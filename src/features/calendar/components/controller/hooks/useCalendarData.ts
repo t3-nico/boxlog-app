@@ -4,24 +4,20 @@ import { useEffect, useMemo } from 'react';
 
 import { addDays, format, subDays } from 'date-fns';
 
-import type { Plan } from '@/core/types/plan';
-import { usePlans } from '@/hooks/usePlans';
-import { useRecords } from '@/hooks/useRecords';
+import type { EntryWithTags } from '@/core/types/entry';
+import { useEntries } from '@/hooks/useEntries';
 import { useTags } from '@/hooks/useTagsQuery';
+import { expandEntriesToCalendarEvents, type PlanInstanceException } from '@/lib/entry-adapter';
+import { isTimePast } from '@/lib/entry-status';
 import { logger } from '@/lib/logger';
 import { isRecurringPlan } from '@/lib/plan-recurrence';
 import { api } from '@/lib/trpc';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 
 import { calculateViewDateRange } from '../../../lib/view-helpers';
-import {
-  expandRecurringPlansToCalendarPlans,
-  recordsToCalendarPlans,
-  type PlanInstanceException,
-} from '../../../utils/planDataAdapter';
 
 import type { CalendarPlan, CalendarViewType, ViewDateRange } from '../../../types/calendar.types';
 
@@ -30,30 +26,21 @@ interface UseCalendarDataOptions {
   currentDate: Date;
 }
 
-// サーバーからはformatPlanWithTagsで変換済みの形式が返る（tagIdsのみ）
-interface PlanWithTagIds extends Plan {
-  tagIds?: string[];
-}
-
-// tRPCから返る型（API定義から推論される）
-type PlansApiResult = ReturnType<typeof usePlans>['data'];
-
 interface UseCalendarDataResult {
   viewDateRange: ViewDateRange;
   filteredEvents: CalendarPlan[];
   allCalendarPlans: CalendarPlan[];
-  plansData: PlansApiResult;
+  entriesData: ReturnType<typeof useEntries>['data'];
 }
 
 export function useCalendarData({
   viewType,
   currentDate,
 }: UseCalendarDataOptions): UseCalendarDataResult {
-  // 週の開始日設定を取得（usePlansに渡すため先に取得）
+  // 週の開始日設定を取得
   const weekStartsOn = useCalendarSettingsStore((state) => state.weekStartsOn);
 
   // ビューに応じた期間計算（週の開始日設定を反映）
-  // usePlansに日付範囲を渡すため、先に計算
   const viewDateRange = useMemo(() => {
     return calculateViewDateRange(viewType, currentDate, weekStartsOn);
   }, [viewType, currentDate, weekStartsOn]);
@@ -67,53 +54,35 @@ export function useCalendarData({
     [viewDateRange],
   );
 
-  // plansを取得（日付範囲フィルタで高速化）
-  const { data: plansData } = usePlans(dateFilter);
-
-  // recordsを取得（日付範囲フィルタ）
-  // service.list は常に plan 情報を含めて返す（RecordWithPlan型）
-  // Plans と同じキャッシュ戦略・retry設定を適用（リアルタイム性が重要）
-  const { data: recordsData } = useRecords({
-    worked_at_from: format(viewDateRange.start, 'yyyy-MM-dd'),
-    worked_at_to: format(viewDateRange.end, 'yyyy-MM-dd'),
-  });
+  // entries を取得（plans + records 統合、単一クエリ）
+  const { data: entriesData } = useEntries(dateFilter);
 
   // タグマスタをプリフェッチ（TagsContainerで使用するためキャッシュをwarm up）
-  // これにより、カードがレンダリングされる時点でタグ情報がキャッシュに存在する
   useTags();
 
   // tRPC utils（プリフェッチ用）
   const utils = api.useUtils();
 
   // 隣接期間のプリフェッチ（ナビゲーション高速化）
-  // Plans と Records 両方をプリフェッチして、週ナビゲーション時の体験を向上
   useEffect(() => {
     const prefetchAdjacentPeriods = () => {
       // 前の期間
       const prevRange = calculateViewDateRange(viewType, subDays(currentDate, 7), weekStartsOn);
-      void utils.plans.list.prefetch({
+      void utils.entries.list.prefetch({
         startDate: prevRange.start.toISOString(),
         endDate: prevRange.end.toISOString(),
-      });
-      void utils.records.list.prefetch({
-        worked_at_from: format(prevRange.start, 'yyyy-MM-dd'),
-        worked_at_to: format(prevRange.end, 'yyyy-MM-dd'),
       });
 
       // 次の期間
       const nextRange = calculateViewDateRange(viewType, addDays(currentDate, 7), weekStartsOn);
-      void utils.plans.list.prefetch({
+      void utils.entries.list.prefetch({
         startDate: nextRange.start.toISOString(),
         endDate: nextRange.end.toISOString(),
-      });
-      void utils.records.list.prefetch({
-        worked_at_from: format(nextRange.start, 'yyyy-MM-dd'),
-        worked_at_to: format(nextRange.end, 'yyyy-MM-dd'),
       });
     };
 
     prefetchAdjacentPeriods();
-  }, [currentDate, viewType, weekStartsOn, utils.plans.list, utils.records.list]);
+  }, [currentDate, viewType, weekStartsOn, utils.entries.list]);
 
   // フィルター関数と状態を取得（ストアに統一）
   const isPlanVisible = useCalendarFilterStore((state) => state.isPlanVisible);
@@ -123,26 +92,25 @@ export function useCalendarData({
   const visibleTagIds = useCalendarFilterStore((state) => state.visibleTagIds);
   const showUntagged = useCalendarFilterStore((state) => state.showUntagged);
 
-  // ドラフトプランを取得（新規作成・コピー＆ペースト時のプレビュー表示用）
-  const draftPlan = usePlanInspectorStore((state) => state.draftPlan);
-  const createType = usePlanInspectorStore((state) => state.createType);
+  // ドラフトエントリを取得（新規作成・コピー＆ペースト時のプレビュー表示用）
+  const draftEntry = useEntryInspectorStore((state) => state.draftEntry);
 
-  // 繰り返しプランのIDを抽出
-  const recurringPlanIds = useMemo(() => {
-    if (!plansData) return [];
-    return plansData.filter((plan) => isRecurringPlan(plan)).map((plan) => plan.id);
-  }, [plansData]);
+  // 繰り返しエントリのIDを抽出
+  const recurringEntryIds = useMemo(() => {
+    if (!entriesData) return [];
+    return entriesData.filter((entry) => isRecurringPlan(entry)).map((entry) => entry.id);
+  }, [entriesData]);
 
-  // 繰り返しプランの例外情報を取得（繰り返しプランがある場合のみ）
-  const { data: instancesData } = api.plans.getInstances.useQuery(
+  // 繰り返しエントリの例外情報を取得（繰り返しエントリがある場合のみ）
+  const { data: instancesData } = api.entries.getInstances.useQuery(
     {
-      planIds: recurringPlanIds,
+      entryIds: recurringEntryIds,
       startDate: format(viewDateRange.start, 'yyyy-MM-dd'),
       endDate: format(viewDateRange.end, 'yyyy-MM-dd'),
     },
     {
-      enabled: recurringPlanIds.length > 0,
-      staleTime: 30 * 1000, // 30秒キャッシュ
+      enabled: recurringEntryIds.length > 0,
+      staleTime: 30 * 1000,
     },
   );
 
@@ -152,11 +120,11 @@ export function useCalendarData({
     if (!instancesData) return map;
 
     for (const inst of instancesData) {
-      const planId = inst.plan_id;
-      if (!map.has(planId)) {
-        map.set(planId, []);
+      const entryId = inst.entry_id; // instances テーブルの entry_id
+      if (!map.has(entryId)) {
+        map.set(entryId, []);
       }
-      map.get(planId)!.push({
+      map.get(entryId)!.push({
         instanceDate: inst.instance_date,
         exceptionType: inst.exception_type as 'modified' | 'cancelled' | 'moved' | undefined,
         title: inst.title ?? undefined,
@@ -169,47 +137,35 @@ export function useCalendarData({
     return map;
   }, [instancesData]);
 
-  // 全プランをCalendarPlan型に変換（繰り返しプランを展開）
+  // 全エントリをCalendarPlan型に変換（繰り返しエントリを展開）
   const allCalendarPlans = useMemo(() => {
     const calendarPlans: CalendarPlan[] = [];
 
-    // Plans の変換
-    if (plansData) {
-      // サーバーからはformatPlanWithTagsで変換済みのtagIds配列が返る
-      const plansWithTagIds = plansData as PlanWithTagIds[];
-
-      // start_time/end_timeが設定されているplanのみを抽出
-      const plansWithTime = plansWithTagIds.filter((plan) => {
-        return plan.start_time && plan.end_time;
-      });
-
-      // 繰り返しプランを展開してCalendarPlanに変換
-      const expandedPlans = expandRecurringPlansToCalendarPlans(
-        plansWithTime,
+    // Entries の変換（繰り返し展開含む）
+    if (entriesData) {
+      // サーバー型 → コア型に正規化（tagIds を保証）
+      const normalized: EntryWithTags[] = entriesData.map((e) => ({
+        ...e,
+        tagIds: e.tagIds ?? [],
+      })) as EntryWithTags[];
+      const expandedEvents = expandEntriesToCalendarEvents(
+        normalized,
         viewDateRange.start,
         viewDateRange.end,
         exceptionsMap,
       );
-      calendarPlans.push(...expandedPlans);
+      calendarPlans.push(...expandedEvents);
     }
 
-    // Records の変換（start_time/end_time がある場合のみ表示）
-    if (recordsData) {
-      const calendarRecords = recordsToCalendarPlans(recordsData);
-      calendarPlans.push(...calendarRecords);
-    }
-
-    // ドラフトプランをプレビューとして追加
-    // 時間がある場合は表示（新規作成時やペースト時）
-    // タイトルがない場合はcreateTypeに応じたデフォルト表示
-    if (draftPlan?.start_time && draftPlan?.end_time) {
-      const startDate = new Date(draftPlan.start_time);
-      const endDate = new Date(draftPlan.end_time);
-      const isRecord = createType === 'record';
+    // ドラフトエントリをプレビューとして追加
+    if (draftEntry?.start_time && draftEntry?.end_time) {
+      const startDate = new Date(draftEntry.start_time);
+      const endDate = new Date(draftEntry.end_time);
+      const isPast = isTimePast(draftEntry.start_time);
       const draftCalendarPlan: CalendarPlan = {
         id: '__draft__',
-        title: draftPlan.title || (isRecord ? '新しい記録' : '新しい予定'),
-        description: draftPlan.description ?? undefined,
+        title: draftEntry.title || (isPast ? '新しい記録' : '新しい予定'),
+        description: draftEntry.description ?? undefined,
         startDate,
         endDate,
         status: 'open',
@@ -221,14 +177,15 @@ export function useCalendarData({
         duration: (endDate.getTime() - startDate.getTime()) / 60000,
         isMultiDay: false,
         isRecurring: false,
-        type: isRecord ? 'record' : 'plan',
+        type: isPast ? 'record' : 'plan',
+        origin: isPast ? 'unplanned' : 'planned',
         isDraft: true,
       };
       calendarPlans.push(draftCalendarPlan);
     }
 
     return calendarPlans;
-  }, [plansData, recordsData, viewDateRange, exceptionsMap, draftPlan, createType]);
+  }, [entriesData, viewDateRange, exceptionsMap, draftEntry]);
 
   // 表示範囲のイベントをフィルタリング
   const filteredEvents = useMemo(() => {
@@ -249,7 +206,6 @@ export function useCalendarData({
     );
 
     const filtered = allCalendarPlans.filter((event) => {
-      // startDate/endDate が null の場合はスキップ
       if (!event.startDate || !event.endDate) {
         return false;
       }
@@ -272,22 +228,22 @@ export function useCalendarData({
     });
 
     // サイドバーのフィルター設定を適用
-    // 種別フィルター（Plan/Record）とタグフィルターの両方をチェック
-    // ドラフトは常に表示（フィルター設定に関係なく）
+    // visibleTypes.plan → origin='planned' のエントリ
+    // visibleTypes.record → origin='unplanned' のエントリ
     const visibilityFiltered = filtered.filter((event) => {
       // ドラフトは常に表示
       if (event.isDraft) {
         return true;
       }
+      // origin ベースのフィルタリング（type フィールドで UX 互換維持）
       if (event.type === 'record') {
         return visibleTypes.record && matchesTagFilter(event.tagIds ?? []);
       }
-      // Planの場合: 種別表示 AND タグ表示の両方をチェック
       return visibleTypes.plan && isPlanVisible(event.tagIds ?? []);
     });
 
-    logger.log(`[useCalendarData] plansフィルタリング:`, {
-      totalPlans: allCalendarPlans.length,
+    logger.log(`[useCalendarData] entriesフィルタリング:`, {
+      totalEntries: allCalendarPlans.length,
       dateFiltered: filtered.length,
       visibilityFiltered: visibilityFiltered.length,
       dateRange: {
@@ -318,6 +274,6 @@ export function useCalendarData({
     viewDateRange,
     filteredEvents,
     allCalendarPlans,
-    plansData,
+    entriesData,
   };
 }
