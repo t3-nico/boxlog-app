@@ -24,7 +24,6 @@ interface TagBreakdownItem {
   tagId: string;
   tagName: string;
   tagColor: string;
-  parentId: string | null;
   plannedMinutes: number;
   actualMinutes: number;
   previousActualMinutes: number;
@@ -76,7 +75,7 @@ export const statsViewRouter = createTRPCRouter({
         .lte('start_time', `${prevEndDate}T23:59:59`),
 
       // 4. ユーザーのタグ一覧
-      supabase.from('tags').select('id, name, color, parent_id').eq('user_id', userId),
+      supabase.from('tags').select('id, name, color').eq('user_id', userId),
     ]);
 
     if (plannedResult.error) {
@@ -272,7 +271,6 @@ export const statsViewRouter = createTRPCRouter({
           tagId: '__untagged__',
           tagName: 'No Tag',
           tagColor: '#94a3b8',
-          parentId: null,
           plannedMinutes: Math.round(plannedMins),
           actualMinutes: Math.round(actualMins),
           previousActualMinutes: Math.round(prevActualMins),
@@ -284,7 +282,6 @@ export const statsViewRouter = createTRPCRouter({
             tagId: tag.id,
             tagName: tag.name,
             tagColor: tag.color ?? '#6366f1',
-            parentId: tag.parent_id,
             plannedMinutes: Math.round(plannedMins),
             actualMinutes: Math.round(actualMins),
             previousActualMinutes: Math.round(prevActualMins),

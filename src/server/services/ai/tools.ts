@@ -277,9 +277,7 @@ export function createAITools(supabase: AISupabaseClient, userId: string): ToolS
           return {
             tags: stats.map((s) => ({
               name: s.name,
-              planCount: s.plan_count,
-              recordCount: s.record_count,
-              totalCount: s.total_count,
+              entryCount: s.entry_count,
               lastUsedAt: s.last_used_at,
             })),
           };

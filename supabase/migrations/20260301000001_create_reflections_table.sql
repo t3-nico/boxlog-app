@@ -65,4 +65,4 @@ CREATE POLICY "Users can delete own reflections"
 CREATE TRIGGER set_reflections_updated_at
   BEFORE UPDATE ON reflections
   FOR EACH ROW
-  EXECUTE FUNCTION update_updated_at_column();
+  EXECUTE FUNCTION update_updated_at();

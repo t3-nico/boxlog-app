@@ -306,7 +306,7 @@ export class TagService {
     try {
       const { data, error } = await callMergeTagsRpc(this.supabase, {
         p_user_id: userId,
-        p_source_tag_ids: [sourceTagId],
+        p_source_tag_id: sourceTagId,
         p_target_tag_id: targetTagId,
       });
 
@@ -362,7 +362,7 @@ export class TagService {
   /**
    * タグ並び替え（バッチ更新）
    *
-   * sort_orderとparent_idをバッチ更新します。
+   * sort_orderをバッチ更新します。
    * 楽観的更新との併用を想定。
    *
    * @param options - userId と更新配列
@@ -458,41 +458,27 @@ export class TagService {
     }
 
     // RPC結果をMapに変換
-    const statsMap = new Map<
-      string,
-      { plan_count: number; record_count: number; last_used: string | null }
-    >();
-    for (const row of (statsRows ?? []) as Array<{
-      tag_id: string | null;
-      plan_count: number;
-      record_count: number;
-      last_used: string | null;
-    }>) {
-      if (row.tag_id) {
-        statsMap.set(row.tag_id, {
-          plan_count: row.plan_count,
-          record_count: row.record_count,
-          last_used: row.last_used,
-        });
-      }
+    const statsMap = new Map<string, { entry_count: number; last_used: string | null }>();
+    for (const row of statsRows ?? []) {
+      statsMap.set(row.tag_id, {
+        entry_count: row.entry_count,
+        last_used: row.last_used,
+      });
     }
 
     const statsData: TagStatsRow[] = tags.map((tag) => {
       const stats = statsMap.get(tag.id);
-      const planCount = stats?.plan_count ?? 0;
-      const recordCount = stats?.record_count ?? 0;
+      const entryCount = stats?.entry_count ?? 0;
       return {
         id: tag.id,
         name: tag.name,
         color: tag.color,
-        plan_count: planCount,
-        record_count: recordCount,
-        total_count: planCount + recordCount,
+        entry_count: entryCount,
         last_used_at: stats?.last_used ?? null,
       };
     });
 
-    statsData.sort((a, b) => b.total_count - a.total_count);
+    statsData.sort((a, b) => b.entry_count - a.entry_count);
 
     return statsData;
   }
@@ -503,9 +489,7 @@ export interface TagStatsRow {
   id: string;
   name: string;
   color: string | null;
-  plan_count: number;
-  record_count: number;
-  total_count: number;
+  entry_count: number;
   last_used_at: string | null;
 }
 

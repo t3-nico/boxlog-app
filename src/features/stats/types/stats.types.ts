@@ -17,7 +17,6 @@ export interface StatsTagBreakdown {
   tagId: string;
   tagName: string;
   tagColor: string;
-  parentId: string | null;
   plannedMinutes: number;
   actualMinutes: number;
   previousActualMinutes: number;

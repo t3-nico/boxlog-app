@@ -150,13 +150,9 @@ export function useEntityTagsHook(
         if (enableTagStats && entityName === 'plans' && previousTagStats) {
           const newCounts = { ...previousTagStats.counts };
           newCounts[tagId] = (newCounts[tagId] ?? 0) + 1;
-          const wasUntagged = currentTagIds.length === 0;
           utils.plans.getTagStats.setData(undefined, {
             ...previousTagStats,
             counts: newCounts,
-            untaggedCount: wasUntagged
-              ? Math.max(0, previousTagStats.untaggedCount - 1)
-              : previousTagStats.untaggedCount,
           });
         }
       }
@@ -212,13 +208,9 @@ export function useEntityTagsHook(
         if (newCounts[tagId] !== undefined && newCounts[tagId] > 0) {
           newCounts[tagId] = newCounts[tagId] - 1;
         }
-        const willBeUntagged = newTagIds.length === 0;
         utils.plans.getTagStats.setData(undefined, {
           ...previousTagStats,
           counts: newCounts,
-          untaggedCount: willBeUntagged
-            ? previousTagStats.untaggedCount + 1
-            : previousTagStats.untaggedCount,
         });
       }
 
@@ -282,19 +274,9 @@ export function useEntityTagsHook(
           }
         }
 
-        const wasUntagged = currentTagIds.length === 0;
-        const willBeUntagged = tagIds.length === 0;
-        let newUntaggedCount = previousTagStats.untaggedCount;
-        if (wasUntagged && !willBeUntagged) {
-          newUntaggedCount = Math.max(0, newUntaggedCount - 1);
-        } else if (!wasUntagged && willBeUntagged) {
-          newUntaggedCount = newUntaggedCount + 1;
-        }
-
         utils.plans.getTagStats.setData(undefined, {
           ...previousTagStats,
           counts: newCounts,
-          untaggedCount: newUntaggedCount,
         });
       }
 

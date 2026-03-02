@@ -421,7 +421,6 @@ describe.skipIf(SKIP_INTEGRATION)('Plans Statistics Router Integration', () => {
       expect(result).toBeDefined();
       expect(result.counts).toBeDefined();
       expect(result.lastUsed).toBeDefined();
-      expect(typeof result.untaggedCount).toBe('number');
     });
   });
 

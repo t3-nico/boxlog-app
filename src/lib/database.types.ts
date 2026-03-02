@@ -886,11 +886,9 @@ export type Database = {
         Row: {
           color: string | null;
           created_at: string | null;
-          description: string | null;
           id: string;
           is_active: boolean;
           name: string;
-          parent_id: string | null;
           sort_order: number;
           updated_at: string | null;
           user_id: string | null;
@@ -898,11 +896,9 @@ export type Database = {
         Insert: {
           color?: string | null;
           created_at?: string | null;
-          description?: string | null;
           id?: string;
           is_active?: boolean;
           name: string;
-          parent_id?: string | null;
           sort_order?: number;
           updated_at?: string | null;
           user_id?: string | null;
@@ -910,24 +906,14 @@ export type Database = {
         Update: {
           color?: string | null;
           created_at?: string | null;
-          description?: string | null;
           id?: string;
           is_active?: boolean;
           name?: string;
-          parent_id?: string | null;
           sort_order?: number;
           updated_at?: string | null;
           user_id?: string | null;
         };
-        Relationships: [
-          {
-            foreignKeyName: 'tags_parent_id_fkey';
-            columns: ['parent_id'];
-            isOneToOne: false;
-            referencedRelation: 'tags';
-            referencedColumns: ['id'];
-          },
-        ];
+        Relationships: [];
       };
       user_settings: {
         Row: {
@@ -1053,8 +1039,8 @@ export type Database = {
       get_tag_stats: {
         Args: { p_user_id: string };
         Returns: {
+          entry_count: number;
           last_used: string;
-          plan_count: number;
           tag_id: string;
         }[];
       };
@@ -1064,7 +1050,7 @@ export type Database = {
       };
       merge_tags: {
         Args: {
-          p_source_tag_ids: string[];
+          p_source_tag_id: string;
           p_target_tag_id: string;
           p_user_id: string;
         };

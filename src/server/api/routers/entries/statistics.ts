@@ -588,7 +588,7 @@ export const statisticsRouter = createTRPCRouter({
   }),
 
   /**
-   * Get tag statistics
+   * Get tag statistics (entry count and last used date)
    * Uses PostgreSQL function `get_tag_stats` for efficient DB-side aggregation
    */
   getTagStats: protectedProcedure.query(async ({ ctx }) => {
@@ -607,29 +607,17 @@ export const statisticsRouter = createTRPCRouter({
 
     // Transform array result into lookup objects
     const counts: Record<string, number> = {};
-    const recordCounts: Record<string, number> = {};
     const lastUsed: Record<string, string> = {};
-    let untaggedCount = 0;
 
     if (data) {
-      for (const row of data as Array<{
-        tag_id: string | null;
-        plan_count: number;
-        record_count: number;
-        last_used: string | null;
-      }>) {
-        if (row.tag_id === null) {
-          untaggedCount = row.plan_count;
-        } else {
-          counts[row.tag_id] = row.plan_count;
-          recordCounts[row.tag_id] = row.record_count;
-          if (row.last_used) {
-            lastUsed[row.tag_id] = row.last_used;
-          }
+      for (const row of data) {
+        counts[row.tag_id] = row.entry_count;
+        if (row.last_used) {
+          lastUsed[row.tag_id] = row.last_used;
         }
       }
     }
 
-    return { counts, recordCounts, lastUsed, untaggedCount };
+    return { counts, lastUsed };
   }),
 });

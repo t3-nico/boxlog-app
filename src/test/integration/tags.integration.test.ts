@@ -371,47 +371,6 @@ describe.skipIf(SKIP_INTEGRATION)('Tags Router Integration', () => {
       createdTagIds = createdTagIds.filter((id) => id !== sourceTag.id);
     });
 
-    it('should promote child tags to root when merging parent', async () => {
-      const caller = createTestCaller(tagsRouter, ctx);
-
-      // 1. 親タグを作成
-      const parentTag = await caller.create({
-        name: 'Parent Tag for Merge',
-        color: '#0000FF',
-      });
-      createdTagIds.push(parentTag.id);
-
-      // 2. 子タグを作成（parentIdを指定）
-      const childTag = await caller.create({
-        name: 'Child Tag for Merge',
-        color: '#FFFF00',
-        parentId: parentTag.id,
-      });
-      createdTagIds.push(childTag.id);
-
-      // 3. ターゲットタグを作成
-      const targetTag = await caller.create({
-        name: 'Target for Parent Merge',
-        color: '#FF00FF',
-      });
-      createdTagIds.push(targetTag.id);
-
-      // 4. 親タグをターゲットタグにマージ
-      await caller.merge({
-        sourceTagId: parentTag.id,
-        targetTagId: targetTag.id,
-        mergeAssociations: true,
-        deleteSource: true,
-      });
-
-      // 5. 子タグがルートに昇格（parent_id = null）されていることを確認
-      const updatedChildTag = await caller.getById({ id: childTag.id });
-      expect(updatedChildTag.parent_id).toBeNull();
-
-      // createdTagIdsから親タグを削除（既に削除済み）
-      createdTagIds = createdTagIds.filter((id) => id !== parentTag.id);
-    });
-
     it('should handle duplicate plan associations during merge', async () => {
       const caller = createTestCaller(tagsRouter, ctx);
 
@@ -510,42 +469,6 @@ describe.skipIf(SKIP_INTEGRATION)('Tags Router Integration', () => {
       olderTags?.forEach((t) => {
         expect(t.sort_order).toBeGreaterThan(0);
       });
-    });
-
-    it('should maintain sort_order within parent group', async () => {
-      const caller = createTestCaller(tagsRouter, ctx);
-
-      // 1. 親タグを作成
-      const parentTag = await caller.create({
-        name: 'Parent for Sort Order',
-        color: '#DD0000',
-      });
-      createdTagIds.push(parentTag.id);
-
-      // 2. 親に属する子タグを2つ作成
-      const child1 = await caller.create({
-        name: 'Child Sort 1',
-        color: '#EE0000',
-        parentId: parentTag.id,
-      });
-      createdTagIds.push(child1.id);
-
-      const child2 = await caller.create({
-        name: 'Child Sort 2',
-        color: '#FF0000',
-        parentId: parentTag.id,
-      });
-      createdTagIds.push(child2.id);
-
-      // 3. 新しい子タグが先頭（sort_order = 0）であることを確認
-      const { data: childTags } = await adminSupabase
-        .from('tags')
-        .select('id, sort_order')
-        .eq('parent_id', parentTag.id)
-        .order('sort_order', { ascending: true });
-
-      expect(childTags?.[0].id).toBe(child2.id);
-      expect(childTags?.[0].sort_order).toBe(0);
     });
   });
 });
