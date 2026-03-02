@@ -1,0 +1,1 @@
+export { InlineTagPalette } from './InlineTagPalette';
