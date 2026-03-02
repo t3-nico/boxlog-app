@@ -1,18 +1,22 @@
 /**
- * Entries Statistics Subrouter
- * Entry and tag statistics
+ * Entries Statistics Router
  *
- * DB側集計関数を使用してパフォーマンスを最適化
- * （マイグレーションで関数内部が entries テーブルを参照するよう更新済み）
+ * 統計・分析・StatsView 用のデータ集約エンドポイント
+ *
+ * 旧2サブルーター (statistics, statsView) を統合。
+ * DB 側集計関数を使用してパフォーマンスを最適化。
  */
 
 import { TRPCError } from '@trpc/server';
+import { z } from 'zod';
 
 import { MS_PER_DAY, MS_PER_MINUTE } from '@/constants/time';
 import { endOfWeek, startOfWeek } from '@/lib/date/core';
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
 
-import { z } from 'zod';
+// =============================================================================
+// Schemas & Types
+// =============================================================================
 
 /** 期間フィルター用の共通入力スキーマ */
 const dateRangeInput = z.object({
@@ -20,9 +24,13 @@ const dateRangeInput = z.object({
   endDate: z.string().optional(),
 });
 
-// --------------------------------------------------------
-// RPC レスポンス型定義
-// --------------------------------------------------------
+const statsViewInputSchema = z.object({
+  startDate: z.string(),
+  endDate: z.string(),
+  prevStartDate: z.string(),
+  prevEndDate: z.string(),
+  todayDate: z.string(),
+});
 
 interface PlanSummaryResult {
   totalHours: number;
@@ -37,11 +45,175 @@ interface TotalTimeResult {
   planCount: number;
 }
 
-export const statisticsRouter = createTRPCRouter({
-  /**
-   * Get summary statistics
-   * DB側集計関数 get_plan_summary を使用（内部は entries テーブルを参照）
-   */
+interface TagBreakdownItem {
+  tagId: string;
+  tagName: string;
+  tagColor: string;
+  plannedMinutes: number;
+  actualMinutes: number;
+  previousActualMinutes: number;
+}
+
+// =============================================================================
+// Router
+// =============================================================================
+
+export const entriesStatisticsRouter = createTRPCRouter({
+  // ---------------------------------------------------------------------------
+  // General Statistics
+  // ---------------------------------------------------------------------------
+
+  /** Get entry statistics (count by origin) */
+  getStats: protectedProcedure.query(async ({ ctx }) => {
+    const { supabase, userId } = ctx;
+
+    const { data: entries, error } = await supabase
+      .from('entries')
+      .select('id, origin')
+      .eq('user_id', userId);
+
+    if (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to fetch statistics',
+      });
+    }
+
+    const byStatus = entries.reduce(
+      (acc, entry) => {
+        const key = entry.origin ?? 'planned';
+        acc[key] = (acc[key] ?? 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
+
+    return { total: entries.length, byStatus };
+  }),
+
+  /** Get tag statistics (entry count and last used date) */
+  getTagStats: protectedProcedure.query(async ({ ctx }) => {
+    const { supabase, userId } = ctx;
+
+    const { data, error } = await supabase.rpc('get_tag_stats', { p_user_id: userId });
+
+    if (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to fetch tag stats',
+      });
+    }
+
+    const counts: Record<string, number> = {};
+    const lastUsed: Record<string, string> = {};
+
+    if (data) {
+      for (const row of data) {
+        counts[row.tag_id] = row.entry_count;
+        if (row.last_used) {
+          lastUsed[row.tag_id] = row.last_used;
+        }
+      }
+    }
+
+    return { counts, lastUsed };
+  }),
+
+  /** Get total time from all entries (DB function) */
+  getTotalTime: protectedProcedure.query(async ({ ctx }) => {
+    const { supabase, userId } = ctx;
+
+    const { data, error } = await supabase.rpc(
+      'get_total_time' as never,
+      {
+        p_user_id: userId,
+      } as never,
+    );
+
+    if (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to fetch total time',
+      });
+    }
+
+    const result = data as TotalTimeResult | null;
+    const totalMinutes = result?.totalMinutes ?? 0;
+    const planCount = result?.planCount ?? 0;
+    const totalHours = totalMinutes / 60;
+
+    return {
+      totalHours,
+      planCount,
+      avgHoursPerPlan: planCount > 0 ? totalHours / planCount : 0,
+    };
+  }),
+
+  /** Get this week's time (planned vs unplanned entries) */
+  getCumulativeTime: protectedProcedure.query(async ({ ctx }) => {
+    const { supabase, userId } = ctx;
+    const now = new Date();
+    const weekStart = startOfWeek(now).toISOString();
+    const weekEnd = endOfWeek(now).toISOString();
+
+    const { data: plannedEntries, error: plannedError } = await supabase
+      .from('entries')
+      .select('start_time, end_time')
+      .eq('user_id', userId)
+      .eq('origin', 'planned')
+      .not('start_time', 'is', null)
+      .not('end_time', 'is', null)
+      .gte('start_time', weekStart)
+      .lte('start_time', weekEnd);
+
+    if (plannedError) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to fetch planned entries',
+      });
+    }
+
+    const { data: unplannedEntries, error: unplannedError } = await supabase
+      .from('entries')
+      .select('duration_minutes, start_time, end_time')
+      .eq('user_id', userId)
+      .eq('origin', 'unplanned')
+      .not('start_time', 'is', null)
+      .gte('start_time', weekStart)
+      .lte('start_time', weekEnd);
+
+    if (unplannedError) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to fetch unplanned entries',
+      });
+    }
+
+    let planTotalMinutes = 0;
+    for (const entry of plannedEntries) {
+      if (entry.start_time && entry.end_time) {
+        const diffMs = new Date(entry.end_time).getTime() - new Date(entry.start_time).getTime();
+        if (diffMs > 0) planTotalMinutes += diffMs / MS_PER_MINUTE;
+      }
+    }
+
+    let recordTotalMinutes = 0;
+    for (const entry of unplannedEntries) {
+      if (entry.duration_minutes) {
+        recordTotalMinutes += entry.duration_minutes;
+      } else if (entry.start_time && entry.end_time) {
+        const diffMs = new Date(entry.end_time).getTime() - new Date(entry.start_time).getTime();
+        if (diffMs > 0) recordTotalMinutes += diffMs / MS_PER_MINUTE;
+      }
+    }
+
+    return {
+      planTotalMinutes: Math.round(planTotalMinutes),
+      recordTotalMinutes: Math.round(recordTotalMinutes),
+    };
+  }),
+
+  /** Get summary statistics (DB function) */
   getSummary: protectedProcedure.query(async ({ ctx }) => {
     const { supabase, userId } = ctx;
 
@@ -66,25 +238,20 @@ export const statisticsRouter = createTRPCRouter({
     const completedTasks = summary?.completedTasks ?? 0;
     const thisWeekCompleted = summary?.thisWeekCompleted ?? 0;
 
-    const monthComparison =
-      lastMonthHours > 0
-        ? Math.round(((thisMonthHours - lastMonthHours) / lastMonthHours) * 100)
-        : 0;
-
     return {
       totalHours,
       thisMonthHours,
       lastMonthHours,
-      monthComparison,
+      monthComparison:
+        lastMonthHours > 0
+          ? Math.round(((thisMonthHours - lastMonthHours) / lastMonthHours) * 100)
+          : 0,
       completedTasks,
       thisWeekCompleted,
     };
   }),
 
-  /**
-   * Get streak data (consecutive days with activity)
-   * DB側集計関数 get_active_dates を使用（内部は entries テーブルを参照）
-   */
+  /** Get streak data — consecutive days with activity (DB function) */
   getStreak: protectedProcedure.query(async ({ ctx }) => {
     const { supabase, userId } = ctx;
 
@@ -113,13 +280,10 @@ export const statisticsRouter = createTRPCRouter({
     const today = todayPart ?? '';
     const hasActivityToday = activeDates.has(today);
 
-    // Calculate current streak
+    // Current streak
     let currentStreak = 0;
     const checkDate = new Date();
-
-    if (!hasActivityToday) {
-      checkDate.setDate(checkDate.getDate() - 1);
-    }
+    if (!hasActivityToday) checkDate.setDate(checkDate.getDate() - 1);
 
     while (true) {
       const checkDateStr = checkDate.toISOString().split('T')[0];
@@ -131,7 +295,7 @@ export const statisticsRouter = createTRPCRouter({
       }
     }
 
-    // Calculate longest streak
+    // Longest streak
     let longestStreak = 0;
     let tempStreak = 0;
     let prevDate: Date | null = null;
@@ -153,23 +317,16 @@ export const statisticsRouter = createTRPCRouter({
     }
     longestStreak = Math.max(longestStreak, tempStreak);
 
-    return {
-      currentStreak,
-      longestStreak,
-      hasActivityToday,
-      totalActiveDays: activeDates.size,
-    };
+    return { currentStreak, longestStreak, hasActivityToday, totalActiveDays: activeDates.size };
   }),
 
-  /**
-   * Get time spent per tag
-   */
+  /** Get time spent per tag */
   getTimeByTag: protectedProcedure
     .input(dateRangeInput.optional())
     .query(async ({ ctx, input }) => {
       const { supabase, userId } = ctx;
+      const MS_PER_HOUR = 3600000;
 
-      // Get all entries with time and their tags
       let query = supabase
         .from('entries')
         .select('id, start_time, end_time')
@@ -177,27 +334,16 @@ export const statisticsRouter = createTRPCRouter({
         .not('start_time', 'is', null)
         .not('end_time', 'is', null);
 
-      if (input?.startDate) {
-        query = query.gte('start_time', input.startDate);
-      }
-      if (input?.endDate) {
-        query = query.lte('start_time', input.endDate);
-      }
+      if (input?.startDate) query = query.gte('start_time', input.startDate);
+      if (input?.endDate) query = query.lte('start_time', input.endDate);
 
       const { data: entries, error: entriesError } = await query;
 
       if (entriesError) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to fetch entries',
-        });
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to fetch entries' });
       }
+      if (entries.length === 0) return [];
 
-      if (entries.length === 0) {
-        return [];
-      }
-
-      // Get entry-tag relationships
       const entryIds = entries.map((e) => e.id);
       const { data: entryTags, error: tagsError } = await supabase
         .from('entry_tags')
@@ -211,11 +357,8 @@ export const statisticsRouter = createTRPCRouter({
         });
       }
 
-      // Get tag details
       const tagIds = [...new Set(entryTags.map((et) => et.tag_id))];
-      if (tagIds.length === 0) {
-        return [];
-      }
+      if (tagIds.length === 0) return [];
 
       const { data: tags, error: tagDetailsError } = await supabase
         .from('tags')
@@ -223,14 +366,9 @@ export const statisticsRouter = createTRPCRouter({
         .in('id', tagIds);
 
       if (tagDetailsError) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to fetch tags',
-        });
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Failed to fetch tags' });
       }
 
-      // Calculate hours per tag
-      const MS_PER_HOUR = 3600000;
       const tagHours: Record<string, number> = {};
       for (const entry of entries) {
         if (entry.start_time && entry.end_time) {
@@ -248,8 +386,7 @@ export const statisticsRouter = createTRPCRouter({
         }
       }
 
-      // Build result
-      const result = tags
+      return tags
         .map((tag) => ({
           tagId: tag.id,
           name: tag.name,
@@ -258,14 +395,9 @@ export const statisticsRouter = createTRPCRouter({
         }))
         .filter((t) => t.hours > 0)
         .sort((a, b) => b.hours - a.hours);
-
-      return result;
     }),
 
-  /**
-   * Get daily hours for heatmap (yearly view)
-   * DB側集計関数 get_daily_hours を使用（内部は entries テーブルを参照）
-   */
+  /** Get daily hours for heatmap (DB function) */
   getDailyHours: protectedProcedure
     .input(z.object({ year: z.number() }))
     .query(async ({ ctx, input }) => {
@@ -294,10 +426,7 @@ export const statisticsRouter = createTRPCRouter({
       return (data ?? []) as Array<{ date: string; hours: number }>;
     }),
 
-  /**
-   * Get hourly distribution (which hours of the day have most activity)
-   * DB側集計関数 get_hourly_distribution を使用（内部は entries テーブルを参照）
-   */
+  /** Get hourly distribution (DB function) */
   getHourlyDistribution: protectedProcedure
     .input(dateRangeInput.optional())
     .query(async ({ ctx, input }) => {
@@ -320,16 +449,11 @@ export const statisticsRouter = createTRPCRouter({
       }
 
       const rows = (data ?? []) as Array<{ hour: number; hours: number }>;
-
-      // Initialize hourly buckets and fill from DB results
       const hourlyHours: number[] = new Array(24).fill(0);
       for (const row of rows) {
-        if (row.hour >= 0 && row.hour < 24) {
-          hourlyHours[row.hour] = row.hours;
-        }
+        if (row.hour >= 0 && row.hour < 24) hourlyHours[row.hour] = row.hours;
       }
 
-      // Convert to time slots (grouped by 2 hours)
       const timeSlots = [];
       for (let i = 0; i < 24; i += 2) {
         const hourA = hourlyHours[i] ?? 0;
@@ -339,14 +463,10 @@ export const statisticsRouter = createTRPCRouter({
           hours: hourA + hourB,
         });
       }
-
       return timeSlots;
     }),
 
-  /**
-   * Get day of week distribution
-   * DB側集計関数 get_dow_distribution を使用（内部は entries テーブルを参照）
-   */
+  /** Get day of week distribution (DB function) */
   getDayOfWeekDistribution: protectedProcedure
     .input(dateRangeInput.optional())
     .query(async ({ ctx, input }) => {
@@ -369,17 +489,12 @@ export const statisticsRouter = createTRPCRouter({
       }
 
       const rows = (data ?? []) as Array<{ dow: number; hours: number }>;
-
-      // Fill day-of-week buckets
       const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
       const dayHours: number[] = new Array(7).fill(0);
       for (const row of rows) {
-        if (row.dow >= 0 && row.dow < 7) {
-          dayHours[row.dow] = row.hours;
-        }
+        if (row.dow >= 0 && row.dow < 7) dayHours[row.dow] = row.hours;
       }
 
-      // Return in Monday-first order (月火水木金土日)
       const mondayFirst = [1, 2, 3, 4, 5, 6, 0];
       return mondayFirst.map((dayIndex) => ({
         day: dayNames[dayIndex] ?? '',
@@ -387,15 +502,11 @@ export const statisticsRouter = createTRPCRouter({
       }));
     }),
 
-  /**
-   * Get monthly trend (last 12 months)
-   * DB側集計関数 get_monthly_hours を使用（内部は entries テーブルを参照）
-   */
+  /** Get monthly trend (DB function) */
   getMonthlyTrend: protectedProcedure
     .input(z.object({ months: z.number().min(1).max(120).optional() }).optional())
     .query(async ({ ctx, input }) => {
       const { supabase, userId } = ctx;
-
       const monthCount = input?.months ?? 12;
       const now = new Date();
       const startDate = new Date(now.getFullYear(), now.getMonth() - (monthCount - 1), 1);
@@ -416,208 +527,320 @@ export const statisticsRouter = createTRPCRouter({
       }
 
       const rows = (data ?? []) as Array<{ month: string; hours: number }>;
-
-      // Initialize monthly buckets
       const monthlyHours: Record<string, number> = {};
       for (let i = 0; i < monthCount; i++) {
         const date = new Date(now.getFullYear(), now.getMonth() - (monthCount - 1) + i, 1);
         const key = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
         monthlyHours[key] = 0;
       }
-
-      // Fill from DB results
       for (const row of rows) {
-        if (monthlyHours[row.month] !== undefined) {
-          monthlyHours[row.month] = row.hours;
-        }
+        if (monthlyHours[row.month] !== undefined) monthlyHours[row.month] = row.hours;
       }
 
       return Object.entries(monthlyHours)
         .sort(([a], [b]) => a.localeCompare(b))
         .map(([month, hours]) => {
           const monthPart = month.split('-')[1];
-          return {
-            month,
-            label: `${monthPart ? parseInt(monthPart) : 0}月`,
-            hours,
-          };
+          return { month, label: `${monthPart ? parseInt(monthPart) : 0}月`, hours };
         });
     }),
 
-  /**
-   * Get total time from all entries
-   * DB側集計関数 get_total_time を使用（内部は entries テーブルを参照）
-   */
-  getTotalTime: protectedProcedure.query(async ({ ctx }) => {
-    const { supabase, userId } = ctx;
-
-    const { data, error } = await supabase.rpc(
-      'get_total_time' as never,
-      {
-        p_user_id: userId,
-      } as never,
-    );
-
-    if (error) {
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Failed to fetch total time',
-      });
-    }
-
-    const result = data as TotalTimeResult | null;
-    const totalMinutes = result?.totalMinutes ?? 0;
-    const planCount = result?.planCount ?? 0;
-    const totalHours = totalMinutes / 60;
-    const avgHoursPerPlan = planCount > 0 ? totalHours / planCount : 0;
-
-    return {
-      totalHours,
-      planCount,
-      avgHoursPerPlan,
-    };
-  }),
+  // ---------------------------------------------------------------------------
+  // Stats View (カレンダー Stats ビュー用集約データ)
+  // ---------------------------------------------------------------------------
 
   /**
-   * Get this week's time (planned vs unplanned entries)
-   * 統合モデル: origin='planned' の時間 vs origin='unplanned' の時間
+   * Stats View のメインデータエンドポイント
+   *
+   * entries テーブルのみを使用:
+   * - origin='planned' → 計画時間（start_time/end_time の差分）
+   * - origin='unplanned' → 実績時間（duration_minutes or 差分）
    */
-  getCumulativeTime: protectedProcedure.query(async ({ ctx }) => {
+  getStatsViewData: protectedProcedure.input(statsViewInputSchema).query(async ({ ctx, input }) => {
     const { supabase, userId } = ctx;
-    const now = new Date();
-    const weekStart = startOfWeek(now).toISOString();
-    const weekEnd = endOfWeek(now).toISOString();
+    const { startDate, endDate, prevStartDate, prevEndDate } = input;
 
-    // Planned entries: origin='planned', this week
-    const { data: plannedEntries, error: plannedError } = await supabase
-      .from('entries')
-      .select('start_time, end_time')
-      .eq('user_id', userId)
-      .eq('origin', 'planned')
-      .not('start_time', 'is', null)
-      .not('end_time', 'is', null)
-      .gte('start_time', weekStart)
-      .lte('start_time', weekEnd);
+    // 並列で4つのデータセットを取得
+    const [plannedResult, actualResult, prevActualResult, tagsResult] = await Promise.all([
+      supabase
+        .from('entries')
+        .select('id, start_time, end_time')
+        .eq('user_id', userId)
+        .eq('origin', 'planned')
+        .not('start_time', 'is', null)
+        .not('end_time', 'is', null)
+        .gte('start_time', `${startDate}T00:00:00`)
+        .lte('start_time', `${endDate}T23:59:59`),
+      supabase
+        .from('entries')
+        .select('id, start_time, end_time, duration_minutes')
+        .eq('user_id', userId)
+        .eq('origin', 'unplanned')
+        .not('start_time', 'is', null)
+        .gte('start_time', `${startDate}T00:00:00`)
+        .lte('start_time', `${endDate}T23:59:59`),
+      supabase
+        .from('entries')
+        .select('id, start_time, end_time, duration_minutes')
+        .eq('user_id', userId)
+        .eq('origin', 'unplanned')
+        .not('start_time', 'is', null)
+        .gte('start_time', `${prevStartDate}T00:00:00`)
+        .lte('start_time', `${prevEndDate}T23:59:59`),
+      supabase.from('tags').select('id, name, color').eq('user_id', userId),
+    ]);
 
-    if (plannedError) {
+    if (plannedResult.error) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: 'Failed to fetch planned entries',
+        message: `Failed to fetch planned entries: ${plannedResult.error.message}`,
+      });
+    }
+    if (actualResult.error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `Failed to fetch actual entries: ${actualResult.error.message}`,
+      });
+    }
+    if (prevActualResult.error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `Failed to fetch previous entries: ${prevActualResult.error.message}`,
+      });
+    }
+    if (tagsResult.error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `Failed to fetch tags: ${tagsResult.error.message}`,
       });
     }
 
-    // Unplanned entries: origin='unplanned', this week
-    const { data: unplannedEntries, error: unplannedError } = await supabase
-      .from('entries')
-      .select('duration_minutes, start_time, end_time')
-      .eq('user_id', userId)
-      .eq('origin', 'unplanned')
-      .not('start_time', 'is', null)
-      .gte('start_time', weekStart)
-      .lte('start_time', weekEnd);
+    const planned = plannedResult.data;
+    const actual = actualResult.data;
+    const prevActual = prevActualResult.data;
+    const tags = tagsResult.data;
 
-    if (unplannedError) {
+    // entry_tags 関連を取得
+    const plannedIds = planned.map((e) => e.id);
+    const actualIds = actual.map((e) => e.id);
+    const prevActualIds = prevActual.map((e) => e.id);
+
+    const [plannedTagsResult, actualTagsResult, prevActualTagsResult] = await Promise.all([
+      plannedIds.length > 0
+        ? supabase.from('entry_tags').select('entry_id, tag_id').in('entry_id', plannedIds)
+        : Promise.resolve({
+            data: [] as Array<{ entry_id: string; tag_id: string }>,
+            error: null,
+          }),
+      actualIds.length > 0
+        ? supabase.from('entry_tags').select('entry_id, tag_id').in('entry_id', actualIds)
+        : Promise.resolve({
+            data: [] as Array<{ entry_id: string; tag_id: string }>,
+            error: null,
+          }),
+      prevActualIds.length > 0
+        ? supabase.from('entry_tags').select('entry_id, tag_id').in('entry_id', prevActualIds)
+        : Promise.resolve({
+            data: [] as Array<{ entry_id: string; tag_id: string }>,
+            error: null,
+          }),
+    ]);
+
+    if (plannedTagsResult.error) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: 'Failed to fetch unplanned entries',
+        message: `Failed to fetch planned entry tags: ${plannedTagsResult.error.message}`,
+      });
+    }
+    if (actualTagsResult.error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `Failed to fetch actual entry tags: ${actualTagsResult.error.message}`,
+      });
+    }
+    if (prevActualTagsResult.error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `Failed to fetch prev entry tags: ${prevActualTagsResult.error.message}`,
       });
     }
 
-    // Planned entries: sum (end_time - start_time)
-    let planTotalMinutes = 0;
-    for (const entry of plannedEntries) {
+    const plannedTags = plannedTagsResult.data ?? [];
+    const actualTags = actualTagsResult.data ?? [];
+    const prevActualTags = prevActualTagsResult.data ?? [];
+    const tagMap = new Map(tags.map((t) => [t.id, t]));
+
+    // --- Planned time をタグ別に集計 ---
+    const planMinutesByTag = new Map<string, number>();
+    let totalPlannedMinutes = 0;
+
+    for (const entry of planned) {
       if (entry.start_time && entry.end_time) {
         const diffMs = new Date(entry.end_time).getTime() - new Date(entry.start_time).getTime();
         if (diffMs > 0) {
-          planTotalMinutes += diffMs / MS_PER_MINUTE;
+          const minutes = diffMs / MS_PER_MINUTE;
+          totalPlannedMinutes += minutes;
+
+          const tagIdsForEntry = plannedTags
+            .filter((et) => et.entry_id === entry.id)
+            .map((et) => et.tag_id);
+
+          if (tagIdsForEntry.length === 0) {
+            planMinutesByTag.set(
+              '__untagged__',
+              (planMinutesByTag.get('__untagged__') ?? 0) + minutes,
+            );
+          } else {
+            for (const tagId of tagIdsForEntry) {
+              planMinutesByTag.set(tagId, (planMinutesByTag.get(tagId) ?? 0) + minutes);
+            }
+          }
         }
       }
     }
 
-    // Unplanned entries: prefer duration_minutes, fallback to time diff
-    let recordTotalMinutes = 0;
-    for (const entry of unplannedEntries) {
+    // --- Actual time をタグ別に集計（今週） ---
+    const recordMinutesByTag = new Map<string, number>();
+    let totalActualMinutes = 0;
+
+    for (const entry of actual) {
+      let minutes = 0;
       if (entry.duration_minutes) {
-        recordTotalMinutes += entry.duration_minutes;
+        minutes = entry.duration_minutes;
       } else if (entry.start_time && entry.end_time) {
         const diffMs = new Date(entry.end_time).getTime() - new Date(entry.start_time).getTime();
-        if (diffMs > 0) {
-          recordTotalMinutes += diffMs / MS_PER_MINUTE;
+        if (diffMs > 0) minutes = diffMs / MS_PER_MINUTE;
+      }
+
+      if (minutes > 0) {
+        totalActualMinutes += minutes;
+        const tagIdsForEntry = actualTags
+          .filter((et) => et.entry_id === entry.id)
+          .map((et) => et.tag_id);
+
+        if (tagIdsForEntry.length === 0) {
+          recordMinutesByTag.set(
+            '__untagged__',
+            (recordMinutesByTag.get('__untagged__') ?? 0) + minutes,
+          );
+        } else {
+          for (const tagId of tagIdsForEntry) {
+            recordMinutesByTag.set(tagId, (recordMinutesByTag.get(tagId) ?? 0) + minutes);
+          }
         }
       }
     }
 
-    return {
-      planTotalMinutes: Math.round(planTotalMinutes),
-      recordTotalMinutes: Math.round(recordTotalMinutes),
-    };
-  }),
+    // --- Actual time をタグ別に集計（前週） ---
+    const prevRecordMinutesByTag = new Map<string, number>();
+    let totalPreviousActualMinutes = 0;
 
-  /**
-   * Get entry statistics (count by origin)
-   */
-  getStats: protectedProcedure.query(async ({ ctx }) => {
-    const { supabase, userId } = ctx;
+    for (const entry of prevActual) {
+      let minutes = 0;
+      if (entry.duration_minutes) {
+        minutes = entry.duration_minutes;
+      } else if (entry.start_time && entry.end_time) {
+        const diffMs = new Date(entry.end_time).getTime() - new Date(entry.start_time).getTime();
+        if (diffMs > 0) minutes = diffMs / MS_PER_MINUTE;
+      }
 
-    const { data: entries, error } = await supabase
-      .from('entries')
-      .select('id, origin')
-      .eq('user_id', userId);
+      if (minutes > 0) {
+        totalPreviousActualMinutes += minutes;
+        const tagIdsForEntry = prevActualTags
+          .filter((et) => et.entry_id === entry.id)
+          .map((et) => et.tag_id);
 
-    if (error) {
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Failed to fetch statistics',
-      });
+        if (tagIdsForEntry.length === 0) {
+          prevRecordMinutesByTag.set(
+            '__untagged__',
+            (prevRecordMinutesByTag.get('__untagged__') ?? 0) + minutes,
+          );
+        } else {
+          for (const tagId of tagIdsForEntry) {
+            prevRecordMinutesByTag.set(tagId, (prevRecordMinutesByTag.get(tagId) ?? 0) + minutes);
+          }
+        }
+      }
     }
 
-    // Count by origin (replaces old status-based counting)
-    const byStatus = entries.reduce(
-      (acc, entry) => {
-        const key = entry.origin ?? 'planned';
-        acc[key] = (acc[key] ?? 0) + 1;
-        return acc;
-      },
-      {} as Record<string, number>,
-    );
+    // --- タグ別ブレイクダウン ---
+    const allTagIds = new Set([
+      ...planMinutesByTag.keys(),
+      ...recordMinutesByTag.keys(),
+      ...prevRecordMinutesByTag.keys(),
+    ]);
 
-    return {
-      total: entries.length,
-      byStatus,
-    };
-  }),
+    const tagBreakdown: TagBreakdownItem[] = [];
 
-  /**
-   * Get tag statistics (entry count and last used date)
-   * Uses PostgreSQL function `get_tag_stats` for efficient DB-side aggregation
-   */
-  getTagStats: protectedProcedure.query(async ({ ctx }) => {
-    const { supabase, userId } = ctx;
+    for (const tagId of allTagIds) {
+      const plannedMins = planMinutesByTag.get(tagId) ?? 0;
+      const actualMins = recordMinutesByTag.get(tagId) ?? 0;
+      const prevActualMins = prevRecordMinutesByTag.get(tagId) ?? 0;
 
-    const { data, error } = await supabase.rpc('get_tag_stats', {
-      p_user_id: userId,
+      if (plannedMins === 0 && actualMins === 0 && prevActualMins === 0) continue;
+
+      if (tagId === '__untagged__') {
+        tagBreakdown.push({
+          tagId: '__untagged__',
+          tagName: 'No Tag',
+          tagColor: '#94a3b8',
+          plannedMinutes: Math.round(plannedMins),
+          actualMinutes: Math.round(actualMins),
+          previousActualMinutes: Math.round(prevActualMins),
+        });
+      } else {
+        const tag = tagMap.get(tagId);
+        if (tag) {
+          tagBreakdown.push({
+            tagId: tag.id,
+            tagName: tag.name,
+            tagColor: tag.color ?? '#6366f1',
+            plannedMinutes: Math.round(plannedMins),
+            actualMinutes: Math.round(actualMins),
+            previousActualMinutes: Math.round(prevActualMins),
+          });
+        }
+      }
+    }
+
+    tagBreakdown.sort((a, b) => {
+      if (a.tagId === '__untagged__') return 1;
+      if (b.tagId === '__untagged__') return -1;
+      return a.tagName.localeCompare(b.tagName);
     });
 
-    if (error) {
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Failed to fetch tag stats',
-      });
+    // --- Today データ ---
+    let todayPlannedMinutes = 0;
+    for (const entry of planned) {
+      if (entry.start_time?.startsWith(input.todayDate)) {
+        const diffMs = new Date(entry.end_time!).getTime() - new Date(entry.start_time).getTime();
+        if (diffMs > 0) todayPlannedMinutes += diffMs / MS_PER_MINUTE;
+      }
     }
-
-    // Transform array result into lookup objects
-    const counts: Record<string, number> = {};
-    const lastUsed: Record<string, string> = {};
-
-    if (data) {
-      for (const row of data) {
-        counts[row.tag_id] = row.entry_count;
-        if (row.last_used) {
-          lastUsed[row.tag_id] = row.last_used;
+    let todayActualMinutes = 0;
+    for (const entry of actual) {
+      if (entry.start_time?.startsWith(input.todayDate)) {
+        if (entry.duration_minutes) {
+          todayActualMinutes += entry.duration_minutes;
+        } else if (entry.start_time && entry.end_time) {
+          const diffMs = new Date(entry.end_time).getTime() - new Date(entry.start_time).getTime();
+          if (diffMs > 0) todayActualMinutes += diffMs / MS_PER_MINUTE;
         }
       }
     }
 
-    return { counts, lastUsed };
+    const progressPercent =
+      totalPlannedMinutes > 0 ? Math.round((totalActualMinutes / totalPlannedMinutes) * 100) : 0;
+
+    return {
+      hero: {
+        plannedMinutes: Math.round(totalPlannedMinutes),
+        actualMinutes: Math.round(totalActualMinutes),
+        progressPercent,
+        todayPlannedMinutes: Math.round(todayPlannedMinutes),
+        todayActualMinutes: Math.round(todayActualMinutes),
+      },
+      tagBreakdown,
+    };
   }),
 });
