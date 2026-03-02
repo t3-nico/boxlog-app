@@ -156,7 +156,6 @@ function PlanEditStory({
       <div>
         <PlanInspectorDetailsTab
           plan={plan}
-          planId={plan.id}
           titleRef={titleRef}
           scheduleDate={scheduleDate}
           startTime={startTime}

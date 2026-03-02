@@ -6,6 +6,7 @@ import { createCacheStore } from '@/stores/createCacheStore';
 interface PlanCache {
   recurrence_type?: 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays' | null;
   recurrence_rule?: string | null;
+  fulfillment_score?: 1 | 2 | 3 | null;
 }
 
 /**

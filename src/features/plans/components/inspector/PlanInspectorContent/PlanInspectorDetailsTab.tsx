@@ -1,17 +1,23 @@
 'use client';
 
 /**
- * PlanInspector の詳細タブ（Toggl風3行レイアウト）
+ * Inspector の詳細タブ（Toggl風3行レイアウト）
  *
  * Row 1: Title
  * Row 2: Date + Time + Duration
- * Row 3: Tags + [Records] [Description] [Status*] [Recurrence] [Reminder]
+ * Row 3: Tags + [Description] + [Fulfillment*] + [Recurrence*] + [Reminder*]
+ *
+ * 「Time waits for no one」原則:
+ * - upcoming: 繰り返し、リマインダーあり / 充実度なし
+ * - active: 充実度あり（先行入力可）/ 繰り返し、リマインダーなし
+ * - past: 充実度あり / 繰り返し、リマインダーなし
  */
 
 import { memo, useCallback } from 'react';
 
 import { useTranslations } from 'next-intl';
 import {
+  FulfillmentButton,
   InspectorDetailsLayout,
   NoteIconButton,
   ScheduleRow,
@@ -20,10 +26,11 @@ import {
 } from '../shared';
 
 import { SuggestInput } from '@/components/common/SuggestInput';
+import type { FulfillmentScore } from '@/core/types/entry';
 import type { Tag } from '@/core/types/tag';
+import type { EntryState } from '@/lib/entry-status';
 
 import type { Plan } from '../../../types/plan';
-import { RecordsIconButton } from '../../shared/RecordsIconButton';
 import { RecurrenceIconButton } from '../../shared/RecurrenceIconButton';
 import { ReminderSelect } from '../../shared/ReminderSelect';
 
@@ -31,16 +38,14 @@ type RecurrenceType = 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'week
 
 interface PlanInspectorDetailsTabProps {
   plan: Plan;
-  planId: string;
   titleRef: React.RefObject<HTMLInputElement | null>;
-  scheduleDate: Date | undefined; // スケジュール日（カレンダー配置用）
+  scheduleDate: Date | undefined;
   startTime: string;
   endTime: string;
   reminderMinutes: number | null;
   selectedTagIds: string[];
   recurrenceRule: string | null;
   recurrenceType: RecurrenceType;
-  /** 時間重複エラー状態（視覚的フィードバック用） */
   timeConflictError?: boolean;
   onAutoSave: (field: string, value: string | undefined) => void;
   onScheduleDateChange: (date: Date | undefined) => void;
@@ -51,19 +56,18 @@ interface PlanInspectorDetailsTabProps {
   onRemoveTag: (tagId: string) => void;
   onRepeatTypeChange: (type: string) => void;
   onRecurrenceRuleChange: (rrule: string | null) => void;
-  /** ドラフトモード（新規作成時） */
   isDraftMode?: boolean;
-  /** ドラフトモード用: 選択済み Record IDs */
-  draftRecordIds?: string[];
-  /** ドラフトモード用: Record IDs 変更コールバック */
-  onDraftRecordIdsChange?: (ids: string[]) => void;
-  /** 外部からタグデータを注入（Storybook等で使用） */
+  /** 時間位置ベースの状態（upcoming/active/past） */
+  entryState?: EntryState;
+  /** 充実度スコア */
+  fulfillmentScore?: FulfillmentScore | null;
+  /** 充実度変更コールバック */
+  onFulfillmentChange?: (score: FulfillmentScore | null) => void;
   availableTags?: Tag[] | undefined;
 }
 
 export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   plan,
-  planId,
   titleRef,
   scheduleDate,
   startTime,
@@ -82,11 +86,28 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   onRepeatTypeChange,
   onRecurrenceRuleChange,
   isDraftMode = false,
-  draftRecordIds,
-  onDraftRecordIdsChange,
+  entryState = 'upcoming',
+  fulfillmentScore,
+  onFulfillmentChange,
   availableTags,
 }: PlanInspectorDetailsTabProps) {
   const t = useTranslations();
+
+  // past entries は record サジェスト、それ以外は plan サジェスト
+  const suggestType = entryState === 'past' ? 'record' : 'plan';
+
+  // past entries は "何をしてた？" プレースホルダー
+  const titlePlaceholder =
+    entryState === 'past'
+      ? t('plan.inspector.recordCreate.titlePlaceholder')
+      : isDraftMode
+        ? t('plan.inspector.addTitle')
+        : t('calendar.event.noTitle');
+
+  // upcoming のみ繰り返し・リマインダーを表示
+  const showRecurrence = entryState === 'upcoming';
+  // active/past で充実度を表示
+  const showFulfillment = entryState !== 'upcoming' && onFulfillmentChange;
 
   const handleSuggestionSelect = useCallback(
     (entry: { title: string; tagIds: string[] }) => {
@@ -104,8 +125,8 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
             value={plan.title}
             onChange={(value) => onAutoSave('title', value)}
             onSuggestionSelect={handleSuggestionSelect}
-            type="plan"
-            placeholder={t('plan.inspector.addTitle')}
+            type={suggestType}
+            placeholder={titlePlaceholder}
             autoFocus
           />
         ) : (
@@ -113,7 +134,7 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
             ref={titleRef}
             value={plan.title}
             onChange={(value) => onAutoSave('title', value)}
-            placeholder={t('calendar.event.noTitle')}
+            placeholder={titlePlaceholder}
           />
         )
       }
@@ -136,11 +157,6 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
             popoverSide="bottom"
             {...(availableTags ? { availableTags } : {})}
           />
-          <RecordsIconButton
-            planId={planId ?? null}
-            draftRecordIds={draftRecordIds}
-            onDraftRecordIdsChange={onDraftRecordIdsChange}
-          />
           <NoteIconButton
             id={plan.id}
             note={plan.description || ''}
@@ -151,13 +167,23 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
               placeholder: t('plan.inspector.addDescriptionPlaceholder'),
             }}
           />
-          <RecurrenceIconButton
-            recurrenceRule={recurrenceRule}
-            recurrenceType={recurrenceType}
-            onRepeatTypeChange={onRepeatTypeChange}
-            onRecurrenceRuleChange={onRecurrenceRuleChange}
-          />
-          <ReminderSelect value={reminderMinutes} onChange={onReminderChange} variant="icon" />
+          {showFulfillment && (
+            <FulfillmentButton
+              score={fulfillmentScore ?? null}
+              onScoreChange={onFulfillmentChange}
+            />
+          )}
+          {showRecurrence && (
+            <>
+              <RecurrenceIconButton
+                recurrenceRule={recurrenceRule}
+                recurrenceType={recurrenceType}
+                onRepeatTypeChange={onRepeatTypeChange}
+                onRecurrenceRuleChange={onRecurrenceRuleChange}
+              />
+              <ReminderSelect value={reminderMinutes} onChange={onReminderChange} variant="icon" />
+            </>
+          )}
         </>
       }
     />
