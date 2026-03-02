@@ -7,7 +7,6 @@ import { getInstanceRef } from '@/lib/instance-id';
 import { logger } from '@/lib/logger';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
-import { useRecordInspectorStore } from '@/stores/useRecordInspectorStore';
 import { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmStore';
 
 import type { CalendarPlan, CalendarViewType } from '../../../types/calendar.types';
@@ -23,60 +22,45 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
   const inspectorPlanId = usePlanInspectorStore((state) => state.planId);
   const inspectorIsOpen = usePlanInspectorStore((state) => state.isOpen);
 
-  // Record Inspector
-  const openRecordInspector = useRecordInspectorStore((state) => state.openInspector);
-
   // カレンダー設定のタイムゾーン
   const timezone = useCalendarSettingsStore((s) => s.timezone);
 
   // Inspector で開いているプランIDをDnD無効化用に計算
-  // Inspector が開いている場合のみ planId を返す
   const disabledPlanId = inspectorIsOpen ? inspectorPlanId : null;
 
-  // プラン/Record クリックハンドラー
+  // エントリクリックハンドラー（Plan/Record 統一）
   const handlePlanClick = useCallback(
     (plan: CalendarPlan) => {
       // ドラッグ操作で開いたダイアログが残っている場合は閉じる
       const { closeDialog } = useRecurringEditConfirmStore.getState();
       closeDialog();
 
-      // Record の場合は RecordInspector を開く
-      if (plan.type === 'record' && plan.recordId) {
-        openRecordInspector(plan.recordId);
-        logger.log('📋 Opening Record Inspector:', {
-          recordId: plan.recordId,
-          title: plan.title,
-          linkedPlanId: plan.linkedPlanId,
-        });
-        return;
-      }
-
-      // Plan の場合は PlanInspector を開く
-      // 繰り返しインスタンスの場合は親プランIDを使用
-      const planIdToOpen = plan.calendarId ?? plan.id;
+      // 繰り返しインスタンスの場合は親エントリIDを使用
+      const entryIdToOpen = plan.calendarId ?? plan.id;
 
       // 繰り返しプランの場合はインスタンス日付を渡す
       const ref = plan.isRecurring ? getInstanceRef(plan) : null;
       const instanceDateRaw = ref?.instanceDate ?? plan.startDate?.toISOString().slice(0, 10);
 
       openPlanInspector(
-        planIdToOpen,
+        entryIdToOpen,
         instanceDateRaw && plan.isRecurring ? { instanceDate: instanceDateRaw } : undefined,
       );
 
-      logger.log('📋 Opening Plan Inspector:', {
-        planId: planIdToOpen,
+      logger.log('📋 Opening Entry Inspector:', {
+        entryId: entryIdToOpen,
         title: plan.title,
+        type: plan.type,
         isRecurringInstance: !!plan.calendarId,
         instanceDate: instanceDateRaw,
       });
     },
-    [openPlanInspector, openRecordInspector],
+    [openPlanInspector],
   );
 
   const handleCreatePlan = useCallback(
     (date?: Date, time?: string) => {
-      logger.log('➕ Create plan requested:', {
+      logger.log('➕ Create entry requested:', {
         date: date?.toISOString(),
         dateString: date?.toDateString(),
         time,
@@ -106,21 +90,19 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
             startTime.setHours(hour ?? 9, min ?? 0, 0, 0);
 
             endTime = new Date(date);
-            endTime.setHours((hour ?? 9) + 1, min ?? 0, 0, 0); // デフォルト1時間
+            endTime.setHours((hour ?? 9) + 1, min ?? 0, 0, 0);
           }
         } else {
           startTime = new Date(date);
-          startTime.setHours(9, 0, 0, 0); // デフォルト9:00
+          startTime.setHours(9, 0, 0, 0);
 
           endTime = new Date(date);
-          endTime.setHours(10, 0, 0, 0); // デフォルト10:00
+          endTime.setHours(10, 0, 0, 0);
         }
       }
 
-      // ドラフトモードでInspectorを開く（DB保存は入力時に遅延実行）
-      // Note: 重複チェックはサーバー側で行う（Plan↔Record共存を許可するため）
+      // ドラフトモードでInspectorを開く
       if (startTime && endTime && date) {
-        // カレンダーTZの時刻をUTCに変換
         const utcStartTime = convertFromTimezone(startTime, timezone);
         const utcEndTime = convertFromTimezone(endTime, timezone);
 
@@ -130,7 +112,7 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
           end_time: utcEndTime.toISOString(),
         });
 
-        logger.log('📝 Opened draft plan:', {
+        logger.log('📝 Opened draft entry:', {
           startTime: utcStartTime.toISOString(),
           endTime: utcEndTime.toISOString(),
         });
@@ -139,7 +121,7 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
     [viewType, currentDate, openInspectorWithDraft, timezone],
   );
 
-  // 空き時間クリック用のハンドラー（ダブルクリックで使用）
+  // 空き時間クリック用のハンドラー
   const handleEmptyClick = useCallback(
     (date: Date, time: string) => {
       logger.log('🖱️ Empty time clicked:', { date, time });
@@ -148,7 +130,7 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
     [handleCreatePlan],
   );
 
-  // 統一された時間範囲選択ハンドラー（全ビュー共通、ドラッグまたはダブルクリックで呼ばれる）
+  // 統一された時間範囲選択ハンドラー（全ビュー共通）
   const handleDateTimeRangeSelect = useCallback(
     (selection: {
       date: Date;
@@ -157,7 +139,6 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
       endHour: number;
       endMinute: number;
     }) => {
-      // 指定された日付に時間を設定（カレンダーTZの値として解釈）
       const localStart = new Date(
         selection.date.getFullYear(),
         selection.date.getMonth(),
@@ -173,6 +154,12 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
         selection.endMinute,
       );
 
+      // 最小15分制約
+      const MIN_DURATION_MS = 15 * 60 * 1000;
+      if (localEnd.getTime() - localStart.getTime() < MIN_DURATION_MS) {
+        localEnd.setTime(localStart.getTime() + MIN_DURATION_MS);
+      }
+
       // カレンダーTZの時刻をUTCに変換
       const startTime = convertFromTimezone(localStart, timezone);
       const endTime = convertFromTimezone(localEnd, timezone);
@@ -183,15 +170,13 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
         endTime: endTime.toLocaleTimeString(),
       });
 
-      // Note: 重複チェックはサーバー側で行う（Plan↔Record共存を許可するため）
-      // ドラフトモードでInspectorを開く（DB保存は入力時に遅延実行）
       openInspectorWithDraft({
         title: '',
         start_time: startTime.toISOString(),
         end_time: endTime.toISOString(),
       });
 
-      logger.log('📝 Opened draft plan from drag selection:', {
+      logger.log('📝 Opened draft entry from drag selection:', {
         startTime: startTime.toISOString(),
         endTime: endTime.toISOString(),
       });

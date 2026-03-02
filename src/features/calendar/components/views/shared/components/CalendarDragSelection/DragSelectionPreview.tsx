@@ -94,9 +94,13 @@ export const DragSelectionPreview = memo(function DragSelectionPreview({
     const endDate = new Date(now);
     endDate.setHours(selection.endHour, selection.endMinute, 0, 0);
 
+    // 過去の時間帯かどうかで表示テキストを切替
+    const isPast = startDate < now;
+    const title = isPast ? '新しい記録' : '新しい予定';
+
     return {
       id: '__drag_preview__',
-      title: '新しい予定',
+      title,
       startDate,
       endDate,
       displayStartDate: startDate,
@@ -108,7 +112,7 @@ export const DragSelectionPreview = memo(function DragSelectionPreview({
       updatedAt: now,
       isMultiDay: false,
       isRecurring: false,
-      type: 'plan',
+      type: isPast ? 'record' : 'plan',
       isDraft: true,
     };
   }, [
