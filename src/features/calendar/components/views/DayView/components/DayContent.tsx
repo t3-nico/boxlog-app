@@ -2,8 +2,11 @@
 
 import React, { useCallback } from 'react';
 
+import { isSameDay } from 'date-fns';
+
 import { cn } from '@/lib/utils';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
+import { useInlineCreateStore } from '@/stores/useInlineCreateStore';
 
 import {
   CalendarDragSelection,
@@ -11,6 +14,7 @@ import {
   calculatePlanGhostStyle,
   calculatePreviewTime,
 } from '../../shared';
+import { InlineTagPalette } from '../../shared/components/InlineTagPalette';
 import { PanelDragPreview } from '../../shared/components/PanelDragPreview';
 import { useGlobalDragCursor } from '../../shared/hooks/useGlobalDragCursor';
 import { useResponsiveHourHeight } from '../../shared/hooks/useResponsiveHourHeight';
@@ -33,6 +37,10 @@ export const DayContent = ({
   // Inspectorで開いているプランのIDを取得
   const inspectorPlanId = useEntryInspectorStore((state) => state.entryId);
   const isInspectorOpen = useEntryInspectorStore((state) => state.isOpen);
+
+  // InlineTagPalette 表示判定
+  const pendingSelection = useInlineCreateStore.use.pendingSelection();
+  const hasPendingSelection = pendingSelection && isSameDay(pendingSelection.date, date);
 
   // TODO: entries統合後、status概念は削除されたため要リファクタ
   const handleStatusChange = useCallback((_planId: string, _newStatus: 'open' | 'closed') => {
@@ -208,6 +216,13 @@ export const DayContent = ({
             );
           })}
       </div>
+
+      {/* InlineTagPalette（ドラッグ選択後のタグ付き即作成） */}
+      {hasPendingSelection && (
+        <div className="pointer-events-none absolute inset-0 z-30" style={{ height: gridHeight }}>
+          <InlineTagPalette hourHeight={HOUR_HEIGHT} />
+        </div>
+      )}
     </div>
   );
 };

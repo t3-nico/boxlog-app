@@ -268,7 +268,7 @@ export function useCalendarComposition({
       startHour,
       startMinute,
       duration,
-      tagIds: plan.tagIds,
+      tagId: plan.tagId,
     };
   }, [selectedPlanId, filteredEvents]);
 

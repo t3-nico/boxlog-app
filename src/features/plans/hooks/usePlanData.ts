@@ -63,7 +63,7 @@ export interface PlanItem {
     | undefined; // 繰り返しタイプ（シンプル版）
   recurrence_end_date?: string | null | undefined; // 繰り返し終了日（YYYY-MM-DD）
   recurrence_rule?: string | null | undefined; // カスタム繰り返し（RRULE形式）
-  tagIds?: string[] | undefined; // タグIDリスト（タグ情報はtags.listキャッシュから取得）
+  tagId?: string | null | undefined; // タグID（タグ情報はtags.listキャッシュから取得）
 }
 
 /**
@@ -139,7 +139,7 @@ export function planToPlanItem(plan: PlanWithTagIds): PlanItem {
     recurrence_type: plan.recurrence_type,
     recurrence_end_date: plan.recurrence_end_date,
     recurrence_rule: plan.recurrence_rule,
-    tagIds: plan.tagIds,
+    tagId: plan.tagId,
   };
 }
 
@@ -192,8 +192,8 @@ export function usePlanData(filters: PlanFilters = {}, sort?: PlanSortOptions) {
     // タグフィルタリング（クライアント側）
     if (filters.tags && filters.tags.length > 0) {
       result = result.filter((item) => {
-        const itemTagIds = item.tagIds ?? [];
-        return filters.tags!.some((filterTagId) => itemTagIds.includes(filterTagId));
+        if (!item.tagId) return false;
+        return filters.tags!.includes(item.tagId);
       });
     }
 

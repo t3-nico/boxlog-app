@@ -132,9 +132,7 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
       )}
 
       {/* タグ表示（横幅いっぱいに表示、入りきらないものは+Nで表示、プレビューモード時は非表示） */}
-      {!previewMode && plan.tagIds && plan.tagIds.length > 0 && (
-        <TagsContainer tagIds={plan.tagIds} />
-      )}
+      {!previewMode && plan.tagId && <TagsContainer tagIds={[plan.tagId]} />}
     </div>
   );
 });

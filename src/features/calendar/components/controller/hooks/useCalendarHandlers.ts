@@ -7,6 +7,7 @@ import { getInstanceRef } from '@/lib/instance-id';
 import { logger } from '@/lib/logger';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
+import { useInlineCreateStore } from '@/stores/useInlineCreateStore';
 import { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmStore';
 
 import type { CalendarPlan, CalendarViewType } from '../../../types/calendar.types';
@@ -131,6 +132,9 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
   );
 
   // 統一された時間範囲選択ハンドラー（全ビュー共通）
+  // ドラッグ終了 → InlineTagPalette表示のためpendingSelectionをセット
+  const setPendingSelection = useInlineCreateStore.use.setPendingSelection();
+
   const handleDateTimeRangeSelect = useCallback(
     (selection: {
       date: Date;
@@ -139,49 +143,15 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
       endHour: number;
       endMinute: number;
     }) => {
-      const localStart = new Date(
-        selection.date.getFullYear(),
-        selection.date.getMonth(),
-        selection.date.getDate(),
-        selection.startHour,
-        selection.startMinute,
-      );
-      const localEnd = new Date(
-        selection.date.getFullYear(),
-        selection.date.getMonth(),
-        selection.date.getDate(),
-        selection.endHour,
-        selection.endMinute,
-      );
-
-      // 最小15分制約
-      const MIN_DURATION_MS = 15 * 60 * 1000;
-      if (localEnd.getTime() - localStart.getTime() < MIN_DURATION_MS) {
-        localEnd.setTime(localStart.getTime() + MIN_DURATION_MS);
-      }
-
-      // カレンダーTZの時刻をUTCに変換
-      const startTime = convertFromTimezone(localStart, timezone);
-      const endTime = convertFromTimezone(localEnd, timezone);
-
-      logger.log('📅 Calendar Drag Selection:', {
+      logger.log('📅 Calendar Drag Selection → InlineTagPalette:', {
         date: selection.date.toDateString(),
-        startTime: startTime.toLocaleTimeString(),
-        endTime: endTime.toLocaleTimeString(),
+        start: `${selection.startHour}:${selection.startMinute}`,
+        end: `${selection.endHour}:${selection.endMinute}`,
       });
 
-      openInspectorWithDraft({
-        title: '',
-        start_time: startTime.toISOString(),
-        end_time: endTime.toISOString(),
-      });
-
-      logger.log('📝 Opened draft entry from drag selection:', {
-        startTime: startTime.toISOString(),
-        endTime: endTime.toISOString(),
-      });
+      setPendingSelection(selection);
     },
-    [openInspectorWithDraft, timezone],
+    [setPendingSelection],
   );
 
   return {

@@ -11,17 +11,9 @@ import { TagMergeModal } from './tag-merge-modal';
 export function GlobalTagMergeModal() {
   const isOpen = useTagMergeModalStore((state) => state.isOpen);
   const sourceTag = useTagMergeModalStore((state) => state.sourceTag);
-  const hasChildren = useTagMergeModalStore((state) => state.hasChildren);
   const closeModal = useTagMergeModalStore((state) => state.closeModal);
 
   if (!sourceTag) return null;
 
-  return (
-    <TagMergeModal
-      open={isOpen}
-      onClose={closeModal}
-      sourceTag={sourceTag}
-      hasChildren={hasChildren}
-    />
-  );
+  return <TagMergeModal open={isOpen} onClose={closeModal} sourceTag={sourceTag} />;
 }

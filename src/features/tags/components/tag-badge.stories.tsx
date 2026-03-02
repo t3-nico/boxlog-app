@@ -10,9 +10,7 @@ const workTag: Tag = {
   name: '仕事',
   color: '#3b82f6',
   user_id: 'user-1',
-  description: '業務関連のタスク',
   is_active: true,
-  parent_id: null,
   sort_order: 0,
   created_at: null,
   updated_at: null,
@@ -23,9 +21,7 @@ const privateTag: Tag = {
   name: 'プライベート',
   color: '#22c55e',
   user_id: 'user-1',
-  description: null,
   is_active: true,
-  parent_id: null,
   sort_order: 1,
   created_at: null,
   updated_at: null,
@@ -36,9 +32,7 @@ const studyTag: Tag = {
   name: '勉強',
   color: '#a855f7',
   user_id: 'user-1',
-  description: null,
   is_active: true,
-  parent_id: null,
   sort_order: 2,
   created_at: null,
   updated_at: null,
@@ -49,9 +43,7 @@ const exerciseTag: Tag = {
   name: '運動',
   color: '#f97316',
   user_id: 'user-1',
-  description: null,
   is_active: true,
-  parent_id: null,
   sort_order: 3,
   created_at: null,
   updated_at: null,
@@ -131,7 +123,7 @@ export const AllPatterns: Story = {
         <p className="text-muted-foreground mb-4 text-sm">descriptionがあればホバーでtooltip表示</p>
         <div className="flex flex-wrap items-center gap-2">
           <TagBadge tag={workTag} />
-          <TagBadge tag={{ ...privateTag, description: 'プライベートな予定' }} />
+          <TagBadge tag={privateTag} />
           <TagBadge tag={studyTag} />
         </div>
       </section>

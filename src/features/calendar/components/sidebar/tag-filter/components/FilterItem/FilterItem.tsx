@@ -7,7 +7,6 @@ import { useTranslations } from 'next-intl';
 
 import { cn } from '@/lib/utils';
 
-import { TagNoteDialog } from '@/components/tags/TagNoteDialog';
 import { TagRenameDialog } from '@/components/tags/TagRenameDialog';
 import { useUpdateTag } from '@/hooks/mutations/useTagMutations';
 import { useTagModalNavigation } from '@/hooks/useTagModalNavigation';
@@ -23,7 +22,6 @@ import { useFilterItemEdit } from './useFilterItemEdit';
 export interface FilterItemProps {
   label: string;
   tagId?: string;
-  description?: string | null;
   checkboxColor?: string;
   labelClassName?: string;
   icon?: React.ReactNode;
@@ -33,8 +31,6 @@ export interface FilterItemProps {
   disabledReason?: string;
   count?: number;
   dragHandleProps?: React.HTMLAttributes<HTMLElement>;
-  parentId?: string | null;
-  parentTags?: Array<{ id: string; name: string; color?: string | null }>;
   onDeleteTag?: (tagId: string) => void;
   onShowOnlyThis?: () => void;
 }
@@ -42,7 +38,6 @@ export interface FilterItemProps {
 export function FilterItem({
   label,
   tagId,
-  description,
   checkboxColor,
   labelClassName,
   icon,
@@ -52,8 +47,6 @@ export function FilterItem({
   disabledReason,
   count,
   dragHandleProps,
-  parentId,
-  parentTags,
   onDeleteTag,
   onShowOnlyThis,
 }: FilterItemProps) {
@@ -67,25 +60,12 @@ export function FilterItem({
 
   // Dialog states
   const [showRenameDialog, setShowRenameDialog] = useState(false);
-  const [showNoteDialog, setShowNoteDialog] = useState(false);
 
   // Edit hook (色変更のみ使用)
   const { displayColor, handleColorChange } = useFilterItemEdit({
     tagId,
     initialColor: checkboxColor,
   });
-
-  // Parent change handler
-  const handleChangeParent = useCallback(
-    async (newParentId: string | null) => {
-      if (!tagId) return;
-      await updateTagMutation.mutateAsync({
-        id: tagId,
-        data: { parentId: newParentId },
-      });
-    },
-    [tagId, updateTagMutation],
-  );
 
   // Rename dialog save handler
   // Note: 重複チェックは TagRenameDialog 内で行われる
@@ -96,19 +76,7 @@ export function FilterItem({
       // mutate で楽観的更新（await しない）
       updateTagMutation.mutate({
         id: tagId,
-        data: { name: newName },
-      });
-    },
-    [tagId, updateTagMutation],
-  );
-
-  // Note dialog save handler
-  const handleSaveNote = useCallback(
-    async (newNote: string) => {
-      if (!tagId) return;
-      await updateTagMutation.mutateAsync({
-        id: tagId,
-        data: { description: newNote || null },
+        name: newName,
       });
     },
     [tagId, updateTagMutation],
@@ -164,9 +132,9 @@ export function FilterItem({
       />
       {icon && <span className="text-muted-foreground ml-2 shrink-0">{icon}</span>}
       <HoverTooltip
-        content={description}
+        content={label}
         side="top"
-        disabled={!description || menuOpen}
+        disabled={menuOpen}
         wrapperClassName="ml-1 min-w-0 flex-1"
       >
         <span className={cn('min-w-0 truncate', labelClassName)}>{label}</span>
@@ -188,12 +156,8 @@ export function FilterItem({
           {tagId ? (
             <FilterItemMenu
               displayColor={displayColor}
-              parentId={parentId}
-              parentTags={parentTags}
               onOpenRenameDialog={() => setShowRenameDialog(true)}
               onColorChange={handleColorChange}
-              onOpenNoteDialog={() => setShowNoteDialog(true)}
-              onChangeParent={parentTags && parentTags.length > 0 ? handleChangeParent : undefined}
               onOpenMergeModal={() =>
                 openTagMergeModal({ id: tagId, name: label, color: checkboxColor ?? null })
               }
@@ -227,16 +191,6 @@ export function FilterItem({
           onSave={handleSaveRename}
           currentName={label}
           tagId={tagId}
-        />
-      )}
-
-      {/* Note Dialog */}
-      {tagId && (
-        <TagNoteDialog
-          isOpen={showNoteDialog}
-          onClose={() => setShowNoteDialog(false)}
-          onSave={handleSaveNote}
-          currentNote={description ?? ''}
         />
       )}
     </>

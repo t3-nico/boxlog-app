@@ -1,13 +1,13 @@
 /**
  * タグマスタからタグ情報をルックアップするためのフック
  *
- * plan.tagIdsからタグの詳細情報（name, color等）を取得するために使用。
+ * plan.tagIdからタグの詳細情報（name, color等）を取得するために使用。
  * これにより、タグマスタの変更が全UIで即時反映される。
  *
  * @example
  * ```tsx
- * const { getTagsByIds } = useTagsMap();
- * const tags = getTagsByIds(plan.tagIds);
+ * const { getTagById } = useTagsMap();
+ * const tag = plan.tagId ? getTagById(plan.tagId) : undefined;
  * ```
  */
 
@@ -19,8 +19,6 @@ export type TagInfo = {
   id: string;
   name: string;
   color: string;
-  parent_id?: string | null;
-  description?: string | null;
 };
 
 export function useTagsMap() {
@@ -34,8 +32,6 @@ export function useTagsMap() {
         id: tag.id,
         name: tag.name,
         color: tag.color ?? '#6b7280', // デフォルトはグレー
-        parent_id: tag.parent_id,
-        description: tag.description,
       });
     });
     return map;

@@ -81,7 +81,7 @@ export function PlanListPanel() {
       }
 
       // タグフィルター
-      const tagIds = plan.tagIds ?? [];
+      const tagIds = plan.tagId ? [plan.tagId] : [];
       if (!isPlanVisible(tagIds)) {
         return false;
       }

@@ -24,7 +24,7 @@ interface UseCalendarPlanKeyboardOptions {
     startHour: number;
     startMinute: number;
     duration: number;
-    tagIds: string[] | undefined;
+    tagId: string | null | undefined;
   } | null;
   /** ペースト先の日付を取得する関数（デフォルトは現在表示中の日付） */
   getPasteDateForKeyboard?: () => Date;

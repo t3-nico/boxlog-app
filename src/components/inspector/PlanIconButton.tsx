@@ -172,9 +172,7 @@ export function PlanIconButton({
             <CommandGroup>
               {sortedPlans.map((plan) => {
                 const isSelected = plan.id === planId;
-                const planTags = plan.tagIds
-                  ?.map((id) => allTags.find((tag) => tag.id === id))
-                  .filter(Boolean);
+                const planTag = plan.tagId ? allTags.find((tag) => tag.id === plan.tagId) : null;
                 return (
                   <CommandItem
                     key={plan.id}
@@ -196,25 +194,17 @@ export function PlanIconButton({
                         <span className="text-muted-foreground">{t('plan.inspector.noTitle')}</span>
                       )}
                     </span>
-                    {planTags && planTags.length > 0 && (
+                    {planTag && (
                       <div className="flex shrink-0 gap-1 pl-2">
-                        {planTags.slice(0, 2).map((tag) => (
-                          <span
-                            key={tag!.id}
-                            className="rounded px-1 py-1 text-xs"
-                            style={{
-                              backgroundColor: tag!.color ? `${tag!.color}20` : undefined,
-                              color: tag!.color || undefined,
-                            }}
-                          >
-                            {tag!.name}
-                          </span>
-                        ))}
-                        {planTags.length > 2 && (
-                          <span className="text-muted-foreground text-xs">
-                            +{planTags.length - 2}
-                          </span>
-                        )}
+                        <span
+                          className="rounded px-1 py-1 text-xs"
+                          style={{
+                            backgroundColor: planTag.color ? `${planTag.color}20` : undefined,
+                            color: planTag.color || undefined,
+                          }}
+                        >
+                          {planTag.name}
+                        </span>
                       </div>
                     )}
                   </CommandItem>

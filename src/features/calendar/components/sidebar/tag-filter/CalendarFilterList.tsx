@@ -45,18 +45,11 @@ export function CalendarFilterList() {
   const tagPlanCounts = useMemo(() => tagStats?.counts ?? {}, [tagStats?.counts]);
   const untaggedCount = tagStats?.untaggedCount ?? 0;
 
-  // 親タグ用のカウント計算（親タグ自体 + 子タグ合計）
+  // タグ別カウント（フラット構造のため各タグのカウントをそのまま使用）
   const parentTagCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     tags?.forEach((tag) => {
-      if (tag.parent_id === null) {
-        const parentCount = tagPlanCounts[tag.id] ?? 0;
-        const childrenCount =
-          tags
-            ?.filter((t) => t.parent_id === tag.id)
-            .reduce((sum, t) => sum + (tagPlanCounts[t.id] ?? 0), 0) ?? 0;
-        counts[tag.id] = parentCount + childrenCount;
-      }
+      counts[tag.id] = tagPlanCounts[tag.id] ?? 0;
     });
     return counts;
   }, [tags, tagPlanCounts]);
@@ -72,28 +65,16 @@ export function CalendarFilterList() {
       data: {
         name?: string;
         color?: string;
-        description?: string | null;
-        parentId?: string | null;
       },
     ) => {
-      const updateData: {
-        name?: string;
-        color?: string;
-        description?: string;
-        parent_id?: string | null;
-      } = {};
-      if (data.name !== undefined) updateData.name = data.name;
-      if (data.color !== undefined) updateData.color = data.color;
-      if (data.description !== undefined) updateData.description = data.description ?? '';
-      if (data.parentId !== undefined) updateData.parent_id = data.parentId;
-      updateTagMutation.mutate({ id: tagId, ...updateData });
+      updateTagMutation.mutate({ id: tagId, ...data });
     },
     [updateTagMutation],
   );
 
   // TagSortableTree用の並び替えハンドラー
   const handleReorder = useCallback(
-    (updates: Array<{ id: string; sort_order: number; parent_id: string | null }>) => {
+    (updates: Array<{ id: string; sort_order: number }>) => {
       reorderTagsMutation.mutate({ updates });
     },
     [reorderTagsMutation],
@@ -106,12 +87,10 @@ export function CalendarFilterList() {
   // アクション（参照安定）
   const toggleType = useCalendarFilterStore((s) => s.toggleType);
   const toggleTag = useCalendarFilterStore((s) => s.toggleTag);
-  const toggleGroupTags = useCalendarFilterStore((s) => s.toggleGroupTags);
   const toggleUntagged = useCalendarFilterStore((s) => s.toggleUntagged);
   const initializeWithTags = useCalendarFilterStore((s) => s.initializeWithTags);
   const showOnlyTag = useCalendarFilterStore((s) => s.showOnlyTag);
   const showOnlyUntagged = useCalendarFilterStore((s) => s.showOnlyUntagged);
-  const showOnlyGroupTags = useCalendarFilterStore((s) => s.showOnlyGroupTags);
 
   // タグミューテーション状態を監視（Race Condition防止）
   // mutationCountは参照カウント方式：複数mutation同時実行に対応
@@ -136,9 +115,9 @@ export function CalendarFilterList() {
   // 削除確認ダイアログの状態（IDと名前を保持）
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
 
-  // 子タグ追加ハンドラー
-  const handleAddChildTag = (parentId: string) => {
-    openTagCreateModal(parentId);
+  // タグ追加ハンドラー
+  const handleAddTag = () => {
+    openTagCreateModal();
   };
 
   // 親タグ削除ハンドラー
@@ -193,14 +172,12 @@ export function CalendarFilterList() {
                 tagCounts={tagPlanCounts}
                 parentTagCounts={parentTagCounts}
                 onToggleTag={toggleTag}
-                onToggleGroupTags={toggleGroupTags}
                 onUpdateTag={handleUpdateTag}
                 onDeleteTag={(tagId: string, tagName: string) =>
                   handleDeleteParentTag(tagId, tagName)
                 }
-                onAddChildTag={handleAddChildTag}
+                onAddChildTag={handleAddTag}
                 onShowOnlyTag={showOnlyTag}
-                onShowOnlyGroupTags={showOnlyGroupTags}
                 onOpenMergeModal={openTagMergeModal}
                 onReorder={handleReorder}
                 indentationWidth={16}

@@ -22,7 +22,7 @@ describe('planPositioning', () => {
     status: 'open',
     color: '#3b82f6',
     isRecurring: false,
-    tagIds: [],
+    tagId: null,
     createdAt: new Date(),
     updatedAt: new Date(),
     displayStartDate: new Date(2025, 0, 15, startHour, startMinute),

@@ -90,7 +90,7 @@ export interface UpdatePlanInput {
  * これにより、タグマスタの変更が全UIで即時反映される。
  */
 export interface PlanWithTags extends Plan {
-  tagIds: string[];
+  tagId: string | null;
 }
 
 /**

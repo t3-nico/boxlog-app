@@ -9,7 +9,7 @@
  *
  * 検知イベント:
  * - INSERT: 新規タグ作成
- * - UPDATE: タグ更新（名前、色、アイコン、親子関係等）
+ * - UPDATE: タグ更新（名前、色等）
  * - DELETE: タグ削除
  *
  * 使用箇所:
@@ -47,7 +47,6 @@ export const useTagRealtime = createRealtimeHook({
 
     // TanStack Queryキャッシュを無効化 → 自動で再フェッチ
     void utils.tags.list.invalidate();
-    void utils.tags.listParentTags.invalidate();
 
     // 個別タグのキャッシュも無効化
     if (recordId) {

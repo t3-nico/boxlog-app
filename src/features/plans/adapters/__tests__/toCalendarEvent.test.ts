@@ -219,16 +219,16 @@ describe('planToCalendarPlan', () => {
     });
   });
 
-  describe('tagIds', () => {
-    it('tagIds が未定義の場合は空配列になる', () => {
+  describe('tagId', () => {
+    it('tagId が未定義の場合は undefined になる', () => {
       const result = planToCalendarPlan(makePlan());
-      expect(result.tagIds).toEqual([]);
+      expect(result.tagId).toBeUndefined();
     });
 
-    it('tagIds が渡された場合はそのまま引き継がれる', () => {
-      const planWithTags = { ...makePlan(), tagIds: ['tag-1', 'tag-2'] };
-      const result = planToCalendarPlan(planWithTags);
-      expect(result.tagIds).toEqual(['tag-1', 'tag-2']);
+    it('tagId が渡された場合はそのまま引き継がれる', () => {
+      const planWithTag = { ...makePlan(), tagId: 'tag-1' };
+      const result = planToCalendarPlan(planWithTag);
+      expect(result.tagId).toBe('tag-1');
     });
   });
 
@@ -278,12 +278,12 @@ describe('plansToCalendarPlans', () => {
 
   it('タグIDが各 CalendarEvent に引き継がれる', () => {
     const plans = [
-      { ...makePlan({ id: 'plan-001' }), tagIds: ['tag-a'] },
-      { ...makePlan({ id: 'plan-002' }), tagIds: ['tag-b', 'tag-c'] },
+      { ...makePlan({ id: 'plan-001' }), tagId: 'tag-a' },
+      { ...makePlan({ id: 'plan-002' }), tagId: 'tag-b' },
     ];
     const result = plansToCalendarPlans(plans);
-    expect(result[0]!.tagIds).toEqual(['tag-a']);
-    expect(result[1]!.tagIds).toEqual(['tag-b', 'tag-c']);
+    expect(result[0]!.tagId).toBe('tag-a');
+    expect(result[1]!.tagId).toBe('tag-b');
   });
 });
 
@@ -450,11 +450,11 @@ describe('expandRecurringPlansToCalendarPlans', () => {
         end_time: '2025-03-01T10:00:00.000Z',
         recurrence_type: 'daily',
       }),
-      tagIds: ['tag-x', 'tag-y'],
+      tagId: 'tag-x',
     };
     const result = expandRecurringPlansToCalendarPlans([plan], rangeStart, rangeEnd);
     result.forEach((event: CalendarEvent) => {
-      expect(event.tagIds).toEqual(['tag-x', 'tag-y']);
+      expect(event.tagId).toBe('tag-x');
     });
   });
 

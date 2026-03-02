@@ -20,8 +20,6 @@ interface TagMergeModalProps {
   open: boolean;
   onClose: () => void;
   sourceTag: { id: string; name: string; color?: string | null };
-  /** 子タグがあるか（確認メッセージ用） */
-  hasChildren: boolean;
   /** マージ成功時のコールバック */
   onMergeSuccess?: () => void;
 }
@@ -32,13 +30,7 @@ interface TagMergeModalProps {
  * ReactのcreatePortalを使用してdocument.bodyに直接レンダリング
  * TagCreateModalと同じパターンで統一
  */
-export function TagMergeModal({
-  open,
-  onClose,
-  sourceTag,
-  hasChildren,
-  onMergeSuccess,
-}: TagMergeModalProps) {
+export function TagMergeModal({ open, onClose, sourceTag, onMergeSuccess }: TagMergeModalProps) {
   const t = useTranslations();
   const { data: tags, refetch: refetchTags } = useTags();
   const mergeTagMutation = useMergeTag();
@@ -93,42 +85,6 @@ export function TagMergeModal({
     return mergeTargetTags.filter((tag) => tag.name.toLowerCase().includes(query));
   }, [mergeTargetTags, searchQuery]);
 
-  // 階層構造でグループ化（親タグ → 子タグの順）
-  const groupedTags = useMemo(() => {
-    // 親タグ（parent_id が null、またはソースタグが親の場合はルートに昇格）
-    const parentTags = filteredTags
-      .filter((tag) => tag.parent_id === null || tag.parent_id === sourceTag.id)
-      .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
-
-    // 親タグごとに子タグをグループ化
-    const result: Array<{
-      parent: (typeof filteredTags)[0] | null;
-      children: typeof filteredTags;
-    }> = [];
-
-    for (const parent of parentTags) {
-      const children = filteredTags
-        .filter((tag) => tag.parent_id === parent.id)
-        .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
-      result.push({ parent, children });
-    }
-
-    // 検索時は親が見つからない子タグも表示（フラットに）
-    if (searchQuery.trim()) {
-      const includedIds = new Set(
-        result.flatMap((g) => [g.parent?.id, ...g.children.map((c) => c.id)]),
-      );
-      const orphanTags = filteredTags.filter((tag) => !includedIds.has(tag.id));
-      if (orphanTags.length > 0) {
-        for (const orphan of orphanTags) {
-          result.push({ parent: orphan, children: [] });
-        }
-      }
-    }
-
-    return result;
-  }, [filteredTags, sourceTag.id, searchQuery]);
-
   // 選択されたタグを取得
   const selectedTarget = mergeTargetTags.find((tag) => tag.id === selectedTargetId);
 
@@ -164,15 +120,10 @@ export function TagMergeModal({
 
   // 確認メッセージ（選択後に表示）
   const confirmationMessage = selectedTarget
-    ? hasChildren
-      ? t('calendar.filter.mergeTag.descriptionWithChildren', {
-          sourceName: sourceTag.name,
-          targetName: selectedTarget.name,
-        })
-      : t('calendar.filter.mergeTag.description', {
-          sourceName: sourceTag.name,
-          targetName: selectedTarget.name,
-        })
+    ? t('calendar.filter.mergeTag.description', {
+        sourceName: sourceTag.name,
+        targetName: selectedTarget.name,
+      })
     : null;
 
   if (!mounted || !open) return null;
@@ -208,7 +159,7 @@ export function TagMergeModal({
           className="mb-2"
         />
 
-        {/* タグ選択（階層表示のラジオボタンリスト） */}
+        {/* タグ選択（フラットなラジオボタンリスト） */}
         <div className="border-border max-h-[200px] overflow-y-auto rounded-lg border">
           {filteredTags.length === 0 ? (
             <p className="text-muted-foreground p-4 text-center text-sm">
@@ -223,58 +174,29 @@ export function TagMergeModal({
               }}
               className="p-1"
             >
-              {groupedTags.map(({ parent, children }) => (
-                <div key={parent?.id ?? 'orphan'}>
-                  {/* 親タグ */}
-                  {parent && (
-                    <Label
-                      htmlFor={`merge-target-${parent.id}`}
-                      className={cn(
-                        'flex cursor-pointer items-center gap-4 rounded-lg px-4 py-2 transition-colors',
-                        'hover:bg-state-hover',
-                        selectedTargetId === parent.id && 'bg-state-selected',
-                      )}
-                    >
-                      <RadioGroupItem
-                        value={parent.id}
-                        id={`merge-target-${parent.id}`}
-                        className="shrink-0"
-                      />
-                      <span
-                        className="shrink-0 font-normal"
-                        style={{ color: parent.color || DEFAULT_TAG_COLOR }}
-                      >
-                        #
-                      </span>
-                      <span className="flex-1 truncate text-sm">{parent.name}</span>
-                    </Label>
+              {filteredTags.map((tag) => (
+                <Label
+                  key={tag.id}
+                  htmlFor={`merge-target-${tag.id}`}
+                  className={cn(
+                    'flex cursor-pointer items-center gap-4 rounded-lg px-4 py-2 transition-colors',
+                    'hover:bg-state-hover',
+                    selectedTargetId === tag.id && 'bg-state-selected',
                   )}
-                  {/* 子タグ（インデント表示） */}
-                  {children.map((child) => (
-                    <Label
-                      key={child.id}
-                      htmlFor={`merge-target-${child.id}`}
-                      className={cn(
-                        'flex cursor-pointer items-center gap-4 rounded-lg py-2 pr-4 pl-8 transition-colors',
-                        'hover:bg-state-hover',
-                        selectedTargetId === child.id && 'bg-state-selected',
-                      )}
-                    >
-                      <RadioGroupItem
-                        value={child.id}
-                        id={`merge-target-${child.id}`}
-                        className="shrink-0"
-                      />
-                      <span
-                        className="shrink-0 font-normal"
-                        style={{ color: child.color || parent?.color || DEFAULT_TAG_COLOR }}
-                      >
-                        #
-                      </span>
-                      <span className="flex-1 truncate text-sm">{child.name}</span>
-                    </Label>
-                  ))}
-                </div>
+                >
+                  <RadioGroupItem
+                    value={tag.id}
+                    id={`merge-target-${tag.id}`}
+                    className="shrink-0"
+                  />
+                  <span
+                    className="shrink-0 font-normal"
+                    style={{ color: tag.color || DEFAULT_TAG_COLOR }}
+                  >
+                    #
+                  </span>
+                  <span className="flex-1 truncate text-sm">{tag.name}</span>
+                </Label>
               ))}
             </RadioGroup>
           )}

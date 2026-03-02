@@ -11,9 +11,6 @@
  * // タグ作成モーダルを開く
  * openTagCreateModal();
  *
- * // 親タグを指定してタグ作成モーダルを開く
- * openTagCreateModal('parent-tag-id');
- *
  * // タグマージモーダルを開く
  * openTagMergeModal({ id: 'tag-id', name: 'Tag Name', color: '#3B82F6' });
  */
@@ -29,25 +26,19 @@ export function useTagModalNavigation() {
 
   /**
    * タグ作成モーダルを開く
-   *
-   * @param parentId - デフォルトの親タグID（オプション）
    */
-  const openTagCreateModal = useCallback(
-    (parentId?: string) => {
-      openCreateModal(parentId);
-    },
-    [openCreateModal],
-  );
+  const openTagCreateModal = useCallback(() => {
+    openCreateModal();
+  }, [openCreateModal]);
 
   /**
    * タグマージモーダルを開く
    *
    * @param sourceTag - マージ元（消える側）のタグ情報
-   * @param hasChildren - 子タグがあるか
    */
   const openTagMergeModal = useCallback(
-    (sourceTag: { id: string; name: string; color?: string | null }, hasChildren = false) => {
-      openMergeModal(sourceTag, hasChildren);
+    (sourceTag: { id: string; name: string; color?: string | null }) => {
+      openMergeModal(sourceTag);
     },
     [openMergeModal],
   );

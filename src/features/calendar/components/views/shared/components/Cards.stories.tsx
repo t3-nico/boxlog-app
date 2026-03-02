@@ -163,7 +163,7 @@ export const WithTags: Story = {
   render: () => (
     <Slot height={100}>
       <PlanCard
-        plan={{ ...basePlan, tagIds: ['tag-1', 'tag-2'] }}
+        plan={{ ...basePlan, tagId: 'tag-1' }}
         position={{ ...basePosition, height: 100 }}
       />
     </Slot>
@@ -244,7 +244,7 @@ export const AllPatterns: Story = {
       </Slot>
       <Slot height={100}>
         <PlanCard
-          plan={{ ...basePlan, tagIds: ['tag-1', 'tag-2'] }}
+          plan={{ ...basePlan, tagId: 'tag-1' }}
           position={{ ...basePosition, height: 100 }}
         />
       </Slot>

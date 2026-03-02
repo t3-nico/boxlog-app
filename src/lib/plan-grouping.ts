@@ -11,7 +11,7 @@ export type GroupByField = 'tags' | null;
  */
 interface Groupable {
   id: string;
-  tagIds?: string[] | undefined;
+  tagId?: string | null | undefined;
 }
 
 /**
@@ -77,8 +77,8 @@ export function groupItems<T extends Groupable>(
 function getGroupKey(item: Groupable, groupBy: GroupByField): string {
   switch (groupBy) {
     case 'tags':
-      // tagIdsの最初のIDをグループキーとして使用（タグ名の解決はUI側で行う）
-      return item.tagIds && item.tagIds.length > 0 ? item.tagIds[0]! : 'タグなし';
+      // tagIdをグループキーとして使用（タグ名の解決はUI側で行う）
+      return item.tagId ?? 'タグなし';
 
     default:
       return 'unknown';

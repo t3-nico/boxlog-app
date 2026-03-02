@@ -89,7 +89,7 @@ export function useEntryMutations() {
         user_id: '',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        tagIds: [] as string[],
+        tagId: null,
       };
 
       // 楽観的にキャッシュを更新（日付フィルター付きキャッシュも含む全て）
@@ -102,14 +102,18 @@ export function useEntryMutations() {
     },
     onSuccess: (newEntry, _input, context) => {
       // 一時エントリを本来のエントリに置換（全キャッシュ対象）
-      const newEntryWithTagIds = { ...newEntry, tagIds: [] as string[] };
+      // entries.create はタグなし EntryRow を返すため、tagId を補完して EntryWithTags に昇格
+      const newEntryWithTagId: Awaited<ReturnType<typeof utils.entries.list.fetch>>[number] = {
+        ...newEntry,
+        tagId: null,
+      };
       type EntryListData = Awaited<ReturnType<typeof utils.entries.list.fetch>>;
 
       queryClient.setQueriesData<EntryListData>({ predicate: isEntriesListQuery }, (oldData) => {
-        if (!oldData) return [newEntryWithTagIds];
+        if (!oldData) return [newEntryWithTagId];
         return oldData
           .filter((e) => e.id !== context?.tempId && e.id !== newEntry.id)
-          .concat(newEntryWithTagIds);
+          .concat(newEntryWithTagId);
       });
 
       // Toast通知
@@ -124,7 +128,7 @@ export function useEntryMutations() {
       });
 
       // 個別エントリのキャッシュを設定
-      utils.entries.getById.setData({ id: newEntry.id }, newEntry);
+      utils.entries.getById.setData({ id: newEntry.id }, { ...newEntry, tagId: null });
     },
     onError: (error, _input, context) => {
       logger.error('[useEntryMutations] Create error:', error);
@@ -239,13 +243,13 @@ export function useEntryMutations() {
         if (exists) {
           return oldData.map((entry) => {
             if (entry.id === variables.id) {
-              return { ...updatedEntry, tagIds: entry.tagIds ?? [] };
+              return { ...updatedEntry, tagId: entry.tagId ?? null };
             }
             return entry;
           });
         }
         if (updatedEntry.start_time) {
-          return [...oldData, { ...updatedEntry, tagIds: [] as string[] }];
+          return [...oldData, { ...updatedEntry, tagId: null }];
         }
         return oldData;
       });
@@ -444,13 +448,13 @@ export function useEntryMutations() {
 
       utils.entries.list.setData(undefined, (oldData) => {
         if (!oldData) return oldData;
+        // 1エントリ1タグ制約: tagIdsの最後のタグを設定
+        const newTagId = tagIds[tagIds.length - 1] ?? null;
         return oldData.map((entry) => {
           if (entryIds.includes(entry.id)) {
-            const existingTagIds = new Set(entry.tagIds ?? []);
-            const newTagIds = tagIds.filter((id) => !existingTagIds.has(id));
             return {
               ...entry,
-              tagIds: [...(entry.tagIds ?? []), ...newTagIds],
+              tagId: newTagId,
             };
           }
           return entry;

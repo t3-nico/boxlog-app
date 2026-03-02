@@ -1,4 +1,4 @@
-// タグシステムの型定義（親子構造：Tag → Tag）
+// タグシステムの型定義
 // Canonical definitions are in @/core/types/tag.
 // Re-exported here for backward compatibility.
 
@@ -7,13 +7,11 @@ export type {
   Tag,
   TagError,
   TagFilter,
-  TagHierarchyResponse,
   TagMutationResult,
   TagOption,
   TagSortField,
   TagSortOptions,
   TagSortOrder,
-  TagWithChildren,
   TagsResponse,
   UpdateTagInput,
 } from '@/core/types/tag';

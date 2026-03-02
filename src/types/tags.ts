@@ -5,10 +5,4 @@
  * 後方互換性のためにここから再エクスポートしています。
  */
 
-export type {
-  CreateTagInput,
-  Tag,
-  TagOption,
-  TagWithChildren,
-  UpdateTagInput,
-} from '@/core/types/tag';
+export type { CreateTagInput, Tag, TagOption, UpdateTagInput } from '@/core/types/tag';

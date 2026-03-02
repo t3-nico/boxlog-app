@@ -59,7 +59,7 @@ export function TagsIconButton({
     <div className="flex flex-wrap items-center gap-1">
       {/* 選択済みタグ（Badge表示） */}
       {selectedTags.map((tag) => (
-        <HoverTooltip key={tag.id} content={tag.description} side="top" disabled={!tag.description}>
+        <HoverTooltip key={tag.id} content={tag.name} side="top" disabled={false}>
           <Badge
             variant="outline"
             style={{ borderColor: tag.color || undefined }}

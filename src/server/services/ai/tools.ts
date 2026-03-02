@@ -76,7 +76,7 @@ export function createAITools(supabase: AISupabaseClient, userId: string): ToolS
             startTime: e.start_time ?? null,
             endTime: e.end_time ?? null,
             origin: e.origin,
-            tags: (e.tagIds ?? []).map((id) => tagMap.get(id) ?? '').filter(Boolean),
+            tags: e.tagId ? [tagMap.get(e.tagId) ?? ''].filter(Boolean) : [],
           }));
 
           return { count: simplified.length, plans: simplified };

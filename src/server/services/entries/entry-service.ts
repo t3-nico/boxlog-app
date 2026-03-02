@@ -351,9 +351,9 @@ export class EntryService {
   }
 
   private formatEntryWithTags(entry: EntryWithTags): EntryWithTags {
-    const tagIds = entry.entry_tags?.map((et) => et.tag_id) ?? [];
+    const tagId = entry.entry_tags?.[0]?.tag_id ?? null;
     const { entry_tags: _, ...entryData } = entry;
-    return { ...entryData, tagIds };
+    return { ...entryData, tagId };
   }
 
   private normalizeDateTimeFields<T extends Record<string, unknown>>(input: T): T {

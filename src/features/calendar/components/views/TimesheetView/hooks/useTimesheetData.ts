@@ -35,8 +35,8 @@ export function useTimesheetData(plans: CalendarPlan[], currentDate: Date): Time
       // startDate がないプランはスキップ
       if (!plan.startDate) continue;
 
-      const tags = plan.tagIds ?? [];
-      if (tags.length === 0) {
+      const tagId = plan.tagId ?? null;
+      if (!tagId) {
         // タグなし（showUntagged が false なら除外）
         if (!showUntagged) continue;
         const existing = groupMap.get(null) ?? [];
@@ -44,12 +44,10 @@ export function useTimesheetData(plans: CalendarPlan[], currentDate: Date): Time
         groupMap.set(null, existing);
       } else {
         // 表示中のタグのみグループに登場させる
-        for (const tagId of tags) {
-          if (!visibleTagIds.has(tagId)) continue;
-          const existing = groupMap.get(tagId) ?? [];
-          existing.push(plan);
-          groupMap.set(tagId, existing);
-        }
+        if (!visibleTagIds.has(tagId)) continue;
+        const existing = groupMap.get(tagId) ?? [];
+        existing.push(plan);
+        groupMap.set(tagId, existing);
       }
     }
 
@@ -74,20 +72,16 @@ export function useTimesheetData(plans: CalendarPlan[], currentDate: Date): Time
         tagId,
         tagName: tagInfo?.name ?? '',
         tagColor: tagInfo?.color ?? '#6b7280',
-        parentId: tagInfo?.parent_id ?? null,
         plans: groupPlans,
         dailyTotals,
         weekTotal,
       });
     }
 
-    // 親タグ → 子タグ の順にソート（untagged は最後）
+    // タグ名順にソート（untagged は最後）
     tagGroups.sort((a, b) => {
       if (a.tagId === null) return 1;
       if (b.tagId === null) return -1;
-      // 親タグを先に
-      if (a.parentId === null && b.parentId !== null) return -1;
-      if (a.parentId !== null && b.parentId === null) return 1;
       return a.tagName.localeCompare(b.tagName);
     });
 

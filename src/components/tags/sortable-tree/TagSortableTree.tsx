@@ -95,8 +95,6 @@ interface TagSortableTreeProps {
   parentTagCounts: Record<string, number>;
   /** チェック切り替えハンドラー（単一タグ） */
   onToggleTag: (tagId: string) => void;
-  /** グループ切り替えハンドラー（親+子タグ一括） */
-  onToggleGroupTags: (tagIds: string[]) => void;
   /** タグ更新ハンドラー */
   onUpdateTag: (
     tagId: string,
@@ -108,15 +106,13 @@ interface TagSortableTreeProps {
   onAddChildTag: (parentId: string) => void;
   /** このタグだけ表示 */
   onShowOnlyTag: (tagId: string) => void;
-  /** グループのタグだけ表示 */
-  onShowOnlyGroupTags: (tagIds: string[]) => void;
   /** マージモーダルを開く */
   onOpenMergeModal: (
     sourceTag: { id: string; name: string; color?: string | null },
     hasChildren?: boolean,
   ) => void;
   /** 並び替え完了時のコールバック */
-  onReorder: (updates: Array<{ id: string; sort_order: number; parent_id: string | null }>) => void;
+  onReorder: (updates: Array<{ id: string; sort_order: number }>) => void;
   /** インデント幅 */
   indentationWidth?: number;
 }
@@ -125,30 +121,14 @@ interface TagSortableTreeProps {
  * タグをTreeItems形式に変換（タグ情報を保持）
  */
 function tagsToTreeItems(tags: Tag[]): TagTreeItem[] {
-  // 親タグ（parent_id === null）を抽出
-  const parentTags = tags.filter((t) => t.parent_id === null);
-
-  // 親タグごとにTreeItemを作成
-  return parentTags
+  // フラット構造: 全タグをルートレベルとして扱う
+  return [...tags]
     .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
-    .map((parent) => {
-      // 子タグを取得
-      const children = tags
-        .filter((t) => t.parent_id === parent.id)
-        .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
-        .map((child) => ({
-          id: child.id,
-          children: [] as TagTreeItem[],
-          tag: child,
-        }));
-
-      return {
-        id: parent.id,
-        children,
-        collapsed: false, // 初期状態は展開
-        tag: parent,
-      };
-    });
+    .map((tag) => ({
+      id: tag.id,
+      children: [] as TagTreeItem[],
+      tag,
+    }));
 }
 
 /**
@@ -174,12 +154,10 @@ export function TagSortableTree({
   tagCounts,
   parentTagCounts,
   onToggleTag,
-  onToggleGroupTags,
   onUpdateTag,
   onDeleteTag,
   onAddChildTag,
   onShowOnlyTag,
-  onShowOnlyGroupTags,
   onOpenMergeModal,
   onReorder,
   indentationWidth = 16,
@@ -198,9 +176,7 @@ export function TagSortableTree({
   // タグが変更されたらitemsを更新（collapsed状態は保持）
   useEffect(() => {
     // タグデータをハッシュ化（ID、名前、親ID、色、ソート順、説明を含む）
-    const currentHash = tags
-      .map((t) => `${t.id}|${t.name}|${t.parent_id}|${t.color}|${t.sort_order}|${t.description}`)
-      .join(',');
+    const currentHash = tags.map((t) => `${t.id}|${t.name}|${t.color}|${t.sort_order}`).join(',');
 
     // 実際にタグデータが変わっていなければスキップ
     if (tagDataHashRef.current === currentHash) {
@@ -303,9 +279,7 @@ export function TagSortableTree({
 
   // 親タグ候補一覧（子タグを持つ親タグのみ）
   const parentTags = useMemo(() => {
-    return tags
-      .filter((t) => t.parent_id === null)
-      .map((t) => ({ id: t.id, name: t.name, color: t.color }));
+    return tags.map((t) => ({ id: t.id, name: t.name, color: t.color }));
   }, [tags]);
 
   // DnD handlers
@@ -367,31 +341,11 @@ export function TagSortableTree({
   // 並び替えデータを生成
   function generateReorderUpdates(
     flatItems: TagFlattenedItem[],
-  ): Array<{ id: string; sort_order: number; parent_id: string | null }> {
-    const updates: Array<{ id: string; sort_order: number; parent_id: string | null }> = [];
-    const parentGroups = new Map<string | null, TagFlattenedItem[]>();
-
-    // 親IDごとにグループ化
-    for (const item of flatItems) {
-      const parentId = item.parentId as string | null;
-      if (!parentGroups.has(parentId)) {
-        parentGroups.set(parentId, []);
-      }
-      parentGroups.get(parentId)!.push(item);
-    }
-
-    // 各グループ内でsort_orderを設定
-    for (const [parentId, groupItems] of parentGroups) {
-      groupItems.forEach((item, index) => {
-        updates.push({
-          id: item.id as string,
-          sort_order: index,
-          parent_id: parentId,
-        });
-      });
-    }
-
-    return updates;
+  ): Array<{ id: string; sort_order: number }> {
+    return flatItems.map((item, index) => ({
+      id: item.id as string,
+      sort_order: index,
+    }));
   }
 
   return (
@@ -422,7 +376,6 @@ export function TagSortableTree({
                   id: tag.id,
                   name: tag.name,
                   color: tag.color || '#3B82F6',
-                  description: tag.description,
                 }}
                 depth={id === activeId && projected ? projected.depth : depth}
                 indentationWidth={indentationWidth}
@@ -432,25 +385,14 @@ export function TagSortableTree({
                 hasChildren={hasChildren}
                 indicator
                 onToggle={() => {
-                  if (depth === 0 && hasChildren) {
-                    const childIds = tags.filter((t) => t.parent_id === id).map((t) => t.id);
-                    onToggleGroupTags([id as string, ...childIds]);
-                  } else {
-                    onToggleTag(id as string);
-                  }
+                  onToggleTag(id as string);
                 }}
                 onCollapse={hasChildren ? () => handleCollapse(id) : undefined}
                 onUpdateTag={(data) => onUpdateTag(id as string, data)}
                 onDeleteTag={() => onDeleteTag(tag.id, tag.name)}
                 onAddChildTag={depth === 0 ? () => onAddChildTag(id as string) : undefined}
                 onShowOnlyThis={() => {
-                  if (depth === 0 && hasChildren) {
-                    // 親タグの場合、自分と子タグを全て表示
-                    const childIds = tags.filter((t) => t.parent_id === id).map((t) => t.id);
-                    onShowOnlyGroupTags([id as string, ...childIds]);
-                  } else {
-                    onShowOnlyTag(id as string);
-                  }
+                  onShowOnlyTag(id as string);
                 }}
                 onOpenMergeModal={() =>
                   onOpenMergeModal({ id: tag.id, name: tag.name, color: tag.color }, hasChildren)
@@ -469,7 +411,6 @@ export function TagSortableTree({
                     id: activeItem.tag.id,
                     name: activeItem.tag.name,
                     color: activeItem.tag.color || '#3B82F6',
-                    description: activeItem.tag.description,
                   }}
                   depth={activeItem.depth}
                   clone

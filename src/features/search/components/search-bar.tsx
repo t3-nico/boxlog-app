@@ -75,7 +75,6 @@ export function SearchBar({
     return tags.map((tag) => ({
       id: tag.id,
       name: tag.name,
-      description: tag.description || '',
     }));
   }, [tags, types]);
 
@@ -140,15 +139,12 @@ export function SearchBar({
                 {searchableTags.slice(0, 10).map((tag) => (
                   <CommandItem
                     key={tag.id}
-                    value={`${tag.name} ${tag.description}`}
+                    value={tag.name}
                     onSelect={() => handleSelect(tag.id, 'tag')}
                   >
                     <Tag className="mr-2 h-4 w-4" />
                     <div className="flex flex-1 flex-col">
                       <span>{tag.name}</span>
-                      {tag.description && (
-                        <span className="text-muted-foreground text-xs">{tag.description}</span>
-                      )}
                     </div>
                   </CommandItem>
                 ))}

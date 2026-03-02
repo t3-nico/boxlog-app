@@ -32,7 +32,7 @@ export interface DraftEntry {
   fulfillment_score?: FulfillmentScore | null;
   recurrence_type?: RecurrenceType | null;
   recurrence_rule?: string | null;
-  tagIds?: string[];
+  tagId?: string | null;
 }
 
 /**
@@ -170,7 +170,7 @@ export const useEntryInspectorStore = create<EntryInspectorStore>()(
               fulfillment_score: initialData?.fulfillment_score ?? null,
               recurrence_type: initialData?.recurrence_type ?? null,
               recurrence_rule: initialData?.recurrence_rule ?? null,
-              tagIds: initialData?.tagIds ?? [],
+              tagId: initialData?.tagId ?? null,
             },
             pendingChanges: null,
           },

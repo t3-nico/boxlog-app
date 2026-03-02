@@ -143,10 +143,10 @@ export function useCalendarData({
 
     // Entries の変換（繰り返し展開含む）
     if (entriesData) {
-      // サーバー型 → コア型に正規化（tagIds を保証）
+      // サーバー型 → コア型に正規化（tagId を保証）
       const normalized: EntryWithTags[] = entriesData.map((e) => ({
         ...e,
-        tagIds: e.tagIds ?? [],
+        tagId: e.tagId ?? null,
       })) as EntryWithTags[];
       const expandedEvents = expandEntriesToCalendarEvents(
         normalized,
@@ -237,9 +237,9 @@ export function useCalendarData({
       }
       // origin ベースのフィルタリング（type フィールドで UX 互換維持）
       if (event.type === 'record') {
-        return visibleTypes.record && matchesTagFilter(event.tagIds ?? []);
+        return visibleTypes.record && matchesTagFilter(event.tagId ? [event.tagId] : []);
       }
-      return visibleTypes.plan && isPlanVisible(event.tagIds ?? []);
+      return visibleTypes.plan && isPlanVisible(event.tagId ? [event.tagId] : []);
     });
 
     logger.log(`[useCalendarData] entriesフィルタリング:`, {
@@ -254,7 +254,7 @@ export function useCalendarData({
         title: e.title,
         startDate: e.startDate?.toISOString() ?? null,
         endDate: e.endDate?.toISOString() ?? null,
-        tagIds: e.tagIds,
+        tagId: e.tagId,
       })),
     });
 

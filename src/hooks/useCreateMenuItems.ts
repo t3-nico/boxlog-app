@@ -9,7 +9,7 @@
 
 import { useCallback, useMemo } from 'react';
 
-import { CalendarPlus, Clock, Tag } from 'lucide-react';
+import { CalendarPlus, Tag } from 'lucide-react';
 
 import { useTagModalNavigation } from '@/hooks/useTagModalNavigation';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
@@ -39,18 +39,14 @@ interface UseCreateMenuItemsOptions {
 /**
  * 新規作成メニューのアイテム一覧を返すフック
  *
- * @returns Plan / Record / --- / Tag のメニュー項目配列
+ * @returns Entry / --- / Tag のメニュー項目配列
  */
 export function useCreateMenuItems(options?: UseCreateMenuItemsOptions): CreateMenuEntry[] {
   const t = useTranslations();
   const openInspectorWithDraft = useEntryInspectorStore((state) => state.openInspectorWithDraft);
   const { openTagCreateModal } = useTagModalNavigation();
 
-  const handleCreatePlan = useCallback(() => {
-    openInspectorWithDraft(options?.initialData);
-  }, [openInspectorWithDraft, options?.initialData]);
-
-  const handleCreateRecord = useCallback(() => {
+  const handleCreateEntry = useCallback(() => {
     openInspectorWithDraft(options?.initialData);
   }, [openInspectorWithDraft, options?.initialData]);
 
@@ -62,17 +58,10 @@ export function useCreateMenuItems(options?: UseCreateMenuItemsOptions): CreateM
     () => [
       {
         type: 'item' as const,
-        id: 'plan',
+        id: 'entry',
         icon: CalendarPlus,
-        label: t('common.createSheet.plan'),
-        action: handleCreatePlan,
-      },
-      {
-        type: 'item' as const,
-        id: 'record',
-        icon: Clock,
-        label: t('common.createSheet.record'),
-        action: handleCreateRecord,
+        label: t('common.createSheet.entry'),
+        action: handleCreateEntry,
       },
       { type: 'separator' as const },
       {
@@ -83,6 +72,6 @@ export function useCreateMenuItems(options?: UseCreateMenuItemsOptions): CreateM
         action: handleCreateTag,
       },
     ],
-    [t, handleCreatePlan, handleCreateRecord, handleCreateTag],
+    [t, handleCreateEntry, handleCreateTag],
   );
 }

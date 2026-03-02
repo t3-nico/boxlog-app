@@ -12,7 +12,6 @@ describe('useTagMergeModalStore', () => {
       const state = useTagMergeModalStore.getState();
       expect(state.isOpen).toBe(false);
       expect(state.sourceTag).toBeNull();
-      expect(state.hasChildren).toBe(false);
     });
   });
 
@@ -22,13 +21,6 @@ describe('useTagMergeModalStore', () => {
       const state = useTagMergeModalStore.getState();
       expect(state.isOpen).toBe(true);
       expect(state.sourceTag).toEqual({ id: 'tag-1', name: '仕事', color: '#f00' });
-      expect(state.hasChildren).toBe(false);
-    });
-
-    it('子タグありで開ける', () => {
-      useTagMergeModalStore.getState().openModal({ id: 'tag-2', name: '趣味' }, true);
-      const state = useTagMergeModalStore.getState();
-      expect(state.hasChildren).toBe(true);
     });
 
     it('colorがnullでも開ける', () => {
@@ -39,12 +31,11 @@ describe('useTagMergeModalStore', () => {
 
   describe('closeModal', () => {
     it('モーダルを閉じて全状態をリセット', () => {
-      useTagMergeModalStore.getState().openModal({ id: 'tag-1', name: '仕事' }, true);
+      useTagMergeModalStore.getState().openModal({ id: 'tag-1', name: '仕事' });
       useTagMergeModalStore.getState().closeModal();
       const state = useTagMergeModalStore.getState();
       expect(state.isOpen).toBe(false);
       expect(state.sourceTag).toBeNull();
-      expect(state.hasChildren).toBe(false);
     });
   });
 });

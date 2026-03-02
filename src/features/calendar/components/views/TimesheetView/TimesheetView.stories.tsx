@@ -121,7 +121,6 @@ const workGroup: TimesheetTagGroup = {
   tagId: 'tag-1',
   tagName: 'Work',
   tagColor: '#3B82F6',
-  parentId: null,
   plans: [planApiDesign, planCodeReview, planBugFix, recordMeeting],
   dailyTotals: {
     [dateKey(0)]: 150, // 120 + 30(record)
@@ -135,7 +134,6 @@ const designGroup: TimesheetTagGroup = {
   tagId: 'tag-2',
   tagName: 'Design',
   tagColor: '#10B981',
-  parentId: null,
   plans: [planMockup, planDesignReview, recordDocs],
   dailyTotals: {
     [dateKey(1)]: 120,
@@ -149,7 +147,6 @@ const untaggedGroup: TimesheetTagGroup = {
   tagId: null,
   tagName: '',
   tagColor: '#6b7280',
-  parentId: null,
   plans: [planMisc],
   dailyTotals: {
     [dateKey(0)]: 30,

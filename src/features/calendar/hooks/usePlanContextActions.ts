@@ -106,7 +106,7 @@ export function usePlanContextActions() {
       duration,
       startHour,
       startMinute,
-      tagIds: plan.tagIds,
+      tagId: plan.tagId,
     });
 
     toast.success('コピーしました');
@@ -155,7 +155,7 @@ export function usePlanContextActions() {
         title: plan.title,
         start_time: plan.startDate?.toISOString() ?? null,
         end_time: plan.endDate?.toISOString() ?? null,
-        tagIds: plan.tagIds ?? [],
+        tagId: plan.tagId ?? null,
       });
     },
     [openInspectorWithDraft],

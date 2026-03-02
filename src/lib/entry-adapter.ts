@@ -58,7 +58,7 @@ export function entryToCalendarEvent(entry: EntryWithTags): CalendarEvent | null
     status: entryState === 'past' ? 'closed' : 'open',
     color: '',
     reminder_minutes: entry.reminder_minutes,
-    tagIds: entry.tagIds ?? [],
+    tagId: entry.tagId ?? null,
     createdAt,
     updatedAt,
     displayStartDate: startDate,
@@ -79,7 +79,7 @@ export function entryToCalendarEvent(entry: EntryWithTags): CalendarEvent | null
  * expandRecurrence は Plan 型を期待するため、
  * Entry のフィールドを Plan 互換のオブジェクトに変換する。
  */
-function entryToPlanCompat(entry: EntryWithTags): Plan & { tagIds?: string[] } {
+function entryToPlanCompat(entry: EntryWithTags): Plan & { tagId?: string | null } {
   return {
     id: entry.id,
     user_id: entry.user_id,
@@ -95,7 +95,7 @@ function entryToPlanCompat(entry: EntryWithTags): Plan & { tagIds?: string[] } {
     completed_at: entry.reviewed_at, // Plan互換: reviewed_at → completed_at
     created_at: entry.created_at,
     updated_at: entry.updated_at,
-    tagIds: entry.tagIds,
+    tagId: entry.tagId,
   };
 }
 
@@ -152,7 +152,7 @@ function occurrenceToCalendarEvent(
     status: entryState === 'past' ? 'closed' : 'open',
     color: '',
     reminder_minutes: baseEntry.reminder_minutes,
-    tagIds: baseEntry.tagIds ?? [],
+    tagId: baseEntry.tagId ?? null,
     createdAt,
     updatedAt,
     displayStartDate: startDate,

@@ -11,7 +11,7 @@ interface TagBadgeProps {
   tag: Tag;
   onClick?: () => void;
   onRemove?: () => void;
-  /** tooltipを無効にする（デフォルト: descriptionがあれば表示） */
+  /** tooltipを無効にする */
   disableTooltip?: boolean;
 }
 
@@ -20,7 +20,6 @@ interface TagBadgeProps {
  *
  * タグをアウトラインバッジとして表示。
  * ボーダー色にタグのカラーを使用。
- * descriptionがあればホバーでtooltip表示。
  *
  * @example
  * ```tsx
@@ -30,11 +29,7 @@ interface TagBadgeProps {
  */
 export function TagBadge({ tag, onClick, onRemove, disableTooltip }: TagBadgeProps) {
   return (
-    <HoverTooltip
-      content={tag.description}
-      side="top"
-      disabled={disableTooltip || !tag.description}
-    >
+    <HoverTooltip content={tag.name} side="top" disabled={disableTooltip ?? true}>
       <Badge
         variant="outline"
         className={cn(

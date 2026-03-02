@@ -6,14 +6,12 @@
  *
  * エンドポイント:
  * - tags.list: タグ一覧取得（フラット）
- * - tags.listHierarchy: 階層構造でタグ取得
- * - tags.listParentTags: 親タグ一覧取得
  * - tags.getById: タグID指定で取得
  * - tags.create: タグ作成
  * - tags.update: タグ更新
  * - tags.merge: タグマージ
  * - tags.delete: タグ削除
- * - tags.reorder: タグ並び替え（sort_order, parent_id更新）
+ * - tags.reorder: タグ並び替え（sort_order更新）
  */
 
 import { z } from 'zod';
@@ -58,40 +56,6 @@ export const tagsRouter = createTRPCRouter({
     }),
 
   /**
-   * 階層構造でタグ取得
-   * 親タグとその子タグをネスト構造で返す
-   */
-  listHierarchy: protectedProcedure.query(async ({ ctx }) => {
-    try {
-      const service = createTagService(ctx.supabase);
-      return await service.listHierarchy({
-        userId: ctx.userId,
-      });
-    } catch (error) {
-      return handleServiceError(error);
-    }
-  }),
-
-  /**
-   * 親タグ一覧取得（ドロップダウン用）
-   * parent_id = null のタグのみ
-   */
-  listParentTags: protectedProcedure.query(async ({ ctx }) => {
-    try {
-      const service = createTagService(ctx.supabase);
-      const tags = await service.listParentTags({
-        userId: ctx.userId,
-      });
-      return {
-        data: tags,
-        count: tags.length,
-      };
-    } catch (error) {
-      return handleServiceError(error);
-    }
-  }),
-
-  /**
    * タグID指定で取得
    */
   getById: protectedProcedure
@@ -125,9 +89,6 @@ export const tagsRouter = createTRPCRouter({
           .string()
           .regex(/^#[0-9A-Fa-f]{6}$/)
           .optional(),
-        description: z.string().optional(),
-        /** 親タグID */
-        parentId: z.string().uuid().nullable().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -138,8 +99,6 @@ export const tagsRouter = createTRPCRouter({
           input: {
             name: input.name,
             color: input.color,
-            description: input.description,
-            parentId: input.parentId,
           },
         });
 
@@ -164,9 +123,6 @@ export const tagsRouter = createTRPCRouter({
           .string()
           .regex(/^#[0-9A-Fa-f]{6}$/)
           .optional(),
-        description: z.string().nullable().optional(),
-        /** 親タグID */
-        parentId: z.string().uuid().nullable().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -178,8 +134,6 @@ export const tagsRouter = createTRPCRouter({
           updates: {
             name: input.name,
             color: input.color,
-            description: input.description,
-            parentId: input.parentId,
           },
         });
 
@@ -264,7 +218,6 @@ export const tagsRouter = createTRPCRouter({
             z.object({
               id: z.string().uuid(),
               sort_order: z.number().int(),
-              parent_id: z.string().uuid().nullable(),
             }),
           )
           .max(200),

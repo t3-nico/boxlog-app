@@ -27,9 +27,7 @@ const mockTags: Tag[] = [
     name: 'Work',
     user_id: 'u1',
     color: '#3B82F6',
-    description: '仕事関連のタスク',
     is_active: true,
-    parent_id: null,
     sort_order: 0,
     created_at: null,
     updated_at: null,
@@ -39,9 +37,7 @@ const mockTags: Tag[] = [
     name: 'Meeting',
     user_id: 'u1',
     color: '#10B981',
-    description: null,
     is_active: true,
-    parent_id: 'tag-1',
     sort_order: 0,
     created_at: null,
     updated_at: null,
@@ -51,9 +47,7 @@ const mockTags: Tag[] = [
     name: 'Focus Time',
     user_id: 'u1',
     color: '#F59E0B',
-    description: null,
     is_active: true,
-    parent_id: 'tag-1',
     sort_order: 1,
     created_at: null,
     updated_at: null,
@@ -63,9 +57,7 @@ const mockTags: Tag[] = [
     name: 'Personal',
     user_id: 'u1',
     color: '#EF4444',
-    description: null,
     is_active: true,
-    parent_id: null,
     sort_order: 1,
     created_at: null,
     updated_at: null,
@@ -75,9 +67,7 @@ const mockTags: Tag[] = [
     name: 'Exercise',
     user_id: 'u1',
     color: '#8B5CF6',
-    description: null,
     is_active: true,
-    parent_id: 'tag-4',
     sort_order: 0,
     created_at: null,
     updated_at: null,
@@ -87,14 +77,15 @@ const mockTags: Tag[] = [
     name: 'Reading',
     user_id: 'u1',
     color: '#EC4899',
-    description: null,
     is_active: true,
-    parent_id: null,
     sort_order: 2,
     created_at: null,
     updated_at: null,
   },
 ];
+
+/** フラットタグ（親タグのみ: tag-1, tag-4, tag-6） */
+const flatMockTags = mockTags.filter((t) => ['tag-1', 'tag-4', 'tag-6'].includes(t.id));
 
 const allVisibleTagIds = new Set(mockTags.map((t) => t.id));
 
@@ -114,12 +105,10 @@ const mockParentTagCounts: Record<string, number> = {
 
 const defaultCallbacks = {
   onToggleTag: fn(),
-  onToggleGroupTags: fn(),
   onUpdateTag: fn(),
   onDeleteTag: fn(),
   onAddChildTag: fn(),
   onShowOnlyTag: fn(),
-  onShowOnlyGroupTags: fn(),
   onOpenMergeModal: fn(),
   onReorder: fn(),
 };
@@ -168,20 +157,17 @@ export const PartiallyVisible: Story = {
 
 /** フラットタグのみ（子タグなし） */
 export const FlatTags: Story = {
-  render: () => {
-    const flatTags = mockTags.filter((t) => t.parent_id === null);
-    return (
-      <TreeFrame>
-        <TagSortableTree
-          tags={flatTags}
-          visibleTagIds={new Set(flatTags.map((t) => t.id))}
-          tagCounts={mockTagCounts}
-          parentTagCounts={{}}
-          {...defaultCallbacks}
-        />
-      </TreeFrame>
-    );
-  },
+  render: () => (
+    <TreeFrame>
+      <TagSortableTree
+        tags={flatMockTags}
+        visibleTagIds={new Set(flatMockTags.map((t) => t.id))}
+        tagCounts={mockTagCounts}
+        parentTagCounts={{}}
+        {...defaultCallbacks}
+      />
+    </TreeFrame>
+  ),
 };
 
 /** 空（タグなし） */
@@ -215,7 +201,7 @@ export const AllPatterns: Story = {
 
       <TreeFrame>
         <TagSortableTree
-          tags={mockTags.filter((t) => t.parent_id === null)}
+          tags={flatMockTags}
           visibleTagIds={allVisibleTagIds}
           tagCounts={mockTagCounts}
           parentTagCounts={{}}

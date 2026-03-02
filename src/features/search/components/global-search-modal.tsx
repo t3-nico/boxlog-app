@@ -407,7 +407,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                 {tags.slice(0, 10).map((tag) => (
                   <CommandItem
                     key={`tag-${tag.id}`}
-                    value={`${tag.name} ${tag.description || ''}`}
+                    value={tag.name}
                     onSelect={() => handleTagSelect(tag.id)}
                     className="flex items-center gap-2"
                   >
@@ -416,11 +416,6 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                       <span className="truncate">
                         <HighlightedText text={tag.name} query={parsedQuery.text} />
                       </span>
-                      {tag.description && (
-                        <span className="text-muted-foreground truncate text-xs">
-                          <HighlightedText text={tag.description} query={parsedQuery.text} />
-                        </span>
-                      )}
                     </div>
                   </CommandItem>
                 ))}

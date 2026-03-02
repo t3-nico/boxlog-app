@@ -36,8 +36,8 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
 
   // 選択中のタグID
   const selectedTagIds = useMemo(() => {
-    return plan.tagIds ?? [];
-  }, [plan.tagIds]);
+    return plan.tagId ? [plan.tagId] : [];
+  }, [plan.tagId]);
 
   // Record判定
   const isRecord = plan.type === 'record';

@@ -6,7 +6,7 @@
  */
 
 // 統一された型定義を再エクスポート
-export type { ApiError, ApiResponse, Tag, TagWithChildren } from './unified';
+export type { ApiError, ApiResponse, Tag } from './unified';
 
 // 検索可能な共通インターフェース
 export interface Searchable {

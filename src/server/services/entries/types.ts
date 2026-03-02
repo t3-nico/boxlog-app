@@ -36,7 +36,7 @@ export interface EntryWithTags extends EntryRow {
   entry_tags?: Array<{
     tag_id: string;
   }>;
-  tagIds?: string[];
+  tagId: string | null;
 }
 
 /**

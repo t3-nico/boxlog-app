@@ -6,16 +6,9 @@
  * 主な機能:
  * - タグ一覧取得（ソート対応）
  * - タグ作成
- * - タグ更新（リネーム、色変更、親タグ移動）
+ * - タグ更新（リネーム、色変更）
  * - タグマージ（関連付け移行 + ソース削除）
  * - タグ削除
- * - 階層構造取得（親タグと子タグ）
- *
- * ## 階層制限: 親子1階層のみ
- * タグは2階層以上のネストを禁止。理由:
- * - DBクエリの複雑性（多階層はWITH RECURSIVEが必要）
- * - UI/UXの簡潔性（選択UIがシンプルに保てる）
- * - 実用性（1階層で十分なケースがほとんど）
  *
  * キャッシュ戦略:
  * - [一時的に無効化] unstable_cache()によるサーバーサイドキャッシュ
@@ -23,7 +16,7 @@
  * - TanStack Queryのクライアントキャッシュ（5分）で対応
  */
 
-import type { Tag, TagWithChildren } from '@/core/types/tag';
+import type { Tag } from '@/core/types/tag';
 import type { Database } from '@/lib/database.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
@@ -39,9 +32,7 @@ function transformDbTag(dbTag: DbTagRow): Tag {
     name: dbTag.name,
     user_id: dbTag.user_id,
     color: dbTag.color,
-    description: dbTag.description,
     is_active: dbTag.is_active,
-    parent_id: dbTag.parent_id,
     sort_order: dbTag.sort_order,
     created_at: dbTag.created_at,
     updated_at: dbTag.updated_at,
@@ -53,7 +44,6 @@ interface MergeTagsRpcResult {
   success: boolean;
   merged_associations: number;
   deleted_tags: number;
-  promoted_children: number;
   target_tag: DbTagRow;
 }
 
@@ -75,18 +65,12 @@ async function callMergeTagsRpc(
 export interface CreateTagInput {
   name: string;
   color?: string | undefined;
-  description?: string | undefined;
-  /** 親タグのID */
-  parentId?: string | null | undefined;
 }
 
 /** タグ更新入力 */
 export interface UpdateTagInput {
   name?: string | undefined;
   color?: string | undefined;
-  description?: string | null | undefined;
-  /** 親タグのID */
-  parentId?: string | null | undefined;
 }
 
 /** タグ一覧取得オプション */
@@ -116,7 +100,6 @@ export interface MergeTagsResult {
 export interface ReorderTagUpdate {
   id: string;
   sort_order: number;
-  parent_id: string | null;
 }
 
 /**
@@ -134,8 +117,7 @@ export class TagServiceError extends Error {
       | 'INVALID_INPUT'
       | 'MERGE_FAILED'
       | 'SAME_TAG_MERGE'
-      | 'TARGET_NOT_FOUND'
-      | 'HIERARCHY_ERROR',
+      | 'TARGET_NOT_FOUND',
     message: string,
   ) {
     super(message);
@@ -183,84 +165,6 @@ export class TagService {
   }
 
   /**
-   * 階層構造でタグ一覧取得
-   *
-   * @param options - userId
-   * @returns 親タグ（子タグを含む）とルートタグの配列
-   */
-  async listHierarchy(options: { userId: string }): Promise<{
-    parentTags: TagWithChildren[];
-    rootTags: Tag[];
-  }> {
-    const { userId } = options;
-
-    const { data, error } = await this.supabase
-      .from('tags')
-      .select('*')
-      .eq('user_id', userId)
-      .order('sort_order', { ascending: true })
-      .order('name', { ascending: true });
-
-    if (error) {
-      throw new TagServiceError('FETCH_FAILED', `Failed to fetch tags: ${error.message}`);
-    }
-
-    const tags = data.map(transformDbTag);
-
-    // 親タグ（子を持つタグ）を特定
-    const parentIds = new Set(tags.filter((t) => t.parent_id).map((t) => t.parent_id!));
-
-    // 親タグと子タグを分類
-    const parentTags: TagWithChildren[] = [];
-    const rootTags: Tag[] = [];
-
-    tags.forEach((tag) => {
-      if (parentIds.has(tag.id)) {
-        // このタグは子を持つ親タグ
-        const children = tags.filter((t) => t.parent_id === tag.id);
-        parentTags.push({
-          ...tag,
-          children,
-        });
-      } else if (!tag.parent_id) {
-        // 親を持たず、子も持たないルートタグ
-        rootTags.push(tag);
-      }
-      // parent_id を持つタグは parentTags の children に含まれる
-    });
-
-    return { parentTags, rootTags };
-  }
-
-  /**
-   * 親タグのみ取得（ドロップダウン用）
-   *
-   * Note: サーバーサイドキャッシュは一時的に無効化（list()と同じ理由）
-   *
-   * @param options - userId
-   * @returns 親タグの配列（子を持つタグ、または子を持つ可能性のあるルートタグ）
-   */
-  async listParentTags(options: { userId: string }): Promise<Tag[]> {
-    const { userId } = options;
-
-    // 直接DBクエリを実行（サーバーサイドキャッシュは一時的に無効化）
-    const { data, error } = await this.supabase
-      .from('tags')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('is_active', true)
-      .is('parent_id', null)
-      .order('sort_order', { ascending: true, nullsFirst: false })
-      .order('name', { ascending: true });
-
-    if (error) {
-      throw new TagServiceError('FETCH_FAILED', `Failed to fetch parent tags: ${error.message}`);
-    }
-
-    return data.map(transformDbTag);
-  }
-
-  /**
    * タグID指定で取得
    *
    * @param options - userId と tagId
@@ -301,31 +205,11 @@ export class TagService {
       throw new TagServiceError('INVALID_INPUT', 'Tag name must be 50 characters or less');
     }
 
-    const parentId = input.parentId ?? null;
-
-    // 親タグの階層チェック（1階層のみ許可）
-    if (parentId) {
-      const parentTag = await this.getById({ userId, tagId: parentId });
-      if (parentTag.parent_id) {
-        throw new TagServiceError(
-          'HIERARCHY_ERROR',
-          'Maximum nesting depth is 1 level. Parent tag cannot be a child of another tag.',
-        );
-      }
-    }
-
-    // 新規タグを先頭に表示するため、既存の兄弟タグのsort_orderをインクリメント
-    let siblingsUpdateQuery = this.supabase
+    // 新規タグを先頭に表示するため、既存タグのsort_orderをインクリメント
+    const { data: siblings } = await this.supabase
       .from('tags')
       .select('id, sort_order')
       .eq('user_id', userId);
-
-    // parent_idがnullの場合は.is()、それ以外は.eq()を使用
-    siblingsUpdateQuery = parentId
-      ? siblingsUpdateQuery.eq('parent_id', parentId)
-      : siblingsUpdateQuery.is('parent_id', null);
-
-    const { data: siblings } = await siblingsUpdateQuery;
 
     // 既存の兄弟タグのsort_orderを+1インクリメント
     if (siblings && siblings.length > 0) {
@@ -343,9 +227,7 @@ export class TagService {
       user_id: userId,
       name: input.name.trim(),
       color: input.color || '#3B82F6',
-      description: input.description?.trim() || null,
       is_active: true,
-      parent_id: parentId,
       sort_order: 0,
     };
 
@@ -383,40 +265,10 @@ export class TagService {
       }
     }
 
-    const parentId = updates.parentId;
-
-    // 親タグの階層チェック
-    if (parentId !== undefined && parentId !== null) {
-      const parentTag = await this.getById({ userId, tagId: parentId });
-      if (parentTag.parent_id) {
-        throw new TagServiceError(
-          'HIERARCHY_ERROR',
-          'Maximum nesting depth is 1 level. Parent tag cannot be a child of another tag.',
-        );
-      }
-
-      // このタグが子を持っているかチェック
-      const { data: children } = await this.supabase
-        .from('tags')
-        .select('id')
-        .eq('parent_id', tagId)
-        .limit(1);
-
-      if (children && children.length > 0) {
-        throw new TagServiceError(
-          'HIERARCHY_ERROR',
-          'Cannot move a tag with children to be a child of another tag.',
-        );
-      }
-    }
-
     // 更新データ準備
     const updateData: Database['public']['Tables']['tags']['Update'] = {};
     if (updates.name !== undefined) updateData.name = updates.name.trim();
     if (updates.color !== undefined) updateData.color = updates.color;
-    if (updates.description !== undefined)
-      updateData.description = updates.description?.trim() || null;
-    if (parentId !== undefined) updateData.parent_id = parentId;
 
     const { data, error } = await this.supabase
       .from('tags')
@@ -494,9 +346,6 @@ export class TagService {
     // 所有権チェック
     const tag = await this.getById({ userId, tagId });
 
-    // 子タグの parent_id を null に更新
-    await this.supabase.from('tags').update({ parent_id: null }).eq('parent_id', tagId);
-
     // plan_tagsの関連付けを先に削除
     await this.supabase.from('plan_tags').delete().eq('tag_id', tagId);
 
@@ -553,7 +402,6 @@ export class TagService {
         .from('tags')
         .update({
           sort_order: update.sort_order,
-          parent_id: update.parent_id,
         })
         .eq('id', update.id)
         .eq('user_id', userId),

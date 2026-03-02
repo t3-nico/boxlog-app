@@ -65,9 +65,10 @@ export interface Entry {
 
 /**
  * タグID付きエントリ（リレーション取得時）
+ * 1エントリ1タグ制約
  */
 export interface EntryWithTags extends Entry {
-  tagIds: string[];
+  tagId: string | null;
 }
 
 /**

@@ -20,7 +20,7 @@ const createMockEntry = (overrides: Partial<PlanWithTagIds> = {}): PlanWithTagId
   reviewed_at: null,
   created_at: '2025-01-15T10:00:00Z',
   updated_at: '2025-01-15T10:00:00Z',
-  tagIds: [],
+  tagId: null,
   ...overrides,
 });
 
@@ -67,28 +67,26 @@ describe('usePlanData', () => {
       expect(result.status).toBe('closed');
     });
 
-    it('tagIdsが正しくパススルーされる', () => {
+    it('tagIdが正しくパススルーされる', () => {
       const plan = createMockEntry({
         id: 'plan-1',
-        tagIds: ['tag-1', 'tag-2'],
+        tagId: 'tag-1',
       });
 
       const result = planToPlanItem(plan);
 
-      expect(result.tagIds).toHaveLength(2);
-      expect(result.tagIds?.[0]).toBe('tag-1');
-      expect(result.tagIds?.[1]).toBe('tag-2');
+      expect(result.tagId).toBe('tag-1');
     });
 
-    it('tagIdsが空配列の場合は空配列がパススルーされる', () => {
+    it('tagIdがnullの場合はnullがパススルーされる', () => {
       const plan = createMockEntry({
         id: 'plan-1',
-        tagIds: [],
+        tagId: null,
       });
 
       const result = planToPlanItem(plan);
 
-      expect(result.tagIds).toEqual([]);
+      expect(result.tagId).toBeNull();
     });
 
     it('時間・繰り返し関連のフィールドを正しく変換する', () => {

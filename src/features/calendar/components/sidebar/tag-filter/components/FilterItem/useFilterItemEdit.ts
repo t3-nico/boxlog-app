@@ -42,7 +42,7 @@ export function useFilterItemEdit({
       try {
         await updateTagMutation.mutateAsync({
           id: tagId,
-          data: { color },
+          color,
         });
       } catch {
         setOptimisticColor(null);

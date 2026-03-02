@@ -236,6 +236,8 @@
     "createSheet": {
       "title": "What would you like to add?",
       "description": "Choose the type of item to add",
+      "entry": "Entry",
+      "entryDescription": "Create a new time entry",
       "plan": "Plan",
       "planDescription": "Create a new plan",
       "record": "Record",

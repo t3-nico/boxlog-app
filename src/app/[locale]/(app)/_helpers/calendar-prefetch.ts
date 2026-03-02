@@ -22,7 +22,6 @@ export async function prefetchCalendarData(view: CalendarViewType, targetDate: D
     helpers.plans.list.prefetch(dateFilter),
     helpers.plans.getTagStats.prefetch(),
     helpers.tags.list.prefetch(),
-    helpers.tags.listParentTags.prefetch(),
   ]);
 
   return { helpers, dehydratedState: dehydrate(helpers.queryClient) };

@@ -17,8 +17,8 @@ export interface CalendarEvent {
   /** @deprecated entries統合後は reviewed_at を使用 */
   completed_at?: string | null | undefined;
   reminder_minutes?: number | null | undefined; // 通知タイミング（開始時刻の何分前か）
-  /** タグIDリスト。タグの詳細情報はtags.listキャッシュから取得する。 */
-  tagIds?: string[] | undefined;
+  /** タグID。1エントリ1タグ。タグの詳細情報はtags.listキャッシュから取得する。 */
+  tagId?: string | null | undefined;
   createdAt: Date;
   updatedAt: Date;
   // Display-specific properties

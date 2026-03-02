@@ -1,9 +1,7 @@
 'use client';
 
-import { Eye, FileText, FolderUp, Merge, Palette, Pencil, Trash2 } from 'lucide-react';
+import { Eye, Merge, Palette, Pencil, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-
-import { cn } from '@/lib/utils';
 
 import { ColorPaletteMenuItems } from '@/components/ui/color-palette-picker';
 import {
@@ -14,18 +12,13 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from '@/components/ui/dropdown-menu';
-import { DEFAULT_TAG_COLOR } from '@/lib/tag-colors';
 
 interface FilterItemMenuProps {
   displayColor: string;
-  parentId: string | null | undefined;
-  parentTags: Array<{ id: string; name: string; color?: string | null }> | undefined;
 
   // Handlers
   onOpenRenameDialog: () => void;
   onColorChange: (color: string) => void;
-  onOpenNoteDialog: () => void;
-  onChangeParent: ((newParentId: string | null) => void) | undefined;
   onOpenMergeModal: () => void;
   onShowOnlyTag: () => void;
   onDeleteTag: (() => void) | undefined;
@@ -33,12 +26,8 @@ interface FilterItemMenuProps {
 
 export function FilterItemMenu({
   displayColor,
-  parentId,
-  parentTags,
   onOpenRenameDialog,
   onColorChange,
-  onOpenNoteDialog,
-  onChangeParent,
   onOpenMergeModal,
   onShowOnlyTag,
   onDeleteTag,
@@ -63,45 +52,6 @@ export function FilterItemMenu({
           <ColorPaletteMenuItems selectedColor={displayColor} onColorSelect={onColorChange} />
         </DropdownMenuSubContent>
       </DropdownMenuSub>
-
-      {/* ノートを編集 */}
-      <DropdownMenuItem onClick={onOpenNoteDialog}>
-        <FileText className="mr-2 size-4" />
-        {t('calendar.filter.editNote')}
-      </DropdownMenuItem>
-
-      {/* 親タグを変更 */}
-      {parentTags && parentTags.length > 0 && onChangeParent && (
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>
-            <FolderUp className="mr-2 size-4" />
-            {t('calendar.filter.changeParent')}
-          </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            <DropdownMenuItem
-              onClick={() => onChangeParent(null)}
-              className={cn(!parentId && 'bg-state-selected')}
-            >
-              {t('calendar.filter.noParent')}
-            </DropdownMenuItem>
-            {parentTags.map((parent) => (
-              <DropdownMenuItem
-                key={parent.id}
-                onClick={() => onChangeParent(parent.id)}
-                className={cn(parentId === parent.id && 'bg-state-selected')}
-              >
-                <span
-                  className="mr-1 font-normal"
-                  style={{ color: parent.color || DEFAULT_TAG_COLOR }}
-                >
-                  #
-                </span>
-                {parent.name}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
-      )}
 
       {/* マージ */}
       <DropdownMenuItem onClick={onOpenMergeModal}>

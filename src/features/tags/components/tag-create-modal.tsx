@@ -15,19 +15,15 @@ import { Input } from '@/components/ui/input';
 import { useHasMounted } from '@/hooks/useHasMounted';
 import { useSubmitShortcut } from '@/hooks/useSubmitShortcut';
 import { logger } from '@/lib/logger';
-import { ChevronDown, Circle } from 'lucide-react';
+import { Circle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { DEFAULT_TAG_COLOR, TAG_NAME_MAX_LENGTH } from '../constants/colors';
-import { useTags } from '../hooks';
 import type { CreateTagInput } from '../types';
-import { TagNoteField } from './tag-note-field';
 
 interface TagCreateModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (data: CreateTagInput) => Promise<void>;
-  /** デフォルトの親タグID（子タグ作成時にプリセット） */
-  defaultParentId?: string | null;
 }
 
 /**
@@ -40,37 +36,22 @@ interface TagCreateModalProps {
  * - 角丸: rounded-2xl（16px）for ダイアログ
  * - Card: bg-card（カード、ダイアログ用）
  */
-export const TagCreateModal = ({
-  isOpen,
-  onClose,
-  onSave,
-  defaultParentId,
-}: TagCreateModalProps) => {
+export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps) => {
   const t = useTranslations();
   const [name, setName] = useState('');
   const [color, setColor] = useState<string>(DEFAULT_TAG_COLOR);
-  const [parentId, setParentId] = useState<string | null>(null);
-  const [description, setDescription] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const mounted = useHasMounted();
-  const [isParentDropdownOpen, setIsParentDropdownOpen] = useState(false);
 
-  // 親タグ取得 - useTags()から parent_id = null のタグを抽出
-  const { data: allTags = [] } = useTags();
-  const parentTags = allTags.filter((t) => !t.parent_id);
-
-  // モーダルが開いたらリセット（defaultParentIdがあればプリセット）
+  // モーダルが開いたらリセット
   useEffect(() => {
     if (isOpen) {
       setName('');
       setColor(DEFAULT_TAG_COLOR);
-      setDescription('');
-      setParentId(defaultParentId ?? null);
       setError('');
-      setIsParentDropdownOpen(false);
     }
-  }, [isOpen, defaultParentId]);
+  }, [isOpen]);
 
   // ESCキーでダイアログを閉じる
   useEffect(() => {
@@ -86,24 +67,6 @@ export const TagCreateModal = ({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, isLoading, onClose]);
 
-  // ドロップダウン外クリックで閉じる
-  useEffect(() => {
-    if (!isParentDropdownOpen) return;
-
-    const handleClickOutside = () => {
-      setIsParentDropdownOpen(false);
-    };
-
-    const timeoutId = setTimeout(() => {
-      document.addEventListener('click', handleClickOutside);
-    }, 0);
-
-    return () => {
-      clearTimeout(timeoutId);
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, [isParentDropdownOpen]);
-
   const handleSubmit = useCallback(async () => {
     setError('');
 
@@ -117,8 +80,6 @@ export const TagCreateModal = ({
       await onSave({
         name: name.trim(),
         color,
-        description: description.trim() || undefined,
-        parentId: parentId,
       });
       onClose();
     } catch (err) {
@@ -138,7 +99,7 @@ export const TagCreateModal = ({
     } finally {
       setIsLoading(false);
     }
-  }, [name, color, description, parentId, onSave, onClose, t]);
+  }, [name, color, onSave, onClose, t]);
 
   const handleBackdropClick = useCallback(
     (e: React.MouseEvent) => {
@@ -159,15 +120,13 @@ export const TagCreateModal = ({
     [handleSubmit, isLoading, name],
   );
 
-  // Cmd+Enter / Ctrl+Enter で作成（色や親タグ選択中でも動作）
+  // Cmd+Enter / Ctrl+Enter で作成（色選択中でも動作）
   useSubmitShortcut({
     enabled: isOpen,
     isLoading,
     checkDisabled: () => !name.trim(),
     onSubmit: handleSubmit,
   });
-
-  const selectedParent = parentTags.find((p) => p.id === parentId);
 
   if (!mounted || !isOpen) return null;
 
@@ -246,63 +205,6 @@ export const TagCreateModal = ({
                 <ColorPaletteMenuItems selectedColor={color} onColorSelect={setColor} />
               </DropdownMenuContent>
             </DropdownMenu>
-          </Field>
-
-          {/* ノート（説明） */}
-          <TagNoteField id="tag-note" value={description} onChange={setDescription} />
-
-          {/* 親タグ選択 */}
-          <Field>
-            <FieldLabel>{t('tags.form.group')}</FieldLabel>
-            <FieldSupportText>{t('tags.form.groupSupportText')}</FieldSupportText>
-            <div className="relative">
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsParentDropdownOpen(!isParentDropdownOpen);
-                }}
-                className="border-border bg-container hover:bg-state-hover flex h-9 w-full items-center justify-between rounded-lg border px-4 text-sm"
-              >
-                <span className={selectedParent ? 'text-foreground' : 'text-muted-foreground'}>
-                  {selectedParent ? selectedParent.name : t('tags.sidebar.uncategorized')}
-                </span>
-                <ChevronDown className="text-muted-foreground size-4" />
-              </button>
-
-              {/* Dropdown menu */}
-              {isParentDropdownOpen && (
-                <div className="bg-card border-border absolute top-full z-10 mt-1 w-full rounded-lg border py-1 shadow-lg">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setParentId(null);
-                      setIsParentDropdownOpen(false);
-                    }}
-                    className="hover:bg-state-hover w-full px-4 py-2 text-left text-sm"
-                  >
-                    {t('tags.sidebar.uncategorized')}
-                  </button>
-                  {parentTags.map((parent) => (
-                    <button
-                      key={parent.id}
-                      type="button"
-                      onClick={() => {
-                        setParentId(parent.id);
-                        setIsParentDropdownOpen(false);
-                      }}
-                      className="hover:bg-state-hover flex w-full items-center gap-2 px-4 py-2 text-left text-sm"
-                    >
-                      <span
-                        className="size-3 rounded-full"
-                        style={{ backgroundColor: parent.color ?? DEFAULT_TAG_COLOR }}
-                      />
-                      {parent.name}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
           </Field>
         </FieldGroup>
 

@@ -440,10 +440,8 @@ const flatMockTags: Tag[] = [
     id: 'tag-1',
     name: 'Work',
     color: '#3B82F6',
-    parent_id: null,
     sort_order: 0,
     user_id: 'demo-user',
-    description: null,
     is_active: true,
     created_at: now,
     updated_at: now,
@@ -452,10 +450,8 @@ const flatMockTags: Tag[] = [
     id: 'tag-4',
     name: 'Personal',
     color: '#F59E0B',
-    parent_id: null,
     sort_order: 1,
     user_id: 'demo-user',
-    description: null,
     is_active: true,
     created_at: now,
     updated_at: now,
@@ -464,10 +460,8 @@ const flatMockTags: Tag[] = [
     id: 'tag-6',
     name: 'Learning',
     color: '#06B6D4',
-    parent_id: null,
     sort_order: 2,
     user_id: 'demo-user',
-    description: null,
     is_active: true,
     created_at: now,
     updated_at: now,
@@ -480,10 +474,8 @@ const nestedMockTags: Tag[] = [
     id: 'tag-1',
     name: 'Work',
     color: '#3B82F6',
-    parent_id: null,
     sort_order: 0,
     user_id: 'demo-user',
-    description: null,
     is_active: true,
     created_at: now,
     updated_at: now,
@@ -492,10 +484,8 @@ const nestedMockTags: Tag[] = [
     id: 'tag-2',
     name: 'Meetings',
     color: '#10B981',
-    parent_id: 'tag-1',
     sort_order: 0,
     user_id: 'demo-user',
-    description: null,
     is_active: true,
     created_at: now,
     updated_at: now,
@@ -504,10 +494,8 @@ const nestedMockTags: Tag[] = [
     id: 'tag-3',
     name: 'Deep Work',
     color: '#8B5CF6',
-    parent_id: 'tag-1',
     sort_order: 1,
     user_id: 'demo-user',
-    description: null,
     is_active: true,
     created_at: now,
     updated_at: now,
@@ -516,10 +504,8 @@ const nestedMockTags: Tag[] = [
     id: 'tag-4',
     name: 'Personal',
     color: '#F59E0B',
-    parent_id: null,
     sort_order: 1,
     user_id: 'demo-user',
-    description: null,
     is_active: true,
     created_at: now,
     updated_at: now,
@@ -528,10 +514,8 @@ const nestedMockTags: Tag[] = [
     id: 'tag-5',
     name: 'Exercise',
     color: '#EF4444',
-    parent_id: 'tag-4',
     sort_order: 0,
     user_id: 'demo-user',
-    description: null,
     is_active: true,
     created_at: now,
     updated_at: now,
@@ -540,10 +524,8 @@ const nestedMockTags: Tag[] = [
     id: 'tag-6',
     name: 'Learning',
     color: '#06B6D4',
-    parent_id: null,
     sort_order: 2,
     user_id: 'demo-user',
-    description: null,
     is_active: true,
     created_at: now,
     updated_at: now,
@@ -559,14 +541,12 @@ interface TagReorderDemoProps {
 function TagReorderDemo({ initialTags, tagCounts, parentTagCounts }: TagReorderDemoProps) {
   const [tags, setTags] = useState<Tag[]>(initialTags);
 
-  const handleReorder = (
-    updates: Array<{ id: string; sort_order: number; parent_id: string | null }>,
-  ) => {
+  const handleReorder = (updates: Array<{ id: string; sort_order: number }>) => {
     setTags((prev) => {
       const next = prev.map((tag) => {
         const update = updates.find((u) => u.id === tag.id);
         if (update) {
-          return { ...tag, sort_order: update.sort_order, parent_id: update.parent_id };
+          return { ...tag, sort_order: update.sort_order };
         }
         return tag;
       });
@@ -582,12 +562,10 @@ function TagReorderDemo({ initialTags, tagCounts, parentTagCounts }: TagReorderD
         tagCounts={tagCounts}
         parentTagCounts={parentTagCounts}
         onToggleTag={fn()}
-        onToggleGroupTags={fn()}
         onUpdateTag={fn()}
         onDeleteTag={fn()}
         onAddChildTag={fn()}
         onShowOnlyTag={fn()}
-        onShowOnlyGroupTags={fn()}
         onOpenMergeModal={fn()}
         onReorder={handleReorder}
       />

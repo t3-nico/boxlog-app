@@ -13,7 +13,6 @@ import type { CreateTagInput } from '../types';
  */
 export function GlobalTagCreateModal() {
   const isOpen = useTagCreateModalStore((state) => state.isOpen);
-  const defaultParentId = useTagCreateModalStore((state) => state.defaultParentId);
   const closeModal = useTagCreateModalStore((state) => state.closeModal);
   const createTagMutation = useCreateTag();
   const { data: existingTags } = useTags();
@@ -34,17 +33,8 @@ export function GlobalTagCreateModal() {
     createTagMutation.mutate({
       name: data.name,
       color: data.color,
-      description: data.description ?? undefined,
-      parentId: data.parentId ?? undefined,
     });
   };
 
-  return (
-    <TagCreateModal
-      isOpen={isOpen}
-      onClose={closeModal}
-      onSave={handleCreateTag}
-      defaultParentId={defaultParentId}
-    />
-  );
+  return <TagCreateModal isOpen={isOpen} onClose={closeModal} onSave={handleCreateTag} />;
 }

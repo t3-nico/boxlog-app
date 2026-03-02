@@ -18,14 +18,14 @@ import type { ExpandedOccurrence, PlanInstanceException } from '@/lib/plan-recur
 export type { ExpandedOccurrence, PlanInstanceException };
 
 // タグID付きPlan型
-type PlanWithTagIds = Plan & {
-  tagIds?: string[];
+type PlanWithTagId = Plan & {
+  tagId?: string | null;
 };
 
 /**
  * データベースPlan型をCalendarEvent型に変換
  */
-export function planToCalendarPlan(plan: PlanWithTagIds): CalendarEvent {
+export function planToCalendarPlan(plan: PlanWithTagId): CalendarEvent {
   const startDate = plan.start_time ? new Date(plan.start_time) : new Date();
   const endDate = plan.end_time ? new Date(plan.end_time) : new Date();
   const createdAt = plan.created_at ? new Date(plan.created_at) : new Date();
@@ -50,7 +50,7 @@ export function planToCalendarPlan(plan: PlanWithTagIds): CalendarEvent {
     status: plan.end_time && new Date(plan.end_time) < new Date() ? 'closed' : 'open',
     color: '#3b82f6', // デフォルトカラー
     reminder_minutes: plan.reminder_minutes,
-    tagIds: plan.tagIds ?? [], // タグIDを引き継ぐ
+    tagId: plan.tagId ?? null, // タグIDを引き継ぐ
     createdAt,
     updatedAt,
     displayStartDate: startDate,
@@ -65,7 +65,7 @@ export function planToCalendarPlan(plan: PlanWithTagIds): CalendarEvent {
 /**
  * データベースPlan型の配列をCalendarEvent型の配列に変換
  */
-export function plansToCalendarPlans(plans: PlanWithTagIds[]): CalendarEvent[] {
+export function plansToCalendarPlans(plans: PlanWithTagId[]): CalendarEvent[] {
   return plans.map(planToCalendarPlan);
 }
 
@@ -76,7 +76,7 @@ export function plansToCalendarPlans(plans: PlanWithTagIds[]): CalendarEvent[] {
  * @param occurrence - 展開されたオカレンス
  */
 function occurrenceToCalendarPlan(
-  basePlan: PlanWithTagIds,
+  basePlan: PlanWithTagId,
   occurrence: ExpandedOccurrence,
 ): CalendarEvent {
   const createdAt = basePlan.created_at ? new Date(basePlan.created_at) : new Date();
@@ -130,7 +130,7 @@ function occurrenceToCalendarPlan(
     status: endDate < new Date() ? 'closed' : 'open',
     color: '#3b82f6',
     reminder_minutes: basePlan.reminder_minutes,
-    tagIds: basePlan.tagIds ?? [], // 親プランのタグIDを引き継ぐ
+    tagId: basePlan.tagId ?? null, // 親プランのタグIDを引き継ぐ
     createdAt,
     updatedAt,
     displayStartDate: startDate,
@@ -158,7 +158,7 @@ function occurrenceToCalendarPlan(
  * @returns 展開されたCalendarEvent配列
  */
 export function expandRecurringPlansToCalendarPlans(
-  plans: PlanWithTagIds[],
+  plans: PlanWithTagId[],
   rangeStart: Date,
   rangeEnd: Date,
   exceptionsMap: Map<string, PlanInstanceException[]> = new Map(),

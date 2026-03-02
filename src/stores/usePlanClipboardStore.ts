@@ -16,8 +16,8 @@ export interface ClipboardPlan {
   startHour: number;
   /** 開始時刻（分） */
   startMinute: number;
-  /** タグID配列 */
-  tagIds: string[] | undefined;
+  /** タグID */
+  tagId: string | null | undefined;
 }
 
 /**

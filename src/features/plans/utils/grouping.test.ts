@@ -44,34 +44,34 @@ describe('grouping', () => {
     });
 
     describe('タグでグループ化', () => {
-      it('最初のタグでグループ分けされる', () => {
+      it('タグIDでグループ分けされる', () => {
         const items = [
           createMockItem({
             id: '1',
-            tagIds: ['tag-1'],
+            tagId: 'tag-1',
           }),
           createMockItem({
             id: '2',
-            tagIds: ['tag-2'],
+            tagId: 'tag-2',
           }),
           createMockItem({
             id: '3',
-            tagIds: ['tag-1'],
+            tagId: 'tag-1',
           }),
         ];
 
         const result = groupItems(items, 'tags');
 
         expect(result).toHaveLength(2);
-        // tagIdsベースのグループ化ではタグIDがgroupKeyになる
+        // tagIdベースのグループ化ではタグIDがgroupKeyになる
         expect(result.some((g) => g.groupKey === 'tag-1')).toBe(true);
         expect(result.some((g) => g.groupKey === 'tag-2')).toBe(true);
       });
 
       it('タグがない場合は「タグなし」グループに分類される', () => {
         const items = [
-          createMockItem({ id: '1', tagIds: undefined }),
-          createMockItem({ id: '2', tagIds: [] }),
+          createMockItem({ id: '1', tagId: undefined }),
+          createMockItem({ id: '2', tagId: null }),
         ];
 
         const result = groupItems(items, 'tags');
@@ -83,7 +83,7 @@ describe('grouping', () => {
 
     describe('グループ結果の構造', () => {
       it('各グループにgroupKey, groupLabel, items, countが含まれる', () => {
-        const items = [createMockItem({ id: '1', tagIds: ['tag-1'] })];
+        const items = [createMockItem({ id: '1', tagId: 'tag-1' })];
 
         const result = groupItems(items, 'tags');
 
@@ -97,7 +97,7 @@ describe('grouping', () => {
         const originalItem = createMockItem({
           id: 'unique-id',
           title: 'ユニークなタイトル',
-          tagIds: ['tag-1'],
+          tagId: 'tag-1',
         });
         const items = [originalItem];
 

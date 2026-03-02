@@ -148,7 +148,7 @@ export function useResizeHandler({
         status: event.status,
         color: event.color,
         reminder_minutes: event.reminder_minutes,
-        tagIds: event.tagIds,
+        tagId: event.tagId,
         createdAt: event.createdAt,
         updatedAt: new Date(),
         displayStartDate: event.startDate,

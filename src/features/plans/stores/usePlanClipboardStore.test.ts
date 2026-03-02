@@ -9,7 +9,7 @@ const mockPlan: ClipboardPlan = {
   duration: 60,
   startHour: 10,
   startMinute: 0,
-  tagIds: ['tag-1', 'tag-2'],
+  tagId: 'tag-1',
 };
 
 describe('usePlanClipboardStore', () => {
