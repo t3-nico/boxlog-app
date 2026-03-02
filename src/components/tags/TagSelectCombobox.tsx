@@ -9,6 +9,7 @@ import { useTags } from '@/hooks/useTagsQuery';
 import { cn } from '@/lib/utils';
 
 import type { Tag } from '@/core/types/tag';
+import { getTagDisplayLabel, groupTagsByPrefix } from '@/lib/tag-colon';
 
 import {
   Command,
@@ -22,8 +23,10 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 
 interface TagSelectComboboxProps {
   children: React.ReactNode;
-  selectedTagIds: string[];
-  onTagsChange: (tagIds: string[]) => void;
+  /** 選択中のタグID（単一） */
+  selectedTagId: string | null;
+  /** タグ変更コールバック（単一） */
+  onTagChange: (tagId: string | null) => void;
   align?: 'start' | 'center' | 'end' | undefined;
   side?: 'top' | 'right' | 'bottom' | 'left' | undefined;
   alignOffset?: number | undefined;
@@ -40,22 +43,16 @@ interface TagSelectComboboxProps {
 function TagItem({
   tag,
   isSelected,
-  onToggle,
-  indent = false,
+  onSelect,
 }: {
   tag: { id: string; name: string; color: string | null };
   isSelected: boolean;
-  onToggle: () => void;
-  indent?: boolean;
+  onSelect: () => void;
 }) {
   const tagColor = tag.color || '#6B7280';
 
   return (
-    <CommandItem
-      value={tag.id}
-      onSelect={onToggle}
-      className={cn('cursor-pointer', indent && 'pl-6')}
-    >
+    <CommandItem value={tag.id} onSelect={onSelect} className="cursor-pointer">
       <div
         className={cn(
           'flex size-4 shrink-0 items-center justify-center rounded border',
@@ -70,15 +67,21 @@ function TagItem({
         {isSelected && <Check className="size-3 text-white" />}
       </div>
 
-      <span className="truncate">{tag.name}</span>
+      <span className="truncate">{getTagDisplayLabel(tag.name)}</span>
     </CommandItem>
   );
 }
 
+/**
+ * タグ選択コンボボックス（単一選択）
+ *
+ * コロン記法のプレフィックスでグルーピング表示。
+ * 選択するとポップオーバーを閉じる。再選択で解除。
+ */
 export function TagSelectCombobox({
   children,
-  selectedTagIds,
-  onTagsChange,
+  selectedTagId,
+  onTagChange,
   align = 'start',
   side = 'bottom',
   alignOffset = 0,
@@ -96,35 +99,34 @@ export function TagSelectCombobox({
   // アクティブなタグのみ
   const activeTags = useMemo(() => allTags.filter((tag) => tag.is_active !== false), [allTags]);
 
-  // ソート済みタグ一覧（フラット構造）
+  // ソート済みタグ一覧
   const sortedTags = useMemo(() => {
     return [...activeTags].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
   }, [activeTags]);
 
   // 検索フィルタリング
-  const matchesSearch = useCallback(
-    (tag: { name: string }) => {
-      if (!searchQuery) return true;
-      return tag.name.toLowerCase().includes(searchQuery.toLowerCase());
-    },
-    [searchQuery],
-  );
-
   const filteredTags = useMemo(() => {
     if (!searchQuery) return sortedTags;
-    return sortedTags.filter(matchesSearch);
-  }, [sortedTags, searchQuery, matchesSearch]);
+    const q = searchQuery.toLowerCase();
+    return sortedTags.filter((tag) => tag.name.toLowerCase().includes(q));
+  }, [sortedTags, searchQuery]);
 
-  const toggleTag = useCallback(
+  // コロン記法でグルーピング
+  const { grouped, ungrouped } = useMemo(() => groupTagsByPrefix(filteredTags), [filteredTags]);
+  const groupKeys = useMemo(() => Array.from(grouped.keys()).sort(), [grouped]);
+
+  const handleSelect = useCallback(
     (tagId: string) => {
-      if (selectedTagIds.includes(tagId)) {
-        onTagsChange(selectedTagIds.filter((id) => id !== tagId));
+      if (selectedTagId === tagId) {
+        // 再選択で解除
+        onTagChange(null);
       } else {
-        // 新しいタグを先頭に追加（最新が左に表示される）
-        onTagsChange([tagId, ...selectedTagIds]);
+        onTagChange(tagId);
       }
+      setIsOpen(false);
+      setSearchQuery('');
     },
-    [selectedTagIds, onTagsChange],
+    [selectedTagId, onTagChange],
   );
 
   const handleOpenChange = useCallback((open: boolean) => {
@@ -155,15 +157,33 @@ export function TagSelectCombobox({
           <CommandList className="max-h-[300px]">
             {!hasResults && <CommandEmpty>{t('tags.page.noTags')}</CommandEmpty>}
 
-            {/* タグ一覧（フラット表示） */}
-            {filteredTags.length > 0 && (
+            {/* グループ化されたタグ */}
+            {groupKeys.map((prefix) => {
+              const groupTags = grouped.get(prefix);
+              if (!groupTags) return null;
+              return (
+                <CommandGroup key={prefix} heading={prefix}>
+                  {groupTags.map((tag) => (
+                    <TagItem
+                      key={tag.id}
+                      tag={tag}
+                      isSelected={selectedTagId === tag.id}
+                      onSelect={() => handleSelect(tag.id)}
+                    />
+                  ))}
+                </CommandGroup>
+              );
+            })}
+
+            {/* グループ化されないタグ */}
+            {ungrouped.length > 0 && (
               <CommandGroup>
-                {filteredTags.map((tag) => (
+                {ungrouped.map((tag) => (
                   <TagItem
                     key={tag.id}
                     tag={tag}
-                    isSelected={selectedTagIds.includes(tag.id)}
-                    onToggle={() => toggleTag(tag.id)}
+                    isSelected={selectedTagId === tag.id}
+                    onSelect={() => handleSelect(tag.id)}
                   />
                 ))}
               </CommandGroup>

@@ -17,8 +17,8 @@ import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 interface UseInspectorSaveCloseProps {
   planId: string | null;
   hasTagChanges: boolean;
-  selectedTagIdsRef: React.RefObject<string[]>;
-  originalTagIdsRef: React.RefObject<string[]>;
+  selectedTagIdRef: React.RefObject<string | null>;
+  originalTagIdRef: React.RefObject<string | null>;
   setPlanTags: (planId: string, tagIds: string[]) => Promise<void>;
   updatePlan: {
     mutateAsync: (args: {
@@ -34,8 +34,8 @@ interface UseInspectorSaveCloseProps {
 export function useInspectorSaveClose({
   planId,
   hasTagChanges,
-  selectedTagIdsRef,
-  originalTagIdsRef,
+  selectedTagIdRef,
+  originalTagIdRef,
   setPlanTags,
   updatePlan,
   closeInspector,
@@ -61,7 +61,7 @@ export function useInspectorSaveClose({
       clearDraft,
     } = useEntryInspectorStore.getState();
     const currentIsDraftMode = currentDraft !== null && currentEntryId === null;
-    const currentTagIds = selectedTagIdsRef.current;
+    const currentTagId = selectedTagIdRef.current;
     const currentHasTagChanges = hasTagChanges;
 
     // 即座に閉じる
@@ -85,9 +85,9 @@ export function useInspectorSaveClose({
       (async () => {
         try {
           const newEntry = await createEntry.mutateAsync(createInput);
-          if (newEntry?.id && currentTagIds.length > 0) {
+          if (newEntry?.id && currentTagId) {
             try {
-              await setPlanTags(newEntry.id, currentTagIds);
+              await setPlanTags(newEntry.id, [currentTagId]);
             } catch {
               toast.error(t('plan.inspector.toast.tagsSaveFailed'));
             }
@@ -122,12 +122,12 @@ export function useInspectorSaveClose({
       }
 
       if (currentHasTagChanges && currentEntryId) {
-        setPlanTags(currentEntryId, currentTagIds).catch(() => {
+        setPlanTags(currentEntryId, currentTagId ? [currentTagId] : []).catch(() => {
           toast.error(t('plan.inspector.toast.tagsSaveFailed'));
         });
       }
     }
-  }, [t, updatePlan, closeInspector, createEntry, setPlanTags, hasTagChanges, selectedTagIdsRef]);
+  }, [t, updatePlan, closeInspector, createEntry, setPlanTags, hasTagChanges, selectedTagIdRef]);
 
   /**
    * 変更を破棄してInspectorを閉じる（キャンセル）
@@ -137,7 +137,8 @@ export function useInspectorSaveClose({
 
     // タグ変更があった場合はキャッシュを元に戻す
     if (hasTagChanges && planId) {
-      updateTagsInCache(planId, originalTagIdsRef.current);
+      const originalTagId = originalTagIdRef.current;
+      updateTagsInCache(planId, originalTagId ? [originalTagId] : []);
     }
 
     closeInspector();
@@ -147,7 +148,7 @@ export function useInspectorSaveClose({
     planId,
     updateTagsInCache,
     hasTagChanges,
-    originalTagIdsRef,
+    originalTagIdRef,
   ]);
 
   // 未保存の変更があるか判定（タグ変更も含む）

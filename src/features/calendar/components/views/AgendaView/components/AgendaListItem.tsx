@@ -27,17 +27,15 @@ interface AgendaListItemProps {
  */
 export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemProps) {
   const t = useTranslations('calendar');
-  const { addPlanTag, removePlanTag } = usePlanTags();
+  const { setPlanTags } = usePlanTags();
   const { formatTime: formatTimeWithSettings } = useDateFormat();
   const { getTagsByIds } = useTagsMap();
 
   // プランの実際のIDを取得（繰り返しプランの場合はcalendarIdを使用）
   const planId = plan.calendarId ?? plan.id;
 
-  // 選択中のタグID
-  const selectedTagIds = useMemo(() => {
-    return plan.tagId ? [plan.tagId] : [];
-  }, [plan.tagId]);
+  // 選択中のタグID（単一）
+  const selectedTagId = plan.tagId ?? null;
 
   // Record判定
   const isRecord = plan.type === 'record';
@@ -51,22 +49,12 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
     onContextMenu?.(plan, e);
   };
 
-  // タグの変更ハンドラー
-  const handleTagsChange = useCallback(
-    async (newTagIds: string[]) => {
-      const currentTagIds = selectedTagIds;
-      const addedTagIds = newTagIds.filter((id) => !currentTagIds.includes(id));
-      const removedTagIds = currentTagIds.filter((id) => !newTagIds.includes(id));
-
-      for (const tagId of addedTagIds) {
-        await addPlanTag(planId, tagId);
-      }
-
-      for (const tagId of removedTagIds) {
-        await removePlanTag(planId, tagId);
-      }
+  // タグの変更ハンドラー（単一タグ）
+  const handleTagChange = useCallback(
+    async (newTagId: string | null) => {
+      await setPlanTags(planId, newTagId ? [newTagId] : []);
     },
-    [planId, selectedTagIds, addPlanTag, removePlanTag],
+    [planId, setPlanTags],
   );
 
   // 時間表示（開始 - 終了）
@@ -75,9 +63,12 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
   const displayTime =
     startTime && endTime ? `${startTime} - ${endTime}` : startTime || t('event.allDay');
 
-  // タグの表示
-  const tags = getTagsByIds(selectedTagIds);
-  const displayTags = tags.slice(0, 2);
+  // タグの表示（単一タグ）
+  const tag = useMemo(() => {
+    if (!selectedTagId) return null;
+    const tags = getTagsByIds([selectedTagId]);
+    return tags[0] ?? null;
+  }, [selectedTagId, getTagsByIds]);
 
   return (
     <div
@@ -128,29 +119,21 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
         onClick={(e) => e.stopPropagation()}
         onKeyDown={(e) => e.stopPropagation()}
       >
-        {displayTags.length > 0 ? (
-          <>
-            {displayTags.map((tag) => (
-              <span
-                key={tag.id}
-                className="inline-flex max-w-16 items-center truncate rounded px-1.5 py-0.5 text-xs"
-                style={{
-                  backgroundColor: tag.color ? `${tag.color}20` : undefined,
-                  color: tag.color || undefined,
-                }}
-                title={tag.name}
-              >
-                {tag.name}
-              </span>
-            ))}
-            {tags.length > 2 && (
-              <span className="text-muted-foreground text-xs">+{tags.length - 2}</span>
-            )}
-          </>
+        {tag ? (
+          <span
+            className="inline-flex max-w-16 items-center truncate rounded px-1.5 py-0.5 text-xs"
+            style={{
+              backgroundColor: tag.color ? `${tag.color}20` : undefined,
+              color: tag.color || undefined,
+            }}
+            title={tag.name}
+          >
+            {tag.name}
+          </span>
         ) : (
           <TagSelectCombobox
-            selectedTagIds={selectedTagIds}
-            onTagsChange={handleTagsChange}
+            selectedTagId={selectedTagId}
+            onTagChange={handleTagChange}
             align="end"
             side="bottom"
           >

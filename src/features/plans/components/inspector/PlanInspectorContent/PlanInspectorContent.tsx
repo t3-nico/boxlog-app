@@ -41,9 +41,8 @@ export function PlanInspectorContent() {
     hasNext,
     goToPrevious,
     goToNext,
-    selectedTagIds,
-    handleTagsChange,
-    handleRemoveTag,
+    selectedTagId,
+    handleTagChange,
     titleRef,
     scheduleDate,
     startTime,
@@ -141,7 +140,7 @@ export function PlanInspectorContent() {
           startTime={startTime}
           endTime={endTime}
           reminderMinutes={reminderMinutes}
-          selectedTagIds={selectedTagIds}
+          selectedTagId={selectedTagId}
           recurrenceRule={
             isDraftMode
               ? null
@@ -169,8 +168,7 @@ export function PlanInspectorContent() {
           onStartTimeChange={handleStartTimeChange}
           onEndTimeChange={handleEndTimeChange}
           onReminderChange={handleReminderChange}
-          onTagsChange={handleTagsChange}
-          onRemoveTag={handleRemoveTag}
+          onTagChange={handleTagChange}
           onRepeatTypeChange={(type) => {
             if (!planId) return;
             updatePlan.mutate({

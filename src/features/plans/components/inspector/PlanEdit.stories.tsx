@@ -121,7 +121,7 @@ function EditFooter({ status }: { status: 'open' | 'closed' }) {
 
 function PlanEditStory({
   plan,
-  initialTagIds = [],
+  initialTagId = null as string | null,
   initialScheduleDate,
   initialStartTime = '',
   initialEndTime = '',
@@ -129,7 +129,7 @@ function PlanEditStory({
   timeConflictError = false,
 }: {
   plan: Plan;
-  initialTagIds?: string[];
+  initialTagId?: string | null;
   initialScheduleDate?: Date;
   initialStartTime?: string;
   initialEndTime?: string;
@@ -137,7 +137,7 @@ function PlanEditStory({
   timeConflictError?: boolean;
 }) {
   const titleRef = useRef<HTMLInputElement | null>(null);
-  const [tagIds, setTagIds] = useState(initialTagIds);
+  const [tagId, setTagId] = useState<string | null>(initialTagId);
   const [scheduleDate, setScheduleDate] = useState<Date | undefined>(initialScheduleDate);
   const [startTime, setStartTime] = useState(initialStartTime);
   const [endTime, setEndTime] = useState(initialEndTime);
@@ -161,7 +161,7 @@ function PlanEditStory({
           startTime={startTime}
           endTime={endTime}
           reminderMinutes={reminderMinutes}
-          selectedTagIds={tagIds}
+          selectedTagId={tagId}
           recurrenceRule={null}
           recurrenceType={null}
           timeConflictError={timeConflictError}
@@ -170,8 +170,7 @@ function PlanEditStory({
           onStartTimeChange={setStartTime}
           onEndTimeChange={setEndTime}
           onReminderChange={setReminderMinutes}
-          onTagsChange={setTagIds}
-          onRemoveTag={(id) => setTagIds((prev) => prev.filter((t) => t !== id))}
+          onTagChange={setTagId}
           onRepeatTypeChange={noop}
           onRecurrenceRuleChange={noop}
           isDraftMode={false}
@@ -192,7 +191,7 @@ export const Edit: Story = {
   render: () => (
     <PlanEditStory
       plan={filledPlan}
-      initialTagIds={['tag-1']}
+      initialTagId="tag-1"
       initialScheduleDate={new Date('2024-01-15')}
       initialStartTime="10:00"
       initialEndTime="11:00"
@@ -206,7 +205,7 @@ export const Completed: Story = {
   render: () => (
     <PlanEditStory
       plan={completedPlan}
-      initialTagIds={['tag-1', 'tag-2']}
+      initialTagId="tag-1"
       initialScheduleDate={new Date('2024-01-15')}
       initialStartTime="10:00"
       initialEndTime="11:00"
@@ -220,7 +219,7 @@ export const TimeConflict: Story = {
   render: () => (
     <PlanEditStory
       plan={filledPlan}
-      initialTagIds={['tag-1']}
+      initialTagId="tag-1"
       initialScheduleDate={new Date('2024-01-15')}
       initialStartTime="10:00"
       initialEndTime="11:00"
@@ -259,7 +258,7 @@ export const AllPatterns: Story = {
     <div className="flex flex-col items-start gap-6">
       <PlanEditStory
         plan={filledPlan}
-        initialTagIds={['tag-1']}
+        initialTagId="tag-1"
         initialScheduleDate={new Date('2024-01-15')}
         initialStartTime="10:00"
         initialEndTime="11:00"
@@ -267,7 +266,7 @@ export const AllPatterns: Story = {
       />
       <PlanEditStory
         plan={completedPlan}
-        initialTagIds={['tag-1', 'tag-2']}
+        initialTagId="tag-1"
         initialScheduleDate={new Date('2024-01-15')}
         initialStartTime="10:00"
         initialEndTime="11:00"
@@ -275,7 +274,7 @@ export const AllPatterns: Story = {
       />
       <PlanEditStory
         plan={filledPlan}
-        initialTagIds={['tag-1']}
+        initialTagId="tag-1"
         initialScheduleDate={new Date('2024-01-15')}
         initialStartTime="10:00"
         initialEndTime="11:00"

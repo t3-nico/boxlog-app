@@ -43,7 +43,7 @@ interface PlanInspectorDetailsTabProps {
   startTime: string;
   endTime: string;
   reminderMinutes: number | null;
-  selectedTagIds: string[];
+  selectedTagId: string | null;
   recurrenceRule: string | null;
   recurrenceType: RecurrenceType;
   timeConflictError?: boolean;
@@ -52,8 +52,7 @@ interface PlanInspectorDetailsTabProps {
   onStartTimeChange: (time: string) => void;
   onEndTimeChange: (time: string) => void;
   onReminderChange: (minutes: number | null) => void;
-  onTagsChange: (tagIds: string[]) => void;
-  onRemoveTag: (tagId: string) => void;
+  onTagChange: (tagId: string | null) => void;
   onRepeatTypeChange: (type: string) => void;
   onRecurrenceRuleChange: (rrule: string | null) => void;
   isDraftMode?: boolean;
@@ -73,7 +72,7 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   startTime,
   endTime,
   reminderMinutes,
-  selectedTagIds,
+  selectedTagId,
   recurrenceRule,
   recurrenceType,
   timeConflictError = false,
@@ -82,7 +81,7 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   onStartTimeChange,
   onEndTimeChange,
   onReminderChange,
-  onTagsChange,
+  onTagChange,
   onRepeatTypeChange,
   onRecurrenceRuleChange,
   isDraftMode = false,
@@ -110,11 +109,11 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   const showFulfillment = entryState !== 'upcoming' && onFulfillmentChange;
 
   const handleSuggestionSelect = useCallback(
-    (entry: { title: string; tagIds: string[] }) => {
+    (entry: { title: string; tagId: string | null }) => {
       onAutoSave('title', entry.title);
-      onTagsChange(entry.tagIds);
+      onTagChange(entry.tagId);
     },
-    [onAutoSave, onTagsChange],
+    [onAutoSave, onTagChange],
   );
 
   return (
@@ -152,8 +151,8 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
       options={
         <>
           <TagsIconButton
-            tagIds={selectedTagIds}
-            onTagsChange={onTagsChange}
+            tagId={selectedTagId}
+            onTagChange={onTagChange}
             popoverSide="bottom"
             {...(availableTags ? { availableTags } : {})}
           />

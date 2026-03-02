@@ -9,15 +9,16 @@ import { TagSelectCombobox } from '@/components/tags/TagSelectCombobox';
 import { Badge } from '@/components/ui/badge';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { useTags } from '@/hooks/useTagsQuery';
+import { getTagDisplayLabel } from '@/lib/tag-colon';
 import { cn } from '@/lib/utils';
 
 import type { Tag as TagType } from '@/core/types/tag';
 
 interface TagsIconButtonProps {
-  /** 選択されているタグIDの配列 */
-  tagIds: string[];
+  /** 選択されているタグID（単一） */
+  tagId: string | null;
   /** タグ変更時のコールバック */
-  onTagsChange: (tagIds: string[]) => void;
+  onTagChange: (tagId: string | null) => void;
   /** Popoverの表示位置 */
   popoverSide?: 'top' | 'bottom';
   /** Inspector内で使う場合にtrue（z-overlay-popoverを適用） */
@@ -27,15 +28,13 @@ interface TagsIconButtonProps {
 }
 
 /**
- * タグインライン表示 + アイコンボタン
+ * タグインライン表示 + アイコンボタン（単一タグ）
  *
- * Row 3用。選択済みタグをBadgeで表示し、
- * - タグあり: Tagアイコンクリックで追加Popover
- * - タグなし: "タグを追加..."テキストクリックで追加Popover
+ * 選択済みタグをBadgeで表示し、Tagアイコンで追加/変更Popover
  */
 export function TagsIconButton({
-  tagIds,
-  onTagsChange,
+  tagId,
+  onTagChange,
   popoverSide = 'bottom',
   isOverlay = true,
   availableTags,
@@ -45,32 +44,27 @@ export function TagsIconButton({
   const allTags = availableTags ?? fetchedTags;
 
   // 選択済みタグ
-  const selectedTags = useMemo(() => {
-    return tagIds
-      .map((id) => allTags.find((tag) => tag.id === id))
-      .filter((tag): tag is NonNullable<typeof tag> => tag !== undefined);
-  }, [tagIds, allTags]);
-
-  const handleRemoveTag = (tagId: string) => {
-    onTagsChange(tagIds.filter((id) => id !== tagId));
-  };
+  const selectedTag = useMemo(() => {
+    if (!tagId) return null;
+    return allTags.find((tag) => tag.id === tagId) ?? null;
+  }, [tagId, allTags]);
 
   return (
     <div className="flex flex-wrap items-center gap-1">
       {/* 選択済みタグ（Badge表示） */}
-      {selectedTags.map((tag) => (
-        <HoverTooltip key={tag.id} content={tag.name} side="top" disabled={false}>
+      {selectedTag && (
+        <HoverTooltip content={selectedTag.name} side="top" disabled={false}>
           <Badge
             variant="outline"
-            style={{ borderColor: tag.color || undefined }}
+            style={{ borderColor: selectedTag.color || undefined }}
             className="h-7 gap-1 bg-transparent text-xs font-normal"
           >
-            {tag.name}
+            {getTagDisplayLabel(selectedTag.name)}
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                handleRemoveTag(tag.id);
+                onTagChange(null);
               }}
               className="hover:bg-state-hover text-muted-foreground hover:text-foreground -mr-1 rounded p-0.5 transition-colors"
             >
@@ -78,13 +72,13 @@ export function TagsIconButton({
             </button>
           </Badge>
         </HoverTooltip>
-      ))}
+      )}
 
       {/* タグ追加ボタン */}
       <HoverTooltip content={t('plan.inspector.tags.add')} side="top">
         <TagSelectCombobox
-          selectedTagIds={tagIds}
-          onTagsChange={onTagsChange}
+          selectedTagId={tagId}
+          onTagChange={onTagChange}
           side={popoverSide}
           sideOffset={8}
           isOverlay={isOverlay}

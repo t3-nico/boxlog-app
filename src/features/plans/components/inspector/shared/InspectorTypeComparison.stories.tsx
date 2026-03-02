@@ -122,7 +122,7 @@ interface FormStyleProps {
 // ---------------------------------------------------------------------------
 
 function PlanForm({ typeLabel, variant, titleAccent }: FormStyleProps) {
-  const [tagIds, setTagIds] = useState(['tag-1']);
+  const [tagId, setTagId] = useState<string | null>('tag-1');
   const [scheduleDate, setScheduleDate] = useState<Date | undefined>(new Date('2024-01-15'));
   const [startTime, setStartTime] = useState('10:00');
   const [endTime, setEndTime] = useState('11:00');
@@ -163,8 +163,8 @@ function PlanForm({ typeLabel, variant, titleAccent }: FormStyleProps) {
         {/* Row 3: オプション（Plan固有: Records, Recurrence, Reminder） */}
         <div className="flex flex-wrap items-center gap-1 px-4 pt-2 pb-4">
           <TagsIconButton
-            tagIds={tagIds}
-            onTagsChange={setTagIds}
+            tagId={tagId}
+            onTagChange={setTagId}
             popoverSide="bottom"
             availableTags={mockTags}
           />
@@ -187,7 +187,7 @@ function PlanForm({ typeLabel, variant, titleAccent }: FormStyleProps) {
 // ---------------------------------------------------------------------------
 
 function RecordForm({ typeLabel, variant, titleAccent }: FormStyleProps) {
-  const [tagIds, setTagIds] = useState(['tag-1']);
+  const [tagId, setTagId] = useState<string | null>('tag-1');
   const [scheduleDate, setScheduleDate] = useState<Date | undefined>(new Date('2024-01-15'));
   const [startTime, setStartTime] = useState('09:00');
   const [endTime, setEndTime] = useState('12:00');
@@ -228,8 +228,8 @@ function RecordForm({ typeLabel, variant, titleAccent }: FormStyleProps) {
         {/* Row 3: オプション（Record固有: Plan紐付け, 充実度） */}
         <div className="flex flex-wrap items-center gap-1 px-4 pt-2 pb-4">
           <TagsIconButton
-            tagIds={tagIds}
-            onTagsChange={setTagIds}
+            tagId={tagId}
+            onTagChange={setTagId}
             popoverSide="bottom"
             availableTags={mockTags}
           />

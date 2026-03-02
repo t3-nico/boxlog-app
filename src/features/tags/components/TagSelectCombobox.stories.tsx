@@ -91,24 +91,26 @@ const mockTags: Tag[] = [
 // Interactive Wrapper
 // ─────────────────────────────────────────────────────────
 
-function TagSelectStory({ initialSelectedIds = [] }: { initialSelectedIds?: string[] }) {
-  const [selectedTagIds, setSelectedTagIds] = useState<string[]>(initialSelectedIds);
+function TagSelectStory({
+  initialSelectedId = null as string | null,
+}: {
+  initialSelectedId?: string | null;
+}) {
+  const [selectedTagId, setSelectedTagId] = useState<string | null>(initialSelectedId);
 
   return (
     <div className="space-y-2">
       <TagSelectCombobox
-        selectedTagIds={selectedTagIds}
-        onTagsChange={setSelectedTagIds}
+        selectedTagId={selectedTagId}
+        onTagChange={setSelectedTagId}
         availableTags={mockTags}
       >
         <Button variant="outline" size="sm" className="gap-2">
           <Tags className="size-4" />
-          タグを選択 ({selectedTagIds.length})
+          タグを選択 {selectedTagId ? '(1)' : '(0)'}
         </Button>
       </TagSelectCombobox>
-      <p className="text-muted-foreground text-xs">
-        選択中: {selectedTagIds.length > 0 ? selectedTagIds.join(', ') : 'なし'}
-      </p>
+      <p className="text-muted-foreground text-xs">選択中: {selectedTagId ?? 'なし'}</p>
     </div>
   );
 }
@@ -123,8 +125,8 @@ export const Default: Story = {
 };
 
 /** 選択済み状態 */
-export const WithSelectedTags: Story = {
-  render: () => <TagSelectStory initialSelectedIds={['parent-1', 'tag-study']} />,
+export const WithSelectedTag: Story = {
+  render: () => <TagSelectStory initialSelectedId="parent-1" />,
 };
 
 /** 全パターン一覧 */
@@ -132,8 +134,8 @@ export const AllPatterns: Story = {
   render: () => (
     <div className="flex flex-col items-start gap-6">
       <TagSelectStory />
-      <TagSelectStory initialSelectedIds={['parent-1', 'tag-study']} />
-      <TagSelectStory initialSelectedIds={['child-1', 'child-2']} />
+      <TagSelectStory initialSelectedId="parent-1" />
+      <TagSelectStory initialSelectedId="tag-study" />
     </div>
   ),
 };

@@ -205,7 +205,7 @@ function EditFooter({ status }: { status: 'open' | 'closed' }) {
 function PlanFormStory({
   plan,
   isDraftMode = false,
-  initialTagIds = [],
+  initialTagId = null as string | null,
   initialScheduleDate,
   initialStartTime = '',
   initialEndTime = '',
@@ -214,7 +214,7 @@ function PlanFormStory({
 }: {
   plan: Plan;
   isDraftMode?: boolean;
-  initialTagIds?: string[];
+  initialTagId?: string | null;
   initialScheduleDate?: Date;
   initialStartTime?: string;
   initialEndTime?: string;
@@ -222,7 +222,7 @@ function PlanFormStory({
   timeConflictError?: boolean;
 }) {
   const titleRef = useRef<HTMLInputElement | null>(null);
-  const [tagIds, setTagIds] = useState(initialTagIds);
+  const [tagId, setTagId] = useState<string | null>(initialTagId);
   const [scheduleDate, setScheduleDate] = useState<Date | undefined>(initialScheduleDate);
   const [startTime, setStartTime] = useState(initialStartTime);
   const [endTime, setEndTime] = useState(initialEndTime);
@@ -239,7 +239,7 @@ function PlanFormStory({
           startTime={startTime}
           endTime={endTime}
           reminderMinutes={reminderMinutes}
-          selectedTagIds={tagIds}
+          selectedTagId={tagId}
           recurrenceRule={null}
           recurrenceType={null}
           timeConflictError={timeConflictError}
@@ -248,8 +248,7 @@ function PlanFormStory({
           onStartTimeChange={setStartTime}
           onEndTimeChange={setEndTime}
           onReminderChange={setReminderMinutes}
-          onTagsChange={setTagIds}
-          onRemoveTag={(id) => setTagIds((prev) => prev.filter((t) => t !== id))}
+          onTagChange={setTagId}
           onRepeatTypeChange={() => {}}
           onRecurrenceRuleChange={() => {}}
           isDraftMode={isDraftMode}
@@ -289,7 +288,7 @@ export const PlanCreateFilled: Story = {
         description: '<p>週次の進捗確認</p>',
       }}
       isDraftMode
-      initialTagIds={['tag-1', 'tag-2']}
+      initialTagId="tag-1"
       initialScheduleDate={new Date('2024-01-15')}
       initialStartTime="10:00"
       initialEndTime="11:00"
@@ -303,7 +302,7 @@ export const PlanEdit: Story = {
   render: () => (
     <PlanFormStory
       plan={filledPlan}
-      initialTagIds={['tag-1']}
+      initialTagId="tag-1"
       initialScheduleDate={new Date('2024-01-15')}
       initialStartTime="10:00"
       initialEndTime="11:00"
@@ -317,7 +316,7 @@ export const PlanEditCompleted: Story = {
   render: () => (
     <PlanFormStory
       plan={completedPlan}
-      initialTagIds={['tag-1', 'tag-2']}
+      initialTagId="tag-1"
       initialScheduleDate={new Date('2024-01-15')}
       initialStartTime="10:00"
       initialEndTime="11:00"
@@ -331,7 +330,7 @@ export const TimeConflict: Story = {
   render: () => (
     <PlanFormStory
       plan={filledPlan}
-      initialTagIds={['tag-1']}
+      initialTagId="tag-1"
       initialScheduleDate={new Date('2024-01-15')}
       initialStartTime="10:00"
       initialEndTime="11:00"
@@ -359,7 +358,7 @@ export const AllPatterns: Story = {
           description: '<p>週次の進捗確認</p>',
         }}
         isDraftMode
-        initialTagIds={['tag-1', 'tag-2']}
+        initialTagId="tag-1"
         initialScheduleDate={new Date('2024-01-15')}
         initialStartTime="10:00"
         initialEndTime="11:00"
@@ -367,7 +366,7 @@ export const AllPatterns: Story = {
       />
       <PlanFormStory
         plan={filledPlan}
-        initialTagIds={['tag-1']}
+        initialTagId="tag-1"
         initialScheduleDate={new Date('2024-01-15')}
         initialStartTime="10:00"
         initialEndTime="11:00"
@@ -375,7 +374,7 @@ export const AllPatterns: Story = {
       />
       <PlanFormStory
         plan={completedPlan}
-        initialTagIds={['tag-1', 'tag-2']}
+        initialTagId="tag-1"
         initialScheduleDate={new Date('2024-01-15')}
         initialStartTime="10:00"
         initialEndTime="11:00"
@@ -383,7 +382,7 @@ export const AllPatterns: Story = {
       />
       <PlanFormStory
         plan={filledPlan}
-        initialTagIds={['tag-1']}
+        initialTagId="tag-1"
         initialScheduleDate={new Date('2024-01-15')}
         initialStartTime="10:00"
         initialEndTime="11:00"

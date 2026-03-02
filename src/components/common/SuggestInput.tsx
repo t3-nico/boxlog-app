@@ -35,7 +35,7 @@ const TITLE_MAX_LENGTH = 200;
 
 interface SuggestionEntry {
   title: string;
-  tagIds: string[];
+  tagId: string | null;
 }
 
 interface SuggestInputProps {
@@ -134,7 +134,7 @@ export const SuggestInput = forwardRef<HTMLInputElement, SuggestInputProps>(func
       const entry = suggestions?.find((s) => s.title === title);
       if (entry) {
         setLocalValue(entry.title);
-        onSuggestionSelect({ title: entry.title, tagIds: entry.tagIds });
+        onSuggestionSelect({ title: entry.title, tagId: entry.tagIds[0] ?? null });
       }
       setIsOpen(false);
       justSelectedRef.current = true;
@@ -231,28 +231,20 @@ export const SuggestInput = forwardRef<HTMLInputElement, SuggestInputProps>(func
                   className="flex items-center justify-between gap-2"
                 >
                   <span className="truncate font-medium">{entry.title}</span>
-                  {entry.tagIds.length > 0 && (
-                    <span className="flex shrink-0 items-center gap-1">
-                      {entry.tagIds.slice(0, 3).map((tagId) => {
-                        const tag = tagMap.get(tagId);
-                        if (!tag) return null;
-                        return (
-                          <span
-                            key={tagId}
-                            className="text-muted-foreground rounded border px-1.5 py-0.5 text-[10px]"
-                            style={{ borderColor: tag.color || undefined }}
-                          >
-                            {tag.name}
-                          </span>
-                        );
-                      })}
-                      {entry.tagIds.length > 3 && (
-                        <span className="text-muted-foreground text-[10px]">
-                          +{entry.tagIds.length - 3}
-                        </span>
-                      )}
-                    </span>
-                  )}
+                  {(() => {
+                    const firstTagId = entry.tagIds[0];
+                    if (!firstTagId) return null;
+                    const tag = tagMap.get(firstTagId);
+                    if (!tag) return null;
+                    return (
+                      <span
+                        className="text-muted-foreground shrink-0 rounded border px-1.5 py-0.5 text-[10px]"
+                        style={{ borderColor: tag.color || undefined }}
+                      >
+                        {tag.name}
+                      </span>
+                    );
+                  })()}
                 </CommandItem>
               ))}
             </CommandGroup>
