@@ -18,7 +18,12 @@ import { format } from 'date-fns';
 
 import { FeatureErrorBoundary } from '@/components/error-boundary';
 import type { CalendarViewType } from '@/features/calendar';
-import { CalendarController, useCalendarLayout, useCalendarNavigation } from '@/features/calendar';
+import {
+  CalendarController,
+  CalendarProvider,
+  useCalendarLayout,
+  useCalendarNavigation,
+} from '@/features/calendar';
 import { logger } from '@/lib/logger';
 
 import { useCalendarComposition } from '../_composition/useCalendarComposition';
@@ -88,6 +93,16 @@ export function CalendarViewClient({ view, initialDate, translations }: Calendar
     changeView,
   });
 
+  // Context value: composition result + navigation state
+  const calendarValue = useMemo(
+    () => ({
+      viewType,
+      currentDate,
+      ...composition,
+    }),
+    [viewType, currentDate, composition],
+  );
+
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <FeatureErrorBoundary
@@ -112,7 +127,9 @@ export function CalendarViewClient({ view, initialDate, translations }: Calendar
           </div>
         }
       >
-        <CalendarController viewType={viewType} currentDate={currentDate} {...composition} />
+        <CalendarProvider value={calendarValue}>
+          <CalendarController />
+        </CalendarProvider>
       </FeatureErrorBoundary>
     </div>
   );

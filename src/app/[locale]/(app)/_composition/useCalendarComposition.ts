@@ -9,7 +9,7 @@
  * @see /docs/architecture/grand-design.md
  */
 
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 import { addHours, startOfHour } from 'date-fns';
 
@@ -300,50 +300,81 @@ export function useCalendarComposition({
   }, []);
 
   // =========================================================================
-  // Return composition result
+  // Return composition result（useMemoでContext value安定化）
   // =========================================================================
-  return {
-    // Data
-    viewDateRange,
-    filteredEvents,
-    allCalendarPlans,
+  return useMemo(
+    () => ({
+      // Data
+      viewDateRange,
+      filteredEvents,
+      allCalendarPlans,
 
-    // Settings
-    showWeekends,
+      // Settings
+      showWeekends,
 
-    // Plan state
-    disabledPlanId,
+      // Plan state
+      disabledPlanId,
 
-    // Aside
-    currentAside,
-    onAsideChange: setCurrentAside,
+      // Aside
+      currentAside,
+      onAsideChange: setCurrentAside,
 
-    // Plan click handlers
-    onPlanClick: handlePlanClick,
-    onCreatePlan: handleCreatePlan,
-    onEmptyClick: handleEmptyClick,
-    onTimeRangeSelect: handleDateTimeRangeSelect,
+      // Plan click handlers
+      onPlanClick: handlePlanClick,
+      onCreatePlan: handleCreatePlan,
+      onEmptyClick: handleEmptyClick,
+      onTimeRangeSelect: handleDateTimeRangeSelect,
 
-    // Plan CRUD
-    onUpdatePlan: handleUpdatePlan,
-    onDeletePlan: deletePlan,
-    onRestorePlan: handlePlanRestore,
+      // Plan CRUD
+      onUpdatePlan: handleUpdatePlan,
+      onDeletePlan: deletePlan,
+      onRestorePlan: handlePlanRestore,
 
-    // Context menu actions
-    onEditPlan: handleEditPlan,
-    onDeletePlanConfirm: handleDeletePlanConfirm,
-    onDuplicatePlan: handleDuplicatePlan,
-    onCopyPlan: handleCopyPlan,
-    onCompletePlan: handleCompletePlan,
-    onCompleteWithRecord: handleCompleteWithRecord,
+      // Context menu actions
+      onEditPlan: handleEditPlan,
+      onDeletePlanConfirm: handleDeletePlanConfirm,
+      onDuplicatePlan: handleDuplicatePlan,
+      onCopyPlan: handleCopyPlan,
+      onCompletePlan: handleCompletePlan,
+      onCompleteWithRecord: handleCompleteWithRecord,
 
-    // Navigation handlers
-    onNavigate: handleNavigate,
-    onViewChange: handleViewChange,
-    onNavigatePrev: handleNavigatePrev,
-    onNavigateNext: handleNavigateNext,
-    onNavigateToday: handleNavigateToday,
-    onToggleWeekends: handleToggleWeekends,
-    onDateSelect: handleDateSelect,
-  };
+      // Navigation handlers
+      onNavigate: handleNavigate,
+      onViewChange: handleViewChange,
+      onNavigatePrev: handleNavigatePrev,
+      onNavigateNext: handleNavigateNext,
+      onNavigateToday: handleNavigateToday,
+      onToggleWeekends: handleToggleWeekends,
+      onDateSelect: handleDateSelect,
+    }),
+    [
+      viewDateRange,
+      filteredEvents,
+      allCalendarPlans,
+      showWeekends,
+      disabledPlanId,
+      currentAside,
+      setCurrentAside,
+      handlePlanClick,
+      handleCreatePlan,
+      handleEmptyClick,
+      handleDateTimeRangeSelect,
+      handleUpdatePlan,
+      deletePlan,
+      handlePlanRestore,
+      handleEditPlan,
+      handleDeletePlanConfirm,
+      handleDuplicatePlan,
+      handleCopyPlan,
+      handleCompletePlan,
+      handleCompleteWithRecord,
+      handleNavigate,
+      handleViewChange,
+      handleNavigatePrev,
+      handleNavigateNext,
+      handleNavigateToday,
+      handleToggleWeekends,
+      handleDateSelect,
+    ],
+  );
 }

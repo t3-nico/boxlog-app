@@ -90,6 +90,8 @@ export type { ItemType } from '@/stores/useCalendarFilterStore';
 // =============================================================================
 // Contexts
 // =============================================================================
+export { CalendarProvider, useCalendar } from './contexts/CalendarContext';
+export type { CalendarContextValue } from './contexts/CalendarContext';
 export {
   CalendarNavigationProvider,
   useCalendarNavigation,
