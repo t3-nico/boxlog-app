@@ -7,7 +7,7 @@ import { getInstanceRef } from '@/lib/instance-id';
 import { logger } from '@/lib/logger';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
-import { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmStore';
+import { closeModal, useModalStore } from '@/stores/useModalStore';
 
 import type { CalendarPlan, CalendarViewType } from '../../../types/calendar.types';
 
@@ -32,8 +32,8 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
   const handlePlanClick = useCallback(
     (plan: CalendarPlan) => {
       // ドラッグ操作で開いたダイアログが残っている場合は閉じる
-      const { closeDialog } = useRecurringEditConfirmStore.getState();
-      closeDialog();
+      const modal = useModalStore.getState().modal;
+      if (modal?.type === 'recurringEdit') closeModal();
 
       // 繰り返しインスタンスの場合は親エントリIDを使用
       const entryIdToOpen = plan.calendarId ?? plan.id;

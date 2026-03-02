@@ -11,7 +11,7 @@ import { CACHE_5_MINUTES } from '@/constants/time';
 import { StatusBarItem } from '../StatusBarItem';
 
 import { api } from '@/lib/trpc';
-import { useSettingsModalStore } from '@/stores/useSettingsModalStore';
+import { openSettingsModal } from '@/stores/useModalStore';
 import {
   CHRONOTYPE_PRESETS,
   getChronotypeColor,
@@ -29,7 +29,6 @@ import {
  */
 export function ChronotypeStatusItem() {
   const [currentTime, setCurrentTime] = useState(() => new Date());
-  const openModal = useSettingsModalStore((state) => state.openModal);
   const t = useTranslations('calendar');
 
   // DBから直接クロノタイプ設定を取得
@@ -117,19 +116,16 @@ export function ChronotypeStatusItem() {
 
   // クリック時: 設定モーダルを開く
   const handleClick = useCallback(() => {
-    openModal('personalization');
-  }, [openModal]);
+    openSettingsModal('personalization');
+  }, []);
 
   // キーボード操作
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        openModal('personalization');
-      }
-    },
-    [openModal],
-  );
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      openSettingsModal('personalization');
+    }
+  }, []);
 
   // ラベル生成（ゾーン名のみ）
   const label = useMemo(() => {

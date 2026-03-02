@@ -1,6 +1,6 @@
 'use client';
 
-import { useTagCreateModalStore } from '@/stores/useTagCreateModalStore';
+import { closeModal as closeModalAction, useModalStore } from '@/stores/useModalStore';
 import { useCreateTag, useTags } from '../hooks';
 import { TagCreateModal } from './tag-create-modal';
 
@@ -9,11 +9,12 @@ import type { CreateTagInput } from '../types';
 /**
  * グローバルに配置するタグ作成モーダル
  *
- * providers.tsxで配置し、どこからでもuseTagCreateModalStore.openModal()で開ける
+ * providers.tsxで配置し、どこからでもopenTagCreateModal()で開ける
  */
 export function GlobalTagCreateModal() {
-  const isOpen = useTagCreateModalStore((state) => state.isOpen);
-  const closeModal = useTagCreateModalStore((state) => state.closeModal);
+  const modal = useModalStore((state) => state.modal);
+  const isOpen = modal?.type === 'tagCreate';
+  const handleClose = closeModalAction;
   const createTagMutation = useCreateTag();
   const { data: existingTags } = useTags();
 
@@ -36,5 +37,5 @@ export function GlobalTagCreateModal() {
     });
   };
 
-  return <TagCreateModal isOpen={isOpen} onClose={closeModal} onSave={handleCreateTag} />;
+  return <TagCreateModal isOpen={isOpen} onClose={handleClose} onSave={handleCreateTag} />;
 }

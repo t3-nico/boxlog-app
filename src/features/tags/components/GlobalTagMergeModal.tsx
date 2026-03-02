@@ -1,17 +1,17 @@
 'use client';
 
-import { useTagMergeModalStore } from '@/stores/useTagMergeModalStore';
+import { closeModal, useModalStore } from '@/stores/useModalStore';
 import { TagMergeModal } from './tag-merge-modal';
 
 /**
  * グローバルに配置するタグマージモーダル
  *
- * providers.tsxで配置し、どこからでもuseTagMergeModalStore.openModal()で開ける
+ * providers.tsxで配置し、どこからでもopenTagMergeModal()で開ける
  */
 export function GlobalTagMergeModal() {
-  const isOpen = useTagMergeModalStore((state) => state.isOpen);
-  const sourceTag = useTagMergeModalStore((state) => state.sourceTag);
-  const closeModal = useTagMergeModalStore((state) => state.closeModal);
+  const modal = useModalStore((state) => state.modal);
+  const isOpen = modal?.type === 'tagMerge';
+  const sourceTag = isOpen ? modal.sourceTag : null;
 
   if (!sourceTag) return null;
 

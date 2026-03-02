@@ -5,18 +5,18 @@ import { useCallback, useRef } from 'react';
 import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
 import { getInstanceRef } from '@/lib/instance-id';
-import { useDeleteConfirmStore } from '@/stores/useDeleteConfirmStore';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
+import {
+  openDeleteConfirm,
+  openRecurringEditConfirm,
+  type RecurringEditScope,
+} from '@/stores/useModalStore';
 import { usePlanClipboardStore } from '@/stores/usePlanClipboardStore';
-import type { RecurringEditScope } from '@/stores/useRecurringEditConfirmStore';
-import { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmStore';
 import { toast } from 'sonner';
 import type { CalendarPlan } from '../types/calendar.types';
 
 export function usePlanContextActions() {
   const { openInspector, openInspectorWithDraft } = useEntryInspectorStore();
-  const openDeleteDialog = useDeleteConfirmStore((state) => state.openDialog);
-  const openRecurringDialog = useRecurringEditConfirmStore((state) => state.openDialog);
   const { deleteEntry } = useEntryMutations();
   const { applyDelete } = useRecurringScopeMutations();
 
@@ -50,17 +50,17 @@ export function usePlanContextActions() {
       // 繰り返しプランの場合はスコープ選択ダイアログを表示
       if (plan.isRecurring) {
         recurringDeleteTargetRef.current = plan;
-        openRecurringDialog(plan.title, 'delete', handleRecurringDeleteConfirm);
+        openRecurringEditConfirm(plan.title, 'delete', handleRecurringDeleteConfirm);
         return;
       }
 
       // 通常プラン: カスタム削除確認ダイアログを使用
       const planIdToDelete = plan.calendarId || plan.id;
-      openDeleteDialog(planIdToDelete, plan.title, async () => {
+      openDeleteConfirm(planIdToDelete, plan.title, async () => {
         await deleteEntry.mutateAsync({ id: planIdToDelete });
       });
     },
-    [deleteEntry, openDeleteDialog, openRecurringDialog, handleRecurringDeleteConfirm],
+    [deleteEntry, handleRecurringDeleteConfirm],
   );
 
   const handleEditPlan = useCallback(

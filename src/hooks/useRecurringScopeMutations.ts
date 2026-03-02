@@ -16,7 +16,7 @@ import { useCallback } from 'react';
 import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { usePlanInstanceMutations } from '@/hooks/usePlanInstances';
 import { api } from '@/lib/trpc';
-import type { RecurringEditScope } from '@/stores/useRecurringEditConfirmStore';
+import type { RecurringEditScope } from '@/stores/useModalStore';
 
 interface ApplyEditParams {
   scope: RecurringEditScope;

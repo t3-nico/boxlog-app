@@ -13,9 +13,8 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 
 import { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
 import { logger } from '@/lib/logger';
-import { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmStore';
+import { openRecurringEditConfirm, type RecurringEditScope } from '@/stores/useModalStore';
 import { isRecurringPlan } from '../../../utils/recurrence';
-import type { RecurringEditScope } from '../../RecurringEditConfirmDialog';
 
 import type { Plan } from '../../../types/plan';
 
@@ -37,9 +36,6 @@ interface UseRecurringPlanEditOptions {
 
 export function useRecurringPlanEdit({ plan, planId, instanceDate }: UseRecurringPlanEditOptions) {
   const { applyEdit } = useRecurringScopeMutations();
-
-  // グローバルダイアログストア
-  const openDialog = useRecurringEditConfirmStore((state) => state.openDialog);
 
   // 繰り返しインスタンスかどうか
   const isRecurringInstance = useMemo(() => {
@@ -130,9 +126,9 @@ export function useRecurringPlanEdit({ plan, planId, instanceDate }: UseRecurrin
       if (field !== undefined) {
         pendingFieldRef.current = { field, value };
       }
-      openDialog(plan?.title ?? '', 'edit', handleScopeConfirm);
+      openRecurringEditConfirm(plan?.title ?? '', 'edit', handleScopeConfirm);
     },
-    [plan?.title, openDialog, handleScopeConfirm],
+    [plan?.title, handleScopeConfirm],
   );
 
   /**

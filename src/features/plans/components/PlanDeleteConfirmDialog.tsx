@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { useTranslations } from 'next-intl';
 
-import { useDeleteConfirmStore } from '@/stores/useDeleteConfirmStore';
+import { closeModal, useModalStore } from '@/stores/useModalStore';
 
 /**
  * プラン削除確認ダイアログ
@@ -16,10 +16,12 @@ import { useDeleteConfirmStore } from '@/stores/useDeleteConfirmStore';
 export function PlanDeleteConfirmDialog() {
   const t = useTranslations();
 
-  const isOpen = useDeleteConfirmStore((state) => state.isOpen);
-  const planTitle = useDeleteConfirmStore((state) => state.planTitle);
-  const onConfirm = useDeleteConfirmStore((state) => state.onConfirm);
-  const closeDialog = useDeleteConfirmStore((state) => state.closeDialog);
+  const modal = useModalStore((state) => state.modal);
+  const isDeleteConfirm = modal?.type === 'deleteConfirm';
+  const isOpen = isDeleteConfirm;
+  const planTitle = isDeleteConfirm ? modal.planTitle : null;
+  const onConfirm = isDeleteConfirm ? modal.onConfirm : null;
+  const closeDialog = closeModal;
 
   const title = planTitle
     ? t('plan.delete.confirmTitleWithName', { name: planTitle })

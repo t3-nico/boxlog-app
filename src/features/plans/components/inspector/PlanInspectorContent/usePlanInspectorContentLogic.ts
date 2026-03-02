@@ -13,11 +13,15 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
 import { logger } from '@/lib/logger';
-import { useDeleteConfirmStore } from '@/stores/useDeleteConfirmStore';
 import { useEntryCacheStore } from '@/stores/useEntryCacheStore';
 import { useEntryInspectorStore, type DraftEntry } from '@/stores/useEntryInspectorStore';
-import { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmStore';
-import type { RecurringEditScope } from '../../../components/RecurringEditConfirmDialog';
+import {
+  closeModal,
+  openDeleteConfirm,
+  openRecurringEditConfirm,
+  useModalStore,
+  type RecurringEditScope,
+} from '@/stores/useModalStore';
 import { usePlan } from '../../../hooks/usePlan';
 import type { Plan } from '../../../types/plan';
 import { useInspectorAutoSave, useInspectorNavigation, useRecurringPlanEdit } from '../hooks';
@@ -53,29 +57,27 @@ export function usePlanInspectorContentLogic() {
   // ドラフトモード判定: draftEntryがあり、entryIdがない場合
   const isDraftMode = draftEntry !== null && entryId === null;
 
-  const openDeleteDialog = useDeleteConfirmStore((state) => state.openDialog);
-  const openRecurringDialog = useRecurringEditConfirmStore((state) => state.openDialog);
   const getCache = useEntryCacheStore((state) => state.getCache);
   const { applyDelete } = useRecurringScopeMutations();
 
   // Inspectorマウント時にグローバルダイアログをリセット
   useEffect(() => {
-    const { closeDialog } = useRecurringEditConfirmStore.getState();
-    closeDialog();
+    const modal = useModalStore.getState().modal;
+    if (modal?.type === 'recurringEdit') closeModal();
     const timer = setTimeout(() => {
-      const { closeDialog: close } = useRecurringEditConfirmStore.getState();
-      close();
+      const m = useModalStore.getState().modal;
+      if (m?.type === 'recurringEdit') closeModal();
     }, 50);
     return () => clearTimeout(timer);
   }, []);
 
   // entryIdが変わったときもリセット
   useEffect(() => {
-    const { closeDialog } = useRecurringEditConfirmStore.getState();
-    closeDialog();
+    const modal = useModalStore.getState().modal;
+    if (modal?.type === 'recurringEdit') closeModal();
     const timer = setTimeout(() => {
-      const { closeDialog: close } = useRecurringEditConfirmStore.getState();
-      close();
+      const m = useModalStore.getState().modal;
+      if (m?.type === 'recurringEdit') closeModal();
     }, 50);
     return () => clearTimeout(timer);
   }, [entryId]);
@@ -124,12 +126,11 @@ export function usePlanInspectorContentLogic() {
 
   // --- サブフック: タグ状態 ---
   const {
-    selectedTagIds,
-    selectedTagIdsRef,
-    originalTagIdsRef,
+    selectedTagId,
+    selectedTagIdRef,
+    originalTagIdRef,
     hasTagChanges,
-    handleTagsChange,
-    handleRemoveTag,
+    handleTagChange,
     setPlanTags,
   } = useInspectorTagState({
     planId: entryId,
@@ -165,8 +166,8 @@ export function usePlanInspectorContentLogic() {
   const { saveAndClose, cancelAndClose, hasPendingChanges } = useInspectorSaveClose({
     planId: entryId,
     hasTagChanges,
-    selectedTagIdsRef,
-    originalTagIdsRef,
+    selectedTagIdRef,
+    originalTagIdRef,
     setPlanTags: setPlanTags as unknown as (planId: string, tagIds: string[]) => Promise<void>,
     updatePlan,
     closeInspector,
@@ -224,7 +225,6 @@ export function usePlanInspectorContentLogic() {
     } else {
       setDraftRecordIds([]);
     }
-     
   }, [isDraftMode]);
 
   const handleDraftRecordIdsChange = useCallback((ids: string[]) => {
@@ -250,11 +250,11 @@ export function usePlanInspectorContentLogic() {
     if (!entryId) return;
 
     if (recurringEdit.isRecurringInstance) {
-      openRecurringDialog(plan?.title ?? '', 'delete', handleRecurringDeleteConfirm);
+      openRecurringEditConfirm(plan?.title ?? '', 'delete', handleRecurringDeleteConfirm);
       return;
     }
 
-    openDeleteDialog(entryId, plan?.title ?? null, async () => {
+    openDeleteConfirm(entryId, plan?.title ?? null, async () => {
       await deletePlan.mutateAsync({ id: entryId });
       closeInspector();
     });
@@ -262,8 +262,6 @@ export function usePlanInspectorContentLogic() {
     entryId,
     plan?.title,
     recurringEdit.isRecurringInstance,
-    openDeleteDialog,
-    openRecurringDialog,
     handleRecurringDeleteConfirm,
     deletePlan,
     closeInspector,
@@ -307,9 +305,8 @@ export function usePlanInspectorContentLogic() {
     goToNext,
 
     // Tags state
-    selectedTagIds,
-    handleTagsChange,
-    handleRemoveTag,
+    selectedTagId,
+    handleTagChange,
 
     // Draft Record IDs（ドラフトモードでの Record 紐付け用）
     draftRecordIds,

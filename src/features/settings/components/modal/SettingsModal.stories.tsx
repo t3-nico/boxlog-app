@@ -16,8 +16,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Camera } from 'lucide-react';
 import { expect, userEvent, within } from 'storybook/test';
 
-import { useSettingsModalStore } from '@/stores/useSettingsModalStore';
-import type { SettingsCategory } from '../../types';
+import { openSettingsModal, useModalStore, type SettingsCategory } from '@/stores/useModalStore';
 import { SettingsCard } from '../SettingsCard';
 import { SettingRow } from '../fields/SettingRow';
 import { SettingsModalSidebar } from './SettingsModalSidebar';
@@ -311,7 +310,9 @@ const MOCK_CONTENT: Record<SettingsCategory, React.ReactNode> = {
 // ─────────────────────────────────────────────────────────
 
 function MockSettingsContent() {
-  const selectedCategory = useSettingsModalStore((state) => state.selectedCategory);
+  const modal = useModalStore((state) => state.modal);
+  const selectedCategory: SettingsCategory =
+    modal?.type === 'settings' ? modal.category : 'general';
 
   return (
     <div className="bg-background flex h-full min-w-0 flex-1 flex-col">
@@ -328,12 +329,9 @@ function MockSettingsContent() {
 
 function SettingsModalShell({ initialCategory }: { initialCategory?: SettingsCategory }) {
   useEffect(() => {
-    useSettingsModalStore.setState({
-      isOpen: true,
-      selectedCategory: initialCategory ?? 'general',
-    });
+    openSettingsModal(initialCategory ?? 'general');
     return () => {
-      useSettingsModalStore.setState({ isOpen: false });
+      useModalStore.setState({ modal: null });
     };
   }, [initialCategory]);
 

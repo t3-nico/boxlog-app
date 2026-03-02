@@ -20,7 +20,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { useSettingsModalStore } from '@/stores/useSettingsModalStore';
+import { openSettingsModal } from '@/stores/useModalStore';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -52,8 +52,6 @@ export function NavUser({
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const t = useTranslations();
   const locale = useLocale();
-  const openSettingsModal = useSettingsModalStore((state) => state.openModal);
-
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {

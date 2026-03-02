@@ -5,7 +5,7 @@ import { memo, useCallback } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { useSettingsModalStore } from '@/stores/useSettingsModalStore';
+import { openSettingsModal } from '@/stores/useModalStore';
 
 import { DEFAULT_MODELS } from '@/server/services/ai/types';
 
@@ -53,8 +53,6 @@ export const AIInspectorContent = memo(function AIInspectorContent() {
     availableModels,
   } = useAIChat();
 
-  const openSettings = useSettingsModalStore((s) => s.openModal);
-
   const handleSuggestionClick = useCallback(
     (suggestion: string) => {
       setInput(suggestion);
@@ -63,8 +61,8 @@ export const AIInspectorContent = memo(function AIInspectorContent() {
   );
 
   const handleOpenIntegrations = useCallback(() => {
-    openSettings('integrations');
-  }, [openSettings]);
+    openSettingsModal('integrations');
+  }, []);
 
   // キー読み込み中
   if (!keyLoaded) {

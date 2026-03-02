@@ -14,8 +14,7 @@ import { useCallback, useRef } from 'react';
 import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
 import { logger } from '@/lib/logger';
-import type { RecurringEditScope } from '@/stores/useRecurringEditConfirmStore';
-import { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmStore';
+import { openRecurringEditConfirm, type RecurringEditScope } from '@/stores/useModalStore';
 
 import type { CalendarPlan } from '../types/calendar.types';
 
@@ -35,9 +34,6 @@ export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
 
   // 保留中のドラッグ更新（refで保持してダイアログのコールバックで参照）
   const pendingDragUpdateRef = useRef<PendingDragUpdate | null>(null);
-
-  // グローバルストアのopenDialog
-  const openDialog = useRecurringEditConfirmStore((state) => state.openDialog);
 
   /**
    * スコープ選択後の処理
@@ -112,7 +108,7 @@ export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
 
       if (isRecurringInstance) {
         pendingDragUpdateRef.current = { plan, updates: resolvedUpdates };
-        openDialog(plan.title, 'edit', handleScopeConfirm);
+        openRecurringEditConfirm(plan.title, 'edit', handleScopeConfirm);
         return { skipToast: true };
       } else {
         // 通常エントリ: 直接更新
@@ -125,7 +121,7 @@ export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
         });
       }
     },
-    [plans, updateEntry, openDialog, handleScopeConfirm],
+    [plans, updateEntry, handleScopeConfirm],
   );
 
   return {

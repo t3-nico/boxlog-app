@@ -8,9 +8,8 @@ import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdow
 import { useInspectorKeyboard } from './hooks';
 import { InspectorContent, InspectorShell } from './shared';
 
-import { useDeleteConfirmStore } from '@/stores/useDeleteConfirmStore';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
-import { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmStore';
+import { openDeleteConfirm, useModalStore } from '@/stores/useModalStore';
 import { usePlan } from '../../hooks/usePlan';
 import type { Plan } from '../../types/plan';
 
@@ -47,7 +46,8 @@ export function PlanInspector() {
   // 繰り返しダイアログが開いている間はInspectorを閉じない
   // ×ボタン/ESC/外側クリック = キャンセル（変更を破棄）
   const handleClose = useCallback(() => {
-    const isRecurringDialogOpen = useRecurringEditConfirmStore.getState().isOpen;
+    const modal = useModalStore.getState().modal;
+    const isRecurringDialogOpen = modal?.type === 'recurringEdit';
     if (!isRecurringDialogOpen) {
       // ドラフトモードの場合はドラフトをクリア
       if (isDraftMode) {
@@ -64,7 +64,6 @@ export function PlanInspector() {
   const { hasPrevious, hasNext, goToPrevious, goToNext } = useInspectorNavigation(planId);
 
   // 削除
-  const openDeleteDialog = useDeleteConfirmStore((state) => state.openDialog);
   const { deletePlan } = useInspectorAutoSave({ planId, plan });
 
   // キーボードショートカット
@@ -91,11 +90,11 @@ export function PlanInspector() {
 
   const handleDelete = useCallback(() => {
     if (!planId) return;
-    openDeleteDialog(planId, plan?.title ?? null, async () => {
+    openDeleteConfirm(planId, plan?.title ?? null, async () => {
       await deletePlan.mutateAsync({ id: planId });
       closeInspector();
     });
-  }, [planId, plan?.title, openDeleteDialog, deletePlan, closeInspector]);
+  }, [planId, plan?.title, deletePlan, closeInspector]);
 
   // モバイル用メニューコンテンツ（簡略版）
   const mobileMenuContent = (

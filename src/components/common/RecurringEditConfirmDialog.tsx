@@ -9,8 +9,7 @@ import { useDialogKeyboard } from '@/hooks/useDialogKeyboard';
 import { useHasMounted } from '@/hooks/useHasMounted';
 import { useTranslations } from 'next-intl';
 
-import type { RecurringEditScope } from '@/stores/useRecurringEditConfirmStore';
-import { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmStore';
+import { closeModal, useModalStore, type RecurringEditScope } from '@/stores/useModalStore';
 
 // Re-export type for backward compatibility
 export type { RecurringEditScope };
@@ -29,10 +28,12 @@ export function RecurringEditConfirmDialog() {
   const mounted = useHasMounted();
   const [scope, setScope] = useState<RecurringEditScope>('this');
 
-  const isOpen = useRecurringEditConfirmStore((state) => state.isOpen);
-  const mode = useRecurringEditConfirmStore((state) => state.mode);
-  const onConfirm = useRecurringEditConfirmStore((state) => state.onConfirm);
-  const closeDialog = useRecurringEditConfirmStore((state) => state.closeDialog);
+  const modal = useModalStore((state) => state.modal);
+  const isRecurringEdit = modal?.type === 'recurringEdit';
+  const isOpen = isRecurringEdit;
+  const mode = isRecurringEdit ? modal.mode : 'edit';
+  const onConfirm = isRecurringEdit ? modal.onConfirm : null;
+  const closeDialog = closeModal;
 
   // ダイアログが開くたびにscopeをリセット
   useEffect(() => {

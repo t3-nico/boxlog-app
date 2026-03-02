@@ -17,19 +17,18 @@
 
 import { useCallback } from 'react';
 
-import { useTagCreateModalStore } from '@/stores/useTagCreateModalStore';
-import { useTagMergeModalStore } from '@/stores/useTagMergeModalStore';
+import {
+  openTagCreateModal as openTagCreate,
+  openTagMergeModal as openTagMerge,
+} from '@/stores/useModalStore';
 
 export function useTagModalNavigation() {
-  const openCreateModal = useTagCreateModalStore((state) => state.openModal);
-  const openMergeModal = useTagMergeModalStore((state) => state.openModal);
-
   /**
    * タグ作成モーダルを開く
    */
   const openTagCreateModal = useCallback(() => {
-    openCreateModal();
-  }, [openCreateModal]);
+    openTagCreate();
+  }, []);
 
   /**
    * タグマージモーダルを開く
@@ -38,9 +37,9 @@ export function useTagModalNavigation() {
    */
   const openTagMergeModal = useCallback(
     (sourceTag: { id: string; name: string; color?: string | null }) => {
-      openMergeModal(sourceTag);
+      openTagMerge(sourceTag);
     },
-    [openMergeModal],
+    [],
   );
 
   return {

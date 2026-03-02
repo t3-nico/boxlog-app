@@ -11,8 +11,7 @@
 // Re-export from shared stores for backward compatibility
 export { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 export type { CalendarViewType, DateFormatType } from '@/stores/useCalendarSettingsStore';
-// Re-export from shared stores for backward compatibility
-export { useSettingsModalStore } from '@/stores/useSettingsModalStore';
+// Modal state is now in @/stores/useModalStore (openSettingsModal, closeModal)
 
 // =============================================================================
 // Hooks

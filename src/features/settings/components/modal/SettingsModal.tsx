@@ -11,7 +11,7 @@ import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
-import { useSettingsModalStore } from '@/stores/useSettingsModalStore';
+import { closeModal, useModalStore } from '@/stores/useModalStore';
 import { useSettingsModalURLSync } from '../../hooks/useSettingsModalURLSync';
 import { SettingsModalContent } from './SettingsModalContent';
 import { SettingsModalMobileView } from './SettingsModalMobileView';
@@ -35,8 +35,8 @@ function SettingsURLSyncHandler() {
  */
 export function SettingsModal() {
   const t = useTranslations();
-  const isOpen = useSettingsModalStore((state) => state.isOpen);
-  const closeModal = useSettingsModalStore((state) => state.closeModal);
+  const modal = useModalStore((state) => state.modal);
+  const isOpen = modal?.type === 'settings';
   const isMobile = useMediaQuery(MEDIA_QUERIES.mobile);
 
   // Mobile: Full-screen Sheet

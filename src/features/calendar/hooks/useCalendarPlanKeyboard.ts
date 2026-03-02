@@ -2,9 +2,9 @@
 
 import { useEffect, useRef } from 'react';
 
-import { useDeleteConfirmStore } from '@/stores/useDeleteConfirmStore';
 import type { EntryInitialData } from '@/stores/useEntryInspectorStore';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
+import { openDeleteConfirm } from '@/stores/useModalStore';
 import { usePlanClipboardStore } from '@/stores/usePlanClipboardStore';
 import { toast } from 'sonner';
 
@@ -64,7 +64,6 @@ export function useCalendarPlanKeyboard({
   getPasteDateForKeyboard,
 }: UseCalendarPlanKeyboardOptions) {
   const { isOpen, entryId, openInspector, closeInspector } = useEntryInspectorStore();
-  const { openDialog } = useDeleteConfirmStore();
 
   // コールバックの最新値を参照
   const onDeletePlanRef = useRef(onDeletePlan);
@@ -117,7 +116,7 @@ export function useCalendarPlanKeyboard({
         const title = getSelectedPlanTitleRef.current?.() ?? null;
         const deleteCallback = onDeletePlanRef.current;
         if (deleteCallback) {
-          openDialog(entryId, title, async () => {
+          openDeleteConfirm(entryId, title, async () => {
             await deleteCallback(entryId);
             closeInspector();
           });
@@ -194,5 +193,5 @@ export function useCalendarPlanKeyboard({
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [enabled, isOpen, entryId, openInspector, closeInspector, openDialog]);
+  }, [enabled, isOpen, entryId, openInspector, closeInspector]);
 }
