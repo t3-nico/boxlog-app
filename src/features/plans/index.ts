@@ -95,7 +95,7 @@ export type {
 export { ReminderSelect } from './components/shared/ReminderSelect';
 export { TimeSelect } from './components/shared/TimeSelect';
 
-// Inspector shared components (used by records feature)
+// Inspector shared components
 export { useInspectorKeyboard } from './components/inspector/hooks';
 export {
   ActivityPopover,

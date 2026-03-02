@@ -1,1 +1,0 @@
-export { RecordInspector } from './RecordInspector';

@@ -25,16 +25,6 @@ export {
 export type { ExpandedOccurrence, PlanInstanceException } from '@/lib/plan-adapter';
 
 // ========================================
-// Records feature アダプターからの再エクスポート（後方互換性）
-// ========================================
-export {
-  recordsToCalendarEvents as recordsToCalendarPlans,
-  recordToCalendarEvent as recordToCalendarPlan,
-} from '@/lib/record-adapter';
-
-export type { RecordWithPlanInfo } from '@/lib/record-adapter';
-
-// ========================================
 // Calendar固有の変換ロジック
 // ========================================
 
@@ -121,13 +111,11 @@ export function applyTimezoneToDisplayDates(plan: CalendarPlan, timezone: string
 
 /**
  * CalendarPlanがRecordかどうかを判定
- * type === 'record' または recordId が存在する場合はRecord
+ * type === 'record' の場合はRecord（origin='unplanned' に対応）
  */
-export function isRecordEvent(
-  event: Pick<CalendarPlan, 'type' | 'recordId'> | null | undefined,
-): boolean {
+export function isRecordEvent(event: Pick<CalendarPlan, 'type'> | null | undefined): boolean {
   if (!event) return false;
-  return event.type === 'record' || !!event.recordId;
+  return event.type === 'record';
 }
 
 /**
@@ -135,7 +123,7 @@ export function isRecordEvent(
  * Record の場合は 'record'、それ以外は 'plan'
  */
 export function getEventType(
-  event: Pick<CalendarPlan, 'type' | 'recordId'> | null | undefined,
+  event: Pick<CalendarPlan, 'type'> | null | undefined,
 ): 'record' | 'plan' {
   return isRecordEvent(event) ? 'record' : 'plan';
 }

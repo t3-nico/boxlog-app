@@ -182,7 +182,7 @@ export function ActionConfigurator({
                   copy_tags: actionConfig.copy_tags,
                 };
                 if (v !== 'none') {
-                  base.default_fulfillment_score = Number(v) as 1 | 2 | 3 | 4 | 5;
+                  base.default_fulfillment_score = Number(v) as 1 | 2 | 3;
                 }
                 onConfigChange(base);
               }}
@@ -192,11 +192,9 @@ export function ActionConfigurator({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="none">なし</SelectItem>
-                <SelectItem value="1">1</SelectItem>
-                <SelectItem value="2">2</SelectItem>
-                <SelectItem value="3">3</SelectItem>
-                <SelectItem value="4">4</SelectItem>
-                <SelectItem value="5">5</SelectItem>
+                <SelectItem value="1">1 (微妙)</SelectItem>
+                <SelectItem value="2">2 (普通)</SelectItem>
+                <SelectItem value="3">3 (良い)</SelectItem>
               </SelectContent>
             </Select>
           </div>

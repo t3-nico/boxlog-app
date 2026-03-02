@@ -11,7 +11,6 @@ import { cn } from '@/lib/utils';
 import { AppAside, type AsideType } from '@/components/layout/AppAside';
 import { useAppAsideStore } from '@/stores/useAppAsideStore';
 import { PlanListPanel } from '../aside/PlanListPanel';
-import { RecordListPanel } from '../aside/RecordListPanel';
 
 // tiptap + AI SDK を初期バンドルから除外（LCP改善）
 const AIInspectorContent = dynamic(
@@ -192,7 +191,7 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
                       case 'plan':
                         return <PlanListPanel />;
                       case 'record':
-                        return <RecordListPanel />;
+                        return <PlanListPanel />;
                       case 'chat':
                         return <AIInspectorContent />;
                       default:
@@ -222,7 +221,7 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
                     case 'plan':
                       return <PlanListPanel />;
                     case 'record':
-                      return <RecordListPanel />;
+                      return <PlanListPanel />;
                     case 'chat':
                       return <AIInspectorContent />;
                     default:

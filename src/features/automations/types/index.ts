@@ -1,8 +1,4 @@
-export type TriggerType =
-  | 'plan.status_changed'
-  | 'plan.created'
-  | 'record.created'
-  | 'record.updated';
+export type TriggerType = 'entry.created' | 'entry.updated' | 'entry.past';
 
 export type ConditionField =
   | 'status'
@@ -35,7 +31,7 @@ export type ActionType = 'create_record' | 'send_notification' | 'add_tags';
 export interface CreateRecordConfig {
   copy_time: boolean;
   copy_tags: boolean;
-  default_fulfillment_score?: 1 | 2 | 3 | 4 | 5;
+  default_fulfillment_score?: 1 | 2 | 3;
 }
 
 export interface SendNotificationConfig {

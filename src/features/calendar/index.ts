@@ -40,7 +40,6 @@ export { WeekView } from './components/views/WeekView';
 // Aside (Panel) Components
 // =============================================================================
 export { PlanListPanel } from './components/aside/PlanListPanel';
-export { RecordListPanel } from './components/aside/RecordListPanel';
 
 // =============================================================================
 // Sidebar Components
