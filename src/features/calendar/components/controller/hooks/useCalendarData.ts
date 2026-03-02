@@ -237,9 +237,9 @@ export function useCalendarData({
       }
       // origin ベースのフィルタリング（type フィールドで UX 互換維持）
       if (event.type === 'record') {
-        return visibleTypes.record && matchesTagFilter(event.tagId ? [event.tagId] : []);
+        return visibleTypes.record && matchesTagFilter(event.tagId ?? null);
       }
-      return visibleTypes.plan && isPlanVisible(event.tagId ? [event.tagId] : []);
+      return visibleTypes.plan && isPlanVisible(event.tagId ?? null);
     });
 
     logger.log(`[useCalendarData] entriesフィルタリング:`, {

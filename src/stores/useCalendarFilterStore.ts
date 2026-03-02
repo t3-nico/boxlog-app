@@ -18,9 +18,6 @@ export interface CalendarFilterState {
   /** タグIDごとの表示設定（デフォルト: すべて表示） */
   visibleTagIds: Set<string>;
 
-  /** タグなしアイテムの表示設定 */
-  showUntagged: boolean;
-
   /** 初期化済みフラグ（タグ一覧取得後に初期化） */
   initialized: boolean;
 }
@@ -31,9 +28,6 @@ export interface CalendarFilterActions {
 
   /** タグの表示切替 */
   toggleTag: (tagId: string) => void;
-
-  /** タグなしの表示切替 */
-  toggleUntagged: () => void;
 
   /** すべてのタグを表示 */
   showAllTags: (tagIds: string[]) => void;
@@ -59,9 +53,6 @@ export interface CalendarFilterActions {
   /** このタグだけ表示（他を全てOFF） */
   showOnlyTag: (tagId: string) => void;
 
-  /** タグなしだけ表示（全タグOFF） */
-  showOnlyUntagged: () => void;
-
   /** 指定タグだけ表示（グループ用） */
   showOnlyGroupTags: (tagIds: string[]) => void;
 
@@ -75,10 +66,10 @@ export interface CalendarFilterActions {
   getGroupVisibility: (tagIds: string[]) => 'all' | 'none' | 'some';
 
   /** タグフィルタに一致するかチェック（種類は無視） */
-  matchesTagFilter: (tagIds: string[]) => boolean;
+  matchesTagFilter: (tagId: string | null) => boolean;
 
-  /** プランが表示対象かチェック（種類とタグの両方） */
-  isPlanVisible: (planTagIds: string[]) => boolean;
+  /** エントリが表示対象かチェック（種類とタグの両方） */
+  isPlanVisible: (tagId: string | null) => boolean;
 }
 
 type CalendarFilterStore = CalendarFilterState & CalendarFilterActions;
@@ -87,7 +78,6 @@ type CalendarFilterStore = CalendarFilterState & CalendarFilterActions;
 interface SerializedCalendarFilterState {
   visibleTypes: Record<ItemType, boolean>;
   visibleTagIds: string[];
-  showUntagged: boolean;
   initialized: boolean;
 }
 
@@ -112,7 +102,6 @@ export const useCalendarFilterStore = create<CalendarFilterStore>()(
         record: true,
       },
       visibleTagIds: new Set<string>(),
-      showUntagged: true,
       initialized: false,
 
       // アクション
@@ -135,21 +124,14 @@ export const useCalendarFilterStore = create<CalendarFilterStore>()(
           return { visibleTagIds: newSet };
         }),
 
-      toggleUntagged: () =>
-        set((state) => ({
-          showUntagged: !state.showUntagged,
-        })),
-
       showAllTags: (tagIds) =>
         set(() => ({
           visibleTagIds: new Set(tagIds),
-          showUntagged: true,
         })),
 
       hideAllTags: () =>
         set(() => ({
           visibleTagIds: new Set(),
-          showUntagged: false,
         })),
 
       showGroupTags: (tagIds) =>
@@ -210,19 +192,11 @@ export const useCalendarFilterStore = create<CalendarFilterStore>()(
       showOnlyTag: (tagId) =>
         set(() => ({
           visibleTagIds: new Set([tagId]),
-          showUntagged: false,
-        })),
-
-      showOnlyUntagged: () =>
-        set(() => ({
-          visibleTagIds: new Set(),
-          showUntagged: true,
         })),
 
       showOnlyGroupTags: (tagIds) =>
         set(() => ({
           visibleTagIds: new Set(tagIds),
-          showUntagged: false,
         })),
 
       isTypeVisible: (type) => get().visibleTypes[type],
@@ -238,19 +212,18 @@ export const useCalendarFilterStore = create<CalendarFilterStore>()(
         return 'some';
       },
 
-      matchesTagFilter: (tagIds) => {
+      matchesTagFilter: (tagId) => {
         const state = get();
 
-        // タグなしの場合
-        if (tagIds.length === 0) {
-          return state.showUntagged;
+        // タグなし → 常に表示（タグなしフィルター廃止）
+        if (tagId === null) {
+          return true;
         }
 
-        // いずれかのタグが表示中なら表示
-        return tagIds.some((tagId) => state.visibleTagIds.has(tagId));
+        return state.visibleTagIds.has(tagId);
       },
 
-      isPlanVisible: (planTagIds) => {
+      isPlanVisible: (tagId) => {
         const state = get();
 
         // 種類チェック
@@ -258,14 +231,15 @@ export const useCalendarFilterStore = create<CalendarFilterStore>()(
           return false;
         }
 
-        return get().matchesTagFilter(planTagIds);
+        return get().matchesTagFilter(tagId);
       },
     }),
     {
       name: 'calendar-filter-storage',
       // バージョンを上げるとlocalStorageがリセットされる
       // v2: visibleTagIds競合問題の修正に伴いリセット
-      version: 2,
+      // v3: showUntagged削除、matchesTagFilter/isPlanVisible単一タグ対応
+      version: 3,
       storage: {
         getItem: (name) => {
           const str = localStorage.getItem(name);
@@ -287,12 +261,10 @@ export const useCalendarFilterStore = create<CalendarFilterStore>()(
       },
       // バージョンマイグレーション: 古いバージョンからの移行時はリセット
       migrate: (persistedState, version) => {
-        // v1 → v2: visibleTagIds競合問題の修正、initializedをfalseにリセット
-        if (version < 2) {
+        if (version < 3) {
           return {
             visibleTypes: { plan: true, record: true },
             visibleTagIds: new Set<string>(),
-            showUntagged: true,
             initialized: false,
           } as unknown as CalendarFilterStore;
         }
