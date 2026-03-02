@@ -13,8 +13,7 @@ import { HoverTooltip } from '@/components/ui/tooltip';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useResizeHandle } from '@/hooks/useResizeHandle';
 import { cn } from '@/lib/utils';
-import { useAppAsideStore } from '@/stores/useAppAsideStore';
-import { useSidebarStore } from '@/stores/useSidebarStore';
+import { useLayoutStore } from '@/stores/useLayoutStore';
 
 import { StatsView } from './StatsView';
 
@@ -34,18 +33,18 @@ export function StatsPageContent({ renderAsideContent }: StatsPageContentProps) 
   const isMobile = useMediaQuery('(max-width: 767px)');
 
   // サイドバー
-  const isSidebarOpen = useSidebarStore.use.isOpen();
-  const openSidebar = useSidebarStore.use.open();
+  const isSidebarOpen = useLayoutStore.use.sidebarOpen();
+  const openSidebar = useLayoutStore.use.openSidebar();
 
   // アサイド状態（Zustand永続化）
-  const currentAside = useAppAsideStore.use.asideType();
-  const setCurrentAside = useAppAsideStore.use.setAside();
+  const currentAside = useLayoutStore.use.asideType();
+  const setCurrentAside = useLayoutStore.use.setAside();
 
   const showAside = currentAside && currentAside !== 'none';
 
   // アサイドリサイズ
-  const asideSize = useAppAsideStore.use.asideSize();
-  const setAsideSize = useAppAsideStore.use.setAsideSize();
+  const asideSize = useLayoutStore.use.asideSize();
+  const setAsideSize = useLayoutStore.use.setAsideSize();
   const { percent, isResizing, handleMouseDown, containerRef } = useResizeHandle({
     initialPercent: asideSize,
     onResizeEnd: setAsideSize,

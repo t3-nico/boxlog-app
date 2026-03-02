@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { useGlobalSearch } from '@/hooks/use-global-search';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
-import { useSidebarStore } from '@/stores/useSidebarStore';
+import { useLayoutStore } from '@/stores/useLayoutStore';
 
 import type { CalendarViewType } from '../../../types/calendar.types';
 
@@ -83,8 +83,8 @@ export const CalendarHeader = ({
   const t = useTranslations();
   const { open: openSearch } = useGlobalSearch();
   const showWeekNumbers = useCalendarSettingsStore((state) => state.showWeekNumbers);
-  const isSidebarOpen = useSidebarStore.use.isOpen();
-  const openSidebar = useSidebarStore.use.open();
+  const isSidebarOpen = useLayoutStore.use.sidebarOpen();
+  const openSidebar = useLayoutStore.use.openSidebar();
 
   return (
     <header className="bg-background relative h-12 px-4 py-2">

@@ -9,7 +9,7 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/utils';
 
 import { AppAside, type AsideType } from '@/components/layout/AppAside';
-import { useAppAsideStore } from '@/stores/useAppAsideStore';
+import { useLayoutStore } from '@/stores/useLayoutStore';
 import { PlanListPanel } from '../aside/PlanListPanel';
 
 // tiptap + AI SDK を初期バンドルから除外（LCP改善）
@@ -106,8 +106,8 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
     const showAside = currentAside && currentAside !== 'none';
 
     // アサイドリサイズ
-    const asideSize = useAppAsideStore.use.asideSize();
-    const setAsideSize = useAppAsideStore.use.setAsideSize();
+    const asideSize = useLayoutStore.use.asideSize();
+    const setAsideSize = useLayoutStore.use.setAsideSize();
     const { percent, isResizing, handleMouseDown, containerRef } = useResizeHandle({
       initialPercent: asideSize,
       onResizeEnd: setAsideSize,

@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useTranslations } from 'next-intl';
 
-import { useSidebarStore } from '@/stores/useSidebarStore';
+import { useLayoutStore } from '@/stores/useLayoutStore';
 
 import { CreateNewDropdown } from './CreateNewDropdown';
 import { NavUser } from './nav-user';
@@ -47,7 +47,7 @@ interface SidebarShellProps {
  */
 export function SidebarShell({ children, className, hideNavUser = false }: SidebarShellProps) {
   const user = useAuthStore((state) => state.user);
-  const toggle = useSidebarStore.use.toggle();
+  const toggle = useLayoutStore.use.toggleSidebar();
   const t = useTranslations();
 
   const userData = {

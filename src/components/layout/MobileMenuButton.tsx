@@ -3,7 +3,7 @@
 import { Menu } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { useSidebarStore } from '@/stores/useSidebarStore';
+import { useLayoutStore } from '@/stores/useLayoutStore';
 import { useTranslations } from 'next-intl';
 
 /**
@@ -21,7 +21,7 @@ import { useTranslations } from 'next-intl';
  * ```
  */
 export function MobileMenuButton({ className }: { className?: string }) {
-  const toggle = useSidebarStore((state) => state.toggle);
+  const toggle = useLayoutStore((state) => state.toggleSidebar);
   const t = useTranslations();
 
   return (

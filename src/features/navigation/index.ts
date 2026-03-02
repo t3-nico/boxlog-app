@@ -30,8 +30,6 @@ export type {
 // =============================================================================
 // Stores
 // =============================================================================
-// Re-export from shared stores for backward compatibility
-export { useAppAsideStore } from '@/stores/useAppAsideStore';
+// Layout state (sidebar + aside) is now in @/stores/useLayoutStore
+export { useLayoutStore } from '@/stores/useLayoutStore';
 export { usePageTitleStore } from './stores/usePageTitleStore';
-// Re-export from shared stores for backward compatibility
-export { useSidebarStore } from '@/stores/useSidebarStore';

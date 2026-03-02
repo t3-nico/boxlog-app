@@ -25,10 +25,9 @@ import {
   useRecurringPlanDrag,
   useWeekendToggleShortcut,
 } from '@/features/calendar';
-import type { AsideType } from '@/features/navigation';
-import { useAppAsideStore } from '@/features/navigation';
 import { useNotifications } from '@/features/notifications';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
+import { useLayoutStore, type AsideType } from '@/stores/useLayoutStore';
 
 import { getCurrentTimezone, setUserTimezone, useCalendarSettingsStore } from '@/features/settings';
 import { logger } from '@/lib/logger';
@@ -137,8 +136,8 @@ export function useCalendarComposition({
   // =========================================================================
   // Aside state
   // =========================================================================
-  const currentAside = useAppAsideStore.use.asideType();
-  const setCurrentAside = useAppAsideStore.use.setAside();
+  const currentAside = useLayoutStore.use.asideType();
+  const setCurrentAside = useLayoutStore.use.setAside();
 
   // =========================================================================
   // Plan Inspector state

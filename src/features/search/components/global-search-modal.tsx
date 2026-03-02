@@ -32,10 +32,10 @@ import { useTheme } from '@/contexts/theme-context';
 import { useEntries } from '@/hooks/useEntries';
 import { useTagModalNavigation } from '@/hooks/useTagModalNavigation';
 import { useTags } from '@/hooks/useTagsQuery';
-import { useAppAsideStore } from '@/stores/useAppAsideStore';
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
-import { useSettingsModalStore } from '@/stores/useSettingsModalStore';
+import { useLayoutStore } from '@/stores/useLayoutStore';
+import { openSettingsModal } from '@/stores/useModalStore';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
 import { useRecentPlans } from '../hooks/useRecentPlans';
@@ -106,8 +106,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
   const openPlanInspector = useEntryInspectorStore((state) => state.openInspector);
   const { openTagCreateModal } = useTagModalNavigation();
   const { resolvedTheme, setTheme } = useTheme();
-  const openSettingsModal = useSettingsModalStore((state) => state.openModal);
-  const openAside = useAppAsideStore((state) => state.openAside);
+  const openAside = useLayoutStore((state) => state.openAside);
 
   const toggleTheme = useCallback(() => {
     setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
@@ -115,7 +114,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
 
   const navigateToSettings = useCallback(() => {
     openSettingsModal('general');
-  }, [openSettingsModal]);
+  }, []);
 
   // Register default commands on mount
   useEffect(() => {
