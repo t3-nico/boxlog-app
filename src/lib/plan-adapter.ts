@@ -17,14 +17,6 @@ import type { ExpandedOccurrence, PlanInstanceException } from '@/lib/plan-recur
 // 型の再エクスポート
 export type { ExpandedOccurrence, PlanInstanceException };
 
-/**
- * データベースPlan型のステータスをCalendarEvent型のステータスに変換
- * 2段階ステータス: open, done
- */
-function mapPlanStatusToCalendarStatus(status: string): 'open' | 'closed' {
-  return status === 'closed' ? 'closed' : 'open';
-}
-
 // タグID付きPlan型
 type PlanWithTagIds = Plan & {
   tagIds?: string[];
@@ -55,7 +47,7 @@ export function planToCalendarPlan(plan: PlanWithTagIds): CalendarEvent {
     description: plan.description || undefined,
     startDate,
     endDate,
-    status: mapPlanStatusToCalendarStatus(plan.status),
+    status: plan.end_time && new Date(plan.end_time) < new Date() ? 'closed' : 'open',
     color: '#3b82f6', // デフォルトカラー
     reminder_minutes: plan.reminder_minutes,
     tagIds: plan.tagIds ?? [], // タグIDを引き継ぐ
@@ -135,7 +127,7 @@ function occurrenceToCalendarPlan(
     description: description || undefined,
     startDate,
     endDate,
-    status: mapPlanStatusToCalendarStatus(basePlan.status),
+    status: endDate < new Date() ? 'closed' : 'open',
     color: '#3b82f6',
     reminder_minutes: basePlan.reminder_minutes,
     tagIds: basePlan.tagIds ?? [], // 親プランのタグIDを引き継ぐ

@@ -6,7 +6,6 @@
 
 import React, { memo, useCallback, useEffect, useMemo } from 'react';
 
-import { normalizeStatus } from '@/lib/plan-status';
 import { CheckCircle2, Circle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
@@ -256,7 +255,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
           onClick={(e) => {
             e.stopPropagation();
             if (isDraft) return;
-            const currentStatus = normalizeStatus(plan.status);
+            const currentStatus = plan.status;
             const newStatus = currentStatus === 'closed' ? 'open' : 'closed';
             onStatusChange?.(plan.id, newStatus);
           }}
@@ -275,13 +274,13 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
             isDraft && 'cursor-default',
           )}
           aria-label={
-            normalizeStatus(plan.status) === 'closed'
+            plan.status === 'closed'
               ? t('calendar.event.markIncomplete')
               : t('calendar.event.markComplete')
           }
         >
           {(() => {
-            const status = normalizeStatus(plan.status);
+            const status = plan.status;
             const iconClass = isMobile
               ? 'h-3.5 w-3.5'
               : safePosition.height < 30

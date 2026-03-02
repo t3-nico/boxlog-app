@@ -65,8 +65,6 @@ export type { ExpandedOccurrence, PlanInstanceException } from './utils/recurren
 export { decodeInstanceId, encodeInstanceId, getInstanceRef } from './utils/instanceId';
 export type { RecurrenceInstanceRef } from './utils/instanceId';
 
-export { isOverdue, isScheduled, normalizeStatus } from './utils/status';
-
 export { groupItems } from './utils/grouping';
 export type { GroupByField, GroupedData } from './utils/grouping';
 

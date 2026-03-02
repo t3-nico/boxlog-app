@@ -38,7 +38,6 @@ import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { useSettingsModalStore } from '@/stores/useSettingsModalStore';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
-import type { PlanStatus } from '@/core/types/plan';
 import { useRecentPlans } from '../hooks/useRecentPlans';
 import { useSearchHistory } from '../hooks/useSearch';
 import { commandRegistry, registerDefaultCommands } from '../lib/command-registry';
@@ -51,7 +50,6 @@ type PlanFromAPI = {
   user_id: string;
   title: string;
   description: string | null;
-  status: PlanStatus;
   start_time: string | null;
   end_time: string | null;
   plan_number: string;
@@ -170,7 +168,6 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
         id: plan.id,
         title: plan.title,
         description: plan.description,
-        status: plan.status,
         plan_number: plan.plan_number,
         tags: resolvedTags,
       };
@@ -178,10 +175,6 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
 
     // Apply custom filters from parsed query
     let filtered = converted;
-
-    if (parsedQuery.filters.status && parsedQuery.filters.status.length > 0) {
-      filtered = filtered.filter((plan) => parsedQuery.filters.status!.includes(plan.status));
-    }
 
     if (parsedQuery.filters.tags && parsedQuery.filters.tags.length > 0) {
       filtered = filtered.filter((plan) =>
@@ -276,11 +269,6 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
               <div className="border-border flex items-center gap-2 border-b px-4 py-2">
                 <Filter className="text-muted-foreground h-4 w-4" />
                 <span className="text-muted-foreground text-xs">フィルター適用中:</span>
-                {parsedQuery.filters.status && (
-                  <span className="bg-state-active text-state-active-foreground rounded px-2 py-1 text-xs">
-                    status: {parsedQuery.filters.status.join(', ')}
-                  </span>
-                )}
                 {parsedQuery.filters.tags && (
                   <span className="bg-state-active text-state-active-foreground rounded px-2 py-1 text-xs">
                     #{parsedQuery.filters.tags.join(', #')}

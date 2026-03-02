@@ -2,7 +2,7 @@
 
 import type { Tag } from '@/core/types/tag';
 
-import type { PlanStatus, PlanWithTags } from '@/core/types/plan';
+import type { PlanWithTags } from '@/core/types/plan';
 
 // Search result types
 export type SearchResultType = 'command' | 'plan' | 'tag';
@@ -44,7 +44,6 @@ export interface SearchOptions {
 }
 
 export interface SearchFilters {
-  status?: PlanStatus[];
   tags?: string[];
 }
 

@@ -59,85 +59,20 @@ describe('query-parser', () => {
       });
     });
 
-    describe('ステータスフィルター (status:xxx)', () => {
-      it('status:doneを抽出できる', () => {
-        const result = parseSearchQuery('status:done');
-
-        expect(result.filters.status).toEqual(['closed']);
-        expect(result.hasFilters).toBe(true);
-      });
-
-      it('status:openを抽出できる', () => {
-        const result = parseSearchQuery('status:open');
-
-        expect(result.filters.status).toEqual(['open']);
-      });
-
-      it('後方互換: status:todoをopenにマッピング', () => {
-        const result = parseSearchQuery('status:todo');
-
-        expect(result.filters.status).toEqual(['open']);
-      });
-
-      it('後方互換: status:in_progressをopenにマッピング', () => {
-        const result = parseSearchQuery('status:in_progress');
-
-        expect(result.filters.status).toEqual(['open']);
-      });
-
-      it('後方互換: status:doingをopenにマッピング', () => {
-        const result = parseSearchQuery('status:doing');
-
-        expect(result.filters.status).toEqual(['open']);
-      });
-
-      it('大文字小文字を区別しない', () => {
-        const result = parseSearchQuery('STATUS:DONE');
-
-        expect(result.filters.status).toEqual(['closed']);
-      });
-
-      it('エイリアス: completedはdoneにマッピング', () => {
-        const result = parseSearchQuery('status:completed');
-
-        expect(result.filters.status).toEqual(['closed']);
-      });
-
-      it('エイリアス: pendingはopenにマッピング', () => {
-        const result = parseSearchQuery('status:pending');
-
-        expect(result.filters.status).toEqual(['open']);
-      });
-
-      it('複数のステータスを抽出できる', () => {
-        const result = parseSearchQuery('status:open status:done');
-
-        expect(result.filters.status).toEqual(['open', 'closed']);
-      });
-
-      it('不明なステータスは無視される', () => {
-        const result = parseSearchQuery('status:unknown');
-
-        expect(result.filters.status).toBeUndefined();
-      });
-    });
-
     describe('複合フィルター', () => {
-      it('すべてのフィルタータイプを組み合わせられる', () => {
-        const result = parseSearchQuery('ミーティング #仕事 status:open');
+      it('タグとテキストを組み合わせられる', () => {
+        const result = parseSearchQuery('ミーティング #仕事');
 
         expect(result.text).toBe('ミーティング');
         expect(result.filters.tags).toEqual(['仕事']);
-        expect(result.filters.status).toEqual(['open']);
         expect(result.hasFilters).toBe(true);
       });
 
-      it('テキストなしでフィルターのみ', () => {
-        const result = parseSearchQuery('#仕事 status:done');
+      it('テキストなしでタグフィルターのみ', () => {
+        const result = parseSearchQuery('#仕事');
 
         expect(result.text).toBe('');
         expect(result.filters.tags).toEqual(['仕事']);
-        expect(result.filters.status).toEqual(['closed']);
       });
     });
   });
@@ -166,13 +101,6 @@ describe('query-parser', () => {
       const tagHint = hints.find((h) => h.syntax.includes('#'));
 
       expect(tagHint).toBeDefined();
-    });
-
-    it('ステータスフィルターのヒントが含まれる', () => {
-      const hints = getFilterHints();
-      const statusHint = hints.find((h) => h.syntax.includes('status:'));
-
-      expect(statusHint).toBeDefined();
     });
   });
 });

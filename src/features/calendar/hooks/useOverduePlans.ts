@@ -24,7 +24,7 @@ export function useAllOverduePlans(plans: CalendarPlan[]): OverduePlan[] {
 
     return plans
       .filter((plan) => {
-        if (plan.status !== 'open') return false;
+        if (plan.entryState === 'past') return false;
         if (!plan.endDate) return false;
         return isBefore(plan.endDate, now);
       })

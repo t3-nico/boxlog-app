@@ -4,7 +4,6 @@ import {
   formatplanDate,
   formatplanDateTime,
   formatplanNumber,
-  formatplanStatus,
   formatRelativeTime,
 } from './formatters';
 
@@ -24,16 +23,6 @@ describe('formatters', () => {
 
     it('単一の文字列は#を付けて返す', () => {
       expect(formatplanNumber('ABC')).toBe('#ABC');
-    });
-  });
-
-  describe('formatplanStatus', () => {
-    it('openをOpenに変換する', () => {
-      expect(formatplanStatus('open')).toBe('Open');
-    });
-
-    it('closedをClosedに変換する', () => {
-      expect(formatplanStatus('closed')).toBe('Closed');
     });
   });
 

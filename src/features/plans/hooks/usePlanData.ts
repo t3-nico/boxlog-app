@@ -22,7 +22,7 @@ import type {
 /**
  * ソートオプション
  */
-export type SortField = 'title' | 'status' | 'created_at' | 'updated_at';
+export type SortField = 'title' | 'created_at' | 'updated_at';
 export type SortDirection = 'asc' | 'desc';
 
 export interface PlanSortOptions {

@@ -11,7 +11,6 @@ import type {
   PanelScheduleFilter,
   PanelSortField,
   PanelSortOrder,
-  PanelStatusFilter,
 } from './PlanListSortMenu';
 import { PlanListSortMenu } from './PlanListSortMenu';
 
@@ -32,16 +31,12 @@ interface PlanListToolbarProps {
   groupBy: PanelGroupByField;
   /** スケジュールフィルター */
   scheduleFilter: PanelScheduleFilter;
-  /** ステータスフィルター */
-  statusFilter: PanelStatusFilter;
   /** ソート変更 */
   onSortChange: (field: PanelSortField, order: PanelSortOrder) => void;
   /** グルーピング変更 */
   onGroupByChange: (field: PanelGroupByField) => void;
   /** スケジュールフィルター変更 */
   onScheduleFilterChange: (filter: PanelScheduleFilter) => void;
-  /** ステータスフィルター変更 */
-  onStatusFilterChange: (filter: PanelStatusFilter) => void;
 }
 
 /**
@@ -60,11 +55,9 @@ export function PlanListToolbar({
   sortOrder,
   groupBy,
   scheduleFilter,
-  statusFilter,
   onSortChange,
   onGroupByChange,
   onScheduleFilterChange,
-  onStatusFilterChange,
 }: PlanListToolbarProps) {
   const t = useTranslations('calendar');
 
@@ -107,11 +100,9 @@ export function PlanListToolbar({
             sortOrder={sortOrder}
             groupBy={groupBy}
             scheduleFilter={scheduleFilter}
-            statusFilter={statusFilter}
             onSortChange={onSortChange}
             onGroupByChange={onGroupByChange}
             onScheduleFilterChange={onScheduleFilterChange}
-            onStatusFilterChange={onStatusFilterChange}
           />
 
           {/* 検索ボタン */}

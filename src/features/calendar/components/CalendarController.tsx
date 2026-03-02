@@ -85,7 +85,6 @@ export interface CalendarControllerProps {
   onDuplicatePlan: (plan: CalendarPlan) => void;
   onCopyPlan: (plan: CalendarPlan) => void;
   onCompletePlan: (plan: CalendarPlan) => void;
-  onCompleteWithRecord: (plan: CalendarPlan) => void;
 
   // --- Navigation handlers ---
   onNavigate: (direction: 'prev' | 'next' | 'today') => void;
@@ -126,7 +125,6 @@ export function CalendarController({
   onDuplicatePlan,
   onCopyPlan,
   onCompletePlan,
-  onCompleteWithRecord,
   onNavigate,
   onViewChange,
   onNavigatePrev,
@@ -241,7 +239,6 @@ export function CalendarController({
           onDuplicate={onDuplicatePlan}
           onCopy={onCopyPlan}
           onComplete={onCompletePlan}
-          onCompleteWithRecord={onCompleteWithRecord}
         />
       ) : null}
 

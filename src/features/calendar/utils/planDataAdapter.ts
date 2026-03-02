@@ -36,7 +36,7 @@ export function planToTimedPlan(plan: CalendarPlan): TimedPlan {
     ...plan,
     start: plan.startDate || new Date(),
     end: plan.endDate || new Date(),
-    isReadOnly: plan.status === 'closed',
+    isReadOnly: plan.entryState === 'past',
   };
 }
 
@@ -81,7 +81,7 @@ export function safePlanToTimedPlan(plan: Partial<CalendarPlan>): TimedPlan | nu
     color: plan.color || '#3b82f6',
     start: plan.startDate || now,
     end: plan.endDate || defaultEnd,
-    isReadOnly: plan.status === 'closed',
+    isReadOnly: plan.entryState === 'past',
   } as TimedPlan;
 }
 
@@ -99,7 +99,7 @@ export function safePlansToTimedPlans(
  * Records は変換しない（壁時計時刻のため）
  */
 export function applyTimezoneToDisplayDates(plan: CalendarPlan, timezone: string): CalendarPlan {
-  if (isRecordEvent(plan) || !plan.startDate) {
+  if (plan.origin === 'unplanned' || !plan.startDate) {
     return plan;
   }
   return {
