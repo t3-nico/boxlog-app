@@ -22,7 +22,7 @@ import { useFilterItemEdit } from './useFilterItemEdit';
 export interface FilterItemProps {
   label: string;
   tagId?: string;
-  checkboxColor?: string;
+  checkboxColor?: string | undefined;
   labelClassName?: string;
   icon?: React.ReactNode;
   checked: boolean;

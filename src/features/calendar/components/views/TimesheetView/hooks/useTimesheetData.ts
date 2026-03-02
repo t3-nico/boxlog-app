@@ -16,7 +16,6 @@ import type { TimesheetData, TimesheetTagGroup } from '../TimesheetView.types';
 export function useTimesheetData(plans: CalendarPlan[], currentDate: Date): TimesheetData {
   const { getTagById } = useTagsMap();
   const visibleTagIds = useCalendarFilterStore((state) => state.visibleTagIds);
-  const showUntagged = useCalendarFilterStore((state) => state.showUntagged);
 
   const weekDates = useMemo(() => {
     const start = startOfWeek(currentDate, { weekStartsOn: 1 });
@@ -37,8 +36,7 @@ export function useTimesheetData(plans: CalendarPlan[], currentDate: Date): Time
 
       const tagId = plan.tagId ?? null;
       if (!tagId) {
-        // タグなし（showUntagged が false なら除外）
-        if (!showUntagged) continue;
+        // タグなし → 常に表示（タグなしフィルター廃止）
         const existing = groupMap.get(null) ?? [];
         existing.push(plan);
         groupMap.set(null, existing);
@@ -98,7 +96,7 @@ export function useTimesheetData(plans: CalendarPlan[], currentDate: Date): Time
     }
 
     return { tagGroups, dailyTotals, weekTotal, weekDates };
-  }, [plans, weekDates, getTagById, visibleTagIds, showUntagged]);
+  }, [plans, weekDates, getTagById, visibleTagIds]);
 
   return result;
 }
