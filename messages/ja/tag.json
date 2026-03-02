@@ -91,7 +91,7 @@
       "preview": "プレビュー",
       "tagNamePlaceholder": "（タグ名）",
       "parentTagPrefix": "親タグ:",
-      "examplePlaceholder": "時間記録を分類するためのラベル",
+      "examplePlaceholder": "例: 仕事、開発:API、運動",
       "group": "グループ",
       "groupSupportText": "同じ種類のタグをまとめて管理できます",
       "selectGroupPlaceholder": "グループを選択（任意）"

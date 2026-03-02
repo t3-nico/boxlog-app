@@ -91,7 +91,7 @@
       "preview": "Preview",
       "tagNamePlaceholder": "(Tag Name)",
       "parentTagPrefix": "Parent Tag:",
-      "examplePlaceholder": "A label to categorize your time entries",
+      "examplePlaceholder": "e.g. Work, Dev:API, Exercise",
       "group": "Group",
       "groupSupportText": "Group similar tags together",
       "selectGroupPlaceholder": "Select group (optional)"

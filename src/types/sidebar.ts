@@ -13,10 +13,8 @@ export interface SidebarTag {
   id: string;
   name: string;
   count: number;
-  parentId?: string | null;
   color?: string;
   icon?: string;
-  level?: number;
 }
 
 export interface SidebarPreferences {
