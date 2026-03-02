@@ -2,7 +2,7 @@
 
 import { Copy, ExternalLink, Link, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useCallback } from 'react';
+import { Suspense, useCallback } from 'react';
 
 import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { useInspectorKeyboard } from './hooks';
@@ -13,8 +13,18 @@ import { openDeleteConfirm, useModalStore } from '@/stores/useModalStore';
 import { usePlan } from '../../hooks/usePlan';
 import type { Plan } from '../../types/plan';
 
+import { useInspectorURLSync } from '../../hooks/useInspectorURLSync';
 import { useInspectorAutoSave, useInspectorNavigation } from './hooks';
 import { PlanInspectorContent } from './PlanInspectorContent';
+
+/**
+ * URL同期を担当する内部コンポーネント
+ * useSearchParams()はSuspenseが必要なため分離
+ */
+function InspectorURLSyncHandler() {
+  useInspectorURLSync();
+  return null;
+}
 
 /**
  * Plan Inspector（全ページ共通）
@@ -124,19 +134,26 @@ export function PlanInspector() {
   );
 
   return (
-    <InspectorShell
-      isOpen={isOpen}
-      onClose={handleClose}
-      title={isDraftMode ? '' : plan?.title || t('plan.inspector.noTitle')}
-      mobileMenuContent={isDraftMode ? undefined : mobileMenuContent}
-    >
-      <InspectorContent
-        isLoading={isDraftMode ? false : isLoading}
-        hasData={isDraftMode ? true : !!plan}
-        emptyMessage={t('plan.inspector.notFound')}
+    <>
+      {/* URL同期（Suspenseでラップ） */}
+      <Suspense fallback={null}>
+        <InspectorURLSyncHandler />
+      </Suspense>
+
+      <InspectorShell
+        isOpen={isOpen}
+        onClose={handleClose}
+        title={isDraftMode ? '' : plan?.title || t('plan.inspector.noTitle')}
+        mobileMenuContent={isDraftMode ? undefined : mobileMenuContent}
       >
-        <PlanInspectorContent />
-      </InspectorContent>
-    </InspectorShell>
+        <InspectorContent
+          isLoading={isDraftMode ? false : isLoading}
+          hasData={isDraftMode ? true : !!plan}
+          emptyMessage={t('plan.inspector.notFound')}
+        >
+          <PlanInspectorContent />
+        </InspectorContent>
+      </InspectorShell>
+    </>
   );
 }

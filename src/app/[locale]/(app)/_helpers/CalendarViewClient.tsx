@@ -47,7 +47,10 @@ export function CalendarViewClient({ view, initialDate, translations }: Calendar
     (newViewType: CalendarViewType, newDate?: Date) => {
       const dateToUse = newDate || new Date();
       const dateString = format(dateToUse, 'yyyy-MM-dd');
-      const newURL = `/${locale}/${newViewType}?date=${dateString}`;
+      // 既存のquery paramを保持しつつdateのみ更新
+      const params = new URLSearchParams(window.location.search);
+      params.set('date', dateString);
+      const newURL = `/${locale}/${newViewType}?${params.toString()}`;
       logger.log('🔗 updateURL called:', { newViewType, dateToUse, newURL });
       window.history.pushState(null, '', newURL);
     },
