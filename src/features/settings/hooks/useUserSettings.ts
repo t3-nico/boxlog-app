@@ -10,7 +10,7 @@ import { api } from '@/lib/trpc';
 
 import type { DateFormatType } from '@/stores/useCalendarSettingsStore';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
-import type { ProductivityZone } from '../types/chronotype';
+import type { ProductivityZone } from '@/types/chronotype';
 
 /**
  * ユーザー設定をDBと同期するhook

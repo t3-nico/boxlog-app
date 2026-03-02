@@ -20,8 +20,6 @@ export type {
   UpdatePlanInput,
 } from './types/plan';
 
-export type { CreateTagInput, Tag, UpdateTagInput } from './types/tag';
-
 export type {
   ActivityActionType,
   ActivityIconColor,

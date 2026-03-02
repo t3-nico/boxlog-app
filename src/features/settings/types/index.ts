@@ -69,10 +69,3 @@ export interface PreferencesSettingsData {
   chronotype: 'morning' | 'evening' | 'intermediate';
   dateFormat: string;
 }
-
-export interface IntegrationSettingsData {
-  googleCalendar: boolean;
-  outlook: boolean;
-  slack: boolean;
-  zapier: boolean;
-}
