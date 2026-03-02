@@ -2,11 +2,8 @@
 
 import React, { useCallback } from 'react';
 
-import { isSameDay } from 'date-fns';
-
 import { cn } from '@/lib/utils';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
-import { useInlineCreateStore } from '@/stores/useInlineCreateStore';
 import { useCalendarDragStore } from '../../../../stores/useCalendarDragStore';
 import type { CalendarPlan } from '../../../../types/calendar.types';
 
@@ -18,7 +15,6 @@ import {
   useGlobalDragCursor,
   usePlanStyles,
 } from '../../shared';
-import { InlineTagPalette } from '../../shared/components/InlineTagPalette';
 import { PanelDragPreview } from '../../shared/components/PanelDragPreview';
 import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop';
 import { useResponsiveHourHeight } from '../../shared/hooks/useResponsiveHourHeight';
@@ -64,10 +60,6 @@ export const WeekContent = React.memo(function WeekContent({
   // Inspectorで開いているプランのIDを取得
   const inspectorPlanId = useEntryInspectorStore((state) => state.entryId);
   const isInspectorOpen = useEntryInspectorStore((state) => state.isOpen);
-
-  // InlineTagPalette 表示判定
-  const pendingSelection = useInlineCreateStore.use.pendingSelection();
-  const hasPendingSelection = pendingSelection && isSameDay(pendingSelection.date, date);
 
   // TODO: entries統合後、status概念は削除されたため要リファクタ
   const handleStatusChange = useCallback((_planId: string, _newStatus: 'open' | 'closed') => {
@@ -303,13 +295,6 @@ export const WeekContent = React.memo(function WeekContent({
           );
         })}
       </div>
-
-      {/* InlineTagPalette（ドラッグ選択後のタグ付き即作成） */}
-      {hasPendingSelection && (
-        <div className="pointer-events-none absolute inset-0 z-30" style={{ height: gridHeight }}>
-          <InlineTagPalette hourHeight={HOUR_HEIGHT} />
-        </div>
-      )}
     </div>
   );
 });

@@ -65,16 +65,7 @@ const RECURRENCE_OPTIONS = [
 ];
 
 function flattenTags(tags: Tag[]): Tag[] {
-  const result: Tag[] = [];
-  for (const tag of tags) {
-    result.push(tag);
-    if (tag.children && tag.children.length > 0) {
-      for (const child of tag.children) {
-        result.push(child);
-      }
-    }
-  }
-  return result;
+  return tags;
 }
 
 /** "gte:3" → { operator: "gte", score: "3" } */
@@ -191,10 +182,7 @@ export function TriggerPicker({
           <Label>対象のタグ</Label>
           <div className="flex flex-col gap-2">
             {allTags.map((tag) => (
-              <div
-                key={tag.id}
-                className={`flex items-center gap-2 ${tag.parent_id ? 'pl-6' : ''}`}
-              >
+              <div key={tag.id} className="flex items-center gap-2">
                 <Checkbox
                   id={`tag_${tag.id}`}
                   checked={selectedTagIds.includes(tag.id)}

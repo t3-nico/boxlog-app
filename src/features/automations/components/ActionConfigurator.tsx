@@ -79,16 +79,7 @@ const DEFAULT_ADD_TAGS: AddTagsConfig = {
 };
 
 function flattenTags(tags: Tag[]): Tag[] {
-  const result: Tag[] = [];
-  for (const tag of tags) {
-    result.push(tag);
-    if (tag.children && tag.children.length > 0) {
-      for (const child of tag.children) {
-        result.push(child);
-      }
-    }
-  }
-  return result;
+  return tags;
 }
 
 export function ActionConfigurator({
@@ -230,10 +221,7 @@ export function ActionConfigurator({
           <Label>付与するタグ</Label>
           <div className="flex flex-col gap-2">
             {allTags.map((tag) => (
-              <div
-                key={tag.id}
-                className={`flex items-center gap-2 ${tag.parent_id ? 'pl-6' : ''}`}
-              >
+              <div key={tag.id} className="flex items-center gap-2">
                 <Checkbox
                   id={`action_tag_${tag.id}`}
                   checked={actionConfig.tag_ids.includes(tag.id)}
