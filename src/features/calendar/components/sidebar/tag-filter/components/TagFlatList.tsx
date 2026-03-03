@@ -326,15 +326,17 @@ function SortableTagItem({
     newName: string;
   } | null>(null);
 
-  const handleSaveRename = useCallback(
-    async (newName: string) => {
-      updateTagMutation.mutate({ id: tag.id, name: newName });
-    },
-    [tag.id, updateTagMutation],
-  );
-
   // コロン記法のプレフィックス（グループ名）
   const { prefix: currentGroup, suffix } = useMemo(() => parseColonTag(tag.name), [tag.name]);
+
+  const handleSaveRename = useCallback(
+    async (newName: string) => {
+      // グループ内タグはプレフィックスを再付与
+      const fullName = isGrouped ? buildColonTagName(currentGroup, newName) : newName;
+      updateTagMutation.mutate({ id: tag.id, name: fullName });
+    },
+    [tag.id, isGrouped, currentGroup, updateTagMutation],
+  );
 
   const handleChangeGroup = useCallback(
     (newGroup: string | null) => {
@@ -529,7 +531,7 @@ function SortableTagItem({
         isOpen={showRenameDialog}
         onClose={() => setShowRenameDialog(false)}
         onSave={handleSaveRename}
-        currentName={tag.name}
+        currentName={isGrouped && suffix ? suffix : tag.name}
         tagId={tag.id}
       />
 

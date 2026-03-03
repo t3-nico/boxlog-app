@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import {
   ChevronRight,
@@ -68,14 +68,22 @@ export function GroupHeader({
 }: GroupHeaderProps) {
   const t = useTranslations();
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuClosedAtRef = useRef(0);
+
+  const handleMenuOpenChange = useCallback((open: boolean) => {
+    setMenuOpen(open);
+    if (!open) menuClosedAtRef.current = Date.now();
+  }, []);
 
   const handleRowClick = useCallback(
     (e: React.MouseEvent) => {
       if ((e.target as HTMLElement).closest('[role="checkbox"]')) return;
       if ((e.target as HTMLElement).closest('button')) return;
+      if (menuOpen) return;
+      if (Date.now() - menuClosedAtRef.current < 200) return;
       onToggleCollapse();
     },
-    [onToggleCollapse],
+    [onToggleCollapse, menuOpen],
   );
 
   const handleContextMenu = useCallback(
@@ -115,7 +123,7 @@ export function GroupHeader({
       <div className="flex-1" />
 
       {/* Menu */}
-      <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
+      <DropdownMenu open={menuOpen} onOpenChange={handleMenuOpenChange}>
         <DropdownMenuTrigger asChild>
           <button
             type="button"

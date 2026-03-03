@@ -347,8 +347,13 @@ export function useUngroupTags() {
         for (const tag of old.data) {
           if (tag.name.startsWith(prefixPattern)) {
             const suffix = tag.name.slice(prefixPattern.length);
-            if (existingNames.has(suffix) && mergeConflicts) {
-              // 衝突タグ: マージされるためキャッシュから除去
+            if (existingNames.has(suffix)) {
+              if (mergeConflicts) {
+                // 衝突タグ: マージされるためキャッシュから除去
+                continue;
+              }
+              // mergeConflicts なし: サーバーがエラーを返すのでリネームしない
+              updated.push(tag);
               continue;
             }
             // 非衝突: suffix にリネーム
@@ -392,7 +397,7 @@ export function useUngroupTags() {
       // UNGROUP_CONFLICTS エラーはUI側でハンドリングするのでtoastは出さない
       if (err.message.includes('UNGROUP_CONFLICTS')) return;
 
-      toast.error(t('filter.ungroupTags'));
+      toast.error(t('filter.ungroupTagsFailed'));
     },
     onSettled: () => {
       decrementMutation();
@@ -438,7 +443,7 @@ export function useDeleteGroup() {
     },
     onError: (_err, _input, context) => {
       context?.listSnapshot?.restore();
-      toast.error(t('filter.deleteGroup.title', { name: context?.prefix ?? '' }));
+      toast.error(t('filter.deleteGroup.failed'));
     },
     onSettled: () => {
       decrementMutation();

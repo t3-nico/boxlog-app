@@ -213,6 +213,7 @@
       "expand": "Expand",
       "collapse": "Collapse",
       "ungroupTags": "Ungroup",
+      "ungroupTagsFailed": "Failed to ungroup tags",
       "ungroupTagsSuccess": "Ungrouped \"{name}\" ({count} tags)",
       "ungroupConflict": {
         "title": "Tags with the same name already exist",
@@ -222,7 +223,8 @@
         "label": "Delete group",
         "title": "Delete group \"{name}\"",
         "description": "{count} tags will be deleted. Plans themselves will not be deleted.",
-        "success": "Deleted group \"{name}\" ({count} tags)"
+        "success": "Deleted group \"{name}\" ({count} tags)",
+        "failed": "Failed to delete group"
       }
     },
     "statusBar": {

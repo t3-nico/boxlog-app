@@ -425,6 +425,8 @@ export class TagService {
     }
 
     // 衝突タグをマージ（既存の merge RPC で plan_tags 移行 + ソース削除）
+    // NOTE: 複数マージのうち途中で失敗した場合、処理済み分はロールバックされない。
+    // merge() は RPC ベースのトランザクションのため個別は安全だが、全体は非トランザクション。
     let mergedCount = 0;
     for (const conflict of conflicts) {
       const targetTag = existingByName.get(conflict.suffix)!;
@@ -531,7 +533,17 @@ export class TagService {
     const tagIds = matchingTags.map((t) => t.id);
 
     // plan_tags の関連付けを先に削除（FK制約のため）
-    await this.supabase.from('plan_tags').delete().in('tag_id', tagIds);
+    const { error: planTagsError } = await this.supabase
+      .from('plan_tags')
+      .delete()
+      .in('tag_id', tagIds);
+
+    if (planTagsError) {
+      throw new TagServiceError(
+        'DELETE_FAILED',
+        `Failed to delete plan_tags associations: ${planTagsError.message}`,
+      );
+    }
 
     // タグを一括削除
     const { error: deleteError } = await this.supabase

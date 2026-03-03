@@ -213,6 +213,7 @@
       "expand": "展開",
       "collapse": "折りたたむ",
       "ungroupTags": "グループを解除",
+      "ungroupTagsFailed": "グループの解除に失敗しました",
       "ungroupTagsSuccess": "「{name}」のグループを解除しました（{count}個のタグ）",
       "ungroupConflict": {
         "title": "同名のタグが存在します",
@@ -222,7 +223,8 @@
         "label": "グループを削除",
         "title": "「{name}」グループを削除",
         "description": "{count}個のタグが削除されます。プラン自体は削除されません。",
-        "success": "「{name}」グループを削除しました（{count}個のタグ）"
+        "success": "「{name}」グループを削除しました（{count}個のタグ）",
+        "failed": "グループの削除に失敗しました"
       }
     },
     "statusBar": {
