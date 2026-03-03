@@ -15,6 +15,7 @@ import {
   PlanCard,
   useGlobalDragCursor,
 } from '../../shared';
+import { InlineTagPalette } from '../../shared/components/InlineTagPalette';
 import { PanelDragPreview } from '../../shared/components/PanelDragPreview';
 import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop';
 import { useResponsiveHourHeight } from '../../shared/hooks/useResponsiveHourHeight';
@@ -231,6 +232,9 @@ export function MultiDayContent({
             </div>
           );
         })}
+
+        {/* インラインタグパレット（ドラッグ/タップ後のタグ選択UI） */}
+        <InlineTagPalette hourHeight={HOUR_HEIGHT} />
       </div>
     </div>
   );

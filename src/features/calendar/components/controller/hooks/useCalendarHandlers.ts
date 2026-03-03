@@ -7,6 +7,7 @@ import { getInstanceRef } from '@/lib/instance-id';
 import { logger } from '@/lib/logger';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
+import { useInlineCreateStore } from '@/stores/useInlineCreateStore';
 import { closeModal, useModalStore } from '@/stores/useModalStore';
 
 import type { CalendarPlan, CalendarViewType } from '../../../types/calendar.types';
@@ -21,6 +22,8 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
   const openInspectorWithDraft = useEntryInspectorStore((state) => state.openInspectorWithDraft);
   const inspectorPlanId = useEntryInspectorStore((state) => state.entryId);
   const inspectorIsOpen = useEntryInspectorStore((state) => state.isOpen);
+
+  const setPendingSelection = useInlineCreateStore.use.setPendingSelection();
 
   // カレンダー設定のタイムゾーン
   const timezone = useCalendarSettingsStore((s) => s.timezone);
@@ -131,6 +134,7 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
   );
 
   // 統一された時間範囲選択ハンドラー（全ビュー共通）
+  // ドラッグ/ダブルクリック/タップ → InlineTagPalette 表示
   const handleDateTimeRangeSelect = useCallback(
     (selection: {
       date: Date;
@@ -139,44 +143,28 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
       endHour: number;
       endMinute: number;
     }) => {
-      const localStart = new Date(
-        selection.date.getFullYear(),
-        selection.date.getMonth(),
-        selection.date.getDate(),
-        selection.startHour,
-        selection.startMinute,
-      );
-      const localEnd = new Date(
-        selection.date.getFullYear(),
-        selection.date.getMonth(),
-        selection.date.getDate(),
-        selection.endHour,
-        selection.endMinute,
-      );
-
-      // 最小15分制約
-      const MIN_DURATION_MS = 15 * 60 * 1000;
-      if (localEnd.getTime() - localStart.getTime() < MIN_DURATION_MS) {
-        localEnd.setTime(localStart.getTime() + MIN_DURATION_MS);
+      // 最小15分制約の適用
+      const startMinutes = selection.startHour * 60 + selection.startMinute;
+      let endMinutes = selection.endHour * 60 + selection.endMinute;
+      if (endMinutes - startMinutes < 15) {
+        endMinutes = startMinutes + 15;
       }
 
-      // カレンダーTZの時刻をUTCに変換
-      const startTime = convertFromTimezone(localStart, timezone);
-      const endTime = convertFromTimezone(localEnd, timezone);
-
-      logger.log('📅 Calendar Drag Selection:', {
+      logger.log('📅 Calendar Drag Selection → InlineTagPalette:', {
         date: selection.date.toDateString(),
-        startTime: startTime.toLocaleTimeString(),
-        endTime: endTime.toLocaleTimeString(),
+        start: `${selection.startHour}:${String(selection.startMinute).padStart(2, '0')}`,
+        end: `${Math.floor(endMinutes / 60)}:${String(endMinutes % 60).padStart(2, '0')}`,
       });
 
-      openInspectorWithDraft({
-        title: '',
-        start_time: startTime.toISOString(),
-        end_time: endTime.toISOString(),
+      setPendingSelection({
+        date: selection.date,
+        startHour: selection.startHour,
+        startMinute: selection.startMinute,
+        endHour: Math.floor(endMinutes / 60),
+        endMinute: endMinutes % 60,
       });
     },
-    [openInspectorWithDraft, timezone],
+    [setPendingSelection],
   );
 
   return {

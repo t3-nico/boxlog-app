@@ -11,6 +11,7 @@ import {
   calculatePlanGhostStyle,
   calculatePreviewTime,
 } from '../../shared';
+import { InlineTagPalette } from '../../shared/components/InlineTagPalette';
 import { PanelDragPreview } from '../../shared/components/PanelDragPreview';
 import { useGlobalDragCursor } from '../../shared/hooks/useGlobalDragCursor';
 import { useResponsiveHourHeight } from '../../shared/hooks/useResponsiveHourHeight';
@@ -207,6 +208,9 @@ export const DayContent = ({
               </div>
             );
           })}
+
+        {/* インラインタグパレット（ドラッグ/タップ後のタグ選択UI） */}
+        <InlineTagPalette hourHeight={HOUR_HEIGHT} />
       </div>
     </div>
   );

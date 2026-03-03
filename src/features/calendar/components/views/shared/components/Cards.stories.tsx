@@ -138,7 +138,7 @@ export const DraftCreating: Story = {
   render: () => (
     <Slot>
       <PlanCard
-        plan={{ ...basePlan, id: '__draft__', title: '新しい予定', isDraft: true }}
+        plan={{ ...basePlan, id: '__draft__', title: '', isDraft: true }}
         position={basePosition}
       />
     </Slot>
@@ -228,7 +228,7 @@ export const AllPatterns: Story = {
       </Slot>
       <Slot>
         <PlanCard
-          plan={{ ...basePlan, id: '__draft__', title: '新しい予定', isDraft: true }}
+          plan={{ ...basePlan, id: '__draft__', title: '', isDraft: true }}
           position={basePosition}
         />
       </Slot>
