@@ -7,6 +7,7 @@ import { Suspense, useMemo } from 'react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { isCalendarViewPath } from '@/features/calendar';
 import { AppSidebar } from '@/features/navigation';
+import { NotificationDropdown } from '@/features/notifications';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useLayoutStore } from '@/stores/useLayoutStore';
@@ -79,7 +80,7 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
           )}
         >
           <div className="h-full w-64">
-            <AppSidebar>
+            <AppSidebar headerActions={<NotificationDropdown size="sm" />}>
               <SidebarContent />
             </AppSidebar>
           </div>

@@ -11,12 +11,13 @@ import { useTranslations } from 'next-intl';
 
 import { useLayoutStore } from '@/stores/useLayoutStore';
 
-import { CreateNewDropdown } from './CreateNewDropdown';
 import { NavUser } from './nav-user';
 
 interface SidebarShellProps {
   /** Sidebarのコンテンツ */
   children: ReactNode;
+  /** ヘッダー右側に配置するアクション（通知アイコン等） */
+  headerActions?: ReactNode;
   /** 追加のクラス名 */
   className?: string;
   /** NavUserを非表示にする（AppSidebarで独自に表示する場合） */
@@ -45,7 +46,12 @@ interface SidebarShellProps {
  * </SidebarShell>
  * ```
  */
-export function SidebarShell({ children, className, hideNavUser = false }: SidebarShellProps) {
+export function SidebarShell({
+  children,
+  headerActions,
+  className,
+  hideNavUser = false,
+}: SidebarShellProps) {
   const user = useAuthStore((state) => state.user);
   const toggle = useLayoutStore.use.toggleSidebar();
   const t = useTranslations();
@@ -79,11 +85,7 @@ export function SidebarShell({ children, className, hideNavUser = false }: Sideb
                 <PanelLeftClose className="size-4" />
               </Button>
             </HoverTooltip>
-            <CreateNewDropdown
-              size="sm"
-              tooltipContent={t('sidebar.quickCreate')}
-              tooltipSide="bottom"
-            />
+            {headerActions}
           </div>
         </div>
       )}

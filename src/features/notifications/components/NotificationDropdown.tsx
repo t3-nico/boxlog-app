@@ -181,14 +181,13 @@ export function NotificationDropdown({
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          className={`hover:bg-state-hover data-[state=open]:bg-state-selected relative flex items-center justify-center rounded-2xl outline-hidden transition-colors ${
-            size === 'sm' ? 'h-8 w-8' : 'h-10 w-10'
-          }`}
+        <Button
+          variant="ghost"
+          icon
+          className={`relative ${size === 'sm' ? 'size-8' : 'size-10'}`}
           aria-label={t('notification.title')}
         >
-          <Bell className={size === 'sm' ? 'h-4 w-4' : 'h-5 w-5'} />
+          <Bell className={size === 'sm' ? 'size-4' : 'size-5'} />
           {unreadCount > 0 && (
             <span
               className={`bg-destructive text-destructive-foreground absolute flex items-center justify-center rounded-full font-bold ${
@@ -200,7 +199,7 @@ export function NotificationDropdown({
               {unreadCount > 9 ? '9+' : unreadCount}
             </span>
           )}
-        </button>
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         className="w-full max-w-sm overflow-visible rounded-2xl p-0 sm:w-96 sm:max-w-96"
