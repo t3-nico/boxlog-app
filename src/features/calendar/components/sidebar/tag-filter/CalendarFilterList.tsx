@@ -2,9 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { BarChart3, Moon, Sun } from 'lucide-react';
-import { useLocale, useTranslations } from 'next-intl';
-import Link from 'next/link';
+import { Moon, Sun } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 
@@ -134,10 +133,9 @@ export function CalendarFilterList() {
   );
 }
 
-/** Stats + テーマ切替ユーティリティ */
+/** テーマ切替ユーティリティ */
 function SidebarUtilities() {
   const t = useTranslations();
-  const locale = useLocale();
   const { resolvedTheme, setTheme } = useTheme();
 
   const handleThemeToggle = useCallback(() => {
@@ -146,13 +144,6 @@ function SidebarUtilities() {
 
   return (
     <div className="flex items-center gap-1 px-2 py-2">
-      <HoverTooltip content={t('calendar.views.stats')} side="right">
-        <Button variant="ghost" icon className="size-8" asChild>
-          <Link href={`/${locale}/stats`} aria-label={t('calendar.views.stats')}>
-            <BarChart3 className="size-4" aria-hidden="true" />
-          </Link>
-        </Button>
-      </HoverTooltip>
       <HoverTooltip content={resolvedTheme === 'light' ? 'Dark mode' : 'Light mode'} side="right">
         <Button
           variant="ghost"

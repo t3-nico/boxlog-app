@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 
+import { PageSwitcher } from '@/components/layout/PageSwitcher';
 import { StatsPageContent, prefetchStatsData } from '@/features/stats';
 import type { Locale } from '@/i18n/routing';
 import { HydrationBoundary } from '@/lib/trpc/server';
@@ -26,7 +27,10 @@ const StatsPage = async () => {
 
   return (
     <HydrationBoundary state={dehydratedState}>
-      <StatsPageContent renderAsideContent={renderStatsAsideContent} />
+      <StatsPageContent
+        renderAsideContent={renderStatsAsideContent}
+        headerSlot={<PageSwitcher />}
+      />
     </HydrationBoundary>
   );
 };

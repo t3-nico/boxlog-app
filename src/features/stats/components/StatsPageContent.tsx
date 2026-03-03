@@ -20,6 +20,8 @@ import { StatsView } from './StatsView';
 interface StatsPageContentProps {
   /** アサイドパネルのコンテンツレンダラー（page.tsxから注入） */
   renderAsideContent?: (asideType: AsideType) => React.ReactNode;
+  /** ヘッダー右側のカスタムスロット（PageSwitcher など） */
+  headerSlot?: React.ReactNode;
 }
 
 /**
@@ -28,7 +30,7 @@ interface StatsPageContentProps {
  * CalendarController を経由せず、Stats を直接レンダリングする。
  * CalendarLayout と同じヘッダー + Aside 構造を持つ。
  */
-export function StatsPageContent({ renderAsideContent }: StatsPageContentProps) {
+export function StatsPageContent({ renderAsideContent, headerSlot }: StatsPageContentProps) {
   const t = useTranslations();
   const isMobile = useMediaQuery('(max-width: 767px)');
 
@@ -79,16 +81,17 @@ export function StatsPageContent({ renderAsideContent }: StatsPageContentProps) 
               <h1 className="text-lg leading-8 font-bold">{t('calendar.views.stats')}</h1>
             </div>
 
-            {/* 右側: 通知 + 検索 + アサイドトグル */}
+            {/* 右側: 検索 + ページ切替 + アサイドトグル */}
             <div className="hidden items-center gap-2 md:flex">
               <HeaderUtilities />
+              {headerSlot}
               {!showAside && (
                 <HoverTooltip content={t('calendar.aside.open')} side="bottom">
                   <Button
                     variant="ghost"
                     icon
                     className="size-8"
-                    onClick={() => setCurrentAside('plan')}
+                    onClick={() => setCurrentAside('entries')}
                     aria-label={t('calendar.aside.open')}
                   >
                     <PanelRight className="size-4" />

@@ -31,6 +31,8 @@ interface CalendarHeaderProps {
   showActions?: boolean | undefined;
   // 左側のカスタムコンテンツ（モバイルメニューボタンなど）
   leftSlot?: React.ReactNode | undefined;
+  // 右側のカスタムコンテンツ（PageSwitcher など）
+  rightSlot?: React.ReactNode | undefined;
   // 日付選択機能
   onDateSelect?: ((date: Date) => void) | undefined;
   showMiniCalendar?: boolean | undefined;
@@ -74,6 +76,7 @@ export const CalendarHeader = ({
   onImport,
   showActions = false,
   leftSlot,
+  rightSlot,
   onDateSelect,
   showMiniCalendar = false,
   displayRange,
@@ -167,16 +170,17 @@ export const CalendarHeader = ({
             </Button>
           </div>
 
-          {/* PC: 通知 + 検索 + パネルトグル + アクション */}
+          {/* PC: 検索 + ページ切替 + パネルトグル + アクション */}
           <div className="hidden items-center gap-2 md:flex">
             <HeaderUtilities />
+            {rightSlot}
             {onAsideChange && currentAside === 'none' && (
               <HoverTooltip content={t('calendar.aside.open')} side="bottom">
                 <Button
                   variant="ghost"
                   icon
                   className="-mr-4 size-8"
-                  onClick={() => onAsideChange('plan')}
+                  onClick={() => onAsideChange('entries')}
                   aria-label="Open aside"
                 >
                   <PanelRight className="size-4" />

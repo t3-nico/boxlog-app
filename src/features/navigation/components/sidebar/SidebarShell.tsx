@@ -73,7 +73,7 @@ export function SidebarShell({
       {!hideNavUser && (
         <div className="flex h-12 shrink-0 items-center justify-between px-2">
           <NavUser user={userData} />
-          <div className="flex items-center gap-1">
+          <div className="flex items-center">
             <HoverTooltip content={t('sidebar.closeSidebar')} side="bottom">
               <Button
                 variant="ghost"

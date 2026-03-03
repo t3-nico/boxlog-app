@@ -55,6 +55,9 @@ export interface CalendarLayoutProps {
   // Aside
   currentAside?: AsideType | undefined;
   onAsideChange?: ((aside: AsideType) => void) | undefined;
+
+  // Header right slot (PageSwitcher など)
+  rightSlot?: React.ReactNode | undefined;
 }
 
 /**
@@ -84,6 +87,9 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
     // Aside
     currentAside,
     onAsideChange,
+
+    // Header right slot
+    rightSlot,
   }) => {
     const t = useTranslations('calendar');
 
@@ -139,6 +145,7 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
               displayRange={displayRange}
               currentAside={currentAside}
               onAsideChange={onAsideChange}
+              rightSlot={rightSlot}
             />
 
             {/* カレンダーコンテンツ（スワイプ対応） */}
@@ -188,9 +195,7 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
                   onAsideChange={onAsideChange}
                   renderContent={(type) => {
                     switch (type) {
-                      case 'plan':
-                        return <PlanListPanel />;
-                      case 'record':
+                      case 'entries':
                         return <PlanListPanel />;
                       case 'chat':
                         return <AIInspectorContent />;
@@ -218,9 +223,7 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
                 onAsideChange={onAsideChange}
                 renderContent={(type) => {
                   switch (type) {
-                    case 'plan':
-                      return <PlanListPanel />;
-                    case 'record':
+                    case 'entries':
                       return <PlanListPanel />;
                     case 'chat':
                       return <AIInspectorContent />;

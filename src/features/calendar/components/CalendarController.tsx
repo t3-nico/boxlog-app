@@ -31,7 +31,10 @@ initializePreload();
 // Component
 // =============================================================================
 
-export function CalendarController({ className }: { className?: string } = {}) {
+export function CalendarController({
+  className,
+  rightSlot,
+}: { className?: string; rightSlot?: React.ReactNode } = {}) {
   // =========================================================================
   // Context（全データ・コールバックを取得）
   // =========================================================================
@@ -157,6 +160,7 @@ export function CalendarController({ className }: { className?: string } = {}) {
         }}
         currentAside={currentAside}
         onAsideChange={onAsideChange}
+        rightSlot={rightSlot}
       >
         <CalendarViewRenderer viewType={viewType} commonProps={commonProps} />
       </CalendarLayout>

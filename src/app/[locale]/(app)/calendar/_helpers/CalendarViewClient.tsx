@@ -17,6 +17,7 @@ import { usePathname } from 'next/navigation';
 import { format } from 'date-fns';
 
 import { FeatureErrorBoundary } from '@/components/error-boundary';
+import { PageSwitcher } from '@/components/layout/PageSwitcher';
 import type { CalendarViewType } from '@/features/calendar';
 import {
   CalendarController,
@@ -55,7 +56,7 @@ export function CalendarViewClient({ view, initialDate, translations }: Calendar
       // 既存のquery paramを保持しつつdateのみ更新
       const params = new URLSearchParams(window.location.search);
       params.set('date', dateString);
-      const newURL = `/${locale}/${newViewType}?${params.toString()}`;
+      const newURL = `/${locale}/calendar/${newViewType}?${params.toString()}`;
       logger.log('🔗 updateURL called:', { newViewType, dateToUse, newURL });
       window.history.pushState(null, '', newURL);
     },
@@ -128,7 +129,7 @@ export function CalendarViewClient({ view, initialDate, translations }: Calendar
         }
       >
         <CalendarProvider value={calendarValue}>
-          <CalendarController />
+          <CalendarController rightSlot={<PageSwitcher />} />
         </CalendarProvider>
       </FeatureErrorBoundary>
     </div>
