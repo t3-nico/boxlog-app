@@ -3,10 +3,11 @@ import { describe, expect, it, vi } from 'vitest';
 // --- Mocks ---
 
 const mockUtils = {
-  plans: {
+  entries: {
     list: { invalidate: vi.fn() },
     getById: { invalidate: vi.fn() },
-    invalidate: vi.fn(),
+    getCumulativeTime: { invalidate: vi.fn() },
+    getInstances: { invalidate: vi.fn() },
   },
 };
 
@@ -34,20 +35,20 @@ vi.mock('@/lib/logger', () => ({
 import { renderHook } from '@testing-library/react';
 import { beforeEach } from 'vitest';
 
-import { usePlanRealtime } from '../usePlanRealtime';
+import { useEntryRealtime } from '../useEntryRealtime';
 
-describe('usePlanRealtime', () => {
+describe('useEntryRealtime', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockIsMutating = false;
   });
 
-  it('正しいテーブル名でサブスクリプションを作成する', () => {
-    renderHook(() => usePlanRealtime('user-1'));
+  it('entries テーブルを購読する', () => {
+    renderHook(() => useEntryRealtime('user-1'));
 
     expect(mockUseRealtimeSubscription).toHaveBeenCalledWith(
       expect.objectContaining({
-        table: 'plans',
+        table: 'entries',
         event: '*',
         enabled: true,
         filter: 'user_id=eq.user-1',
@@ -56,17 +57,17 @@ describe('usePlanRealtime', () => {
   });
 
   it('チャンネル名にユーザーIDが含まれる', () => {
-    renderHook(() => usePlanRealtime('user-123'));
+    renderHook(() => useEntryRealtime('user-123'));
 
     expect(mockUseRealtimeSubscription).toHaveBeenCalledWith(
       expect.objectContaining({
-        channelName: 'plan-changes-user-123',
+        channelName: 'entry-changes-user-123',
       }),
     );
   });
 
-  it('enabled=falseで無効化できる', () => {
-    renderHook(() => usePlanRealtime('user-1', { enabled: false }));
+  it('enabled=false で無効化できる', () => {
+    renderHook(() => useEntryRealtime('user-1', { enabled: false }));
 
     expect(mockUseRealtimeSubscription).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -85,18 +86,18 @@ describe('usePlanRealtime', () => {
       },
     );
 
-    renderHook(() => usePlanRealtime('user-1'));
+    renderHook(() => useEntryRealtime('user-1'));
 
-    // イベントを発火
     capturedOnEvent!({
       eventType: 'UPDATE',
-      new: { id: 'plan-1' },
+      new: { id: 'entry-1' },
       old: null,
     });
 
-    expect(mockUtils.plans.list.invalidate).toHaveBeenCalled();
-    expect(mockUtils.plans.getById.invalidate).toHaveBeenCalledWith({ id: 'plan-1' });
-    expect(mockUtils.plans.invalidate).toHaveBeenCalled();
+    expect(mockUtils.entries.list.invalidate).toHaveBeenCalled();
+    expect(mockUtils.entries.getById.invalidate).toHaveBeenCalledWith({ id: 'entry-1' });
+    expect(mockUtils.entries.getCumulativeTime.invalidate).toHaveBeenCalled();
+    expect(mockUtils.entries.getInstances.invalidate).toHaveBeenCalled();
   });
 
   it('mutation中はキャッシュ無効化をスキップする', () => {
@@ -109,19 +110,18 @@ describe('usePlanRealtime', () => {
       },
     );
 
-    renderHook(() => usePlanRealtime('user-1'));
+    renderHook(() => useEntryRealtime('user-1'));
 
-    // イベントを発火
     capturedOnEvent!({
       eventType: 'UPDATE',
-      new: { id: 'plan-1' },
+      new: { id: 'entry-1' },
       old: null,
     });
 
-    expect(mockUtils.plans.list.invalidate).not.toHaveBeenCalled();
+    expect(mockUtils.entries.list.invalidate).not.toHaveBeenCalled();
   });
 
-  it('DELETEイベントでold.idを使用する', () => {
+  it('DELETE イベントで old.id を使用する', () => {
     mockIsMutating = false;
     let capturedOnEvent: (payload: unknown) => void;
 
@@ -131,14 +131,14 @@ describe('usePlanRealtime', () => {
       },
     );
 
-    renderHook(() => usePlanRealtime('user-1'));
+    renderHook(() => useEntryRealtime('user-1'));
 
     capturedOnEvent!({
       eventType: 'DELETE',
       new: null,
-      old: { id: 'plan-deleted' },
+      old: { id: 'entry-deleted' },
     });
 
-    expect(mockUtils.plans.getById.invalidate).toHaveBeenCalledWith({ id: 'plan-deleted' });
+    expect(mockUtils.entries.getById.invalidate).toHaveBeenCalledWith({ id: 'entry-deleted' });
   });
 });

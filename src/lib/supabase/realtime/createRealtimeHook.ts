@@ -5,15 +5,14 @@
  *
  * @example
  * ```typescript
- * // feature固有のフックを簡潔に定義
- * export const usePlanRealtime = createRealtimeHook({
- *   name: 'plan',
- *   table: 'plans',
- *   useMutationGuard: () => usePlanCacheStore((s) => s.isMutating),
+ * export const useEntryRealtime = createRealtimeHook({
+ *   name: 'entry',
+ *   table: 'entries',
+ *   useMutationGuard: () => useEntryCacheStore((s) => s.isMutating),
  *   onInvalidate: (utils, payload) => {
- *     void utils.plans.list.invalidate();
+ *     void utils.entries.list.invalidate();
  *     const id = payload.new?.id ?? payload.old?.id;
- *     if (id) void utils.plans.getById.invalidate({ id });
+ *     if (id) void utils.entries.getById.invalidate({ id });
  *   },
  * });
  * ```

@@ -50,7 +50,6 @@ export { usePlanTags } from '@/hooks/usePlanTags';
 export { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
 export { usePlan, useplan } from './hooks/usePlan';
 export { usePlanActivities } from './hooks/usePlanActivities';
-export { usePlanRealtime } from './hooks/usePlanRealtime';
 
 // =============================================================================
 // Utils

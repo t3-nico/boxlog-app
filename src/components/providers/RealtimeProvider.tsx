@@ -24,10 +24,10 @@
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 
-import { isCalendarViewPath, useCalendarRealtime } from '@/features/calendar';
+import { isCalendarViewPath } from '@/features/calendar';
 import { useNotificationRealtime } from '@/features/notifications';
-import { usePlanRealtime } from '@/features/plans';
 import { useTagRealtime } from '@/features/tags';
+import { useEntryRealtime } from '@/hooks/useEntryRealtime';
 import { useHasMounted } from '@/hooks/useHasMounted';
 import { useAuthStore } from '@/stores/useAuthStore';
 
@@ -62,8 +62,7 @@ export function RealtimeProvider({ children }: RealtimeProviderProps) {
     // pathnameがnullの場合（SSR時など）は全て無効
     if (!pathname) {
       return {
-        calendar: false,
-        plan: false,
+        entries: false,
         tags: false,
         notifications: false,
       };
@@ -75,10 +74,8 @@ export function RealtimeProvider({ children }: RealtimeProviderProps) {
     const isCalendarPage = isCalendarViewPath(normalizedPath);
 
     return {
-      // カレンダーページ: カレンダーとプランの購読が必要
-      calendar: isCalendarPage,
-      // プランはカレンダーのアサイドで表示されるため、カレンダーページで購読
-      plan: isCalendarPage,
+      // エントリはカレンダーページで購読
+      entries: isCalendarPage,
       // タグはサイドバーに常時表示されるため、カレンダーページで購読
       tags: isCalendarPage,
       // 通知は全ページで必要
@@ -88,11 +85,8 @@ export function RealtimeProvider({ children }: RealtimeProviderProps) {
 
   // 各機能のRealtime購読（ページ別に条件付き有効化）
   // フックは常に呼び出されるが、enabled=falseの場合は購読しない
-  useCalendarRealtime(userId, {
-    enabled: shouldSubscribe && subscriptionConfig.calendar,
-  });
-  usePlanRealtime(userId, {
-    enabled: shouldSubscribe && (subscriptionConfig.calendar || subscriptionConfig.plan),
+  useEntryRealtime(userId, {
+    enabled: shouldSubscribe && subscriptionConfig.entries,
   });
   useTagRealtime(userId, {
     enabled: shouldSubscribe && subscriptionConfig.tags,
