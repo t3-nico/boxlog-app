@@ -97,12 +97,3 @@ export {
   useDragHandle,
 } from './components/inspector/shared';
 export type { ActivityDisplayItem } from './components/inspector/shared';
-
-// =============================================================================
-// Adapters
-// =============================================================================
-export {
-  expandRecurringPlansToCalendarPlans,
-  planToCalendarPlan,
-  plansToCalendarPlans,
-} from './adapters/toCalendarEvent';
