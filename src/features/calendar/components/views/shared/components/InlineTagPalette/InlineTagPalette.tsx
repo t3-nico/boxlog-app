@@ -8,20 +8,18 @@
  * タグタップでエントリを即作成する。フォームなし、保存ボタンなし。
  */
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { useTags } from '@/hooks/useTagsQuery';
 import { convertFromTimezone } from '@/lib/date/timezone';
 import { logger } from '@/lib/logger';
+import { parseColonTag } from '@/lib/tag-colon';
 import { cn } from '@/lib/utils';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 import { useInlineCreateStore } from '@/stores/useInlineCreateStore';
 
 import { Z_INDEX } from '../../constants/grid.constants';
-
-/** パレットに表示するタグの最大数 */
-const MAX_TAGS = 10;
 
 interface InlineTagPaletteProps {
   /** 1時間あたりの高さ（px） */
@@ -129,6 +127,26 @@ export function InlineTagPalette({ hourHeight }: InlineTagPaletteProps) {
     [pendingSelection, isCreating, timezone, createEntry, bulkAddTags, clearPendingSelection],
   );
 
+  // パレット用グルーピング（コロン付き1つでもprefix表示）
+  const { groups, ungrouped } = useMemo(() => {
+    const allTags = tags ?? [];
+    const prefixMap = new Map<string, typeof allTags>();
+    const noColon: typeof allTags = [];
+
+    for (const tag of allTags) {
+      const { prefix, suffix } = parseColonTag(tag.name);
+      if (suffix !== null) {
+        const existing = prefixMap.get(prefix) ?? [];
+        existing.push(tag);
+        prefixMap.set(prefix, existing);
+      } else {
+        noColon.push(tag);
+      }
+    }
+
+    return { groups: prefixMap, ungrouped: noColon };
+  }, [tags]);
+
   if (!pendingSelection) return null;
 
   const { startHour, startMinute, endHour, endMinute } = pendingSelection;
@@ -152,8 +170,6 @@ export function InlineTagPalette({ hourHeight }: InlineTagPaletteProps) {
   const minutes = totalMinutes % 60;
   const durationText =
     hours > 0 ? (minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`) : `${minutes}m`;
-
-  const displayTags = (tags ?? []).slice(0, MAX_TAGS);
 
   return (
     <div
@@ -183,31 +199,94 @@ export function InlineTagPalette({ hourHeight }: InlineTagPaletteProps) {
         className="bg-card border-border absolute right-1 left-1 rounded-lg border p-2 shadow-lg"
         style={{ top: paletteTop }}
       >
-        <div className="flex flex-wrap gap-1.5">
-          {displayTags.map((tag) => (
-            <button
-              key={tag.id}
-              type="button"
-              disabled={isCreating}
-              onClick={() => handleCreate(tag.id, tag.name)}
-              className={cn(
-                'flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition-colors',
-                'hover:opacity-80 active:scale-95 disabled:opacity-50',
-              )}
-              style={{
-                backgroundColor: tag.color
-                  ? `color-mix(in oklch, ${tag.color} 15%, transparent)`
-                  : 'var(--muted)',
-                color: tag.color ?? 'var(--muted-foreground)',
-              }}
-            >
-              <span
-                className="size-2 rounded-full"
-                style={{ backgroundColor: tag.color ?? 'var(--muted-foreground)' }}
-              />
-              {tag.name}
-            </button>
-          ))}
+        <div className="flex flex-col gap-1.5">
+          {/* [prefix] suffix suffix ... */}
+          {[...groups.entries()].map(([prefix, groupTags]) => {
+            const firstTag = groupTags[0];
+            const groupColor = firstTag?.color ?? null;
+
+            return (
+              <div key={prefix} className="flex flex-wrap items-center gap-1">
+                {/* prefix ボタン（クリックで先頭タグを割り当て） */}
+                <button
+                  type="button"
+                  disabled={isCreating || !firstTag}
+                  onClick={() => firstTag && handleCreate(firstTag.id, prefix)}
+                  className={cn(
+                    'rounded px-2 py-1 text-xs font-semibold transition-colors',
+                    'hover:opacity-80 active:scale-95 disabled:opacity-50',
+                  )}
+                  style={{
+                    backgroundColor: groupColor
+                      ? `color-mix(in oklch, ${groupColor} 25%, transparent)`
+                      : 'var(--muted)',
+                    color: groupColor ?? 'var(--muted-foreground)',
+                  }}
+                >
+                  {prefix}
+                </button>
+
+                {/* suffix 表示 */}
+                {groupTags.map((tag) => {
+                  const { suffix } = parseColonTag(tag.name);
+                  return (
+                    <button
+                      key={tag.id}
+                      type="button"
+                      disabled={isCreating}
+                      onClick={() => handleCreate(tag.id, tag.name)}
+                      className={cn(
+                        'flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium transition-colors',
+                        'hover:opacity-80 active:scale-95 disabled:opacity-50',
+                      )}
+                      style={{
+                        backgroundColor: tag.color
+                          ? `color-mix(in oklch, ${tag.color} 15%, transparent)`
+                          : 'var(--muted)',
+                        color: tag.color ?? 'var(--muted-foreground)',
+                      }}
+                    >
+                      <span
+                        className="size-1.5 rounded-full"
+                        style={{ backgroundColor: tag.color ?? 'var(--muted-foreground)' }}
+                      />
+                      {suffix}
+                    </button>
+                  );
+                })}
+              </div>
+            );
+          })}
+
+          {/* 非グループタグ */}
+          {ungrouped.length > 0 && (
+            <div className="flex flex-wrap items-center gap-1">
+              {ungrouped.map((tag) => (
+                <button
+                  key={tag.id}
+                  type="button"
+                  disabled={isCreating}
+                  onClick={() => handleCreate(tag.id, tag.name)}
+                  className={cn(
+                    'flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium transition-colors',
+                    'hover:opacity-80 active:scale-95 disabled:opacity-50',
+                  )}
+                  style={{
+                    backgroundColor: tag.color
+                      ? `color-mix(in oklch, ${tag.color} 15%, transparent)`
+                      : 'var(--muted)',
+                    color: tag.color ?? 'var(--muted-foreground)',
+                  }}
+                >
+                  <span
+                    className="size-1.5 rounded-full"
+                    style={{ backgroundColor: tag.color ?? 'var(--muted-foreground)' }}
+                  />
+                  {tag.name}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

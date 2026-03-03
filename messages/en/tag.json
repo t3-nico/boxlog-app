@@ -282,7 +282,7 @@
     "merge": {
       "title": "Merge Tags",
       "description": "Merge \"{source}\" into another tag",
-      "autoMergeDescription": "All plan associations will be moved to the target tag, and the source tag will be automatically deleted.",
+      "autoMergeDescription": "All plans from the source tag will be transferred to the target tag, and the source tag will be automatically deleted.",
       "targetTag": "Target tag",
       "selectTarget": "Select target...",
       "noTargetSelected": "Please select a target tag",

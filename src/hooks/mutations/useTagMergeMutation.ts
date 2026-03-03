@@ -1,10 +1,14 @@
 // タグマージ用ミューテーションフック（楽観的更新付き）
 
+import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
+
 import { trpc } from '@/lib/trpc/client';
 import { useTagCacheStore } from '@/stores/useTagCacheStore';
 
 export function useMergeTag() {
   const utils = trpc.useUtils();
+  const t = useTranslations('tags');
   const incrementMutation = useTagCacheStore((state) => state.incrementMutation);
   const decrementMutation = useTagCacheStore((state) => state.decrementMutation);
 
@@ -21,6 +25,7 @@ export function useMergeTag() {
       const previousData = utils.tags.list.getData();
       const previousSourceDetail = utils.tags.getById.getData({ id: sourceTagId });
       const previousTargetDetail = utils.tags.getById.getData({ id: targetTagId });
+      const previousTagStats = utils.plans.getTagStats.getData();
 
       utils.tags.list.setData(undefined, (old) => {
         if (!old) return old;
@@ -37,9 +42,13 @@ export function useMergeTag() {
         previousData,
         previousSourceDetail,
         previousTargetDetail,
+        previousTagStats,
         sourceTagId,
         targetTagId,
       };
+    },
+    onSuccess: (result) => {
+      toast.success(t('merge.success', { count: result.mergedAssociations }));
     },
     onError: (_err, _variables, context) => {
       if (context?.previousData) utils.tags.list.setData(undefined, context.previousData);
@@ -49,6 +58,10 @@ export function useMergeTag() {
       if (context?.previousTargetDetail && context?.targetTagId) {
         utils.tags.getById.setData({ id: context.targetTagId }, context.previousTargetDetail);
       }
+      if (context?.previousTagStats) {
+        utils.plans.getTagStats.setData(undefined, context.previousTagStats);
+      }
+      toast.error(t('merge.failed'));
     },
     onSettled: (_data, _err, input) => {
       decrementMutation();

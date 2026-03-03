@@ -25,6 +25,8 @@ interface FilterItemMenuProps {
   currentGroup?: string | null | undefined;
   /** グループ候補一覧 */
   groupOptions?: GroupOption[] | undefined;
+  /** グループに属するタグか（色変更はグループ単位のため個別無効） */
+  isGrouped?: boolean | undefined;
 
   // Handlers
   onOpenRenameDialog: () => void;
@@ -39,6 +41,7 @@ export function FilterItemMenu({
   displayColor,
   currentGroup,
   groupOptions,
+  isGrouped,
   onOpenRenameDialog,
   onColorChange,
   onChangeGroup,
@@ -56,16 +59,18 @@ export function FilterItemMenu({
         {t('calendar.filter.rename')}
       </DropdownMenuItem>
 
-      {/* カラーを変更 */}
-      <DropdownMenuSub>
-        <DropdownMenuSubTrigger>
-          <Palette className="mr-2 size-4" />
-          {t('calendar.filter.changeColor')}
-        </DropdownMenuSubTrigger>
-        <DropdownMenuSubContent onClick={(e) => e.stopPropagation()}>
-          <ColorPaletteMenuItems selectedColor={displayColor} onColorSelect={onColorChange} />
-        </DropdownMenuSubContent>
-      </DropdownMenuSub>
+      {/* カラーを変更（グループ内タグは色がグループ統一のため非表示） */}
+      {!isGrouped && (
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <Palette className="mr-2 size-4" />
+            {t('calendar.filter.changeColor')}
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent onClick={(e) => e.stopPropagation()}>
+            <ColorPaletteMenuItems selectedColor={displayColor} onColorSelect={onColorChange} />
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+      )}
 
       {/* グループを変更 */}
       {groupOptions && groupOptions.length > 0 && onChangeGroup && (

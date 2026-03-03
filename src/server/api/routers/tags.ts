@@ -236,6 +236,60 @@ export const tagsRouter = createTRPCRouter({
     }),
 
   /**
+   * グループ解除（コロン記法プレフィックスを除去）
+   */
+  ungroupTags: protectedProcedure
+    .input(
+      z.object({
+        prefix: z.string().min(1).max(50),
+        mergeConflicts: z.boolean().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const service = createTagService(ctx.supabase);
+        const result = await service.ungroupTags({
+          userId: ctx.userId,
+          prefix: input.prefix,
+          ...(input.mergeConflicts != null ? { mergeConflicts: input.mergeConflicts } : {}),
+        });
+
+        // サーバーサイドキャッシュを無効化
+        await invalidateUserTagsCache(ctx.userId);
+
+        return result;
+      } catch (error) {
+        return handleServiceError(error);
+      }
+    }),
+
+  /**
+   * グループ削除（コロン記法プレフィックスのタグを一括削除）
+   */
+  deleteGroup: protectedProcedure
+    .input(
+      z.object({
+        prefix: z.string().min(1).max(50),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const service = createTagService(ctx.supabase);
+        const result = await service.deleteGroup({
+          userId: ctx.userId,
+          prefix: input.prefix,
+        });
+
+        // サーバーサイドキャッシュを無効化
+        await invalidateUserTagsCache(ctx.userId);
+
+        return result;
+      } catch (error) {
+        return handleServiceError(error);
+      }
+    }),
+
+  /**
    * タグ並び替え（バッチ更新）
    */
   reorder: protectedProcedure

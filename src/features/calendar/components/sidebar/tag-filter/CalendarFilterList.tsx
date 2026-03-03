@@ -77,8 +77,11 @@ export function CalendarFilterList() {
   // 削除確認後のハンドラー
   const handleConfirmDelete = async () => {
     if (!deleteTarget) return;
-    await deleteTagMutation.mutateAsync({ id: deleteTarget.id });
-    setDeleteTarget(null);
+    try {
+      await deleteTagMutation.mutateAsync({ id: deleteTarget.id });
+    } finally {
+      setDeleteTarget(null);
+    }
   };
 
   return (

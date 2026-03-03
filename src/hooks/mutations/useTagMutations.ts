@@ -5,9 +5,11 @@
  */
 export {
   useCreateTag,
+  useDeleteGroup,
   useDeleteTag,
   useRenameTag,
   useReorderTags,
+  useUngroupTags,
   useUpdateTag,
   useUpdateTagColor,
 } from './useTagCrudMutations';

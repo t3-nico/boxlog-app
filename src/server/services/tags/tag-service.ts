@@ -117,7 +117,8 @@ export class TagServiceError extends Error {
       | 'INVALID_INPUT'
       | 'MERGE_FAILED'
       | 'SAME_TAG_MERGE'
-      | 'TARGET_NOT_FOUND',
+      | 'TARGET_NOT_FOUND'
+      | 'UNGROUP_CONFLICTS',
     message: string,
   ) {
     super(message);
@@ -356,6 +357,194 @@ export class TagService {
     }
 
     return results.filter((r) => r.data !== null).map((r) => transformDbTag(r.data));
+  }
+
+  /**
+   * グループ解除（コロン記法プレフィックスを除去）
+   *
+   * 例: prefix="AA" の場合
+   *   "AA:api" → "api"（非衝突: リネーム）
+   *   "AA:BB"  → "BB" が既存 → BB に統合（mergeConflicts=true 時）
+   *
+   * prefix 名の単体タグが存在しなければ自動作成して残す。
+   *
+   * @param options - userId, prefix, mergeConflicts
+   * @returns 更新されたタグ数とマージされたタグ数
+   */
+  async ungroupTags(options: {
+    userId: string;
+    prefix: string;
+    mergeConflicts?: boolean;
+  }): Promise<{ count: number; mergedCount: number }> {
+    const { userId, prefix, mergeConflicts = false } = options;
+
+    // prefix: で始まるタグを全取得
+    const { data: matchingTags, error: fetchError } = await this.supabase
+      .from('tags')
+      .select('*')
+      .eq('user_id', userId)
+      .like('name', `${prefix}:%`);
+
+    if (fetchError) {
+      throw new TagServiceError(
+        'FETCH_FAILED',
+        `Failed to fetch group tags: ${fetchError.message}`,
+      );
+    }
+
+    if (!matchingTags || matchingTags.length === 0) {
+      return { count: 0, mergedCount: 0 };
+    }
+
+    // 各タグの suffix を算出
+    const tagSuffixes = matchingTags.map((tag) => {
+      const colonIndex = tag.name.indexOf(':');
+      return {
+        tag,
+        suffix: colonIndex !== -1 ? tag.name.slice(colonIndex + 1) : tag.name,
+      };
+    });
+
+    // 全 suffix 名で既存タグを一括検索（衝突チェック）
+    const suffixNames = [...new Set(tagSuffixes.map((t) => t.suffix))];
+    const { data: existingTags } = await this.supabase
+      .from('tags')
+      .select('*')
+      .eq('user_id', userId)
+      .in('name', suffixNames);
+
+    const existingByName = new Map((existingTags ?? []).map((t) => [t.name, t]));
+
+    // 衝突と非衝突を分類
+    const conflicts = tagSuffixes.filter((t) => existingByName.has(t.suffix));
+    const nonConflicts = tagSuffixes.filter((t) => !existingByName.has(t.suffix));
+
+    // 衝突があるが mergeConflicts が false → エラー（衝突リストを返す）
+    if (conflicts.length > 0 && !mergeConflicts) {
+      throw new TagServiceError('UNGROUP_CONFLICTS', conflicts.map((c) => c.suffix).join(', '));
+    }
+
+    // 衝突タグをマージ（既存の merge RPC で plan_tags 移行 + ソース削除）
+    let mergedCount = 0;
+    for (const conflict of conflicts) {
+      const targetTag = existingByName.get(conflict.suffix)!;
+      await this.merge({
+        userId,
+        sourceTagId: conflict.tag.id,
+        targetTagId: targetTag.id,
+      });
+      mergedCount++;
+    }
+
+    // 非衝突タグをリネーム（suffix 部分のみに）
+    const updatePromises = nonConflicts.map(({ tag, suffix }) =>
+      this.supabase
+        .from('tags')
+        .update({ name: suffix })
+        .eq('id', tag.id)
+        .eq('user_id', userId)
+        .select()
+        .single(),
+    );
+
+    const results = await Promise.all(updatePromises);
+
+    const errors = results.filter((r) => r.error);
+    if (errors.length > 0) {
+      const firstError = errors[0];
+      throw new TagServiceError(
+        'UPDATE_FAILED',
+        `Failed to ungroup tags: ${firstError?.error?.message ?? 'Unknown error'}`,
+      );
+    }
+
+    // prefix 名の単体タグが存在するか確認（リネーム後の状態で再チェック）
+    const willHavePrefix = nonConflicts.some((t) => t.suffix === prefix);
+    if (!willHavePrefix) {
+      const { data: existingParent } = await this.supabase
+        .from('tags')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('name', prefix)
+        .maybeSingle();
+
+      if (!existingParent) {
+        const representativeColor = matchingTags[0]?.color ?? '#3B82F6';
+        const { error: createError } = await this.supabase
+          .from('tags')
+          .insert({
+            user_id: userId,
+            name: prefix,
+            color: representativeColor,
+            is_active: true,
+            sort_order: 0,
+          })
+          .select()
+          .single();
+
+        if (createError && createError.code !== '23505') {
+          throw new TagServiceError(
+            'CREATE_FAILED',
+            `Failed to create parent tag: ${createError.message}`,
+          );
+        }
+      }
+    }
+
+    return { count: nonConflicts.length + mergedCount, mergedCount };
+  }
+
+  /**
+   * グループ削除（コロン記法プレフィックスのタグを一括削除）
+   *
+   * 例: prefix="開発" の場合
+   *   "開発:api", "開発:frontend" を全削除
+   *   関連する plan_tags も先に削除
+   *
+   * @param options - userId, prefix
+   * @returns 削除されたタグ数
+   */
+  async deleteGroup(options: {
+    userId: string;
+    prefix: string;
+  }): Promise<{ deletedCount: number }> {
+    const { userId, prefix } = options;
+
+    // prefix: で始まるタグを全取得
+    const { data: matchingTags, error: fetchError } = await this.supabase
+      .from('tags')
+      .select('id')
+      .eq('user_id', userId)
+      .like('name', `${prefix}:%`);
+
+    if (fetchError) {
+      throw new TagServiceError(
+        'FETCH_FAILED',
+        `Failed to fetch group tags: ${fetchError.message}`,
+      );
+    }
+
+    if (!matchingTags || matchingTags.length === 0) {
+      return { deletedCount: 0 };
+    }
+
+    const tagIds = matchingTags.map((t) => t.id);
+
+    // plan_tags の関連付けを先に削除（FK制約のため）
+    await this.supabase.from('plan_tags').delete().in('tag_id', tagIds);
+
+    // タグを一括削除
+    const { error: deleteError } = await this.supabase
+      .from('tags')
+      .delete()
+      .in('id', tagIds)
+      .eq('user_id', userId);
+
+    if (deleteError) {
+      throw new TagServiceError('DELETE_FAILED', `Failed to delete group: ${deleteError.message}`);
+    }
+
+    return { deletedCount: tagIds.length };
   }
 
   /**

@@ -211,7 +211,19 @@
       },
       "tagMenu": "Tag menu",
       "expand": "Expand",
-      "collapse": "Collapse"
+      "collapse": "Collapse",
+      "ungroupTags": "Ungroup",
+      "ungroupTagsSuccess": "Ungrouped \"{name}\" ({count} tags)",
+      "ungroupConflict": {
+        "title": "Tags with the same name already exist",
+        "description": "\"{names}\" already exists. It will be merged with the existing tag."
+      },
+      "deleteGroup": {
+        "label": "Delete group",
+        "title": "Delete group \"{name}\"",
+        "description": "{count} tags will be deleted. Plans themselves will not be deleted.",
+        "success": "Deleted group \"{name}\" ({count} tags)"
+      }
     },
     "statusBar": {
       "noSchedule": "No schedule",

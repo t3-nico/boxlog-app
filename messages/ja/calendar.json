@@ -211,7 +211,19 @@
       },
       "tagMenu": "タグメニュー",
       "expand": "展開",
-      "collapse": "折りたたむ"
+      "collapse": "折りたたむ",
+      "ungroupTags": "グループを解除",
+      "ungroupTagsSuccess": "「{name}」のグループを解除しました（{count}個のタグ）",
+      "ungroupConflict": {
+        "title": "同名のタグが存在します",
+        "description": "「{names}」は既に存在します。既存のタグに統合されます。"
+      },
+      "deleteGroup": {
+        "label": "グループを削除",
+        "title": "「{name}」グループを削除",
+        "description": "{count}個のタグが削除されます。プラン自体は削除されません。",
+        "success": "「{name}」グループを削除しました（{count}個のタグ）"
+      }
     },
     "statusBar": {
       "noSchedule": "予定なし",

@@ -22,8 +22,13 @@ import { CSS } from '@dnd-kit/utilities';
 import { useTranslations } from 'next-intl';
 
 import type { Tag } from '@/core/types/tag';
-import { useRenameGroup, useReorderTags } from '@/hooks/mutations/useTagCrudMutations';
-import { useUpdateTag } from '@/hooks/mutations/useTagMutations';
+import {
+  useDeleteGroup,
+  useRenameGroup,
+  useReorderTags,
+  useUngroupTags,
+} from '@/hooks/mutations/useTagCrudMutations';
+import { useMergeTag, useUpdateTag } from '@/hooks/mutations/useTagMutations';
 import { useTagModalNavigation } from '@/hooks/useTagModalNavigation';
 import { buildColonTagName, getTagDisplayLabel, parseColonTag } from '@/lib/tag-colon';
 import { cn } from '@/lib/utils';
@@ -31,6 +36,7 @@ import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 
 import { TagRenameDialog } from '@/components/tags/TagRenameDialog';
 import { Checkbox } from '@/components/ui/checkbox';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { HoverTooltip } from '@/components/ui/tooltip';
 
@@ -130,11 +136,8 @@ export function TagFlatList({
       }
     }
 
-    // 2人以上のメンバーがいるプレフィックスのみグループとして扱う
-    const groupPrefixes = new Set<string>();
-    for (const [prefix, members] of groups) {
-      if (members.length >= 2) groupPrefixes.add(prefix);
-    }
+    // コロン記法のタグは1つでもグループとして表示する
+    const groupPrefixes = new Set<string>(groups.keys());
 
     // 表示順を構築: 独立タグは元の位置を維持、グループは最初のメンバーの位置にまとめる
     const sorted: typeof parsed = [];
@@ -211,6 +214,25 @@ export function TagFlatList({
     [displayIds, reorderMutation],
   );
 
+  // グループ解除時の衝突チェック（キャッシュから判定）
+  const getUngroupConflicts = useCallback(
+    (prefix: string): string[] => {
+      const prefixPattern = `${prefix}:`;
+      const existingNames = new Set(tags.map((t) => t.name));
+      return tags
+        .filter((t) => t.name.startsWith(prefixPattern))
+        .map((t) => t.name.slice(prefixPattern.length))
+        .filter((suffix) => existingNames.has(suffix));
+    },
+    [tags],
+  );
+
+  // 名前からタグを検索（個別タグ移動時の衝突チェック用）
+  const findTagByName = useCallback(
+    (name: string): Tag | undefined => tags.find((t) => t.name === name),
+    [tags],
+  );
+
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext items={displayIds} strategy={verticalListSortingStrategy}>
@@ -232,6 +254,8 @@ export function TagFlatList({
             onToggleGroupTags={onToggleGroupTags}
             onShowOnlyGroupTags={onShowOnlyGroupTags}
             onToggleCollapse={() => toggleGroupCollapse(info.prefix)}
+            getUngroupConflicts={getUngroupConflicts}
+            findTagByName={findTagByName}
           />
         ))}
       </SortableContext>
@@ -255,6 +279,8 @@ function SortableTagItem({
   onToggleGroupTags,
   onShowOnlyGroupTags,
   onToggleCollapse,
+  getUngroupConflicts,
+  findTagByName,
 }: {
   tag: Tag;
   checked: boolean;
@@ -271,13 +297,18 @@ function SortableTagItem({
   onToggleGroupTags: (tagIds: string[]) => void;
   onShowOnlyGroupTags: (tagIds: string[]) => void;
   onToggleCollapse: () => void;
+  getUngroupConflicts: (prefix: string) => string[];
+  findTagByName: (name: string) => Tag | undefined;
 }) {
   const t = useTranslations();
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: tag.id,
   });
   const updateTagMutation = useUpdateTag();
+  const mergeTagMutation = useMergeTag();
   const renameGroupMutation = useRenameGroup();
+  const ungroupTagsMutation = useUngroupTags();
+  const deleteGroupMutation = useDeleteGroup();
   const { showOnlyTag } = useCalendarFilterStore();
   const { openTagMergeModal, openTagCreateModal } = useTagModalNavigation();
   const { displayColor, handleColorChange } = useFilterItemEdit({
@@ -288,6 +319,12 @@ function SortableTagItem({
   const [menuOpen, setMenuOpen] = useState(false);
   const [showRenameDialog, setShowRenameDialog] = useState(false);
   const [showGroupRenameDialog, setShowGroupRenameDialog] = useState(false);
+  const [showDeleteGroupDialog, setShowDeleteGroupDialog] = useState(false);
+  const [ungroupConflicts, setUngroupConflicts] = useState<string[] | null>(null);
+  const [groupChangeConflict, setGroupChangeConflict] = useState<{
+    targetTagId: string;
+    newName: string;
+  } | null>(null);
 
   const handleSaveRename = useCallback(
     async (newName: string) => {
@@ -303,7 +340,15 @@ function SortableTagItem({
     (newGroup: string | null) => {
       const baseName = suffix ?? tag.name;
       const newName = newGroup ? buildColonTagName(newGroup, baseName) : baseName;
-      // グループの色を継承
+
+      // 衝突チェック: 移動先の名前が既存タグと重複するか
+      const existingTag = findTagByName(newName);
+      if (existingTag && existingTag.id !== tag.id) {
+        setGroupChangeConflict({ targetTagId: existingTag.id, newName });
+        return;
+      }
+
+      // 衝突なし → 通常のリネーム
       const groupColor = newGroup
         ? groupOptions.find((g) => g.name === newGroup)?.color
         : undefined;
@@ -313,7 +358,7 @@ function SortableTagItem({
         ...(groupColor ? { color: groupColor } : {}),
       });
     },
-    [tag.id, tag.name, suffix, groupOptions, updateTagMutation],
+    [tag.id, tag.name, suffix, groupOptions, updateTagMutation, findTagByName],
   );
 
   // グループリネームハンドラー
@@ -322,6 +367,57 @@ function SortableTagItem({
       renameGroupMutation.mutate({ oldPrefix: currentGroup, newPrefix });
     },
     [currentGroup, renameGroupMutation],
+  );
+
+  // グループ解除ハンドラー（衝突チェック付き）
+  const handleUngroupTags = useCallback(() => {
+    const conflicts = getUngroupConflicts(currentGroup);
+    if (conflicts.length > 0) {
+      setUngroupConflicts(conflicts);
+    } else {
+      ungroupTagsMutation.mutate({ prefix: currentGroup });
+    }
+  }, [currentGroup, ungroupTagsMutation, getUngroupConflicts]);
+
+  // 衝突確認後のマージ付きグループ解除
+  const handleConfirmUngroupWithMerge = useCallback(async () => {
+    try {
+      await ungroupTagsMutation.mutateAsync({ prefix: currentGroup, mergeConflicts: true });
+    } finally {
+      setUngroupConflicts(null);
+    }
+  }, [currentGroup, ungroupTagsMutation]);
+
+  // グループ変更時の衝突確認 → マージ
+  const handleConfirmGroupChangeMerge = useCallback(async () => {
+    if (!groupChangeConflict) return;
+    try {
+      await mergeTagMutation.mutateAsync({
+        sourceTagId: tag.id,
+        targetTagId: groupChangeConflict.targetTagId,
+      });
+    } finally {
+      setGroupChangeConflict(null);
+    }
+  }, [tag.id, groupChangeConflict, mergeTagMutation]);
+
+  // グループ削除ハンドラー
+  const handleConfirmDeleteGroup = useCallback(async () => {
+    try {
+      await deleteGroupMutation.mutateAsync({ prefix: currentGroup });
+    } finally {
+      setShowDeleteGroupDialog(false);
+    }
+  }, [currentGroup, deleteGroupMutation]);
+
+  // グループ色変更ハンドラー（グループ内全タグの色を一括更新）
+  const handleGroupColorChange = useCallback(
+    (color: string) => {
+      for (const id of groupTagIds) {
+        updateTagMutation.mutate({ id, color });
+      }
+    },
+    [groupTagIds, updateTagMutation],
   );
 
   // 表示名: グループ内ならsuffix部分のみ
@@ -352,11 +448,15 @@ function SortableTagItem({
             indeterminate={groupVisibility === 'some'}
             count={groupCount}
             collapsed={collapsed}
+            displayColor={displayColor}
             onCheckedChange={() => onToggleGroupTags(groupTagIds)}
             onToggleCollapse={onToggleCollapse}
             onShowOnlyGroup={() => onShowOnlyGroupTags(groupTagIds)}
+            onColorChange={handleGroupColorChange}
             onAddTagToGroup={() => openTagCreateModal(currentGroup)}
             onRenameGroup={() => setShowGroupRenameDialog(true)}
+            onUngroupTags={handleUngroupTags}
+            onDeleteGroup={() => setShowDeleteGroupDialog(true)}
           />
         )}
 
@@ -405,6 +505,7 @@ function SortableTagItem({
                 displayColor={displayColor}
                 currentGroup={suffix !== null ? currentGroup : null}
                 groupOptions={groupOptions}
+                isGrouped={isGrouped}
                 onOpenRenameDialog={() => setShowRenameDialog(true)}
                 onColorChange={handleColorChange}
                 onChangeGroup={handleChangeGroup}
@@ -442,6 +543,46 @@ function SortableTagItem({
           tagId={`group-${currentGroup}`}
         />
       )}
+
+      {/* グループ削除確認ダイアログ */}
+      {isFirstInGroup && (
+        <ConfirmDialog
+          open={showDeleteGroupDialog}
+          onClose={() => setShowDeleteGroupDialog(false)}
+          onConfirm={handleConfirmDeleteGroup}
+          title={t('calendar.filter.deleteGroup.title', { name: currentGroup })}
+          description={t('calendar.filter.deleteGroup.description', {
+            count: groupTagIds.length,
+          })}
+          variant="destructive"
+        />
+      )}
+
+      {/* グループ解除・衝突確認ダイアログ */}
+      {isFirstInGroup && (
+        <ConfirmDialog
+          open={ungroupConflicts !== null}
+          onClose={() => setUngroupConflicts(null)}
+          onConfirm={handleConfirmUngroupWithMerge}
+          title={t('calendar.filter.ungroupConflict.title')}
+          description={t('calendar.filter.ungroupConflict.description', {
+            names: ungroupConflicts?.join(', ') ?? '',
+          })}
+          variant="warning"
+        />
+      )}
+
+      {/* グループ変更時の衝突確認ダイアログ */}
+      <ConfirmDialog
+        open={groupChangeConflict !== null}
+        onClose={() => setGroupChangeConflict(null)}
+        onConfirm={handleConfirmGroupChangeMerge}
+        title={t('calendar.filter.ungroupConflict.title')}
+        description={t('calendar.filter.ungroupConflict.description', {
+          names: groupChangeConflict?.newName ?? '',
+        })}
+        variant="warning"
+      />
     </>
   );
 }
