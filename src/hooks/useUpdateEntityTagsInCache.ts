@@ -6,10 +6,10 @@ import { api } from '@/lib/trpc';
 /**
  * エンティティのtagIdsキャッシュを楽観的に更新するフック
  *
- * Plans/Records共通で使用。list / getById 両方のキャッシュを一括更新する。
+ * list / getById 両方のキャッシュを一括更新する。
  * CalendarCard等での即時表示に必要。
  */
-export function useUpdateEntityTagsInCache(entity: 'plans' | 'records') {
+export function useUpdateEntityTagsInCache(entity: 'plans') {
   const queryClient = useQueryClient();
   const utils = api.useUtils();
 
@@ -38,22 +38,13 @@ export function useUpdateEntityTagsInCache(entity: 'plans' | 'records') {
         },
       );
 
-      // 2. entity.getById のキャッシュを更新
-      if (entity === 'plans') {
-        const updater = (oldData: ReturnType<typeof utils.plans.getById.getData>) => {
-          if (!oldData) return oldData;
-          return { ...oldData, tagIds: newTagIds };
-        };
-        utils.plans.getById.setData({ id: entityId }, updater);
-        utils.plans.getById.setData({ id: entityId, include: { tags: true } }, updater);
-      } else {
-        const updater = (oldData: ReturnType<typeof utils.records.getById.getData>) => {
-          if (!oldData) return oldData;
-          return { ...oldData, tagIds: newTagIds };
-        };
-        utils.records.getById.setData({ id: entityId }, updater);
-        utils.records.getById.setData({ id: entityId, include: { plan: true } }, updater);
-      }
+      // 2. plans.getById のキャッシュを更新
+      const updater = (oldData: ReturnType<typeof utils.plans.getById.getData>) => {
+        if (!oldData) return oldData;
+        return { ...oldData, tagIds: newTagIds };
+      };
+      utils.plans.getById.setData({ id: entityId }, updater);
+      utils.plans.getById.setData({ id: entityId, include: { tags: true } }, updater);
     },
     [queryClient, entity, utils],
   );

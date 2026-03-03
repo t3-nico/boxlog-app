@@ -1,7 +1,7 @@
 /**
  * Activity Router Factory
  *
- * Plan/Record共通のアクティビティ履歴管理ルーターを生成
+ * エンティティのアクティビティ履歴管理ルーターを生成
  */
 
 import { TRPCError } from '@trpc/server';

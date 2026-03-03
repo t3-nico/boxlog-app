@@ -104,7 +104,7 @@ export function PlanIconButton({
     [onPlanChange],
   );
 
-  // 新しいPlanを作成（RecordsIconButton の handleCreateRecord と同じパターン）
+  // 新しいPlanを作成
   const handleCreatePlan = useCallback(() => {
     setIsOpen(false);
     onBeforeCreatePlan?.();
