@@ -47,7 +47,6 @@ export const WeekView = ({
   onPlanContextMenu,
   onEmptyAreaContextMenu,
   onUpdatePlan,
-  onEmptyClick,
   onTimeRangeSelect,
 }: WeekViewProps) => {
   const weekStartsOnSetting = useCalendarSettingsStore((s) => s.weekStartsOn);
@@ -85,7 +84,6 @@ export const WeekView = ({
         onEventClick={onPlanClick}
         onEventContextMenu={onPlanContextMenu}
         onEmptyAreaContextMenu={onEmptyAreaContextMenu}
-        onEmptyClick={onEmptyClick}
         onEventUpdate={onUpdatePlan}
         onTimeRangeSelect={onTimeRangeSelect}
         className={className}

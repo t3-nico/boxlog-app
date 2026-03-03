@@ -40,7 +40,6 @@ export const WeekGrid = ({
   disabledPlanId,
   onEventClick,
   onEventContextMenu,
-  onEmptyClick,
   onEventUpdate,
   onTimeRangeSelect,
   className,
@@ -141,7 +140,6 @@ export const WeekGrid = ({
                 planPositions={planPositions}
                 onPlanClick={onEventClick}
                 onPlanContextMenu={onEventContextMenu}
-                onEmptyClick={onEmptyClick}
                 onPlanUpdate={handlePlanUpdate}
                 onTimeRangeSelect={onTimeRangeSelect}
                 onEmptyAreaContextMenu={onEmptyAreaContextMenu}

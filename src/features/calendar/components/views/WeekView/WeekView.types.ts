@@ -22,7 +22,6 @@ export interface WeekGridProps {
   onEmptyAreaContextMenu?:
     | ((date: Date, hour: number, minute: number, e: React.MouseEvent) => void)
     | undefined;
-  onEmptyClick?: ((date: Date, time: string) => void) | undefined;
   onEventUpdate?: ((plan: CalendarPlan) => void) | undefined;
   onTimeRangeSelect?: ((selection: DateTimeSelection) => void) | undefined;
   className?: string | undefined;

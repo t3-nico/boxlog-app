@@ -98,13 +98,7 @@ const todayRange: ViewDateRange = {
 export const Default: Story = {
   render: () => (
     <div className="h-[700px]">
-      <DayView
-        dateRange={todayRange}
-        plans={mockPlans}
-        currentDate={today}
-        onPlanClick={fn()}
-        onEmptyClick={fn()}
-      />
+      <DayView dateRange={todayRange} plans={mockPlans} currentDate={today} onPlanClick={fn()} />
     </div>
   ),
 };
@@ -123,13 +117,7 @@ export const AllPatterns: Story = {
   render: () => (
     <div className="flex flex-col items-start gap-6">
       <div className="h-[500px] w-full">
-        <DayView
-          dateRange={todayRange}
-          plans={mockPlans}
-          currentDate={today}
-          onPlanClick={fn()}
-          onEmptyClick={fn()}
-        />
+        <DayView dateRange={todayRange} plans={mockPlans} currentDate={today} onPlanClick={fn()} />
       </div>
 
       <div className="h-[500px] w-full">

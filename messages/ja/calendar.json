@@ -227,6 +227,12 @@
         "failed": "グループの削除に失敗しました"
       }
     },
+    "tagSelector": {
+      "title": "タグを選択",
+      "searchPlaceholder": "タグを検索...",
+      "noResults": "タグが見つかりません",
+      "createPlaceholder": "新しいタグ名"
+    },
     "statusBar": {
       "noSchedule": "予定なし",
       "openSchedule": "予定を開く",

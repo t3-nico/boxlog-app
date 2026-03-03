@@ -227,6 +227,12 @@
         "failed": "Failed to delete group"
       }
     },
+    "tagSelector": {
+      "title": "Select a tag",
+      "searchPlaceholder": "Search tags...",
+      "noResults": "No tags found",
+      "createPlaceholder": "New tag name"
+    },
     "statusBar": {
       "noSchedule": "No schedule",
       "openSchedule": "Open schedule",

@@ -1,0 +1,423 @@
+'use client';
+
+/**
+ * TagQuickSelector
+ *
+ * ドラッグ後に表示されるタグ選択UI。
+ * ラジオボタン型の単一選択 + 検索 + 新規作成。
+ * overlayなし — カレンダーの時間選択プレビューが見える状態を維持。
+ * モバイル: BottomSheet風パネル、PC: 中央フローティングパネル。
+ */
+
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+
+import { Check, Plus, Search, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { useHasMounted } from '@/hooks/useHasMounted';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import { useTags } from '@/hooks/useTagsQuery';
+import { parseColonTag } from '@/lib/tag-colon';
+import { cn } from '@/lib/utils';
+
+import type { Tag } from '@/core/types/tag';
+
+interface TagQuickSelectorProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSelect: (tagId: string, tagName: string) => void;
+  onCreateAndSelect: (name: string) => void;
+  /** PC: アンカー要素の横にパネルを配置する */
+  anchorRef?: React.RefObject<HTMLDivElement | null>;
+}
+
+/**
+ * ラジオ風タグアイテム
+ */
+function TagRadioItem({
+  tag,
+  label,
+  isSelected,
+  onSelect,
+  indented,
+}: {
+  tag: { id: string; color: string | null };
+  label: string;
+  isSelected: boolean;
+  onSelect: () => void;
+  indented?: boolean;
+}) {
+  const tagColor = tag.color || '#6B7280';
+
+  return (
+    <button
+      type="button"
+      onClick={onSelect}
+      className={cn(
+        'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors',
+        'hover:bg-state-hover active:bg-state-hover',
+        'min-h-11',
+        indented && 'pl-9',
+      )}
+      role="radio"
+      aria-checked={isSelected}
+    >
+      {/* Radio indicator */}
+      <div
+        className={cn(
+          'flex size-5 shrink-0 items-center justify-center rounded-full border-2',
+          isSelected ? 'border-transparent' : 'opacity-50',
+        )}
+        style={{
+          backgroundColor: isSelected ? tagColor : 'transparent',
+          borderColor: isSelected ? tagColor : tagColor,
+        }}
+      >
+        {isSelected && <Check className="size-3 text-white" />}
+      </div>
+
+      {/* Tag name */}
+      <span className="truncate">{label}</span>
+
+      {/* Color dot */}
+      <span
+        className="ml-auto size-2 shrink-0 rounded-full"
+        style={{ backgroundColor: tagColor }}
+      />
+    </button>
+  );
+}
+
+/**
+ * 共通コンテンツ部分
+ */
+function TagQuickSelectorContent({
+  onSelect,
+  onCreateAndSelect,
+}: {
+  onSelect: (tagId: string, tagName: string) => void;
+  onCreateAndSelect: (name: string) => void;
+}) {
+  const t = useTranslations('calendar');
+  const { data: tags } = useTags();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [newTagName, setNewTagName] = useState('');
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  // アクティブなタグのみ、ソート済み
+  const sortedTags = useMemo(() => {
+    const active = (tags ?? []).filter((tag) => tag.is_active !== false);
+    return [...active].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+  }, [tags]);
+
+  // 検索フィルタリング
+  const filteredTags = useMemo(() => {
+    if (!searchQuery) return sortedTags;
+    const q = searchQuery.toLowerCase();
+    return sortedTags.filter((tag) => tag.name.toLowerCase().includes(q));
+  }, [sortedTags, searchQuery]);
+
+  // コロン記法でグルーピング（1つでもグループ表示）
+  const { groups, ungrouped } = useMemo(() => {
+    const prefixMap = new Map<string, Tag[]>();
+    const noColon: Tag[] = [];
+
+    for (const tag of filteredTags) {
+      const { prefix, suffix } = parseColonTag(tag.name);
+      if (suffix !== null) {
+        const existing = prefixMap.get(prefix) ?? [];
+        existing.push(tag);
+        prefixMap.set(prefix, existing);
+      } else {
+        noColon.push(tag);
+      }
+    }
+
+    return { groups: prefixMap, ungrouped: noColon };
+  }, [filteredTags]);
+
+  const handleSelect = useCallback(
+    (tagId: string, tagName: string) => {
+      setSelectedId(tagId);
+      onSelect(tagId, tagName);
+    },
+    [onSelect],
+  );
+
+  const handleCreateSubmit = useCallback(() => {
+    const trimmed = newTagName.trim();
+    if (!trimmed) return;
+    onCreateAndSelect(trimmed);
+  }, [newTagName, onCreateAndSelect]);
+
+  const handleCreateKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleCreateSubmit();
+      }
+    },
+    [handleCreateSubmit],
+  );
+
+  const hasResults = filteredTags.length > 0;
+
+  return (
+    <>
+      {/* Search */}
+      <div className="border-border border-b px-4 py-3">
+        <div className="relative">
+          <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+          <Input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={t('tagSelector.searchPlaceholder')}
+            className="pl-9"
+          />
+        </div>
+      </div>
+
+      {/* Tag list */}
+      <div
+        className="overflow-y-auto px-1 py-2"
+        style={{ maxHeight: '50vh' }}
+        role="radiogroup"
+        aria-label={t('tagSelector.title')}
+      >
+        {!hasResults && (
+          <p className="text-muted-foreground px-3 py-6 text-center text-sm">
+            {t('tagSelector.noResults')}
+          </p>
+        )}
+
+        {/* Grouped tags */}
+        {[...groups.entries()].map(([prefix, groupTags]) => {
+          const firstTag = groupTags[0];
+          if (!firstTag) return null;
+
+          const parentSelected = selectedId === `group:${prefix}`;
+
+          return (
+            <div key={prefix} className="mb-1">
+              {/* Group parent */}
+              <TagRadioItem
+                tag={firstTag}
+                label={prefix}
+                isSelected={parentSelected}
+                onSelect={() => {
+                  setSelectedId(`group:${prefix}`);
+                  handleSelect(firstTag.id, prefix);
+                }}
+              />
+
+              {/* Children */}
+              {groupTags.map((tag) => {
+                const { suffix } = parseColonTag(tag.name);
+                return (
+                  <TagRadioItem
+                    key={tag.id}
+                    tag={tag}
+                    label={suffix ?? tag.name}
+                    isSelected={selectedId === tag.id}
+                    onSelect={() => {
+                      setSelectedId(tag.id);
+                      handleSelect(tag.id, tag.name);
+                    }}
+                    indented
+                  />
+                );
+              })}
+            </div>
+          );
+        })}
+
+        {/* Ungrouped tags */}
+        {ungrouped.map((tag) => (
+          <TagRadioItem
+            key={tag.id}
+            tag={tag}
+            label={tag.name}
+            isSelected={selectedId === tag.id}
+            onSelect={() => {
+              setSelectedId(tag.id);
+              handleSelect(tag.id, tag.name);
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Create new tag */}
+      <div className="border-border flex items-center gap-2 border-t px-4 py-3">
+        <Input
+          value={newTagName}
+          onChange={(e) => setNewTagName(e.target.value)}
+          onKeyDown={handleCreateKeyDown}
+          placeholder={t('tagSelector.createPlaceholder')}
+          className="flex-1"
+        />
+        <Button
+          icon
+          variant="outline"
+          onClick={handleCreateSubmit}
+          disabled={!newTagName.trim()}
+          className="shrink-0"
+          aria-label={t('tagSelector.createPlaceholder')}
+        >
+          <Plus className="size-4" />
+        </Button>
+      </div>
+    </>
+  );
+}
+
+/** アンカー要素の横にパネルを配置する位置を計算 */
+function calcAnchoredPosition(anchorRect: DOMRect, panelWidth: number) {
+  const GAP = 8;
+  const MARGIN = 16;
+  const spaceRight = window.innerWidth - anchorRect.right - GAP - MARGIN;
+  const spaceLeft = anchorRect.left - GAP - MARGIN;
+
+  // 右に十分なスペースがあれば右、なければ左
+  const left =
+    spaceRight >= panelWidth
+      ? anchorRect.right + GAP
+      : spaceLeft >= panelWidth
+        ? anchorRect.left - GAP - panelWidth
+        : // どちらも足りなければ右寄せ（画面端からマージン）
+          window.innerWidth - panelWidth - MARGIN;
+
+  // 縦位置: アンカーの上端に揃えつつ、画面内に収まるようクランプ
+  const maxTop = window.innerHeight - MARGIN;
+  const top = Math.max(MARGIN, Math.min(anchorRect.top, maxTop - 200));
+
+  return { top, left };
+}
+
+export function TagQuickSelector({
+  open,
+  onOpenChange,
+  onSelect,
+  onCreateAndSelect,
+  anchorRef,
+}: TagQuickSelectorProps) {
+  const t = useTranslations('calendar');
+  const isMobile = useIsMobile();
+  const mounted = useHasMounted();
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  // PC: アンカー横に配置する位置を計算
+  const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
+
+  useEffect(() => {
+    if (!open || isMobile) {
+      setPosition(null);
+      return;
+    }
+
+    const anchor = anchorRef?.current;
+    if (!anchor) {
+      setPosition(null);
+      return;
+    }
+
+    const update = () => {
+      const rect = anchor.getBoundingClientRect();
+      const panelWidth = 384; // max-w-sm = 24rem = 384px
+      setPosition(calcAnchoredPosition(rect, panelWidth));
+    };
+
+    update();
+
+    // スクロール・リサイズで再計算
+    window.addEventListener('resize', update);
+    // カレンダーのスクロールコンテナにも対応
+    const scrollParent = anchor.closest('[data-scroll-container]') ?? window;
+    scrollParent.addEventListener('scroll', update, { passive: true });
+
+    return () => {
+      window.removeEventListener('resize', update);
+      scrollParent.removeEventListener('scroll', update);
+    };
+  }, [open, isMobile, anchorRef]);
+
+  // Escape キーで閉じる
+  useEffect(() => {
+    if (!open) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onOpenChange(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [open, onOpenChange]);
+
+  const handleBackdropClick = useCallback(
+    (e: React.MouseEvent) => {
+      if (panelRef.current?.contains(e.target as Node)) return;
+      onOpenChange(false);
+    },
+    [onOpenChange],
+  );
+
+  if (!mounted || !open) return null;
+
+  const panel = (
+    <div className="fixed inset-0 z-50" onClick={handleBackdropClick}>
+      {/* Floating panel — overlayなし、カレンダーが見える */}
+      <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="false"
+        aria-label={t('tagSelector.title')}
+        className={cn(
+          'bg-card border-border absolute flex flex-col border shadow-xl',
+          'animate-in fade-in duration-150',
+          isMobile
+            ? 'slide-in-from-bottom-4 inset-x-0 bottom-0 max-h-[70vh] rounded-t-2xl border-t'
+            : 'max-h-[70vh] w-full max-w-sm rounded-2xl',
+        )}
+        style={!isMobile && position ? { top: position.top, left: position.left } : undefined}
+      >
+        {/* Drag handle (mobile) / Header */}
+        {isMobile ? (
+          <>
+            <div
+              className="flex h-10 w-full shrink-0 items-center justify-center"
+              aria-hidden="true"
+            >
+              <div className="bg-border h-1.5 w-12 rounded-full" />
+            </div>
+            <div className="px-4 pb-2">
+              <h2 className="text-lg font-bold">{t('tagSelector.title')}</h2>
+            </div>
+          </>
+        ) : (
+          <div className="flex items-center justify-between px-4 pt-4 pb-2">
+            <h2 className="text-lg font-bold">{t('tagSelector.title')}</h2>
+            <button
+              type="button"
+              onClick={() => onOpenChange(false)}
+              className={cn(
+                'text-foreground flex size-8 items-center justify-center rounded-lg transition-colors',
+                'hover:bg-state-hover',
+              )}
+              aria-label="Close"
+            >
+              <X className="size-4" />
+            </button>
+          </div>
+        )}
+
+        <TagQuickSelectorContent onSelect={onSelect} onCreateAndSelect={onCreateAndSelect} />
+      </div>
+    </div>
+  );
+
+  return createPortal(panel, document.body);
+}

@@ -133,13 +133,7 @@ const weekRange: ViewDateRange = {
 export const Default: Story = {
   render: () => (
     <div className="h-[700px]">
-      <WeekView
-        dateRange={weekRange}
-        plans={mockPlans}
-        currentDate={today}
-        onPlanClick={fn()}
-        onEmptyClick={fn()}
-      />
+      <WeekView dateRange={weekRange} plans={mockPlans} currentDate={today} onPlanClick={fn()} />
     </div>
   ),
 };

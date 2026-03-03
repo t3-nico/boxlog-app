@@ -45,8 +45,6 @@ export interface CalendarContextValue {
 
   // --- Plan click handlers ---
   onPlanClick: (plan: CalendarPlan) => void;
-  onCreatePlan: (date?: Date, time?: string) => void;
-  onEmptyClick: (date: Date, time: string) => void;
   onTimeRangeSelect: (selection: {
     date: Date;
     startHour: number;

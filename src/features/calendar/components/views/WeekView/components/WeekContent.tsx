@@ -29,7 +29,6 @@ interface WeekContentProps {
   planPositions: WeekPlanPosition[];
   onPlanClick?: ((plan: CalendarPlan) => void) | undefined;
   onPlanContextMenu?: ((plan: CalendarPlan, e: React.MouseEvent) => void) | undefined;
-  onEmptyClick?: ((date: Date, timeString: string) => void) | undefined;
   onPlanUpdate?: ((planId: string, updates: Partial<CalendarPlan>) => void) | undefined;
   onTimeRangeSelect?: ((selection: import('../../shared').DateTimeSelection) => void) | undefined;
   /** 空き領域の右クリックハンドラー */
@@ -297,7 +296,7 @@ export const WeekContent = React.memo(function WeekContent({
         })}
 
         {/* インラインタグパレット（ドラッグ/タップ後のタグ選択UI） */}
-        <InlineTagPalette hourHeight={HOUR_HEIGHT} />
+        <InlineTagPalette hourHeight={HOUR_HEIGHT} date={date} />
       </div>
     </div>
   );

@@ -27,7 +27,6 @@ interface MultiDayContentProps {
   planStyles: Record<string, React.CSSProperties>;
   onPlanClick?: ((plan: CalendarPlan) => void) | undefined;
   onPlanContextMenu?: ((plan: CalendarPlan, e: React.MouseEvent) => void) | undefined;
-  onEmptyClick?: ((date: Date, timeString: string) => void) | undefined;
   onPlanUpdate?: ((planId: string, updates: Partial<CalendarPlan>) => void) | undefined;
   onTimeRangeSelect?: ((selection: DateTimeSelection) => void) | undefined;
   onEmptyAreaContextMenu?:
@@ -234,7 +233,7 @@ export function MultiDayContent({
         })}
 
         {/* インラインタグパレット（ドラッグ/タップ後のタグ選択UI） */}
-        <InlineTagPalette hourHeight={HOUR_HEIGHT} />
+        <InlineTagPalette hourHeight={HOUR_HEIGHT} date={date} />
       </div>
     </div>
   );

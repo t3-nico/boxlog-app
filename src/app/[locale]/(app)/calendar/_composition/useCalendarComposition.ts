@@ -68,8 +68,6 @@ export interface CalendarCompositionResult {
 
   // === Plan click handlers ===
   onPlanClick: (plan: CalendarPlan) => void;
-  onCreatePlan: (date?: Date, time?: string) => void;
-  onEmptyClick: (date: Date, time: string) => void;
   onTimeRangeSelect: (selection: {
     date: Date;
     startHour: number;
@@ -170,16 +168,7 @@ export function useCalendarComposition({
   // =========================================================================
   // Calendar Handlers（click, create, drag-select）
   // =========================================================================
-  const {
-    handlePlanClick,
-    handleCreatePlan,
-    handleEmptyClick,
-    handleDateTimeRangeSelect,
-    disabledPlanId,
-  } = useCalendarHandlers({
-    viewType,
-    currentDate,
-  });
+  const { handlePlanClick, handleDateTimeRangeSelect, disabledPlanId } = useCalendarHandlers();
 
   // =========================================================================
   // Plan Operations（CRUD）
@@ -321,8 +310,6 @@ export function useCalendarComposition({
 
       // Plan click handlers
       onPlanClick: handlePlanClick,
-      onCreatePlan: handleCreatePlan,
-      onEmptyClick: handleEmptyClick,
       onTimeRangeSelect: handleDateTimeRangeSelect,
 
       // Plan CRUD
@@ -356,8 +343,6 @@ export function useCalendarComposition({
       currentAside,
       setCurrentAside,
       handlePlanClick,
-      handleCreatePlan,
-      handleEmptyClick,
       handleDateTimeRangeSelect,
       handleUpdatePlan,
       deletePlan,

@@ -43,7 +43,6 @@ export interface GridViewProps extends BaseViewProps {
   disabledPlanId?: string | null | undefined;
 
   // Plan handlers（グリッド操作用）
-  onCreatePlan?: ((date: Date, time?: string) => void) | undefined;
   onUpdatePlan?:
     | ((
         planIdOrPlan: string | CalendarPlan,
@@ -52,7 +51,6 @@ export interface GridViewProps extends BaseViewProps {
     | undefined;
   onDeletePlan?: ((planId: string) => void) | undefined;
   onRestorePlan?: ((plan: CalendarPlan) => Promise<void>) | undefined;
-  onEmptyClick?: ((date: Date, time: string) => void) | undefined;
   onEmptyAreaContextMenu?:
     | ((date: Date, hour: number, minute: number, e: React.MouseEvent) => void)
     | undefined;
