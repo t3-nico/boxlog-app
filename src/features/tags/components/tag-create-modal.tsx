@@ -150,7 +150,9 @@ export function TagCreateModal({
     } catch (err) {
       logger.error('Tag creation failed:', err);
       const errorMessage = err instanceof Error ? err.message : String(err);
-      if (
+      if (errorMessage.includes('group_conflict') || errorMessage.includes('GROUP_NAME_CONFLICT')) {
+        setError(t('tags.form.groupNameConflict'));
+      } else if (
         errorMessage.includes('duplicate') ||
         errorMessage.includes('unique') ||
         errorMessage.includes('already exists') ||

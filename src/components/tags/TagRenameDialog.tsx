@@ -8,6 +8,7 @@ import { Field, FieldError } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { useDialogKeyboard } from '@/hooks/useDialogKeyboard';
 import { useTags } from '@/hooks/useTagsQuery';
+import { hasGroupNameConflict } from '@/lib/tag-colon';
 import { TAG_NAME_MAX_LENGTH } from '@/lib/tag-colors';
 import { useTranslations } from 'next-intl';
 
@@ -89,6 +90,12 @@ export function TagRenameDialog({
       return;
     }
 
+    // グループ名とフラットタグの衝突チェック
+    if (existingTags && hasGroupNameConflict(trimmedName, existingTags, tagId)) {
+      setError(t('tags.form.groupNameConflict'));
+      return;
+    }
+
     setIsLoading(true);
     try {
       await onSave(trimmedName);
@@ -107,6 +114,11 @@ export function TagRenameDialog({
       const errorCode = trpcErr.data?.code ?? trpcErr.code ?? trpcErr.cause?.code ?? '';
       const causeMessage = trpcErr.cause?.message ?? '';
 
+      const isGroupConflict =
+        errorCode === 'GROUP_NAME_CONFLICT' ||
+        errorMessage.includes('GROUP_NAME_CONFLICT') ||
+        causeMessage.includes('GROUP_NAME_CONFLICT');
+
       const isDuplicate =
         errorCode === 'DUPLICATE_NAME' ||
         errorMessage.includes('duplicate') ||
@@ -118,7 +130,13 @@ export function TagRenameDialog({
         errorMessage.includes('重複') ||
         errorMessage.includes('既に存在');
 
-      setError(isDuplicate ? t('tags.form.duplicateName') : t('tags.errors.updateFailed'));
+      if (isGroupConflict) {
+        setError(t('tags.form.groupNameConflict'));
+      } else if (isDuplicate) {
+        setError(t('tags.form.duplicateName'));
+      } else {
+        setError(t('tags.errors.updateFailed'));
+      }
     } finally {
       setIsLoading(false);
     }

@@ -1,5 +1,6 @@
 'use client';
 
+import { hasGroupNameConflict } from '@/lib/tag-colon';
 import { closeModal as closeModalAction, useModalStore } from '@/stores/useModalStore';
 import { useCreateTag, useTags } from '../hooks';
 import { TagCreateModal } from './tag-create-modal';
@@ -27,8 +28,12 @@ export function GlobalTagCreateModal() {
       (tag) => tag.name.toLowerCase() === data.name.trim().toLowerCase(),
     );
     if (isDuplicate) {
-      // TagCreateModalのcatch句でエラーメッセージを表示
       throw new Error('duplicate');
+    }
+
+    // グループ名とフラットタグの衝突チェック
+    if (existingTags && hasGroupNameConflict(data.name.trim(), existingTags)) {
+      throw new Error('group_conflict');
     }
 
     // 重複なし → mutateで楽観的更新（awaitしない）

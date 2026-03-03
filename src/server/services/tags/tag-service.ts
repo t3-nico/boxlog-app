@@ -18,6 +18,7 @@
 
 import type { Tag } from '@/core/types/tag';
 import type { Database } from '@/lib/database.types';
+import { parseColonTag } from '@/lib/tag-colon';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 /** DB タグ行の型 */
@@ -118,7 +119,8 @@ export class TagServiceError extends Error {
       | 'MERGE_FAILED'
       | 'SAME_TAG_MERGE'
       | 'TARGET_NOT_FOUND'
-      | 'UNGROUP_CONFLICTS',
+      | 'UNGROUP_CONFLICTS'
+      | 'GROUP_NAME_CONFLICT',
     message: string,
   ) {
     super(message);
@@ -131,6 +133,66 @@ export class TagServiceError extends Error {
  */
 export class TagService {
   constructor(private readonly supabase: SupabaseClient<Database>) {}
+
+  /**
+   * グループ名とフラットタグの衝突チェック
+   *
+   * - フラットタグ "Work" を作成 → "Work:*" が存在したらNG
+   * - コロンタグ "Work:api" を作成 → フラットタグ "Work" が存在したらNG
+   *
+   * @param userId - ユーザーID
+   * @param name - チェック対象の名前
+   * @param excludeTagId - 除外するタグID（更新時の自分自身）
+   */
+  private async checkGroupNameConflict(
+    userId: string,
+    name: string,
+    excludeTagId?: string,
+  ): Promise<void> {
+    const { prefix, suffix } = parseColonTag(name);
+
+    if (suffix === null) {
+      // フラットタグ → 同名prefixのコロンタグが存在するか
+      let query = this.supabase
+        .from('tags')
+        .select('id')
+        .eq('user_id', userId)
+        .like('name', `${name}:%`)
+        .limit(1);
+
+      if (excludeTagId) {
+        query = query.neq('id', excludeTagId);
+      }
+
+      const { data } = await query;
+      if (data && data.length > 0) {
+        throw new TagServiceError(
+          'GROUP_NAME_CONFLICT',
+          `Name "${name}" conflicts with existing group "${name}:*"`,
+        );
+      }
+    } else {
+      // コロンタグ → 同名prefixのフラットタグが存在するか
+      let query = this.supabase
+        .from('tags')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('name', prefix)
+        .limit(1);
+
+      if (excludeTagId) {
+        query = query.neq('id', excludeTagId);
+      }
+
+      const { data } = await query;
+      if (data && data.length > 0) {
+        throw new TagServiceError(
+          'GROUP_NAME_CONFLICT',
+          `Name "${name}" conflicts with existing flat tag "${prefix}"`,
+        );
+      }
+    }
+  }
 
   /**
    * タグ一覧取得
@@ -206,6 +268,9 @@ export class TagService {
       throw new TagServiceError('INVALID_INPUT', 'Tag name must be 50 characters or less');
     }
 
+    // グループ名とフラットタグの衝突チェック
+    await this.checkGroupNameConflict(userId, input.name.trim());
+
     // 新規タグを先頭に表示するため、既存タグのsort_orderをインクリメント
     const { data: siblings } = await this.supabase
       .from('tags')
@@ -264,6 +329,9 @@ export class TagService {
       if (updates.name.trim().length > 50) {
         throw new TagServiceError('INVALID_INPUT', 'Tag name must be 50 characters or less');
       }
+
+      // グループ名とフラットタグの衝突チェック（自分自身は除外）
+      await this.checkGroupNameConflict(userId, updates.name.trim(), tagId);
     }
 
     // 更新データ準備

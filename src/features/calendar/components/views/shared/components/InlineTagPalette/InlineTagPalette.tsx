@@ -120,7 +120,9 @@ export function InlineTagPalette({ hourHeight, date }: InlineTagPaletteProps) {
       } catch (err) {
         setIsCreating(false);
         const message = err instanceof Error ? err.message : String(err);
-        if (message.includes('duplicate') || message.includes('already exists')) {
+        if (message.includes('GROUP_NAME_CONFLICT') || message.includes('group_conflict')) {
+          toast.error(t('form.groupNameConflict'));
+        } else if (message.includes('duplicate') || message.includes('already exists')) {
           toast.error(t('form.duplicateName'));
         } else {
           toast.error(t('errors.createFailed'));
@@ -172,10 +174,12 @@ export function InlineTagPalette({ hourHeight, date }: InlineTagPaletteProps) {
       >
         <div
           ref={highlightRef}
-          className="bg-plan-box border-plan-border absolute right-0 left-0 rounded-md border"
+          className="absolute right-0 left-0 rounded-md border"
           style={{
             top: selectionTop,
             height: selectionHeight,
+            borderColor: 'var(--entry-default)',
+            backgroundColor: 'color-mix(in oklch, var(--entry-default) 12%, var(--background))',
           }}
         >
           <div className="flex h-full flex-col justify-between p-2">

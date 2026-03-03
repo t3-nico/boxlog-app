@@ -102,3 +102,30 @@ export function buildColonTagName(prefix: string, suffix?: string): string {
   if (!suffix) return prefix;
   return `${prefix}:${suffix}`;
 }
+
+/**
+ * グループ名とフラットタグの衝突をチェック。
+ *
+ * - フラットタグ "Work" を作成 → "Work:*" が存在したらtrue
+ * - コロンタグ "Work:api" を作成 → フラットタグ "Work" が存在したらtrue
+ *
+ * @param name - チェック対象の名前
+ * @param existingTags - 既存タグ配列
+ * @param excludeTagId - 除外するタグID（更新時の自分自身）
+ * @returns 衝突がある場合true
+ */
+export function hasGroupNameConflict(
+  name: string,
+  existingTags: { id: string; name: string }[],
+  excludeTagId?: string,
+): boolean {
+  const { prefix, suffix } = parseColonTag(name);
+  const targets = excludeTagId ? existingTags.filter((t) => t.id !== excludeTagId) : existingTags;
+
+  if (suffix === null) {
+    // フラットタグ → 同名prefixのコロンタグが存在するか
+    return targets.some((t) => t.name.toLowerCase().startsWith(`${name.toLowerCase()}:`));
+  }
+  // コロンタグ → 同名prefixのフラットタグが存在するか
+  return targets.some((t) => t.name.toLowerCase() === prefix.toLowerCase());
+}

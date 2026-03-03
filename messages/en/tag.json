@@ -77,6 +77,7 @@
       "noHashPrefix": "Tag name cannot start with #",
       "descriptionMaxLength": "Description must be 200 characters or less",
       "duplicateName": "A tag with this name already exists",
+      "groupNameConflict": "This name conflicts with an existing group or tag",
       "namePlaceholder": "Enter tag name",
       "rootLevel": "Root Level (No Parent)",
       "tagName": "Tag Name",
