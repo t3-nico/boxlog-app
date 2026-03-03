@@ -8,7 +8,7 @@ import { createSelectors } from '@/lib/zustand/createSelectors';
 /**
  * アサイドの種類
  */
-export type AsideType = 'none' | 'plan' | 'record' | 'chat' | 'reflection';
+export type AsideType = 'none' | 'entries' | 'chat' | 'reflection';
 
 /** アサイドのデフォルト幅（%） */
 const DEFAULT_ASIDE_SIZE = 28;
@@ -81,13 +81,19 @@ const useLayoutStoreBase = create<LayoutStoreState>()(
         merge: (persistedState, currentState) => {
           const state = persistedState as Partial<LayoutStoreState> | undefined;
           // 旧ストアからのマイグレーション対応
-          const validAsideTypes = ['none', 'plan', 'record', 'chat', 'reflection'];
-          const asideType = state?.asideType;
+          // 旧 'plan'/'record' は 'entries' にマイグレーション
+          const validAsideTypes = ['none', 'entries', 'chat', 'reflection'];
+          const asideType = state?.asideType as string | undefined;
           const asideSize = state?.asideSize;
           return {
             ...currentState,
             sidebarOpen: state?.sidebarOpen ?? currentState.sidebarOpen,
-            asideType: asideType && validAsideTypes.includes(asideType) ? asideType : 'none',
+            asideType:
+              asideType === 'plan' || asideType === 'record'
+                ? 'entries'
+                : asideType && validAsideTypes.includes(asideType)
+                  ? (asideType as AsideType)
+                  : 'none',
             asideSize: asideSize ?? DEFAULT_ASIDE_SIZE,
           };
         },

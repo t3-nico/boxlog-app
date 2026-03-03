@@ -35,8 +35,7 @@ function ViewSwitcherExample({
 }
 
 const asideOptions = [
-  { value: 'plan' as const, label: 'Plan' },
-  { value: 'record' as const, label: 'Record' },
+  { value: 'entries' as const, label: 'Entries' },
   { value: 'chat' as const, label: 'Chat' },
 ];
 
@@ -45,7 +44,7 @@ function AsideSwitcherExample() {
   return (
     <SegmentedControl
       options={asideOptions}
-      value={aside as 'plan' | 'record' | 'chat'}
+      value={aside as 'entries' | 'chat'}
       onChange={setAside}
     />
   );

@@ -19,9 +19,7 @@ const AIInspectorContent = dynamic(
  */
 export function renderStatsAsideContent(asideType: AsideType): React.ReactNode {
   switch (asideType) {
-    case 'plan':
-      return <PlanListPanel />;
-    case 'record':
+    case 'entries':
       return <PlanListPanel />;
     case 'chat':
       return <AIInspectorContent />;

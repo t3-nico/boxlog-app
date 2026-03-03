@@ -14,10 +14,10 @@ const meta = {
   },
   args: {
     options: [
-      { value: 'plan', label: 'Plan' },
-      { value: 'record', label: 'Record' },
+      { value: 'entries', label: 'Entries' },
+      { value: 'chat', label: 'Chat' },
     ],
-    value: 'plan',
+    value: 'entries',
     onChange: fn(),
   },
 } satisfies Meta<typeof SegmentedControl>;
@@ -30,12 +30,12 @@ type Story = StoryObj<typeof meta>;
 // ---------------------------------------------------------------------------
 
 function TwoOptionsExample() {
-  const [value, setValue] = useState('plan');
+  const [value, setValue] = useState('entries');
   return (
     <SegmentedControl
       options={[
-        { value: 'plan', label: 'Plan' },
-        { value: 'record', label: 'Record' },
+        { value: 'entries', label: 'Entries' },
+        { value: 'chat', label: 'Chat' },
       ]}
       value={value}
       onChange={setValue}
@@ -44,12 +44,12 @@ function TwoOptionsExample() {
 }
 
 function ThreeOptionsExample() {
-  const [value, setValue] = useState('plan');
+  const [value, setValue] = useState('entries');
   return (
     <SegmentedControl
       options={[
-        { value: 'plan', label: 'Plan' },
-        { value: 'record', label: 'Record' },
+        { value: 'entries', label: 'Entries' },
+        { value: 'chat', label: 'Chat' },
         { value: 'stats', label: 'Stats' },
       ]}
       value={value}
@@ -78,10 +78,10 @@ function FourOptionsExample() {
 // Stories
 // ---------------------------------------------------------------------------
 
-/** 2つの選択肢。実装例: Inspector Plan/Record切り替え */
+/** 2つの選択肢。実装例: Aside Entries/Chat切り替え */
 export const Default: Story = {};
 
-/** 2つの選択肢（インタラクティブ）。実装例: Inspector DraftModeHeader */
+/** 2つの選択肢（インタラクティブ） */
 export const TwoOptions: Story = {
   render: () => <TwoOptionsExample />,
 };

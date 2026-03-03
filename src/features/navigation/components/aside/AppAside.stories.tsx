@@ -27,7 +27,7 @@ function AsideFrame({ children }: { children: React.ReactNode }) {
 }
 
 function InteractiveAsideStory() {
-  const [asideType, setAsideType] = useState<AsideType>('plan');
+  const [asideType, setAsideType] = useState<AsideType>('entries');
   return (
     <AsideFrame>
       <AppAside asideType={asideType} onAsideChange={setAsideType} />
@@ -39,20 +39,20 @@ function InteractiveAsideStory() {
 // Stories
 // ─────────────────────────────────────────────────────────
 
-/** Planパネル（デフォルト） */
-export const PlanPanel: Story = {
+/** Entriesパネル（デフォルト） */
+export const EntriesPanel: Story = {
   render: () => (
     <AsideFrame>
-      <AppAside asideType="plan" onAsideChange={fn()} />
+      <AppAside asideType="entries" onAsideChange={fn()} />
     </AsideFrame>
   ),
 };
 
-/** Recordパネル（RecordListPanel） */
-export const RecordPanel: Story = {
+/** Chatパネル */
+export const ChatPanel: Story = {
   render: () => (
     <AsideFrame>
-      <AppAside asideType="record" onAsideChange={fn()} />
+      <AppAside asideType="chat" onAsideChange={fn()} />
     </AsideFrame>
   ),
 };
@@ -67,11 +67,7 @@ export const AllPatterns: Story = {
   render: () => (
     <div className="flex flex-col items-start gap-6">
       <AsideFrame>
-        <AppAside asideType="plan" onAsideChange={fn()} />
-      </AsideFrame>
-
-      <AsideFrame>
-        <AppAside asideType="record" onAsideChange={fn()} />
+        <AppAside asideType="entries" onAsideChange={fn()} />
       </AsideFrame>
 
       <AsideFrame>
