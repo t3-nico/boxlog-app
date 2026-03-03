@@ -81,12 +81,6 @@ function TagRadioItem({
 
       {/* Tag name */}
       <span className="truncate">{label}</span>
-
-      {/* Color dot */}
-      <span
-        className="ml-auto size-2 shrink-0 rounded-full"
-        style={{ backgroundColor: tagColor }}
-      />
     </button>
   );
 }
@@ -143,6 +137,15 @@ function TagQuickSelectorContent({
     (tagId: string, tagName: string) => {
       setSelectedId(tagId);
       onSelect(tagId, tagName);
+    },
+    [onSelect],
+  );
+
+  // グループ親選択: 先頭子タグのIDを使い、タイトルにはprefix名を設定
+  const handleSelectGroupParent = useCallback(
+    (prefix: string, firstTagId: string) => {
+      setSelectedId(`group:${prefix}`);
+      onSelect(firstTagId, prefix);
     },
     [onSelect],
   );
@@ -207,10 +210,7 @@ function TagQuickSelectorContent({
                 tag={firstTag}
                 label={prefix}
                 isSelected={parentSelected}
-                onSelect={() => {
-                  setSelectedId(`group:${prefix}`);
-                  handleSelect(firstTag.id, prefix);
-                }}
+                onSelect={() => handleSelectGroupParent(prefix, firstTag.id)}
               />
 
               {/* Children */}
@@ -312,16 +312,10 @@ export function TagQuickSelector({
   const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
 
   useEffect(() => {
-    if (!open || isMobile) {
-      setPosition(null);
-      return;
-    }
+    if (!open || isMobile) return;
 
     const anchor = anchorRef?.current;
-    if (!anchor) {
-      setPosition(null);
-      return;
-    }
+    if (!anchor) return;
 
     const update = () => {
       const rect = anchor.getBoundingClientRect();
