@@ -119,7 +119,7 @@ describe('LoginForm', () => {
 
       await waitFor(() => {
         expect(mockSignIn).toHaveBeenCalledWith('test@example.com', 'password123');
-        expect(mockPush).toHaveBeenCalledWith('/ja/day');
+        expect(mockPush).toHaveBeenCalledWith('/ja/calendar/day');
       });
     });
 

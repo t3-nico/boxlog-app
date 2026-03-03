@@ -101,7 +101,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
         setServerError(t(errorKey));
       } else if (signUpData.session) {
         // email確認不要（即ログイン）
-        router.push(`/${locale}/day`);
+        router.push(`/${locale}/calendar/day`);
       } else {
         // email確認が必要
         setSubmittedEmail(data.email);

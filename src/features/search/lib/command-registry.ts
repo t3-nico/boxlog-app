@@ -127,7 +127,7 @@ interface CommandActions {
   openTagCreateModal: () => void;
   navigateToSettings: () => void;
   toggleTheme: () => void;
-  openAside: (aside: 'plan' | 'record' | 'chat') => void;
+  openAside: (aside: 'entries' | 'chat' | 'reflection') => void;
 }
 
 // Default commands that are always available
@@ -151,7 +151,7 @@ export const registerDefaultCommands = (actions: CommandActions) => {
       icon: 'calendar',
       shortcut: ['G', 'C'],
       keywords: ['calendar', 'schedule', 'カレンダー', '予定'],
-      action: () => router.push('/day'),
+      action: () => router.push('/calendar/day'),
     },
     {
       id: 'nav:plan',
@@ -160,10 +160,10 @@ export const registerDefaultCommands = (actions: CommandActions) => {
       category: 'navigation',
       icon: 'check-square',
       shortcut: ['G', 'P'],
-      keywords: ['plan', 'board', 'kanban', 'タスク', '一覧', 'プラン'],
+      keywords: ['plan', 'board', 'kanban', 'タスク', '一覧', 'プラン', 'entries'],
       action: () => {
-        router.push('/day');
-        openAside('plan');
+        router.push('/calendar/day');
+        openAside('entries');
       },
     },
     {

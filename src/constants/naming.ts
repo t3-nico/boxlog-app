@@ -194,8 +194,8 @@ export const FILE_NAMING = {
 export const ROUTES = {
   // === アプリケーションルート ===
   dashboard: () => '/',
-  calendar: () => '/day',
-  calendarView: (view: string) => `/${view}`,
+  calendar: () => '/calendar/day',
+  calendarView: (view: string) => `/calendar/${view}`,
   stats: () => '/stats',
   statsDetail: (id: string) => `/stats/${id}`,
 

@@ -57,11 +57,11 @@ export default function MFAVerifyPage() {
           }
         } else {
           // MFAが設定されていない場合はリダイレクト
-          router.push('/day');
+          router.push('/calendar/day');
         }
       } else {
         // MFAが設定されていない場合はリダイレクト
-        router.push('/day');
+        router.push('/calendar/day');
       }
     } catch {
       setError('MFA状態の確認に失敗しました');
@@ -95,7 +95,7 @@ export default function MFAVerifyPage() {
       }
 
       // 検証成功、次のページへリダイレクト
-      const next = searchParams?.get('next') || `/${locale}/day`;
+      const next = searchParams?.get('next') || `/${locale}/calendar/day`;
       router.refresh();
       router.push(next);
     } catch (err) {

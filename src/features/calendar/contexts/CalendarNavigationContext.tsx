@@ -53,7 +53,7 @@ export const CalendarNavigationProvider = ({
         // 既存のquery paramを保持しつつdateのみ更新
         const params = new URLSearchParams(window.location.search);
         params.set('date', dateString);
-        const newUrl = `/${locale}/${viewType}?${params.toString()}`;
+        const newUrl = `/${locale}/calendar/${viewType}?${params.toString()}`;
         // 日付変更は履歴に追加しない（replaceState）
         window.history.replaceState(null, '', newUrl);
       }
@@ -70,7 +70,7 @@ export const CalendarNavigationProvider = ({
       params.set('date', dateString);
       // pushState: 即座にURL更新、サーバーナビゲーションなし
       // Next.js App Router は pushState と統合済み（usePathname等が同期する）
-      window.history.pushState(null, '', `/${locale}/${view}?${params.toString()}`);
+      window.history.pushState(null, '', `/${locale}/calendar/${view}?${params.toString()}`);
     },
     [currentDate, locale],
   );
