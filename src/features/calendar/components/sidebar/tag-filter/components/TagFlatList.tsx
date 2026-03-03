@@ -1,11 +1,11 @@
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
-import { createPortal } from 'react-dom';
+
+import { MoreHorizontal } from 'lucide-react';
 
 import {
   DndContext,
-  DragOverlay,
   KeyboardSensor,
   PointerSensor,
   closestCenter,
@@ -19,21 +19,41 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { useTranslations } from 'next-intl';
 
 import type { Tag } from '@/core/types/tag';
-import { useReorderTags } from '@/hooks/mutations/useTagCrudMutations';
-import { getTagDisplayLabel, groupTagsByPrefix } from '@/lib/tag-colon';
+import { useRenameGroup, useReorderTags } from '@/hooks/mutations/useTagCrudMutations';
+import { useUpdateTag } from '@/hooks/mutations/useTagMutations';
+import { useTagModalNavigation } from '@/hooks/useTagModalNavigation';
+import { buildColonTagName, getTagDisplayLabel, parseColonTag } from '@/lib/tag-colon';
 import { cn } from '@/lib/utils';
+import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 
-import { FilterItem } from './FilterItem/FilterItem';
+import { TagRenameDialog } from '@/components/tags/TagRenameDialog';
+import { Checkbox } from '@/components/ui/checkbox';
+import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { HoverTooltip } from '@/components/ui/tooltip';
+
+import { FilterItemMenu, type GroupOption } from './FilterItem/FilterItemMenu';
+import { useFilterItemEdit } from './FilterItem/useFilterItemEdit';
 import { GroupHeader } from './GroupHeader';
 
 import type { DragEndEvent } from '@dnd-kit/core';
-import type { AnimateLayoutChanges } from '@dnd-kit/sortable';
 
-/** ドラッグ中はレイアウトアニメーションを無効化 */
-const animateLayoutChanges: AnimateLayoutChanges = ({ isSorting, wasDragging }) =>
-  isSorting || wasDragging ? false : true;
+/** 各タグの表示情報（隣接グルーピング判定結果） */
+interface TagDisplayInfo {
+  tag: Tag;
+  prefix: string;
+  suffix: string | null;
+  /** 隣接する同prefix タグが存在し、グループとして表示するか */
+  isGrouped: boolean;
+  /** グループの先頭タグか（GroupHeader を描画する位置） */
+  isFirstInGroup: boolean;
+  /** 同グループに属するタグID一覧 */
+  groupTagIds: string[];
+  /** グループ全体のカウント合計 */
+  groupCount: number;
+}
 
 interface TagFlatListProps {
   tags: Tag[];
@@ -50,11 +70,8 @@ interface TagFlatListProps {
 /**
  * タグフラットリスト（DnD並び替え付き）
  *
- * コロン記法のプレフィックスでグルーピング表示
- * - 同じプレフィックスのタグが2つ以上 → グループ化
- * - グループヘッダー + suffix表示
- * - それ以外はフラット表示
- * - ドラッグ&ドロップで並び替え可能
+ * 見本準拠: ref + attributes + listeners + style が全て同一要素
+ * 隣接する同プレフィックスタグは GroupHeader 付きでグループ表示
  */
 export function TagFlatList({
   tags,
@@ -62,29 +79,115 @@ export function TagFlatList({
   tagCounts,
   onToggleTag,
   onDeleteTag,
-  onShowOnlyTag,
+  onShowOnlyTag: _onShowOnlyTag,
   onToggleGroupTags,
   onShowOnlyGroupTags,
   getGroupVisibility,
 }: TagFlatListProps) {
-  const { grouped, ungrouped } = useMemo(() => groupTagsByPrefix(tags), [tags]);
-  const groupKeys = useMemo(() => Array.from(grouped.keys()).sort(), [grouped]);
+  // グループ折りたたみ状態
+  const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
 
-  // 表示順のフラットリスト（DnD用）
-  const displayOrder = useMemo(() => {
-    const order: Tag[] = [];
-    for (const key of groupKeys) {
-      const groupTags = grouped.get(key);
-      if (groupTags) order.push(...groupTags);
+  const toggleGroupCollapse = useCallback((prefix: string) => {
+    setCollapsedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(prefix)) next.delete(prefix);
+      else next.add(prefix);
+      return next;
+    });
+  }, []);
+
+  // グループ候補を算出（FilterItemMenu のグループ変更メニュー用）
+  const groupOptions = useMemo<GroupOption[]>(() => {
+    const prefixes = new Map<string, string | null>();
+    for (const tag of tags) {
+      const { prefix, suffix } = parseColonTag(tag.name);
+      if (suffix !== null) {
+        if (!prefixes.has(prefix)) prefixes.set(prefix, tag.color);
+      } else {
+        if (!prefixes.has(tag.name)) prefixes.set(tag.name, tag.color);
+      }
     }
-    order.push(...ungrouped);
-    return order;
-  }, [grouped, ungrouped, groupKeys]);
+    return Array.from(prefixes.entries())
+      .map(([name, color]) => ({ name, color }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }, [tags]);
 
-  const displayIds = useMemo(() => displayOrder.map((t) => t.id), [displayOrder]);
+  // プレフィックスでグルーピング（sort_order は触らず、UI表示時にまとめる）
+  // 同プレフィックスのコロンタグは位置に関係なくグループ化
+  const { sortedTags, tagDisplayInfos } = useMemo(() => {
+    const parsed = tags.map((tag) => ({
+      tag,
+      ...parseColonTag(tag.name),
+    }));
+
+    // グループ収集: prefix → メンバー一覧
+    const groups = new Map<string, typeof parsed>();
+    for (const item of parsed) {
+      if (item.suffix !== null) {
+        const members = groups.get(item.prefix) ?? [];
+        members.push(item);
+        groups.set(item.prefix, members);
+      }
+    }
+
+    // 2人以上のメンバーがいるプレフィックスのみグループとして扱う
+    const groupPrefixes = new Set<string>();
+    for (const [prefix, members] of groups) {
+      if (members.length >= 2) groupPrefixes.add(prefix);
+    }
+
+    // 表示順を構築: 独立タグは元の位置を維持、グループは最初のメンバーの位置にまとめる
+    const sorted: typeof parsed = [];
+    const placed = new Set<string>(); // 配置済みタグID
+
+    for (const item of parsed) {
+      if (placed.has(item.tag.id)) continue;
+
+      if (item.suffix !== null && groupPrefixes.has(item.prefix)) {
+        // グループの最初の出現位置にメンバーをまとめて配置
+        const members = groups.get(item.prefix)!;
+        for (const member of members) {
+          if (!placed.has(member.tag.id)) {
+            sorted.push(member);
+            placed.add(member.tag.id);
+          }
+        }
+      } else {
+        sorted.push(item);
+        placed.add(item.tag.id);
+      }
+    }
+
+    // グループ情報を付与
+    const infos: TagDisplayInfo[] = sorted.map((item, i) => {
+      const isGrouped = item.suffix !== null && groupPrefixes.has(item.prefix);
+      const prev = sorted[i - 1] as typeof item | undefined;
+      const isFirstInGroup = isGrouped && !(prev?.suffix != null && prev.prefix === item.prefix);
+
+      let groupTagIds: string[] = [];
+      let groupCount = 0;
+      if (isGrouped) {
+        groupTagIds = (groups.get(item.prefix) ?? []).map((m) => m.tag.id);
+        groupCount = groupTagIds.reduce((sum, id) => sum + (tagCounts[id] ?? 0), 0);
+      }
+
+      return {
+        tag: item.tag,
+        prefix: item.prefix,
+        suffix: item.suffix,
+        isGrouped,
+        isFirstInGroup,
+        groupTagIds,
+        groupCount,
+      };
+    });
+
+    return { sortedTags: sorted.map((s) => s.tag), tagDisplayInfos: infos };
+  }, [tags, tagCounts]);
+
+  const displayIds = useMemo(() => sortedTags.map((t) => t.id), [sortedTags]);
 
   const reorderMutation = useReorderTags();
-  const [activeId, setActiveId] = useState<string | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -94,9 +197,6 @@ export function TagFlatList({
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
       const { active, over } = event;
-      setActiveId(null);
-      document.body.style.setProperty('cursor', '');
-
       if (!over || active.id === over.id) return;
 
       const oldIndex = displayIds.indexOf(active.id as string);
@@ -111,135 +211,237 @@ export function TagFlatList({
     [displayIds, reorderMutation],
   );
 
-  const activeTag = activeId ? displayOrder.find((t) => t.id === activeId) : null;
-
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragStart={({ active }) => {
-        setActiveId(active.id as string);
-        document.body.style.setProperty('cursor', 'grabbing');
-      }}
-      onDragEnd={handleDragEnd}
-      onDragCancel={() => {
-        setActiveId(null);
-        document.body.style.setProperty('cursor', '');
-      }}
-    >
+    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext items={displayIds} strategy={verticalListSortingStrategy}>
-        <div className="space-y-0.5">
-          {/* グループ化されたタグ */}
-          {groupKeys.map((prefix) => {
-            const groupTags = grouped.get(prefix);
-            if (!groupTags) return null;
-
-            const groupTagIds = groupTags.map((t) => t.id);
-            const groupVisibility = getGroupVisibility(groupTagIds);
-            const groupCount = groupTagIds.reduce((sum, id) => sum + (tagCounts[id] ?? 0), 0);
-
-            return (
-              <div key={prefix}>
-                <GroupHeader
-                  label={prefix}
-                  checked={groupVisibility === 'all'}
-                  indeterminate={groupVisibility === 'some'}
-                  count={groupCount}
-                  onCheckedChange={() => onToggleGroupTags(groupTagIds)}
-                  onShowOnlyGroup={() => onShowOnlyGroupTags(groupTagIds)}
-                />
-                {groupTags.map((tag) => (
-                  <SortableFilterItem
-                    key={tag.id}
-                    tag={tag}
-                    isInGroup
-                    checked={visibleTagIds.has(tag.id)}
-                    onCheckedChange={() => onToggleTag(tag.id)}
-                    onDeleteTag={() => onDeleteTag(tag.id, tag.name)}
-                    onShowOnlyThis={() => onShowOnlyTag(tag.id)}
-                    count={tagCounts[tag.id] ?? 0}
-                  />
-                ))}
-              </div>
-            );
-          })}
-
-          {/* グループ化されないタグ */}
-          {ungrouped.map((tag) => (
-            <SortableFilterItem
-              key={tag.id}
-              tag={tag}
-              isInGroup={false}
-              checked={visibleTagIds.has(tag.id)}
-              onCheckedChange={() => onToggleTag(tag.id)}
-              onDeleteTag={() => onDeleteTag(tag.id, tag.name)}
-              onShowOnlyThis={() => onShowOnlyTag(tag.id)}
-              count={tagCounts[tag.id] ?? 0}
-            />
-          ))}
-        </div>
+        {tagDisplayInfos.map((info) => (
+          <SortableTagItem
+            key={info.tag.id}
+            tag={info.tag}
+            checked={visibleTagIds.has(info.tag.id)}
+            count={tagCounts[info.tag.id] ?? 0}
+            groupOptions={groupOptions}
+            isGrouped={info.isGrouped}
+            isFirstInGroup={info.isFirstInGroup}
+            groupTagIds={info.groupTagIds}
+            groupCount={info.groupCount}
+            groupVisibility={info.isGrouped ? getGroupVisibility(info.groupTagIds) : 'none'}
+            collapsed={collapsedGroups.has(info.prefix)}
+            onToggle={() => onToggleTag(info.tag.id)}
+            onDeleteTag={() => onDeleteTag(info.tag.id, info.tag.name)}
+            onToggleGroupTags={onToggleGroupTags}
+            onShowOnlyGroupTags={onShowOnlyGroupTags}
+            onToggleCollapse={() => toggleGroupCollapse(info.prefix)}
+          />
+        ))}
       </SortableContext>
-      {typeof document !== 'undefined' &&
-        createPortal(
-          <DragOverlay>
-            {activeTag ? (
-              <div className="bg-background border-primary flex h-8 items-center rounded border-2 px-2 text-sm shadow-lg">
-                <span
-                  className="mr-2 inline-block size-3 shrink-0 rounded-sm"
-                  style={{ backgroundColor: activeTag.color ?? '#6366f1' }}
-                />
-                <span className="truncate">{activeTag.name}</span>
-              </div>
-            ) : null}
-          </DragOverlay>,
-          document.body,
-        )}
     </DndContext>
   );
 }
 
-interface SortableFilterItemProps {
-  tag: Tag;
-  isInGroup: boolean;
-  checked: boolean;
-  onCheckedChange: () => void;
-  onDeleteTag: () => void;
-  onShowOnlyThis: () => void;
-  count: number;
-}
-
-function SortableFilterItem({
+function SortableTagItem({
   tag,
-  isInGroup,
   checked,
-  onCheckedChange,
-  onDeleteTag,
-  onShowOnlyThis,
   count,
-}: SortableFilterItemProps) {
+  groupOptions,
+  isGrouped,
+  isFirstInGroup,
+  groupTagIds,
+  groupCount,
+  groupVisibility,
+  collapsed,
+  onToggle,
+  onDeleteTag,
+  onToggleGroupTags,
+  onShowOnlyGroupTags,
+  onToggleCollapse,
+}: {
+  tag: Tag;
+  checked: boolean;
+  count: number;
+  groupOptions: GroupOption[];
+  isGrouped: boolean;
+  isFirstInGroup: boolean;
+  groupTagIds: string[];
+  groupCount: number;
+  groupVisibility: 'all' | 'none' | 'some';
+  collapsed: boolean;
+  onToggle: () => void;
+  onDeleteTag: () => void;
+  onToggleGroupTags: (tagIds: string[]) => void;
+  onShowOnlyGroupTags: (tagIds: string[]) => void;
+  onToggleCollapse: () => void;
+}) {
+  const t = useTranslations();
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: tag.id,
-    animateLayoutChanges,
   });
+  const updateTagMutation = useUpdateTag();
+  const renameGroupMutation = useRenameGroup();
+  const { showOnlyTag } = useCalendarFilterStore();
+  const { openTagMergeModal, openTagCreateModal } = useTagModalNavigation();
+  const { displayColor, handleColorChange } = useFilterItemEdit({
+    tagId: tag.id,
+    initialColor: tag.color ?? undefined,
+  });
+
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [showRenameDialog, setShowRenameDialog] = useState(false);
+  const [showGroupRenameDialog, setShowGroupRenameDialog] = useState(false);
+
+  const handleSaveRename = useCallback(
+    async (newName: string) => {
+      updateTagMutation.mutate({ id: tag.id, name: newName });
+    },
+    [tag.id, updateTagMutation],
+  );
+
+  // コロン記法のプレフィックス（グループ名）
+  const { prefix: currentGroup, suffix } = useMemo(() => parseColonTag(tag.name), [tag.name]);
+
+  const handleChangeGroup = useCallback(
+    (newGroup: string | null) => {
+      const baseName = suffix ?? tag.name;
+      const newName = newGroup ? buildColonTagName(newGroup, baseName) : baseName;
+      // グループの色を継承
+      const groupColor = newGroup
+        ? groupOptions.find((g) => g.name === newGroup)?.color
+        : undefined;
+      updateTagMutation.mutate({
+        id: tag.id,
+        name: newName,
+        ...(groupColor ? { color: groupColor } : {}),
+      });
+    },
+    [tag.id, tag.name, suffix, groupOptions, updateTagMutation],
+  );
+
+  // グループリネームハンドラー
+  const handleSaveGroupRename = useCallback(
+    async (newPrefix: string) => {
+      renameGroupMutation.mutate({ oldPrefix: currentGroup, newPrefix });
+    },
+    [currentGroup, renameGroupMutation],
+  );
+
+  // 表示名: グループ内ならsuffix部分のみ
+  const displayLabel = getTagDisplayLabel(tag.name, isGrouped);
 
   const style = {
     transform: CSS.Translate.toString(transform),
     transition,
   };
 
+  // 折りたたみ時: グループ先頭以外は非表示
+  const isHiddenByCollapse = isGrouped && !isFirstInGroup && collapsed;
+
   return (
-    <div ref={setNodeRef} style={style} className={cn(isDragging && 'opacity-40')}>
-      <FilterItem
-        label={getTagDisplayLabel(tag.name, isInGroup)}
+    <>
+      <div
+        ref={setNodeRef}
+        style={style}
+        className={cn(isDragging && 'z-10 opacity-50', isHiddenByCollapse && 'hidden')}
+        {...attributes}
+        {...listeners}
+      >
+        {/* グループ先頭タグの場合、GroupHeader を描画 */}
+        {isFirstInGroup && (
+          <GroupHeader
+            label={currentGroup}
+            checked={groupVisibility === 'all'}
+            indeterminate={groupVisibility === 'some'}
+            count={groupCount}
+            collapsed={collapsed}
+            onCheckedChange={() => onToggleGroupTags(groupTagIds)}
+            onToggleCollapse={onToggleCollapse}
+            onShowOnlyGroup={() => onShowOnlyGroupTags(groupTagIds)}
+            onAddTagToGroup={() => openTagCreateModal(currentGroup)}
+            onRenameGroup={() => setShowGroupRenameDialog(true)}
+          />
+        )}
+
+        {/* タグ行: collapsed かつ先頭の場合も非表示 */}
+        {!(isFirstInGroup && collapsed) && (
+          <div
+            className={cn(
+              'group/item flex h-8 items-center rounded text-sm',
+              'hover:bg-state-hover cursor-grab active:cursor-grabbing',
+              menuOpen && 'bg-state-selected',
+              isGrouped && 'pl-3',
+            )}
+          >
+            <Checkbox
+              checked={checked}
+              onCheckedChange={onToggle}
+              className="ml-2 shrink-0 cursor-pointer"
+              style={{
+                borderColor: displayColor,
+                backgroundColor: checked ? displayColor : 'transparent',
+              }}
+            />
+            <HoverTooltip
+              content={tag.name}
+              side="top"
+              disabled={menuOpen}
+              wrapperClassName="ml-1 min-w-0 flex-1"
+            >
+              <span className="min-w-0 truncate">{displayLabel}</span>
+            </HoverTooltip>
+
+            {/* Menu */}
+            <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  aria-label={t('calendar.filter.tagMenu')}
+                  className="text-muted-foreground hover:text-foreground hover:bg-state-hover relative flex size-6 shrink-0 items-center justify-center rounded opacity-0 transition-opacity group-hover/item:opacity-100 before:absolute before:-inset-2 before:content-['']"
+                  onClick={(e) => e.stopPropagation()}
+                  onPointerDown={(e) => e.stopPropagation()}
+                >
+                  <MoreHorizontal className="size-4" />
+                </button>
+              </DropdownMenuTrigger>
+              <FilterItemMenu
+                displayColor={displayColor}
+                currentGroup={suffix !== null ? currentGroup : null}
+                groupOptions={groupOptions}
+                onOpenRenameDialog={() => setShowRenameDialog(true)}
+                onColorChange={handleColorChange}
+                onChangeGroup={handleChangeGroup}
+                onOpenMergeModal={() =>
+                  openTagMergeModal({ id: tag.id, name: tag.name, color: tag.color ?? null })
+                }
+                onShowOnlyTag={() => showOnlyTag(tag.id)}
+                onDeleteTag={onDeleteTag}
+              />
+            </DropdownMenu>
+
+            {/* Count */}
+            <span className="text-muted-foreground ml-1 shrink-0 pr-2 text-xs tabular-nums">
+              {count}
+            </span>
+          </div>
+        )}
+      </div>
+
+      <TagRenameDialog
+        isOpen={showRenameDialog}
+        onClose={() => setShowRenameDialog(false)}
+        onSave={handleSaveRename}
+        currentName={tag.name}
         tagId={tag.id}
-        checkboxColor={tag.color ?? undefined}
-        checked={checked}
-        onCheckedChange={onCheckedChange}
-        onDeleteTag={() => onDeleteTag()}
-        onShowOnlyThis={onShowOnlyThis}
-        count={count}
-        dragHandleProps={{ ...attributes, ...listeners }}
       />
-    </div>
+
+      {/* グループリネームダイアログ */}
+      {isFirstInGroup && (
+        <TagRenameDialog
+          isOpen={showGroupRenameDialog}
+          onClose={() => setShowGroupRenameDialog(false)}
+          onSave={handleSaveGroupRename}
+          currentName={currentGroup}
+          tagId={`group-${currentGroup}`}
+        />
+      )}
+    </>
   );
 }

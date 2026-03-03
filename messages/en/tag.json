@@ -25,7 +25,6 @@
       "rename": "Rename",
       "archive": "Archive",
       "delete": "Delete",
-      "moveToGroup": "Move to Group",
       "noGroup": "No Group",
       "permanentDelete": "Permanently Delete",
       "tagCreated": "Created tag \"{name}\"",
@@ -94,7 +93,8 @@
       "examplePlaceholder": "e.g. Work, Dev:API, Exercise",
       "group": "Group",
       "groupSupportText": "Group similar tags together",
-      "selectGroupPlaceholder": "Select group (optional)"
+      "selectGroupPlaceholder": "Select group (optional)",
+      "noGroup": "No Group"
     },
     "modal": {
       "createTitle": "Create New Tag",

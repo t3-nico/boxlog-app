@@ -184,25 +184,20 @@
       "noTags": "No tags available",
       "comingSoon": "Coming soon",
       "createTag": "Create tag",
-      "addChildTag": "Add child tag",
+      "addTagToGroup": "Add tag to group",
       "rename": "Rename",
       "changeColor": "Change color",
       "editNote": "Edit note",
       "noteLabel": "Note",
       "noteHint": "Displayed in tooltip",
       "notePlaceholder": "Add a note...",
-      "deleteParentTag": {
-        "title": "Delete \"{name}\"",
-        "description": "Delete this tag? Child tags will remain as root tags."
-      },
-      "changeParent": "Change parent",
-      "moveToGroup": "Move to group",
+      "changeGroup": "Change group",
       "merge": "Merge into another tag",
       "showOnlyThis": "Show only this",
-      "noParent": "No parent",
+      "noGroup": "No group",
       "deleteTag": {
-        "title": "Delete Tag",
-        "description": "Delete this tag?"
+        "title": "Delete \"{name}\"",
+        "description": "This tag will be permanently deleted. This action cannot be undone."
       },
       "mergeTag": {
         "title": "Merge Tag",

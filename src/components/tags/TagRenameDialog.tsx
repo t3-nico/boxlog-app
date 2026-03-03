@@ -147,7 +147,7 @@ export function TagRenameDialog({
 
   const dialog = (
     <div
-      className="bg-card fixed inset-0 z-[250] flex items-center justify-center"
+      className="fixed inset-0 z-[250] flex items-center justify-center"
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"

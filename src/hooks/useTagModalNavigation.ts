@@ -25,9 +25,10 @@ import {
 export function useTagModalNavigation() {
   /**
    * タグ作成モーダルを開く
+   * @param defaultGroup - デフォルトのグループ名（コロン記法のプレフィックス）
    */
-  const openTagCreateModal = useCallback(() => {
-    openTagCreate();
+  const openTagCreateModal = useCallback((defaultGroup?: string) => {
+    openTagCreate(defaultGroup);
   }, []);
 
   /**

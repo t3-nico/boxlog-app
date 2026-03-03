@@ -262,6 +262,55 @@ export function useUpdateTagColor() {
   });
 }
 
+// グループリネームフック（楽観的更新付き）
+export function useRenameGroup() {
+  const utils = trpc.useUtils();
+  const t = useTranslations('tags');
+  const incrementMutation = useTagCacheStore((state) => state.incrementMutation);
+  const decrementMutation = useTagCacheStore((state) => state.decrementMutation);
+
+  return trpc.tags.renameGroup.useMutation({
+    onMutate: async ({ oldPrefix, newPrefix }) => {
+      incrementMutation();
+
+      const listSnapshot = await snapshotQuery(utils.tags.list);
+
+      // 楽観的更新: キャッシュ内の全該当タグの name を一括置換
+      utils.tags.list.setData(undefined, (old) => {
+        if (!old) return old;
+        const prefixPattern = `${oldPrefix}:`;
+        return {
+          ...old,
+          data: old.data.map((tag) => {
+            if (tag.name.startsWith(prefixPattern)) {
+              const suffix = tag.name.slice(prefixPattern.length);
+              return { ...tag, name: `${newPrefix}:${suffix}` };
+            }
+            return tag;
+          }),
+        };
+      });
+
+      return { listSnapshot };
+    },
+    onError: (err, _input, context) => {
+      context?.listSnapshot?.restore();
+
+      const message = err.message;
+      if (message.includes('already exists') || message.includes('DUPLICATE_NAME')) {
+        toast.error(t('errors.duplicateName'));
+      } else {
+        toast.error(t('errors.updateFailed'));
+      }
+    },
+    onSettled: () => {
+      decrementMutation();
+      void utils.tags.list.invalidate();
+      void utils.plans.list.invalidate();
+    },
+  });
+}
+
 // タグ並び替え入力型
 export interface ReorderTagInput {
   id: string;
@@ -293,7 +342,10 @@ export function useReorderTags() {
           return tag;
         });
 
-        return { ...oldData, data: [...newData] };
+        // sort_order順にソートして配列の順番も反映
+        newData.sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+
+        return { ...oldData, data: newData };
       });
 
       return { previousData };
@@ -303,6 +355,7 @@ export function useReorderTags() {
     },
     onSettled: () => {
       decrementMutation();
+      void utils.tags.list.invalidate();
     },
   });
 }

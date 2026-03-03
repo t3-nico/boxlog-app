@@ -208,6 +208,34 @@ export const tagsRouter = createTRPCRouter({
     }),
 
   /**
+   * グループ（コロン記法プレフィックス）の一括リネーム
+   */
+  renameGroup: protectedProcedure
+    .input(
+      z.object({
+        oldPrefix: z.string().min(1).max(50),
+        newPrefix: z.string().min(1).max(50),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const service = createTagService(ctx.supabase);
+        const updatedTags = await service.renameGroup({
+          userId: ctx.userId,
+          oldPrefix: input.oldPrefix,
+          newPrefix: input.newPrefix,
+        });
+
+        // サーバーサイドキャッシュを無効化
+        await invalidateUserTagsCache(ctx.userId);
+
+        return { updatedTags, count: updatedTags.length };
+      } catch (error) {
+        return handleServiceError(error);
+      }
+    }),
+
+  /**
    * タグ並び替え（バッチ更新）
    */
   reorder: protectedProcedure

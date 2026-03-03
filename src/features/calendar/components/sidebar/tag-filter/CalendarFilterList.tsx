@@ -126,8 +126,8 @@ export function CalendarFilterList() {
         open={deleteTarget !== null}
         onClose={() => setDeleteTarget(null)}
         onConfirm={handleConfirmDelete}
-        title={t('calendar.filter.deleteParentTag.title', { name: deleteTarget?.name ?? '' })}
-        description={t('calendar.filter.deleteParentTag.description')}
+        title={t('calendar.filter.deleteTag.title', { name: deleteTarget?.name ?? '' })}
+        description={t('calendar.filter.deleteTag.description')}
         variant="destructive"
       />
     </>

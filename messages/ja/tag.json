@@ -25,7 +25,6 @@
       "rename": "名前を変更",
       "archive": "アーカイブ",
       "delete": "削除",
-      "moveToGroup": "グループに移動",
       "noGroup": "グループなし",
       "permanentDelete": "完全に削除",
       "tagCreated": "タグ「{name}」を作成しました",
@@ -94,7 +93,8 @@
       "examplePlaceholder": "例: 仕事、開発:API、運動",
       "group": "グループ",
       "groupSupportText": "同じ種類のタグをまとめて管理できます",
-      "selectGroupPlaceholder": "グループを選択（任意）"
+      "selectGroupPlaceholder": "グループを選択（任意）",
+      "noGroup": "グループなし"
     },
     "modal": {
       "createTitle": "新規タグ作成",

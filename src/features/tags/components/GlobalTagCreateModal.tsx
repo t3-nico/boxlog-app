@@ -14,6 +14,7 @@ import type { CreateTagInput } from '../types';
 export function GlobalTagCreateModal() {
   const modal = useModalStore((state) => state.modal);
   const isOpen = modal?.type === 'tagCreate';
+  const defaultGroup = isOpen ? modal.defaultGroup : undefined;
   const handleClose = closeModalAction;
   const createTagMutation = useCreateTag();
   const { data: existingTags } = useTags();
@@ -37,5 +38,13 @@ export function GlobalTagCreateModal() {
     });
   };
 
-  return <TagCreateModal isOpen={isOpen} onClose={handleClose} onSave={handleCreateTag} />;
+  return (
+    <TagCreateModal
+      isOpen={isOpen}
+      onClose={handleClose}
+      onSave={handleCreateTag}
+      defaultGroup={defaultGroup}
+      existingTags={existingTags ?? []}
+    />
+  );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { Button } from '@/components/ui/button';
@@ -15,43 +15,87 @@ import { Input } from '@/components/ui/input';
 import { useHasMounted } from '@/hooks/useHasMounted';
 import { useSubmitShortcut } from '@/hooks/useSubmitShortcut';
 import { logger } from '@/lib/logger';
-import { Circle } from 'lucide-react';
+import { buildColonTagName, parseColonTag } from '@/lib/tag-colon';
+import { ChevronDown, Circle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { DEFAULT_TAG_COLOR, TAG_NAME_MAX_LENGTH } from '../constants/colors';
-import type { CreateTagInput } from '../types';
+
+import type { CreateTagInput, Tag } from '../types';
 
 interface TagCreateModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (data: CreateTagInput) => Promise<void>;
+  /** デフォルトのグループ名（コロン記法のプレフィックス） */
+  defaultGroup?: string | undefined;
+  /** 既存タグ一覧（グループ候補算出 + 色継承用） */
+  existingTags?: Tag[] | undefined;
 }
 
 /**
  * タグ作成モーダル
  *
- * ReactのcreatePortalを使用してdocument.bodyに直接レンダリング
- *
- * スタイルガイド準拠:
- * - 8pxグリッドシステム（p-6, gap-4, mb-6等）
- * - 角丸: rounded-2xl（16px）for ダイアログ
- * - Card: bg-card（カード、ダイアログ用）
+ * グループ選択ドロップダウン付き。
+ * グループを選択すると色が自動継承され、保存時にコロン記法で名前が構築される。
  */
-export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps) => {
+export function TagCreateModal({
+  isOpen,
+  onClose,
+  onSave,
+  defaultGroup,
+  existingTags = [],
+}: TagCreateModalProps) {
   const t = useTranslations();
   const [name, setName] = useState('');
   const [color, setColor] = useState<string>(DEFAULT_TAG_COLOR);
+  const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isGroupDropdownOpen, setIsGroupDropdownOpen] = useState(false);
   const mounted = useHasMounted();
 
-  // モーダルが開いたらリセット
+  // 既存タグからグループ候補を算出
+  const groupOptions = useMemo(() => {
+    const prefixes = new Map<string, string | null>(); // prefix → color
+    for (const tag of existingTags) {
+      const { prefix, suffix } = parseColonTag(tag.name);
+      if (suffix !== null) {
+        // コロン付きタグのプレフィックス
+        if (!prefixes.has(prefix)) {
+          prefixes.set(prefix, tag.color);
+        }
+      } else {
+        // 独立タグも親候補に（ただし既にプレフィックスとして存在する場合はスキップ）
+        if (!prefixes.has(tag.name)) {
+          prefixes.set(tag.name, tag.color);
+        }
+      }
+    }
+    return Array.from(prefixes.entries())
+      .map(([name, groupColor]) => ({ name, color: groupColor }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }, [existingTags]);
+
+  // グループ選択時の色自動継承
+  const inheritedColor = useMemo(() => {
+    if (!selectedGroup) return null;
+    const group = groupOptions.find((g) => g.name === selectedGroup);
+    return group?.color ?? null;
+  }, [selectedGroup, groupOptions]);
+
+  // 実際に使用する色（グループの色 or 手動選択）
+  const effectiveColor = inheritedColor ?? color;
+
+  // モーダルが開いたらリセット（defaultGroupがあればプリセット）
   useEffect(() => {
     if (isOpen) {
       setName('');
       setColor(DEFAULT_TAG_COLOR);
+      setSelectedGroup(defaultGroup ?? null);
       setError('');
+      setIsGroupDropdownOpen(false);
     }
-  }, [isOpen]);
+  }, [isOpen, defaultGroup]);
 
   // ESCキーでダイアログを閉じる
   useEffect(() => {
@@ -67,6 +111,24 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, isLoading, onClose]);
 
+  // グループドロップダウン外クリックで閉じる
+  useEffect(() => {
+    if (!isGroupDropdownOpen) return;
+
+    const handleClickOutside = () => {
+      setIsGroupDropdownOpen(false);
+    };
+
+    const timeoutId = setTimeout(() => {
+      document.addEventListener('click', handleClickOutside);
+    }, 0);
+
+    return () => {
+      clearTimeout(timeoutId);
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [isGroupDropdownOpen]);
+
   const handleSubmit = useCallback(async () => {
     setError('');
 
@@ -75,11 +137,14 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
       return;
     }
 
+    // コロン記法で名前を構築
+    const fullName = selectedGroup ? buildColonTagName(selectedGroup, name.trim()) : name.trim();
+
     setIsLoading(true);
     try {
       await onSave({
-        name: name.trim(),
-        color,
+        name: fullName,
+        color: effectiveColor,
       });
       onClose();
     } catch (err) {
@@ -99,7 +164,7 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
     } finally {
       setIsLoading(false);
     }
-  }, [name, color, onSave, onClose, t]);
+  }, [name, selectedGroup, effectiveColor, onSave, onClose, t]);
 
   const handleBackdropClick = useCallback(
     (e: React.MouseEvent) => {
@@ -120,13 +185,15 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
     [handleSubmit, isLoading, name],
   );
 
-  // Cmd+Enter / Ctrl+Enter で作成（色選択中でも動作）
+  // Cmd+Enter / Ctrl+Enter で作成
   useSubmitShortcut({
     enabled: isOpen,
     isLoading,
     checkDisabled: () => !name.trim(),
     onSubmit: handleSubmit,
   });
+
+  const selectedGroupOption = groupOptions.find((g) => g.name === selectedGroup);
 
   if (!mounted || !isOpen) return null;
 
@@ -138,7 +205,6 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
       aria-modal="true"
       aria-labelledby="tag-create-dialog-title"
     >
-      {/* ダイアログコンテンツ: bg-card, rounded-2xl, p-6 */}
       <div
         className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-2xl border p-6 shadow-lg duration-150"
         style={{ width: 'min(calc(100vw - 32px), 400px)' }}
@@ -169,7 +235,6 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
               value={name}
               onChange={(e) => {
                 setName(e.target.value);
-                // 入力変更時にエラーをクリア
                 if (error) setError('');
               }}
               onKeyDown={handleKeyDown}
@@ -188,24 +253,84 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
             )}
           </Field>
 
-          {/* カラー */}
-          <Field>
-            <FieldLabel>{t('tags.form.color')}</FieldLabel>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+          {/* カラー（グループ選択時は非表示 — 色は自動継承） */}
+          {!inheritedColor && (
+            <Field>
+              <FieldLabel>{t('tags.form.color')}</FieldLabel>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    className="border-border bg-container hover:bg-state-hover flex h-9 w-full items-center gap-2 rounded-lg border px-4 text-sm"
+                  >
+                    <Circle className="size-4" fill={color} strokeWidth={0} />
+                    <span>{COLOR_NAMES[color] || color}</span>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <ColorPaletteMenuItems selectedColor={color} onColorSelect={setColor} />
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </Field>
+          )}
+
+          {/* グループ選択 */}
+          {groupOptions.length > 0 && (
+            <Field>
+              <FieldLabel>{t('tags.form.group')}</FieldLabel>
+              <FieldSupportText>{t('tags.form.groupSupportText')}</FieldSupportText>
+              <div className="relative">
                 <button
                   type="button"
-                  className="border-border bg-container hover:bg-state-hover flex h-9 w-full items-center gap-2 rounded-lg border px-4 text-sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsGroupDropdownOpen(!isGroupDropdownOpen);
+                  }}
+                  className="border-border bg-container hover:bg-state-hover flex h-9 w-full items-center justify-between rounded-lg border px-4 text-sm"
                 >
-                  <Circle className="size-4" fill={color} strokeWidth={0} />
-                  <span>{COLOR_NAMES[color] || color}</span>
+                  <span
+                    className={selectedGroupOption ? 'text-foreground' : 'text-muted-foreground'}
+                  >
+                    {selectedGroupOption ? selectedGroupOption.name : t('tags.form.noGroup')}
+                  </span>
+                  <ChevronDown className="text-muted-foreground size-4" />
                 </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
-                <ColorPaletteMenuItems selectedColor={color} onColorSelect={setColor} />
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </Field>
+
+                {isGroupDropdownOpen && (
+                  <div className="bg-card border-border absolute top-full z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-lg border py-1 shadow-lg">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedGroup(null);
+                        setIsGroupDropdownOpen(false);
+                      }}
+                      className="hover:bg-state-hover w-full px-4 py-2 text-left text-sm"
+                    >
+                      {t('tags.form.noGroup')}
+                    </button>
+                    {groupOptions.map((group) => (
+                      <button
+                        key={group.name}
+                        type="button"
+                        onClick={() => {
+                          setSelectedGroup(group.name);
+                          setIsGroupDropdownOpen(false);
+                        }}
+                        className="hover:bg-state-hover flex w-full items-center gap-2 px-4 py-2 text-left text-sm"
+                      >
+                        <Circle
+                          className="size-3 shrink-0"
+                          fill={group.color ?? DEFAULT_TAG_COLOR}
+                          strokeWidth={0}
+                        />
+                        {group.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </Field>
+          )}
         </FieldGroup>
 
         {/* Footer */}
@@ -227,4 +352,4 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
   );
 
   return createPortal(dialog, document.body);
-};
+}

@@ -288,6 +288,77 @@ export class TagService {
   }
 
   /**
+   * グループ（コロン記法プレフィックス）の一括リネーム
+   *
+   * 例: oldPrefix="開発" → newPrefix="仕事" の場合
+   *   "開発:api" → "仕事:api"
+   *   "開発:frontend" → "仕事:frontend"
+   *
+   * @param options - userId, oldPrefix, newPrefix
+   * @returns 更新されたタグ配列
+   */
+  async renameGroup(options: {
+    userId: string;
+    oldPrefix: string;
+    newPrefix: string;
+  }): Promise<Tag[]> {
+    const { userId, oldPrefix, newPrefix } = options;
+
+    if (oldPrefix === newPrefix) {
+      return [];
+    }
+
+    // oldPrefix: で始まるタグを全取得
+    const { data: matchingTags, error: fetchError } = await this.supabase
+      .from('tags')
+      .select('*')
+      .eq('user_id', userId)
+      .like('name', `${oldPrefix}:%`);
+
+    if (fetchError) {
+      throw new TagServiceError(
+        'FETCH_FAILED',
+        `Failed to fetch group tags: ${fetchError.message}`,
+      );
+    }
+
+    if (!matchingTags || matchingTags.length === 0) {
+      return [];
+    }
+
+    // 各タグの name を newPrefix:suffix に更新
+    const updatePromises = matchingTags.map((tag) => {
+      const colonIndex = tag.name.indexOf(':');
+      const suffix = colonIndex !== -1 ? tag.name.slice(colonIndex + 1) : '';
+      const newName = `${newPrefix}:${suffix}`;
+      return this.supabase
+        .from('tags')
+        .update({ name: newName })
+        .eq('id', tag.id)
+        .eq('user_id', userId)
+        .select()
+        .single();
+    });
+
+    const results = await Promise.all(updatePromises);
+
+    // エラーチェック
+    const errors = results.filter((r) => r.error);
+    if (errors.length > 0) {
+      const firstError = errors[0];
+      if (firstError?.error?.code === '23505') {
+        throw new TagServiceError('DUPLICATE_NAME', 'A tag with the new name already exists');
+      }
+      throw new TagServiceError(
+        'UPDATE_FAILED',
+        `Failed to rename group: ${firstError?.error?.message ?? 'Unknown error'}`,
+      );
+    }
+
+    return results.filter((r) => r.data !== null).map((r) => transformDbTag(r.data));
+  }
+
+  /**
    * タグマージ（トランザクション対応）
    *
    * PL/pgSQL Stored Procedureを使用してトランザクション的にタグをマージします。

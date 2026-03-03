@@ -38,6 +38,7 @@ export type ModalState =
     }
   | {
       type: 'tagCreate';
+      defaultGroup?: string;
     }
   | {
       type: 'tagMerge';
@@ -116,8 +117,10 @@ export function openDeleteConfirm(
   useModalStore.getState().openModal({ type: 'deleteConfirm', planId, planTitle, onConfirm });
 }
 
-export function openTagCreateModal() {
-  useModalStore.getState().openModal({ type: 'tagCreate' });
+export function openTagCreateModal(defaultGroup?: string) {
+  useModalStore
+    .getState()
+    .openModal(defaultGroup ? { type: 'tagCreate', defaultGroup } : { type: 'tagCreate' });
 }
 
 export function openTagMergeModal(sourceTag: { id: string; name: string; color?: string | null }) {

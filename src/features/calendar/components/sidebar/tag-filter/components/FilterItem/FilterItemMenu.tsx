@@ -1,6 +1,6 @@
 'use client';
 
-import { Eye, Merge, Palette, Pencil, Trash2 } from 'lucide-react';
+import { Circle, Eye, FolderUp, Merge, Palette, Pencil, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { ColorPaletteMenuItems } from '@/components/ui/color-palette-picker';
@@ -12,13 +12,24 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from '@/components/ui/dropdown-menu';
+import { DEFAULT_TAG_COLOR } from '@/lib/tag-colors';
+
+export interface GroupOption {
+  name: string;
+  color: string | null;
+}
 
 interface FilterItemMenuProps {
   displayColor: string;
+  /** 現在のグループ名（null = 独立タグ） */
+  currentGroup?: string | null | undefined;
+  /** グループ候補一覧 */
+  groupOptions?: GroupOption[] | undefined;
 
   // Handlers
   onOpenRenameDialog: () => void;
   onColorChange: (color: string) => void;
+  onChangeGroup?: ((newGroup: string | null) => void) | undefined;
   onOpenMergeModal: () => void;
   onShowOnlyTag: () => void;
   onDeleteTag: (() => void) | undefined;
@@ -26,8 +37,11 @@ interface FilterItemMenuProps {
 
 export function FilterItemMenu({
   displayColor,
+  currentGroup,
+  groupOptions,
   onOpenRenameDialog,
   onColorChange,
+  onChangeGroup,
   onOpenMergeModal,
   onShowOnlyTag,
   onDeleteTag,
@@ -52,6 +66,38 @@ export function FilterItemMenu({
           <ColorPaletteMenuItems selectedColor={displayColor} onColorSelect={onColorChange} />
         </DropdownMenuSubContent>
       </DropdownMenuSub>
+
+      {/* グループを変更 */}
+      {groupOptions && groupOptions.length > 0 && onChangeGroup && (
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <FolderUp className="mr-2 size-4" />
+            {t('calendar.filter.changeGroup')}
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent>
+            <DropdownMenuItem
+              onClick={() => onChangeGroup(null)}
+              className={!currentGroup ? 'bg-state-selected' : undefined}
+            >
+              {t('calendar.filter.noGroup')}
+            </DropdownMenuItem>
+            {groupOptions.map((group) => (
+              <DropdownMenuItem
+                key={group.name}
+                onClick={() => onChangeGroup(group.name)}
+                className={currentGroup === group.name ? 'bg-state-selected' : undefined}
+              >
+                <Circle
+                  className="mr-1 size-3"
+                  fill={group.color ?? DEFAULT_TAG_COLOR}
+                  strokeWidth={0}
+                />
+                {group.name}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+      )}
 
       {/* マージ */}
       <DropdownMenuItem onClick={onOpenMergeModal}>
