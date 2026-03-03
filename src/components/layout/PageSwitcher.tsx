@@ -1,12 +1,14 @@
 'use client';
 
+import { format } from 'date-fns';
 import { BarChart3, CalendarDays } from 'lucide-react';
-import { usePathname, useRouter } from 'next/navigation';
-import { useMemo } from 'react';
+import { usePathname } from 'next/navigation';
+import { useCallback, useMemo } from 'react';
 
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { isCalendarViewPath } from '@/features/calendar';
+import { isCalendarViewPath, useCalendarNavigation } from '@/features/calendar';
 import { cn } from '@/lib/utils';
+import { useClientRouterStore } from '@/stores/useClientRouterStore';
 
 interface PageSwitcherProps {
   className?: string;
@@ -16,16 +18,25 @@ interface PageSwitcherProps {
  * ページ切替アイコンタブ（Calendar / Stats）
  *
  * ヘッダー右側に配置し、CalendarとStatsの2セクションを切り替える。
- * アクティブ状態は bg-muted でハイライト。
+ * pushState + useClientRouterStore でクライアントサイド遷移を行い、
+ * サーバーラウンドトリップを回避する。
  */
 export function PageSwitcher({ className }: PageSwitcherProps) {
   const pathname = usePathname();
-  const router = useRouter();
+  const calendarNav = useCalendarNavigation();
+  const switchToPage = useClientRouterStore((s) => s.switchToPage);
+
+  // locale を pathname から抽出
+  const locale = useMemo(() => {
+    const segments = pathname?.split('/') ?? [];
+    if (segments.length >= 2 && (segments[1] === 'ja' || segments[1] === 'en')) {
+      return segments[1];
+    }
+    return 'ja';
+  }, [pathname]);
 
   const activePage = useMemo(() => {
-    // locale部分を除去してパス判定
     const segments = pathname?.split('/') ?? [];
-    // as-needed: デフォルトlocale(en)はプレフィックスなし、ja は /ja/... 形式
     const pathWithoutLocale =
       segments.length >= 2 && (segments[1] === 'ja' || segments[1] === 'en')
         ? '/' + segments.slice(2).join('/')
@@ -35,6 +46,28 @@ export function PageSwitcher({ className }: PageSwitcherProps) {
     if (pathWithoutLocale.startsWith('/stats')) return 'stats' as const;
     return 'calendar' as const;
   }, [pathname]);
+
+  const handleCalendarClick = useCallback(() => {
+    if (activePage === 'calendar') return;
+
+    // CalendarNavigationProvider の状態を保持して URL を構築
+    const viewType = calendarNav?.viewType ?? 'day';
+    const currentDate = calendarNav?.currentDate;
+    const params = new URLSearchParams();
+    if (currentDate) {
+      params.set('date', format(currentDate, 'yyyy-MM-dd'));
+    }
+    const query = params.size > 0 ? `?${params.toString()}` : '';
+    window.history.pushState(null, '', `/${locale}/calendar/${viewType}${query}`);
+    switchToPage('calendar');
+  }, [activePage, calendarNav, locale, switchToPage]);
+
+  const handleStatsClick = useCallback(() => {
+    if (activePage === 'stats') return;
+
+    window.history.pushState(null, '', `/${locale}/stats`);
+    switchToPage('stats');
+  }, [activePage, locale, switchToPage]);
 
   return (
     <div
@@ -56,7 +89,7 @@ export function PageSwitcher({ className }: PageSwitcherProps) {
               ? 'bg-primary-state-selected text-primary'
               : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
           )}
-          onClick={() => activePage !== 'calendar' && router.push('/calendar/day')}
+          onClick={handleCalendarClick}
         >
           <CalendarDays className="size-4" />
         </button>
@@ -72,7 +105,7 @@ export function PageSwitcher({ className }: PageSwitcherProps) {
               ? 'bg-primary-state-selected text-primary'
               : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
           )}
-          onClick={() => activePage !== 'stats' && router.push('/stats')}
+          onClick={handleStatsClick}
         >
           <BarChart3 className="size-4" />
         </button>

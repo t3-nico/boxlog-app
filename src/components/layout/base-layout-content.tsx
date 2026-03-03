@@ -63,9 +63,13 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
     }
   }, []);
 
-  // メモ化: コンテンツ部分（children, isMobile, localeに依存）
-  const content = useMemo(
-    () => (
+  return (
+    // CalendarNavigationProvider を常にレンダリングしてツリー構造を安定化。
+    // ルート切替時にProvider の付け外しによるリマウントを防ぎ、
+    // Sidebar が静止したままメインコンテンツだけが変わる体験を実現する。
+    // 非カレンダーページでは idle 状態（useCalendarNavigation() は null を返す設計ではなくなるが、
+    // 全消費者が contextAvailable チェック済みのため安全）。
+    <CalendarNavigationProvider {...(calendarProviderProps ?? {})}>
       <div className="flex h-screen flex-col">
         {/* アクセシビリティ: スキップリンク */}
         <a
@@ -107,21 +111,6 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
           />
         ) : null}
       </div>
-    ),
-    [children, isMobile, localeFromPath, t, createActionSheet, handleCreateAction],
+    </CalendarNavigationProvider>
   );
-
-  // カレンダーページの場合はCalendarNavigationProviderでラップ
-  if (calendarProviderProps) {
-    return (
-      <CalendarNavigationProvider
-        initialDate={calendarProviderProps.initialDate}
-        initialView={calendarProviderProps.initialView}
-      >
-        {content}
-      </CalendarNavigationProvider>
-    );
-  }
-
-  return content;
 }

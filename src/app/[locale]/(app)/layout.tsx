@@ -21,6 +21,8 @@ import {
   RecurringEditConfirmDialog,
 } from '@/features/plans/components';
 
+import { ClientPageRenderer } from './_composition/ClientPageRenderer';
+
 interface AppLayoutProps {
   children: React.ReactNode;
 }
@@ -29,7 +31,7 @@ const AppLayout = async ({ children }: AppLayoutProps) => {
   return (
     <Providers>
       <BaseLayout>
-        {children}
+        <ClientPageRenderer>{children}</ClientPageRenderer>
         <PlanInspector />
         <PlanDeleteConfirmDialog />
         <RecurringEditConfirmDialog />

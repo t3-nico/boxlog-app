@@ -9,8 +9,9 @@ interface MainContentWrapperProps {
 /**
  * メインコンテンツラッパー
  *
- * シンプルなmain要素ラッパー
- * InspectorはPopover/Drawerで表示されるため、レイアウト調整不要
+ * loading.tsx を排除し、Next.js の startTransition に任せることで
+ * ルート切替時に古いコンテンツを維持 → 新コンテンツ準備完了後に差し替え。
+ * Sidebar は layout 層で永続化されるため、メインだけが変わる体験になる。
  */
 export function MainContentWrapper({ children }: MainContentWrapperProps) {
   return (

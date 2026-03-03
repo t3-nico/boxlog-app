@@ -52,10 +52,10 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
 
   const pathname = usePathname();
 
-  // ページ判定: カレンダービューかどうか（ヘッダー表示制御用）
-  const isCalendarPage = useMemo(() => {
+  // ページ判定: 独自ヘッダーを持つページかどうか（PageHeader表示制御用）
+  const hasOwnHeader = useMemo(() => {
     const pathWithoutLocale = pathname?.replace(new RegExp(`^/${locale}`), '') ?? '';
-    return isCalendarViewPath(pathWithoutLocale);
+    return isCalendarViewPath(pathWithoutLocale) || pathWithoutLocale === '/stats';
   }, [pathname, locale]);
 
   return (
@@ -76,8 +76,8 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
 
       {/* PageHeader + Main Content */}
       <div className="flex h-full flex-1 flex-col">
-        {/* PageHeader（Calendarは独自ヘッダーを持つため非表示） */}
-        {!isCalendarPage && <PageHeader />}
+        {/* PageHeader（Calendar/Statsは独自ヘッダーを持つため非表示） */}
+        {!hasOwnHeader && <PageHeader />}
 
         {/* Main Content */}
         <MainContentWrapper>{children}</MainContentWrapper>
