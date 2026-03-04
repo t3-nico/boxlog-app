@@ -72,10 +72,7 @@ export function PreferencesSettings() {
   return (
     <div className="space-y-8">
       {/* 言語とテーマ */}
-      <SettingsCard
-        title={t('settings.preferences.languageAndTheme')}
-        isSaving={preferences.isSaving}
-      >
+      <SettingsCard title={t('settings.preferences.languageAndTheme')}>
         <div className="space-y-0">
           <SettingRow label={t('settings.preferences.language')}>
             <Select value={locale} onValueChange={handleLanguageChange}>
@@ -107,7 +104,7 @@ export function PreferencesSettings() {
       </SettingsCard>
 
       {/* 起動設定 */}
-      <SettingsCard title={t('settings.preferences.startup')} isSaving={preferences.isSaving}>
+      <SettingsCard title={t('settings.preferences.startup')}>
         <div className="space-y-0">
           <SettingRow label={t('settings.preferences.startupScreen')}>
             <Select

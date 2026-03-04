@@ -224,7 +224,7 @@ export function ChronotypeSettings() {
   return (
     <div className="space-y-8">
       {/* タイプ選択セクション */}
-      <SettingsCard title={t('settings.chronotype.title')} isSaving={autoSave.isSaving}>
+      <SettingsCard title={t('settings.chronotype.title')}>
         <div className="space-y-0">
           <SettingRow label={t('settings.chronotype.title')}>
             <Select value={selectValue} onValueChange={handleTypeSelect}>

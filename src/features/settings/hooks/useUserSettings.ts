@@ -74,8 +74,6 @@ export function useUserSettings() {
         showWeekNumbers: dbSettings.showWeekNumbers,
         defaultDuration: dbSettings.defaultDuration,
         snapInterval: dbSettings.snapInterval,
-        businessHours: dbSettings.businessHours,
-        showDeclinedEvents: dbSettings.showDeclinedEvents,
         chronotype: chronotypeSettings,
         planRecordMode: dbSettings.planRecordMode,
       });
@@ -102,12 +100,6 @@ export function useUserSettings() {
       if (settings.defaultDuration !== undefined)
         dbInput.defaultDuration = settings.defaultDuration;
       if (settings.snapInterval !== undefined) dbInput.snapInterval = settings.snapInterval;
-      if (settings.businessHours !== undefined) {
-        dbInput.businessHoursStart = settings.businessHours.start;
-        dbInput.businessHoursEnd = settings.businessHours.end;
-      }
-      if (settings.showDeclinedEvents !== undefined)
-        dbInput.showDeclinedEvents = settings.showDeclinedEvents;
       if (settings.chronotype !== undefined) {
         dbInput.chronotypeEnabled = settings.chronotype.enabled;
         dbInput.chronotypeType = settings.chronotype.type;

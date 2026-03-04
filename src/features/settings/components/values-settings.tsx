@@ -105,7 +105,7 @@ export function ValuesSettings() {
   }
 
   return (
-    <SettingsCard title={t('settings.values.title')} isSaving={autoSave.isSaving}>
+    <SettingsCard title={t('settings.values.title')}>
       <p className="text-muted-foreground mb-4 text-sm">{t('settings.values.description')}</p>
 
       <div className="space-y-4">

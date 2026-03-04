@@ -21,12 +21,6 @@ describe('useCalendarSettingsStore', () => {
       expect(state.planRecordMode).toBe('both');
     });
 
-    it('営業時間のデフォルトが9-18', () => {
-      const state = useCalendarSettingsStore.getState();
-      expect(state.businessHours.start).toBe(9);
-      expect(state.businessHours.end).toBe(18);
-    });
-
     it('クロノタイプはデフォルト無効', () => {
       const state = useCalendarSettingsStore.getState();
       expect(state.chronotype.enabled).toBe(false);
@@ -52,16 +46,6 @@ describe('useCalendarSettingsStore', () => {
       expect(state.dateFormat).toBe('MM/dd/yyyy');
       // 他は維持
       expect(state.timezone).toBe('Asia/Tokyo');
-    });
-
-    it('ネストされた設定を更新できる', () => {
-      useCalendarSettingsStore.getState().updateSettings({
-        businessHours: { start: 10, end: 19 },
-      });
-      expect(useCalendarSettingsStore.getState().businessHours).toEqual({
-        start: 10,
-        end: 19,
-      });
     });
 
     it('クロノタイプを有効化できる', () => {

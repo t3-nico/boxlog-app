@@ -159,7 +159,7 @@ export function ValueRankingSettings() {
   }
 
   return (
-    <SettingsCard title={t('settings.values.ranking.title')} isSaving={autoSave.isSaving}>
+    <SettingsCard title={t('settings.values.ranking.title')}>
       <p className="text-muted-foreground mb-4 text-sm">
         {t('settings.values.ranking.description')}
       </p>

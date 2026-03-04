@@ -89,12 +89,6 @@ export function NotificationSettings() {
     [updateBrowserNotifications, t],
   );
 
-  const isSaving =
-    updateBrowserNotifications.isPending ||
-    updateEmailNotifications.isPending ||
-    updatePushNotifications.isPending ||
-    updateDefaultReminder.isPending;
-
   if (isLoading) {
     return (
       <div className="space-y-8">
@@ -113,7 +107,7 @@ export function NotificationSettings() {
 
   return (
     <div className="space-y-8">
-      <SettingsCard isSaving={isSaving}>
+      <SettingsCard>
         <div className="space-y-0">
           <SettingRow
             label={t('notification.settings.browserNotifications.label')}
