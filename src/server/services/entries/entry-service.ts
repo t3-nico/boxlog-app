@@ -351,7 +351,9 @@ export class EntryService {
   }
 
   private formatEntryWithTags(entry: EntryWithTags): EntryWithTags {
-    const tagId = entry.entry_tags?.[0]?.tag_id ?? null;
+    // PostgREST は entry_id にユニーク制約がある場合オブジェクトを返す（配列ではなく）
+    const tags = entry.entry_tags;
+    const tagId = Array.isArray(tags) ? (tags[0]?.tag_id ?? null) : (tags?.tag_id ?? null);
     const { entry_tags: _, ...entryData } = entry;
     return { ...entryData, tagId };
   }
