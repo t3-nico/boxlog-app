@@ -3,23 +3,26 @@
 /**
  * 予定/記録 時間比較セクション
  *
- * 2行構成:
- * - 予定行: start_time / end_time（ClockTimePicker で編集可能）
- * - 記録行: actual_start_time / actual_end_time（null = 予定と同じ）
+ * 3パターン対応:
+ * 1. upcoming + planned: 予定行 + 「予定と同じ」プレースホルダー
+ * 2. past + planned: 予定行 + 記録行（diff 表示付き）
+ * 3. past + unplanned: 記録行のみ（予定行なし）
  *
  * 差分表示: 記録の duration − 予定の duration を ±Xm / ±Xh 形式で表示
  */
 
-import { useMemo } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { ClockTimePicker } from '@/components/ui/clock-time-picker';
 import { DatePickerPopover } from '@/components/ui/date-picker-popover';
+import type { EntryOrigin } from '@/core/types/entry';
 import { useAutoAdjustEndTime } from '@/hooks/useAutoAdjustEndTime';
 import type { EntryState } from '@/lib/entry-status';
 import { computeDuration, formatDurationDisplay } from '@/lib/time-utils';
+import { TimeProgressBar } from './TimeProgressBar';
 
 interface TimeComparisonSectionProps {
   // 日付（共通）
@@ -37,6 +40,7 @@ interface TimeComparisonSectionProps {
   onActualEndChange: (time: string | null) => void;
   // 状態
   entryState: EntryState;
+  origin?: EntryOrigin;
   timeConflictError?: boolean;
   disabled?: boolean;
 }
@@ -55,6 +59,89 @@ function formatDiffDisplay(diffMinutes: number): string {
   return `${sign}${m}m`;
 }
 
+/**
+ * 時刻を ±deltaMinutes 調整する
+ * 0:00–23:45 の範囲にクランプ
+ */
+function adjustTime(time: string, deltaMinutes: number): string {
+  const [h, m] = time.split(':').map(Number);
+  const total = Math.max(0, Math.min(23 * 60 + 45, (h ?? 0) * 60 + (m ?? 0) + deltaMinutes));
+  return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
+}
+
+/**
+ * ±ボタン付き ClockTimePicker（past/active のみ表示）
+ */
+const TimePickerWithAdjust = memo(function TimePickerWithAdjust({
+  value,
+  onChange,
+  showAdjust,
+  disabled,
+  hasError,
+  minTime,
+  showDurationInMenu,
+}: {
+  value: string;
+  onChange: (time: string) => void;
+  showAdjust: boolean;
+  disabled?: boolean;
+  hasError?: boolean;
+  minTime?: string;
+  showDurationInMenu?: boolean;
+}) {
+  const handleDecrement = useCallback(() => {
+    onChange(adjustTime(value, -15));
+  }, [value, onChange]);
+
+  const handleIncrement = useCallback(() => {
+    onChange(adjustTime(value, 15));
+  }, [value, onChange]);
+
+  if (!showAdjust) {
+    return (
+      <ClockTimePicker
+        value={value}
+        onChange={onChange}
+        disabled={disabled}
+        hasError={hasError}
+        minTime={minTime}
+        showDurationInMenu={showDurationInMenu}
+      />
+    );
+  }
+
+  return (
+    <div className="flex items-center">
+      <button
+        type="button"
+        className="text-muted-foreground hover:text-foreground flex size-5 items-center justify-center rounded transition-colors"
+        onClick={handleDecrement}
+        disabled={disabled}
+        aria-label="15分前"
+      >
+        <ChevronLeft className="size-3.5" />
+      </button>
+      <ClockTimePicker
+        value={value}
+        onChange={onChange}
+        disabled={disabled}
+        hasError={hasError}
+        minTime={minTime}
+        showDurationInMenu={showDurationInMenu}
+      />
+      <button
+        type="button"
+        className="text-muted-foreground hover:text-foreground flex size-5 items-center justify-center rounded transition-colors"
+        onClick={handleIncrement}
+        disabled={disabled}
+        aria-label="15分後"
+      >
+        <ChevronRight className="size-3.5" />
+      </button>
+    </div>
+  );
+});
+
 export function TimeComparisonSection({
   selectedDate,
   onDateChange,
@@ -67,10 +154,19 @@ export function TimeComparisonSection({
   onActualStartChange,
   onActualEndChange,
   entryState,
+  origin = 'planned',
   timeConflictError = false,
   disabled = false,
 }: TimeComparisonSectionProps) {
   const t = useTranslations();
+
+  // 3パターンのレンダリング制御
+  const isUnplanned = origin === 'unplanned';
+  const showPlannedRow = !isUnplanned;
+  const showActualRow = entryState !== 'upcoming' || isUnplanned;
+  const showPlaceholderRow = entryState === 'upcoming' && !isUnplanned;
+  // ±ボタンは past/active のみ表示
+  const showAdjust = entryState !== 'upcoming';
 
   // 予定行の自動調整
   const {
@@ -127,13 +223,10 @@ export function TimeComparisonSection({
     [actualDuration],
   );
 
-  // 差分（記録が明示的に設定されている場合のみ）
+  // 差分（記録が明示的に設定されている場合のみ、planned エントリのみ）
   const hasActualTime = actualStart !== null || actualEnd !== null;
-  const diffMinutes = hasActualTime ? actualDuration - plannedDuration : 0;
+  const diffMinutes = hasActualTime && !isUnplanned ? actualDuration - plannedDuration : 0;
   const diffDisplay = formatDiffDisplay(diffMinutes);
-
-  // 記録行を表示するか（upcoming は予定のみ）
-  const showActualRow = entryState !== 'upcoming';
 
   return (
     <div className="flex flex-col gap-1 px-4 py-2">
@@ -145,50 +238,68 @@ export function TimeComparisonSection({
         showIcon
       />
 
-      {/* 予定行 */}
-      <div className="flex items-center gap-1">
-        <span className="text-muted-foreground w-8 flex-shrink-0 text-xs">
-          {t('plan.inspector.time.planned')}
-        </span>
-        <ClockTimePicker
-          value={plannedStart}
-          onChange={handlePlannedStartChange}
-          disabled={disabled}
-          hasError={timeConflictError}
-        />
-        <span className="text-muted-foreground text-sm">–</span>
-        <ClockTimePicker
-          value={plannedEnd}
-          onChange={handlePlannedEndChange}
-          disabled={disabled || !plannedStart}
-          minTime={plannedStart}
-          showDurationInMenu
-          hasError={timeConflictError}
-        />
-        {plannedDurationDisplay && (
-          <span className="text-muted-foreground ml-2 text-xs tabular-nums">
-            {plannedDurationDisplay}
+      {/* 予定行（unplanned では非表示） */}
+      {showPlannedRow && (
+        <div className="flex items-center gap-1">
+          <span className="text-muted-foreground w-8 flex-shrink-0 text-xs">
+            {t('plan.inspector.time.planned')}
           </span>
-        )}
-      </div>
+          <TimePickerWithAdjust
+            value={plannedStart}
+            onChange={handlePlannedStartChange}
+            showAdjust={showAdjust}
+            disabled={disabled}
+            hasError={timeConflictError}
+          />
+          <span className="text-muted-foreground text-sm">–</span>
+          <TimePickerWithAdjust
+            value={plannedEnd}
+            onChange={handlePlannedEndChange}
+            showAdjust={showAdjust}
+            disabled={disabled || !plannedStart}
+            minTime={plannedStart}
+            showDurationInMenu
+            hasError={timeConflictError}
+          />
+          {plannedDurationDisplay && (
+            <span className="text-muted-foreground ml-2 text-xs tabular-nums">
+              {plannedDurationDisplay}
+            </span>
+          )}
+        </div>
+      )}
 
-      {/* 記録行 */}
+      {/* 記録プレースホルダー行（upcoming + planned のみ） */}
+      {showPlaceholderRow && (
+        <div className="flex items-center gap-1">
+          <span className="text-muted-foreground w-8 flex-shrink-0 text-xs">
+            {t('plan.inspector.time.actual')}
+          </span>
+          <span className="text-muted-foreground text-xs">
+            ── {t('plan.inspector.time.sameAsPlanned')} ──
+          </span>
+        </div>
+      )}
+
+      {/* 記録行（active/past、または unplanned） */}
       {showActualRow && (
         <div className="flex items-center gap-1">
           <span className="text-muted-foreground w-8 flex-shrink-0 text-xs">
             {t('plan.inspector.time.actual')}
           </span>
-          {hasActualTime ? (
+          {hasActualTime || isUnplanned ? (
             <>
-              <ClockTimePicker
+              <TimePickerWithAdjust
                 value={effectiveActualStart}
                 onChange={handleActualStartChange}
+                showAdjust={showAdjust}
                 disabled={disabled}
               />
               <span className="text-muted-foreground text-sm">–</span>
-              <ClockTimePicker
+              <TimePickerWithAdjust
                 value={effectiveActualEnd}
                 onChange={handleActualEndChange}
+                showAdjust={showAdjust}
                 disabled={disabled || !effectiveActualStart}
                 minTime={effectiveActualStart}
                 showDurationInMenu
@@ -201,9 +312,7 @@ export function TimeComparisonSection({
               {diffDisplay && (
                 <span
                   className={`ml-1 text-xs tabular-nums ${
-                    diffMinutes < 0
-                      ? 'text-green-600 dark:text-green-400'
-                      : 'text-orange-600 dark:text-orange-400'
+                    diffMinutes < 0 ? 'text-success' : 'text-warning'
                   }`}
                 >
                   {diffDisplay}
@@ -223,6 +332,13 @@ export function TimeComparisonSection({
               {t('plan.inspector.time.sameAsPlanned')}
             </button>
           )}
+        </div>
+      )}
+
+      {/* プログレスバー: past + planned + 記録ありの場合のみ */}
+      {showActualRow && showPlannedRow && hasActualTime && (
+        <div className="px-8">
+          <TimeProgressBar plannedMinutes={plannedDuration} actualMinutes={actualDuration} />
         </div>
       )}
 
