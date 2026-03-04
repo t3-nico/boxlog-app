@@ -3,10 +3,10 @@
 /**
  * 予定/記録 時間比較セクション
  *
- * 3パターン対応:
- * 1. upcoming + planned: 予定行 + 「予定と同じ」プレースホルダー
- * 2. past + planned: 予定行 + 記録行（diff 表示付き）
- * 3. past + unplanned: 記録行のみ（予定行なし）
+ * 3パターン対応（レイアウト統一: 予定行 + 記録行を常に表示）
+ * 1. upcoming + planned: 予定行(編集可) + 記録行(placeholder)
+ * 2. past + planned: 予定行(編集可) + 記録行(編集可, diff表示)
+ * 3. past + unplanned: 予定行(disabled, 「予定なし」) + 記録行(編集可)
  *
  * 差分表示: 記録の duration − 予定の duration を ±Xm / ±Xh 形式で表示
  */
@@ -160,11 +160,12 @@ export function TimeComparisonSection({
 }: TimeComparisonSectionProps) {
   const t = useTranslations();
 
-  // 3パターンのレンダリング制御
+  // 3パターンのレンダリング制御（レイアウト統一: 両行を常に表示）
   const isUnplanned = origin === 'unplanned';
-  const showPlannedRow = !isUnplanned;
-  const showActualRow = entryState !== 'upcoming' || isUnplanned;
-  const showPlaceholderRow = entryState === 'upcoming' && !isUnplanned;
+  // 予定行: unplanned では disabled 表示（「予定なし」）
+  const isPlannedRowDisabled = isUnplanned;
+  // 記録行: upcoming+planned では placeholder、それ以外は編集可
+  const showActualPlaceholder = entryState === 'upcoming' && !isUnplanned;
   // ±ボタンは past/active のみ表示
   const showAdjust = entryState !== 'upcoming';
 
@@ -238,105 +239,100 @@ export function TimeComparisonSection({
         showIcon
       />
 
-      {/* 予定行（unplanned では非表示） */}
-      {showPlannedRow && (
-        <div className="flex items-center gap-1">
-          <span className="text-muted-foreground w-8 flex-shrink-0 text-xs">
-            {t('plan.inspector.time.planned')}
+      {/* 予定行（常に表示、unplanned では disabled + 「予定なし」） */}
+      <div className="flex items-center gap-1">
+        <span className="text-muted-foreground w-8 flex-shrink-0 text-xs">
+          {t('plan.inspector.time.planned')}
+        </span>
+        {isPlannedRowDisabled ? (
+          <span className="text-muted-foreground/60 text-xs">
+            ── {t('plan.inspector.time.noPlanned')} ──
           </span>
-          <TimePickerWithAdjust
-            value={plannedStart}
-            onChange={handlePlannedStartChange}
-            showAdjust={showAdjust}
-            disabled={disabled}
-            hasError={timeConflictError}
-          />
-          <span className="text-muted-foreground text-sm">–</span>
-          <TimePickerWithAdjust
-            value={plannedEnd}
-            onChange={handlePlannedEndChange}
-            showAdjust={showAdjust}
-            disabled={disabled || !plannedStart}
-            minTime={plannedStart}
-            showDurationInMenu
-            hasError={timeConflictError}
-          />
-          {plannedDurationDisplay && (
-            <span className="text-muted-foreground ml-2 text-xs tabular-nums">
-              {plannedDurationDisplay}
-            </span>
-          )}
-        </div>
-      )}
+        ) : (
+          <>
+            <TimePickerWithAdjust
+              value={plannedStart}
+              onChange={handlePlannedStartChange}
+              showAdjust={showAdjust}
+              disabled={disabled}
+              hasError={timeConflictError}
+            />
+            <span className="text-muted-foreground text-sm">–</span>
+            <TimePickerWithAdjust
+              value={plannedEnd}
+              onChange={handlePlannedEndChange}
+              showAdjust={showAdjust}
+              disabled={disabled || !plannedStart}
+              minTime={plannedStart}
+              showDurationInMenu
+              hasError={timeConflictError}
+            />
+            {plannedDurationDisplay && (
+              <span className="text-muted-foreground ml-2 text-xs tabular-nums">
+                {plannedDurationDisplay}
+              </span>
+            )}
+          </>
+        )}
+      </div>
 
-      {/* 記録プレースホルダー行（upcoming + planned のみ） */}
-      {showPlaceholderRow && (
-        <div className="flex items-center gap-1">
-          <span className="text-muted-foreground w-8 flex-shrink-0 text-xs">
-            {t('plan.inspector.time.actual')}
-          </span>
+      {/* 記録行（常に表示、upcoming+planned では placeholder） */}
+      <div className="flex items-center gap-1">
+        <span className="text-muted-foreground w-8 flex-shrink-0 text-xs">
+          {t('plan.inspector.time.actual')}
+        </span>
+        {showActualPlaceholder ? (
           <span className="text-muted-foreground text-xs">
             ── {t('plan.inspector.time.sameAsPlanned')} ──
           </span>
-        </div>
-      )}
-
-      {/* 記録行（active/past、または unplanned） */}
-      {showActualRow && (
-        <div className="flex items-center gap-1">
-          <span className="text-muted-foreground w-8 flex-shrink-0 text-xs">
-            {t('plan.inspector.time.actual')}
-          </span>
-          {hasActualTime || isUnplanned ? (
-            <>
-              <TimePickerWithAdjust
-                value={effectiveActualStart}
-                onChange={handleActualStartChange}
-                showAdjust={showAdjust}
-                disabled={disabled}
-              />
-              <span className="text-muted-foreground text-sm">–</span>
-              <TimePickerWithAdjust
-                value={effectiveActualEnd}
-                onChange={handleActualEndChange}
-                showAdjust={showAdjust}
-                disabled={disabled || !effectiveActualStart}
-                minTime={effectiveActualStart}
-                showDurationInMenu
-              />
-              {actualDurationDisplay && (
-                <span className="text-muted-foreground ml-2 text-xs tabular-nums">
-                  {actualDurationDisplay}
-                </span>
-              )}
-              {diffDisplay && (
-                <span
-                  className={`ml-1 text-xs tabular-nums ${
-                    diffMinutes < 0 ? 'text-success' : 'text-warning'
-                  }`}
-                >
-                  {diffDisplay}
-                </span>
-              )}
-            </>
-          ) : (
-            <button
-              type="button"
-              className="text-muted-foreground hover:text-foreground text-xs transition-colors"
-              onClick={() => {
-                // 予定の値をコピーして編集モードに入る
-                onActualStartChange(plannedStart);
-                onActualEndChange(plannedEnd);
-              }}
-            >
-              {t('plan.inspector.time.sameAsPlanned')}
-            </button>
-          )}
-        </div>
-      )}
+        ) : hasActualTime || isUnplanned ? (
+          <>
+            <TimePickerWithAdjust
+              value={effectiveActualStart}
+              onChange={handleActualStartChange}
+              showAdjust={showAdjust}
+              disabled={disabled}
+            />
+            <span className="text-muted-foreground text-sm">–</span>
+            <TimePickerWithAdjust
+              value={effectiveActualEnd}
+              onChange={handleActualEndChange}
+              showAdjust={showAdjust}
+              disabled={disabled || !effectiveActualStart}
+              minTime={effectiveActualStart}
+              showDurationInMenu
+            />
+            {actualDurationDisplay && (
+              <span className="text-muted-foreground ml-2 text-xs tabular-nums">
+                {actualDurationDisplay}
+              </span>
+            )}
+            {diffDisplay && (
+              <span
+                className={`ml-1 text-xs tabular-nums ${
+                  diffMinutes < 0 ? 'text-success' : 'text-warning'
+                }`}
+              >
+                {diffDisplay}
+              </span>
+            )}
+          </>
+        ) : (
+          <button
+            type="button"
+            className="text-muted-foreground hover:text-foreground text-xs transition-colors"
+            onClick={() => {
+              onActualStartChange(plannedStart);
+              onActualEndChange(plannedEnd);
+            }}
+          >
+            {t('plan.inspector.time.sameAsPlanned')}
+          </button>
+        )}
+      </div>
 
       {/* プログレスバー: past + planned + 記録ありの場合のみ */}
-      {showActualRow && showPlannedRow && hasActualTime && (
+      {!isUnplanned && !showActualPlaceholder && hasActualTime && (
         <div className="px-8">
           <TimeProgressBar plannedMinutes={plannedDuration} actualMinutes={actualDuration} />
         </div>

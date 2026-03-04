@@ -120,7 +120,8 @@
       "time": {
         "planned": "Plan",
         "actual": "Actual",
-        "sameAsPlanned": "Same as plan"
+        "sameAsPlanned": "Same as plan",
+        "noPlanned": "No plan"
       },
       "note": {
         "upcomingPlaceholder": "What do you plan to do?",
