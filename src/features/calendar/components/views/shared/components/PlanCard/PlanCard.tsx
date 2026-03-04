@@ -189,10 +189,11 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     isSelected && 'ring-2 ring-primary',
     'text-foreground',
     isDraft ? 'cursor-default' : isDragging ? 'cursor-grabbing' : 'cursor-pointer',
-    // 統一デザイン: 左ボーダーアクセント + 右角丸
+    // 統一デザイン: 左ボーダーアクセント + 右角丸（unplanned は点線）
     isMobile
       ? 'px-2 pt-2 text-xs flex items-start gap-1 border-l-2 rounded-r'
       : 'p-2 text-sm border-l-[3px] rounded-r-lg',
+    plan.origin === 'unplanned' && 'border-dashed',
     className,
   );
 

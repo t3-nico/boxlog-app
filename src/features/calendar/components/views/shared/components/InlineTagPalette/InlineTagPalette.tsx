@@ -174,11 +174,11 @@ export function InlineTagPalette({ hourHeight, date }: InlineTagPaletteProps) {
       >
         <div
           ref={highlightRef}
-          className="absolute right-0 left-0 rounded-md border"
+          className="absolute right-0 left-0 rounded-r-lg border-l-[3px]"
           style={{
             top: selectionTop,
             height: selectionHeight,
-            borderColor: 'var(--entry-default)',
+            borderLeftColor: 'var(--entry-default)',
             backgroundColor: 'color-mix(in oklch, var(--entry-default) 12%, var(--background))',
           }}
         >
