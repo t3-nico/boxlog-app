@@ -9,16 +9,15 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useUpdateEntityTagsInCache } from '@/hooks/useUpdateEntityTagsInCache';
 
+import type { EntryWithTags } from '@/core/types/entry';
 import { usePlanTags } from '@/hooks/usePlanTags';
-import type { Plan } from '../../../types/plan';
 
 interface UseInspectorTagStateProps {
   planId: string | null;
-  planData: Plan | undefined;
-  isDraftMode: boolean;
+  planData: EntryWithTags | undefined;
 }
 
-export function useInspectorTagState({ planId, planData, isDraftMode }: UseInspectorTagStateProps) {
+export function useInspectorTagState({ planId, planData }: UseInspectorTagStateProps) {
   const updateTagsInCache = useUpdateEntityTagsInCache('entries');
   const { setPlanTags } = usePlanTags();
 
@@ -34,22 +33,20 @@ export function useInspectorTagState({ planId, planData, isDraftMode }: UseInspe
   const [prevPlanId, setPrevPlanId] = useState(planId);
   if (planId !== prevPlanId) {
     setPrevPlanId(planId);
-    if (!isDraftMode) {
-      setSelectedTagId(null);
-      selectedTagIdRef.current = null;
-      originalTagIdRef.current = null;
-      setHasTagChanges(false);
-    }
+    setSelectedTagId(null);
+    selectedTagIdRef.current = null;
+    originalTagIdRef.current = null;
+    setHasTagChanges(false);
   }
 
   // Sync tags from plan data（React推奨: レンダー中のstate調整）
   // 初期値を undefined にすることで、placeholderData で即座に planData が
   // 返る場合でも必ず差分検出 → タグ同期が走る
-  const [prevPlanData, setPrevPlanData] = useState<Plan | undefined>(undefined);
+  const [prevPlanData, setPrevPlanData] = useState<EntryWithTags | undefined>(undefined);
   if (planData !== prevPlanData) {
     setPrevPlanData(planData);
     if (!hasTagChanges && planData !== undefined) {
-      const tagId = ('tagId' in planData ? (planData.tagId as string | null) : null) ?? null;
+      const tagId = planData.tagId ?? null;
       setSelectedTagId(tagId);
       selectedTagIdRef.current = tagId;
       originalTagIdRef.current = tagId;
@@ -77,7 +74,6 @@ export function useInspectorTagState({ planId, planData, isDraftMode }: UseInspe
       setHasTagChanges(true);
 
       // キャッシュも更新（CalendarCard等での即時表示用）
-      // ドラフトモード（planId未確定）ではスキップ
       if (planId) {
         updateTagsInCache(planId, newTagId ? [newTagId] : []);
       }

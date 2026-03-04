@@ -2,12 +2,12 @@
 
 import { useCallback, useEffect, useRef } from 'react';
 
+import type { EntryWithTags } from '@/core/types/entry';
 import { useEntryMutations } from '@/hooks/useEntryMutations';
-import type { Plan } from '../../../types/plan';
 
 interface UseInspectorAutoSaveOptions {
   planId: string | null;
-  plan: Plan | null;
+  plan: EntryWithTags | null;
   debounceMs?: number;
 }
 

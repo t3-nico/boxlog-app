@@ -8,6 +8,7 @@ import {
   useCreateActionSheet,
   type CreateActionType,
 } from '@/features/navigation';
+import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { Plus } from 'lucide-react';
@@ -54,14 +55,19 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
   // CreateActionSheet状態管理
   const createActionSheet = useCreateActionSheet();
 
+  // 即DB作成（ドラフトなし）
+  const { createEntry } = useEntryMutations();
+
   // FABからのアクション選択ハンドラー
-  const handleCreateAction = useCallback((type: CreateActionType) => {
-    if (type === 'plan') {
-      useEntryInspectorStore.getState().openInspectorWithDraft(undefined);
-    } else if (type === 'record') {
-      useEntryInspectorStore.getState().openInspectorWithDraft(undefined);
-    }
-  }, []);
+  const handleCreateAction = useCallback(
+    async (_type: CreateActionType) => {
+      const result = await createEntry.mutateAsync({ title: '' });
+      if (result?.id) {
+        useEntryInspectorStore.getState().openInspector(result.id);
+      }
+    },
+    [createEntry],
+  );
 
   return (
     // CalendarNavigationProvider を常にレンダリングしてツリー構造を安定化。

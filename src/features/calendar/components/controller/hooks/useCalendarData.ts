@@ -8,12 +8,10 @@ import type { EntryWithTags } from '@/core/types/entry';
 import { useEntries } from '@/hooks/useEntries';
 import { useTags } from '@/hooks/useTagsQuery';
 import { expandEntriesToCalendarEvents, type PlanInstanceException } from '@/lib/entry-adapter';
-import { isTimePast } from '@/lib/entry-status';
 import { logger } from '@/lib/logger';
 import { isRecurringPlan } from '@/lib/plan-recurrence';
 import { api } from '@/lib/trpc';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
-import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 
@@ -91,9 +89,6 @@ export function useCalendarData({
   // タグフィルタ変更時に useMemo を再実行させるためのリアクティブ依存
   const visibleTagIds = useCalendarFilterStore((state) => state.visibleTagIds);
 
-  // ドラフトエントリを取得（新規作成・コピー＆ペースト時のプレビュー表示用）
-  const draftEntry = useEntryInspectorStore((state) => state.draftEntry);
-
   // 繰り返しエントリのIDを抽出
   const recurringEntryIds = useMemo(() => {
     if (!entriesData) return [];
@@ -156,35 +151,8 @@ export function useCalendarData({
       calendarPlans.push(...expandedEvents);
     }
 
-    // ドラフトエントリをプレビューとして追加
-    if (draftEntry?.start_time && draftEntry?.end_time) {
-      const startDate = new Date(draftEntry.start_time);
-      const endDate = new Date(draftEntry.end_time);
-      const isPast = isTimePast(draftEntry.start_time);
-      const draftCalendarPlan: CalendarPlan = {
-        id: '__draft__',
-        title: draftEntry.title || (isPast ? '新しい記録' : '新しい予定'),
-        description: draftEntry.description ?? undefined,
-        startDate,
-        endDate,
-        status: 'open',
-        color: 'var(--primary)',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        displayStartDate: startDate,
-        displayEndDate: endDate,
-        duration: (endDate.getTime() - startDate.getTime()) / 60000,
-        isMultiDay: false,
-        isRecurring: false,
-        type: isPast ? 'record' : 'plan',
-        origin: isPast ? 'unplanned' : 'planned',
-        isDraft: true,
-      };
-      calendarPlans.push(draftCalendarPlan);
-    }
-
     return calendarPlans;
-  }, [entriesData, viewDateRange, exceptionsMap, draftEntry]);
+  }, [entriesData, viewDateRange, exceptionsMap]);
 
   // 表示範囲のイベントをフィルタリング
   const filteredEvents = useMemo(() => {
@@ -230,10 +198,6 @@ export function useCalendarData({
     // visibleTypes.plan → origin='planned' のエントリ
     // visibleTypes.record → origin='unplanned' のエントリ
     const visibilityFiltered = filtered.filter((event) => {
-      // ドラフトは常に表示
-      if (event.isDraft) {
-        return true;
-      }
       // origin ベースのフィルタリング（type フィールドで UX 互換維持）
       if (event.type === 'record') {
         return visibleTypes.record && matchesTagFilter(event.tagId ?? null);

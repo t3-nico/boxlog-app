@@ -31,7 +31,6 @@ import { useLayoutStore, type AsideType } from '@/stores/useLayoutStore';
 
 import { getCurrentTimezone, setUserTimezone, useCalendarSettingsStore } from '@/features/settings';
 import { logger } from '@/lib/logger';
-import type { EntryInitialData } from '@/stores/useEntryInspectorStore';
 
 // =============================================================================
 // Types
@@ -222,7 +221,7 @@ export function useCalendarComposition({
   // =========================================================================
   // Plan Keyboard Shortcuts
   // =========================================================================
-  const getInitialPlanData = useCallback((): EntryInitialData => {
+  const getInitialPlanData = useCallback((): { start_time?: string; end_time?: string } => {
     const now = new Date();
     const start = startOfHour(now);
     const end = addHours(start, 1);

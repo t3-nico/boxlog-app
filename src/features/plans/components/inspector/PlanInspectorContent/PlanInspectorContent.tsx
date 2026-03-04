@@ -4,23 +4,19 @@
  * Entry Inspectorのコンテンツ部分
  *
  * 「Time waits for no one」原則:
- * - SegmentedControl (Plan/Record) を廃止
  * - getEntryState() で時間位置に基づくUI出し分け
  * - status フィールドなし（時間位置から自動判定）
+ * - ドラフトモードなし（即DB保存 + edit mode）
  */
 
 import { useTranslations } from 'next-intl';
 import { useCallback, useMemo } from 'react';
 
-import { Button } from '@/components/ui/button';
-import type { FulfillmentScore } from '@/core/types/entry';
+import type { EntryOrigin, FulfillmentScore } from '@/core/types/entry';
 import { useEntryMutations } from '@/hooks/useEntryMutations';
-import { useSubmitShortcut } from '@/hooks/useSubmitShortcut';
-import { getEntryState, isTimePast } from '@/lib/entry-status';
+import { getEntryState } from '@/lib/entry-status';
 import { cn } from '@/lib/utils';
-import { InspectorHeader, useDragHandle } from '../shared';
-
-import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
+import { InspectorHeader } from '../shared';
 
 import { PlanInspectorDetailsTab } from './PlanInspectorDetailsTab';
 import { PlanInspectorMenu } from './PlanInspectorMenu';
@@ -33,9 +29,6 @@ export function PlanInspectorContent() {
     planId,
     plan,
     saveAndClose,
-    cancelAndClose,
-    isDraftMode,
-    isSaving,
     hasPrevious,
     hasNext,
     goToPrevious,
@@ -63,14 +56,6 @@ export function PlanInspectorContent() {
     getCache,
   } = usePlanInspectorContentLogic();
 
-  // Cmd+Enter / Ctrl+Enter でドラフト作成
-  useSubmitShortcut({
-    enabled: isDraftMode,
-    isLoading: isSaving,
-    checkDisabled: () => false,
-    onSubmit: saveAndClose,
-  });
-
   // エントリの時間位置ベース状態（upcoming/active/past）
   const entryState = useMemo(() => {
     if (!plan) return 'upcoming' as const;
@@ -79,9 +64,10 @@ export function PlanInspectorContent() {
     return getEntryState({ start_time: st, end_time: et });
   }, [plan]);
 
-  // ドラフトの時間位置（ボタンラベル用）
-  const draftStartTime = useEntryInspectorStore((state) => state.draftEntry?.start_time);
-  const isDraftPast = draftStartTime ? isTimePast(draftStartTime) : false;
+  // origin（planned / unplanned）
+  const origin = useMemo<EntryOrigin>(() => {
+    return plan?.origin ?? 'planned';
+  }, [plan]);
 
   // 充実度スコアのハンドリング（active/past のみ表示）
   const fulfillmentScore = useMemo<FulfillmentScore | null>(() => {
@@ -90,10 +76,10 @@ export function PlanInspectorContent() {
     if (cache?.fulfillment_score !== undefined) {
       return cache.fulfillment_score as FulfillmentScore | null;
     }
-    return (plan as { fulfillment_score?: FulfillmentScore | null })?.fulfillment_score ?? null;
+    return plan?.fulfillment_score ?? null;
   }, [planId, plan, getCache]);
 
-  // 充実度は entries API 経由で更新（plan mutations には fulfillment_score がない）
+  // 充実度は entries API 経由で更新
   const { updateEntry } = useEntryMutations();
   const handleFulfillmentChange = useCallback(
     (score: FulfillmentScore | null) => {
@@ -116,21 +102,17 @@ export function PlanInspectorContent() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       {/* ヘッダー */}
-      {isDraftMode ? (
-        <DraftModeHeader />
-      ) : (
-        <InspectorHeader
-          hasPrevious={hasPrevious}
-          hasNext={hasNext}
-          onClose={isSaving ? () => {} : saveAndClose}
-          onPrevious={goToPrevious}
-          onNext={goToNext}
-          closeLabel={t('common.actions.close')}
-          previousLabel={t('common.aria.previous')}
-          nextLabel={t('common.aria.next')}
-          menuContent={menuContent}
-        />
-      )}
+      <InspectorHeader
+        hasPrevious={hasPrevious}
+        hasNext={hasNext}
+        onClose={saveAndClose}
+        onPrevious={goToPrevious}
+        onNext={goToNext}
+        closeLabel={t('common.actions.close')}
+        previousLabel={t('common.aria.previous')}
+        nextLabel={t('common.aria.next')}
+        menuContent={menuContent}
+      />
 
       {/* コンテンツ部分 */}
       <div className={cn('flex-1 overflow-y-auto')}>
@@ -141,28 +123,20 @@ export function PlanInspectorContent() {
           endTime={endTime}
           reminderMinutes={reminderMinutes}
           selectedTagId={selectedTagId}
-          recurrenceRule={
-            isDraftMode
-              ? null
-              : (() => {
-                  if (!planId) return null;
-                  const cache = getCache(planId);
-                  return cache?.recurrence_rule !== undefined
-                    ? cache.recurrence_rule
-                    : (plan?.recurrence_rule ?? null);
-                })()
-          }
-          recurrenceType={
-            isDraftMode
-              ? null
-              : (() => {
-                  if (!planId) return null;
-                  const cache = getCache(planId);
-                  return cache?.recurrence_type !== undefined
-                    ? cache.recurrence_type
-                    : (plan?.recurrence_type ?? null);
-                })()
-          }
+          recurrenceRule={(() => {
+            if (!planId) return null;
+            const cache = getCache(planId);
+            return cache?.recurrence_rule !== undefined
+              ? cache.recurrence_rule
+              : (plan?.recurrence_rule ?? null);
+          })()}
+          recurrenceType={(() => {
+            if (!planId) return null;
+            const cache = getCache(planId);
+            return cache?.recurrence_type !== undefined
+              ? cache.recurrence_type
+              : (plan?.recurrence_type ?? null);
+          })()}
           onAutoSave={autoSave}
           onScheduleDateChange={handleScheduleDateChange}
           onStartTimeChange={handleStartTimeChange}
@@ -190,8 +164,8 @@ export function PlanInspectorContent() {
             updatePlan.mutate({ id: planId, data: { recurrence_rule: rrule } });
           }}
           timeConflictError={timeConflictError}
-          isDraftMode={isDraftMode}
-          entryState={isDraftMode ? (isDraftPast ? 'past' : 'upcoming') : entryState}
+          entryState={entryState}
+          origin={origin}
           fulfillmentScore={fulfillmentScore}
           onFulfillmentChange={handleFulfillmentChange}
           actualStart={actualStartTime}
@@ -200,42 +174,6 @@ export function PlanInspectorContent() {
           onActualEndChange={handleActualEndChange}
         />
       </div>
-
-      {/* フッター: ドラフトモードのみ（編集モードは自動保存） */}
-      {isDraftMode && (
-        <div className="flex shrink-0 justify-end gap-2 px-4 py-4">
-          <Button variant="ghost" onClick={cancelAndClose} disabled={isSaving}>
-            {t('common.actions.cancel')}
-          </Button>
-          <Button onClick={saveAndClose} disabled={isSaving}>
-            {isDraftPast ? t('plan.inspector.createRecord') : t('plan.inspector.createPlan')}
-          </Button>
-        </div>
-      )}
-    </div>
-  );
-}
-
-/**
- * ドラフトモード用ヘッダー
- *
- * ドラッグハンドルのみ（Plan/Record切り替えを廃止）
- */
-function DraftModeHeader() {
-  const dragHandleProps = useDragHandle();
-  const isDraggable = !!dragHandleProps;
-
-  return (
-    <div className="bg-card relative flex shrink-0 items-center px-4 pt-4 pb-2">
-      {isDraggable && (
-        <div
-          {...dragHandleProps}
-          className="hover:bg-state-hover absolute inset-0 cursor-move transition-colors"
-          aria-hidden="true"
-        />
-      )}
-      {/* スペーサー（ヘッダー高を維持） */}
-      <div className="relative z-10 h-6" />
     </div>
   );
 }

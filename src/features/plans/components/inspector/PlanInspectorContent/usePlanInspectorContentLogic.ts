@@ -7,14 +7,18 @@
  * - useInspectorTagState: タグ状態管理
  * - useInspectorTimeState: 時間・スケジュール状態管理
  * - useInspectorSaveClose: 保存・閉じるロジック
+ *
+ * ドラフトモードなし（即DB保存 + edit mode）。
  */
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
+import type { EntryWithTags } from '@/core/types/entry';
+import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
 import { logger } from '@/lib/logger';
 import { useEntryCacheStore } from '@/stores/useEntryCacheStore';
-import { useEntryInspectorStore, type DraftEntry } from '@/stores/useEntryInspectorStore';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import {
   closeModal,
   openDeleteConfirm,
@@ -23,7 +27,6 @@ import {
   type RecurringEditScope,
 } from '@/stores/useModalStore';
 import { usePlan } from '../../../hooks/usePlan';
-import type { Plan } from '../../../types/plan';
 import { useInspectorAutoSave, useInspectorNavigation, useRecurringPlanEdit } from '../hooks';
 import { useInspectorSaveClose } from './useInspectorSaveClose';
 import { useInspectorTagState } from './useInspectorTagState';
@@ -33,32 +36,23 @@ import { useInspectorTimeState } from './useInspectorTimeState';
 // title/descriptionは即座に保存（Googleカレンダー準拠）
 const SCOPE_DIALOG_FIELDS = ['start_time', 'end_time'] as const;
 
-// 即座にDB保存するフィールド（編集モードのみ）
+// 即座にDB保存するフィールド（title/description）
 const IMMEDIATE_SAVE_FIELDS = ['title', 'description'] as const;
 
 export function usePlanInspectorContentLogic() {
-  // 保存中フラグ（即座に閉じるため常にfalse、UIの disabled guard として維持）
-  const isSaving = false;
-
   // 自動保存デバウンス用タイマー（Activityノイズ防止）
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const entryId = useEntryInspectorStore((state) => state.entryId);
   const instanceDate = useEntryInspectorStore((state) => state.instanceDate);
-  const initialData = useEntryInspectorStore((state) => state.initialData);
   const closeInspector = useEntryInspectorStore((state) => state.closeInspector);
-  const openInspectorWithDraft = useEntryInspectorStore((state) => state.openInspectorWithDraft);
-  const draftEntry = useEntryInspectorStore((state) => state.draftEntry);
-  const updateDraft = useEntryInspectorStore((state) => state.updateDraft);
   const addPendingChange = useEntryInspectorStore((state) => state.addPendingChange);
   const clearPendingChanges = useEntryInspectorStore((state) => state.clearPendingChanges);
   const pendingChanges = useEntryInspectorStore((state) => state.pendingChanges);
 
-  // ドラフトモード判定: draftEntryがあり、entryIdがない場合
-  const isDraftMode = draftEntry !== null && entryId === null;
-
   const getCache = useEntryCacheStore((state) => state.getCache);
   const { applyDelete } = useRecurringScopeMutations();
+  const { createEntry } = useEntryMutations();
 
   // Inspectorマウント時にグローバルダイアログをリセット
   useEffect(() => {
@@ -91,9 +85,9 @@ export function usePlanInspectorContentLogic() {
     };
   }, []);
 
-  // ドラフトモードまたは未保存の変更がある場合、beforeunload警告を表示
+  // 未保存の変更がある場合、beforeunload警告を表示
   useEffect(() => {
-    if (!isDraftMode && !pendingChanges) return;
+    if (!pendingChanges) return;
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       e.preventDefault();
@@ -101,17 +95,14 @@ export function usePlanInspectorContentLogic() {
 
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [isDraftMode, pendingChanges]);
+  }, [pendingChanges]);
 
   const { data: planData } = usePlan(entryId!, {
     includeTags: true,
-    enabled: !!entryId && !isDraftMode,
+    enabled: !!entryId,
   });
 
-  // ドラフトモードの場合はdraftEntryを使用、それ以外はfetchしたplanDataを使用
-  const plan = isDraftMode
-    ? (draftEntry as unknown as Plan | null)
-    : ((planData ?? null) as unknown as Plan | null);
+  const plan: EntryWithTags | null = (planData ?? null) as EntryWithTags | null;
 
   // 繰り返しプラン編集フック
   const recurringEdit = useRecurringPlanEdit({
@@ -134,8 +125,7 @@ export function usePlanInspectorContentLogic() {
     setPlanTags,
   } = useInspectorTagState({
     planId: entryId,
-    planData: planData as Plan | undefined,
-    isDraftMode,
+    planData: planData as EntryWithTags | undefined,
   });
 
   // --- サブフック: 時間・スケジュール状態 ---
@@ -157,12 +147,8 @@ export function usePlanInspectorContentLogic() {
   } = useInspectorTimeState({
     plan,
     planId: entryId,
-    isDraftMode,
-    draftPlan: draftEntry,
-    initialData: initialData ?? null,
     recurringEdit,
     addPendingChange,
-    updateDraft,
     updatePlan,
   });
 
@@ -182,14 +168,7 @@ export function usePlanInspectorContentLogic() {
   // 繰り返しインスタンス対応のautoSave
   const autoSave = useCallback(
     async (field: string, value: string | undefined) => {
-      const { draftEntry: currentDraft, entryId: currentEntryId } =
-        useEntryInspectorStore.getState();
-      const currentIsDraftMode = currentDraft !== null && currentEntryId === null;
-
-      if (currentIsDraftMode) {
-        updateDraft({ [field]: value } as Partial<DraftEntry>);
-        return;
-      }
+      const currentEntryId = useEntryInspectorStore.getState().entryId;
 
       if (
         currentEntryId &&
@@ -216,24 +195,8 @@ export function usePlanInspectorContentLogic() {
       }
       addPendingChange({ [field]: value });
     },
-    [addPendingChange, recurringEdit, updateDraft, updatePlan],
+    [addPendingChange, recurringEdit, updatePlan],
   );
-
-  // Draft Record IDs state（ドラフトモードでの Record 紐付け用）
-  const [draftRecordIds, setDraftRecordIds] = useState<string[]>([]);
-
-  // ドラフトモード突入時に初期化
-  useEffect(() => {
-    if (isDraftMode) {
-      setDraftRecordIds([]);
-    } else {
-      setDraftRecordIds([]);
-    }
-  }, [isDraftMode]);
-
-  const handleDraftRecordIdsChange = useCallback((ids: string[]) => {
-    setDraftRecordIds(ids);
-  }, []);
 
   // 繰り返しプラン削除確認ハンドラー
   const handleRecurringDeleteConfirm = useCallback(
@@ -276,20 +239,26 @@ export function usePlanInspectorContentLogic() {
     if (entryId) navigator.clipboard.writeText(entryId);
   }, [entryId]);
 
-  const handleDuplicate = useCallback(() => {
+  const handleDuplicate = useCallback(async () => {
     if (!plan || !('id' in plan)) return;
 
-    closeInspector();
-
-    setTimeout(() => {
-      openInspectorWithDraft({
-        title: `${plan.title} (copy)`,
-        description: plan.description ?? null,
-        start_time: plan.start_time ?? null,
-        end_time: plan.end_time ?? null,
+    try {
+      const result = await createEntry.mutateAsync({
+        title: plan.title,
+        description: plan.description ?? undefined,
+        start_time: plan.start_time ?? undefined,
+        end_time: plan.end_time ?? undefined,
       });
-    }, 100);
-  }, [plan, closeInspector, openInspectorWithDraft]);
+      if (result?.id) {
+        closeInspector();
+        setTimeout(() => {
+          useEntryInspectorStore.getState().openInspector(result.id);
+        }, 100);
+      }
+    } catch {
+      logger.error('Failed to duplicate entry');
+    }
+  }, [plan, createEntry, closeInspector]);
 
   return {
     // Store state
@@ -299,8 +268,6 @@ export function usePlanInspectorContentLogic() {
     saveAndClose,
     cancelAndClose,
     hasPendingChanges,
-    isDraftMode,
-    isSaving,
 
     // Navigation
     hasPrevious,
@@ -311,10 +278,6 @@ export function usePlanInspectorContentLogic() {
     // Tags state
     selectedTagId,
     handleTagChange,
-
-    // Draft Record IDs（ドラフトモードでの Record 紐付け用）
-    draftRecordIds,
-    handleDraftRecordIdsChange,
 
     // Form state
     titleRef,

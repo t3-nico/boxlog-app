@@ -25,7 +25,7 @@ export type {
 // =============================================================================
 export { useEntryCacheStore } from '@/stores/useEntryCacheStore';
 export { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
-export type { DraftEntry, EntryInitialData, PendingChanges } from '@/stores/useEntryInspectorStore';
+export type { PendingChanges } from '@/stores/useEntryInspectorStore';
 export { usePlanClipboardStore } from '@/stores/usePlanClipboardStore';
 export type { ClipboardPlan, LastClickedPosition } from '@/stores/usePlanClipboardStore';
 

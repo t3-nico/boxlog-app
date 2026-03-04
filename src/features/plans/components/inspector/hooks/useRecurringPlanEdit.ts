@@ -16,7 +16,7 @@ import { logger } from '@/lib/logger';
 import { isRecurringPlan } from '@/lib/plan-recurrence';
 import { openRecurringEditConfirm, type RecurringEditScope } from '@/stores/useModalStore';
 
-import type { Plan } from '../../../types/plan';
+import type { EntryWithTags } from '@/core/types/entry';
 
 // オーバーライド可能なフィールド
 type OverrideableField = 'title' | 'description' | 'start_time' | 'end_time';
@@ -29,7 +29,7 @@ interface PendingChanges {
 }
 
 interface UseRecurringPlanEditOptions {
-  plan: Plan | null;
+  plan: EntryWithTags | null;
   planId: string | null;
   instanceDate: string | null;
 }

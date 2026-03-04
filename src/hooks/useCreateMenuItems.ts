@@ -5,12 +5,15 @@
  *
  * Sidebar CreateNewDropdown / Calendar EmptyAreaContextMenu / Mobile CreateActionSheet
  * の3箇所で使用されるメニュー項目を一元管理する。
+ *
+ * 即DB保存 + Inspector edit mode で開く。
  */
 
 import { useCallback, useMemo } from 'react';
 
 import { CalendarPlus, Tag } from 'lucide-react';
 
+import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { useTagModalNavigation } from '@/hooks/useTagModalNavigation';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { useTranslations } from 'next-intl';
@@ -43,12 +46,20 @@ interface UseCreateMenuItemsOptions {
  */
 export function useCreateMenuItems(options?: UseCreateMenuItemsOptions): CreateMenuEntry[] {
   const t = useTranslations();
-  const openInspectorWithDraft = useEntryInspectorStore((state) => state.openInspectorWithDraft);
+  const openInspector = useEntryInspectorStore((state) => state.openInspector);
+  const { createEntry } = useEntryMutations();
   const { openTagCreateModal } = useTagModalNavigation();
 
-  const handleCreateEntry = useCallback(() => {
-    openInspectorWithDraft(options?.initialData);
-  }, [openInspectorWithDraft, options?.initialData]);
+  const handleCreateEntry = useCallback(async () => {
+    const result = await createEntry.mutateAsync({
+      title: '',
+      start_time: options?.initialData?.start_time,
+      end_time: options?.initialData?.end_time,
+    });
+    if (result?.id) {
+      openInspector(result.id);
+    }
+  }, [createEntry, openInspector, options?.initialData]);
 
   const handleCreateTag = useCallback(() => {
     openTagCreateModal();

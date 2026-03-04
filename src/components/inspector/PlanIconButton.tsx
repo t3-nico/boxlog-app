@@ -24,6 +24,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { useEntries } from '@/hooks/useEntries';
+import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { useTags } from '@/hooks/useTagsQuery';
 import { cn } from '@/lib/utils';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
@@ -47,14 +48,14 @@ interface PlanIconButtonProps {
 export function PlanIconButton({
   planId,
   onPlanChange,
-  recordId,
   onBeforeCreatePlan,
   disabled = false,
 }: PlanIconButtonProps) {
   const t = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const openInspectorWithDraft = useEntryInspectorStore((state) => state.openInspectorWithDraft);
+  const openInspector = useEntryInspectorStore((state) => state.openInspector);
+  const { createEntry } = useEntryMutations();
 
   // Plan一覧（キャッシュ済み）
   const { data: plans } = useEntries({});
@@ -104,12 +105,15 @@ export function PlanIconButton({
     [onPlanChange],
   );
 
-  // 新しいPlanを作成
-  const handleCreatePlan = useCallback(() => {
+  // 新しいPlanを作成（即DB保存 + Inspector edit mode）
+  const handleCreatePlan = useCallback(async () => {
     setIsOpen(false);
     onBeforeCreatePlan?.();
-    openInspectorWithDraft({ reminder_minutes: null });
-  }, [onBeforeCreatePlan, openInspectorWithDraft, recordId]);
+    const result = await createEntry.mutateAsync({ title: '' });
+    if (result?.id) {
+      openInspector(result.id);
+    }
+  }, [onBeforeCreatePlan, createEntry, openInspector]);
 
   const handleOpenChange = useCallback((open: boolean) => {
     setIsOpen(open);

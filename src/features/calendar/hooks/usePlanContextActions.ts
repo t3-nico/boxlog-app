@@ -5,6 +5,7 @@ import { useCallback, useRef } from 'react';
 import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
 import { getInstanceRef } from '@/lib/instance-id';
+import { logger } from '@/lib/logger';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import {
   openDeleteConfirm,
@@ -16,8 +17,8 @@ import { toast } from 'sonner';
 import type { CalendarPlan } from '../types/calendar.types';
 
 export function usePlanContextActions() {
-  const { openInspector, openInspectorWithDraft } = useEntryInspectorStore();
-  const { deleteEntry } = useEntryMutations();
+  const openInspector = useEntryInspectorStore((s) => s.openInspector);
+  const { deleteEntry, createEntry } = useEntryMutations();
   const { applyDelete } = useRecurringScopeMutations();
 
   // 繰り返しプラン削除用のターゲットをrefで保持（ダイアログのコールバックで参照）
@@ -76,20 +77,26 @@ export function usePlanContextActions() {
   );
 
   const handleDuplicatePlan = useCallback(
-    (plan: CalendarPlan) => {
-      const startTime = plan.startDate ? plan.startDate.toISOString() : null;
-      const endTime = plan.endDate ? plan.endDate.toISOString() : null;
+    async (plan: CalendarPlan) => {
+      const startTime = plan.startDate ? plan.startDate.toISOString() : undefined;
+      const endTime = plan.endDate ? plan.endDate.toISOString() : undefined;
 
-      // ドラフトモードで開く（複製元の情報をプリフィル）
-      // ユーザーが時間を変更してから保存できる
-      openInspectorWithDraft({
-        title: `${plan.title} (copy)`,
-        description: plan.description ?? null,
-        start_time: startTime,
-        end_time: endTime,
-      });
+      // 即DB作成 → Inspector edit mode で開く
+      try {
+        const result = await createEntry.mutateAsync({
+          title: `${plan.title} (copy)`,
+          description: plan.description ?? undefined,
+          start_time: startTime,
+          end_time: endTime,
+        });
+        if (result?.id) {
+          openInspector(result.id);
+        }
+      } catch {
+        logger.error('Failed to duplicate entry');
+      }
     },
-    [openInspectorWithDraft],
+    [createEntry, openInspector],
   );
 
   const handleCopyPlan = useCallback((plan: CalendarPlan) => {
@@ -119,7 +126,7 @@ export function usePlanContextActions() {
    * @param targetMinute ペースト先の分（指定しない場合はコピー元の分を使用）
    */
   const handlePastePlan = useCallback(
-    (targetDate: Date, targetHour?: number, targetMinute?: number) => {
+    async (targetDate: Date, targetHour?: number, targetMinute?: number) => {
       const clipboard = usePlanClipboardStore.getState();
       const copiedPlan = clipboard.copiedPlan;
       if (!copiedPlan) return;
@@ -133,14 +140,22 @@ export function usePlanContextActions() {
       const endTime = new Date(startTime);
       endTime.setMinutes(endTime.getMinutes() + copiedPlan.duration);
 
-      openInspectorWithDraft({
-        title: copiedPlan.title,
-        description: copiedPlan.description,
-        start_time: startTime.toISOString(),
-        end_time: endTime.toISOString(),
-      });
+      // 即DB作成 → Inspector edit mode で開く
+      try {
+        const result = await createEntry.mutateAsync({
+          title: copiedPlan.title,
+          description: copiedPlan.description ?? undefined,
+          start_time: startTime.toISOString(),
+          end_time: endTime.toISOString(),
+        });
+        if (result?.id) {
+          openInspector(result.id);
+        }
+      } catch {
+        logger.error('Failed to paste entry');
+      }
     },
-    [openInspectorWithDraft],
+    [createEntry, openInspector],
   );
 
   // TODO: entries統合後、status概念は削除されたため要リファクタ
@@ -149,16 +164,22 @@ export function usePlanContextActions() {
   }, []);
 
   const handleCompleteWithRecord = useCallback(
-    (plan: CalendarPlan) => {
-      // Record 作成フォームを開く（Plan のデータをプリフィル）
-      openInspectorWithDraft({
-        title: plan.title,
-        start_time: plan.startDate?.toISOString() ?? null,
-        end_time: plan.endDate?.toISOString() ?? null,
-        tagId: plan.tagId ?? null,
-      });
+    async (plan: CalendarPlan) => {
+      // 即DB作成 → Inspector edit mode で開く
+      try {
+        const result = await createEntry.mutateAsync({
+          title: plan.title,
+          start_time: plan.startDate?.toISOString() ?? undefined,
+          end_time: plan.endDate?.toISOString() ?? undefined,
+        });
+        if (result?.id) {
+          openInspector(result.id);
+        }
+      } catch {
+        logger.error('Failed to create entry from plan');
+      }
     },
-    [openInspectorWithDraft],
+    [createEntry, openInspector],
   );
 
   return {

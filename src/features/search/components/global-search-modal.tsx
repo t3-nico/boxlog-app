@@ -30,6 +30,7 @@ import {
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { useTheme } from '@/contexts/theme-context';
 import { useEntries } from '@/hooks/useEntries';
+import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { useTagModalNavigation } from '@/hooks/useTagModalNavigation';
 import { useTags } from '@/hooks/useTagsQuery';
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
@@ -104,6 +105,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
 
   // Get actions from stores
   const openPlanInspector = useEntryInspectorStore((state) => state.openInspector);
+  const { createEntry } = useEntryMutations();
   const { openTagCreateModal } = useTagModalNavigation();
   const { resolvedTheme, setTheme } = useTheme();
   const openAside = useLayoutStore((state) => state.openAside);
@@ -116,17 +118,34 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
     openSettingsModal('general');
   }, []);
 
+  // 新規エントリ作成 → Inspector で開く
+  const createAndOpenEntry = useCallback(async () => {
+    const result = await createEntry.mutateAsync({ title: '' });
+    if (result?.id) {
+      openPlanInspector(result.id);
+    }
+  }, [createEntry, openPlanInspector]);
+
   // Register default commands on mount
   useEffect(() => {
     registerDefaultCommands({
       router,
       openPlanInspector,
+      createAndOpenEntry,
       openTagCreateModal,
       navigateToSettings,
       toggleTheme,
       openAside,
     });
-  }, [router, openPlanInspector, openTagCreateModal, navigateToSettings, toggleTheme, openAside]);
+  }, [
+    router,
+    openPlanInspector,
+    createAndOpenEntry,
+    openTagCreateModal,
+    navigateToSettings,
+    toggleTheme,
+    openAside,
+  ]);
 
   // Reset query when modal closes（React推奨: レンダー中のstate調整）
   const [prevIsOpen, setPrevIsOpen] = useState(isOpen);

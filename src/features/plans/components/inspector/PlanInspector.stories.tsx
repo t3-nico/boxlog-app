@@ -11,11 +11,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
-import type { Plan } from '../../types/plan';
+import type { EntryWithTags } from '@/core/types/entry';
 import { PlanInspectorDetailsTab } from './PlanInspectorContent/PlanInspectorDetailsTab';
 import { InspectorFrame, mockTags } from './shared/story-helpers';
 
@@ -39,65 +39,45 @@ type Story = StoryObj<typeof meta>;
 // モックデータ
 // ---------------------------------------------------------------------------
 
-const basePlan: Plan = {
+const basePlan: EntryWithTags = {
   id: 'plan-1',
   user_id: 'user-1',
   title: '',
   description: null,
-  status: 'open',
-  completed_at: null,
+  origin: 'planned',
   start_time: null,
   end_time: null,
+  actual_start_time: null,
+  actual_end_time: null,
+  duration_minutes: null,
+  fulfillment_score: null,
   recurrence_type: null,
   recurrence_end_date: null,
   recurrence_rule: null,
   reminder_minutes: null,
+  reviewed_at: null,
   created_at: '2024-01-15T00:00:00Z',
   updated_at: '2024-01-15T00:00:00Z',
+  tagId: null,
 };
 
-const filledPlan: Plan = {
+const filledPlan: EntryWithTags = {
   ...basePlan,
   title: 'チームミーティング',
   description: '<p>週次の進捗確認。アジェンダを事前に共有すること。</p>',
   start_time: '2024-01-15T10:00:00+09:00',
   end_time: '2024-01-15T11:00:00+09:00',
-  reminder_minutes: null,
 };
 
-const completedPlan: Plan = {
+const completedPlan: EntryWithTags = {
   ...filledPlan,
-  status: 'closed',
-  completed_at: '2024-01-15T11:05:00+09:00',
+  actual_start_time: '2024-01-15T10:05:00+09:00',
+  actual_end_time: '2024-01-15T11:05:00+09:00',
 };
 
 // ---------------------------------------------------------------------------
 // ヘルパーコンポーネント
 // ---------------------------------------------------------------------------
-
-/** ドラフトモードヘッダー（Plan/Record タブ） */
-function DraftHeader() {
-  return (
-    <div className="bg-card relative flex shrink-0 items-center px-4 pt-4 pb-2">
-      <Tabs value="plan" className="relative z-10">
-        <TabsList className="h-8 rounded-lg border-0 bg-transparent p-0">
-          <TabsTrigger
-            value="plan"
-            className="data-[state=active]:bg-state-selected data-[state=active]:text-foreground rounded-lg font-bold data-[state=active]:shadow-none"
-          >
-            Plan
-          </TabsTrigger>
-          <TabsTrigger
-            value="record"
-            className="data-[state=active]:bg-state-selected data-[state=active]:text-foreground rounded-lg font-bold data-[state=active]:shadow-none"
-          >
-            Record
-          </TabsTrigger>
-        </TabsList>
-      </Tabs>
-    </div>
-  );
-}
 
 /** 編集モードヘッダー（ナビゲーション + メニュー + 閉じる） */
 function EditHeader({
@@ -151,16 +131,6 @@ function EditHeader({
   );
 }
 
-/** ドラフトモードフッター（キャンセル + 作成ボタン） */
-function DraftFooter() {
-  return (
-    <div className="flex shrink-0 justify-end gap-2 px-4 py-4">
-      <Button variant="ghost">キャンセル</Button>
-      <Button>Plan 作成</Button>
-    </div>
-  );
-}
-
 /** 編集モードフッター（完了にするスプリットボタン） */
 function EditFooter({ status }: { status: 'open' | 'closed' }) {
   if (status === 'closed') {
@@ -204,7 +174,6 @@ function EditFooter({ status }: { status: 'open' | 'closed' }) {
 
 function PlanFormStory({
   plan,
-  isDraftMode = false,
   initialTagId = null as string | null,
   initialScheduleDate,
   initialStartTime = '',
@@ -212,8 +181,7 @@ function PlanFormStory({
   initialReminderMinutes = null as number | null,
   timeConflictError = false,
 }: {
-  plan: Plan;
-  isDraftMode?: boolean;
+  plan: EntryWithTags;
   initialTagId?: string | null;
   initialScheduleDate?: Date;
   initialStartTime?: string;
@@ -229,7 +197,7 @@ function PlanFormStory({
 
   return (
     <InspectorFrame>
-      {isDraftMode ? <DraftHeader /> : <EditHeader />}
+      <EditHeader />
       <div>
         <PlanInspectorDetailsTab
           plan={plan}
@@ -249,11 +217,10 @@ function PlanFormStory({
           onTagChange={setTagId}
           onRepeatTypeChange={() => {}}
           onRecurrenceRuleChange={() => {}}
-          isDraftMode={isDraftMode}
           availableTags={mockTags}
         />
       </div>
-      {isDraftMode ? <DraftFooter /> : <EditFooter status={plan.status} />}
+      <EditFooter status={plan.actual_end_time ? 'closed' : 'open'} />
     </InspectorFrame>
   );
 }
@@ -267,7 +234,6 @@ export const PlanCreate: Story = {
   render: () => (
     <PlanFormStory
       plan={{ ...basePlan, id: '__draft__' }}
-      isDraftMode
       initialScheduleDate={new Date('2024-01-15')}
       initialStartTime="10:00"
       initialEndTime="11:00"
@@ -285,7 +251,6 @@ export const PlanCreateFilled: Story = {
         title: 'チームミーティング',
         description: '<p>週次の進捗確認</p>',
       }}
-      isDraftMode
       initialTagId="tag-1"
       initialScheduleDate={new Date('2024-01-15')}
       initialStartTime="10:00"
@@ -343,7 +308,6 @@ export const AllPatterns: Story = {
     <div className="flex flex-col items-start gap-8">
       <PlanFormStory
         plan={{ ...basePlan, id: '__draft__' }}
-        isDraftMode
         initialScheduleDate={new Date('2024-01-15')}
         initialStartTime="10:00"
         initialEndTime="11:00"
@@ -355,7 +319,6 @@ export const AllPatterns: Story = {
           title: 'チームミーティング',
           description: '<p>週次の進捗確認</p>',
         }}
-        isDraftMode
         initialTagId="tag-1"
         initialScheduleDate={new Date('2024-01-15')}
         initialStartTime="10:00"

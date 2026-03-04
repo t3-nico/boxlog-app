@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Spinner } from '@/components/ui/spinner';
 
-import type { Plan } from '../../types/plan';
+import type { EntryWithTags } from '@/core/types/entry';
 import { PlanInspectorDetailsTab } from './PlanInspectorContent/PlanInspectorDetailsTab';
 import { PlanInspectorMenu } from './PlanInspectorContent/PlanInspectorMenu';
 import { InspectorHeader } from './shared';
@@ -37,36 +37,40 @@ type Story = StoryObj<typeof meta>;
 // モックデータ
 // ---------------------------------------------------------------------------
 
-const basePlan: Plan = {
+const basePlan: EntryWithTags = {
   id: 'plan-1',
   user_id: 'user-1',
   title: '',
   description: null,
-  status: 'open',
-  completed_at: null,
+  origin: 'planned',
   start_time: null,
   end_time: null,
+  actual_start_time: null,
+  actual_end_time: null,
+  duration_minutes: null,
+  fulfillment_score: null,
   recurrence_type: null,
   recurrence_end_date: null,
   recurrence_rule: null,
   reminder_minutes: null,
+  reviewed_at: null,
   created_at: '2024-01-15T00:00:00Z',
   updated_at: '2024-01-15T00:00:00Z',
+  tagId: null,
 };
 
-const filledPlan: Plan = {
+const filledPlan: EntryWithTags = {
   ...basePlan,
   title: 'チームミーティング',
   description: '<p>週次の進捗確認。アジェンダを事前に共有すること。</p>',
   start_time: '2024-01-15T10:00:00+09:00',
   end_time: '2024-01-15T11:00:00+09:00',
-  reminder_minutes: null,
 };
 
-const completedPlan: Plan = {
+const completedPlan: EntryWithTags = {
   ...filledPlan,
-  status: 'closed',
-  completed_at: '2024-01-15T11:05:00+09:00',
+  actual_start_time: '2024-01-15T10:05:00+09:00',
+  actual_end_time: '2024-01-15T11:05:00+09:00',
 };
 
 // ---------------------------------------------------------------------------
@@ -128,7 +132,7 @@ function PlanEditStory({
   initialReminderMinutes = null as number | null,
   timeConflictError = false,
 }: {
-  plan: Plan;
+  plan: EntryWithTags;
   initialTagId?: string | null;
   initialScheduleDate?: Date;
   initialStartTime?: string;
@@ -171,11 +175,10 @@ function PlanEditStory({
           onTagChange={setTagId}
           onRepeatTypeChange={noop}
           onRecurrenceRuleChange={noop}
-          isDraftMode={false}
           availableTags={mockTags}
         />
       </div>
-      <EditFooter status={plan.status} />
+      <EditFooter status={plan.actual_end_time ? 'closed' : 'open'} />
     </InspectorFrame>
   );
 }

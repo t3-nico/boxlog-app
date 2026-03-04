@@ -8,10 +8,10 @@ import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdow
 import { useInspectorKeyboard } from './hooks';
 import { InspectorContent, InspectorShell } from './shared';
 
+import type { EntryWithTags } from '@/core/types/entry';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { openDeleteConfirm, useModalStore } from '@/stores/useModalStore';
 import { usePlan } from '../../hooks/usePlan';
-import type { Plan } from '../../types/plan';
 
 import { useInspectorURLSync } from '../../hooks/useInspectorURLSync';
 import { useInspectorAutoSave, useInspectorNavigation } from './hooks';
@@ -37,21 +37,13 @@ export function PlanInspector() {
   const isOpen = useEntryInspectorStore((state) => state.isOpen);
   const planId = useEntryInspectorStore((state) => state.entryId);
   const closeInspector = useEntryInspectorStore((state) => state.closeInspector);
-  const draftEntry = useEntryInspectorStore((state) => state.draftEntry);
-  const clearDraft = useEntryInspectorStore((state) => state.clearDraft);
   const clearPendingChanges = useEntryInspectorStore((state) => state.clearPendingChanges);
-
-  // ドラフトモード判定
-  const isDraftMode = draftEntry !== null && planId === null;
 
   const { data: planData, isLoading } = usePlan(planId!, {
     includeTags: true,
-    enabled: !!planId && !isDraftMode,
+    enabled: !!planId,
   });
-  // ドラフトモードの場合はdraftEntryを使用
-  const plan = isDraftMode
-    ? (draftEntry as unknown as Plan | null)
-    : ((planData ?? null) as unknown as Plan | null);
+  const plan: EntryWithTags | null = (planData ?? null) as EntryWithTags | null;
 
   // 繰り返しダイアログが開いている間はInspectorを閉じない
   // ×ボタン/ESC/外側クリック = キャンセル（変更を破棄）
@@ -59,16 +51,10 @@ export function PlanInspector() {
     const modal = useModalStore.getState().modal;
     const isRecurringDialogOpen = modal?.type === 'recurringEdit';
     if (!isRecurringDialogOpen) {
-      // ドラフトモードの場合はドラフトをクリア
-      if (isDraftMode) {
-        clearDraft();
-      }
-      // 未保存の変更を破棄
       clearPendingChanges();
-      // closeInspector内でcalendar-drag-cancelイベントを発行
       closeInspector();
     }
-  }, [closeInspector, isDraftMode, clearDraft, clearPendingChanges]);
+  }, [closeInspector, clearPendingChanges]);
 
   // ナビゲーション
   const { hasPrevious, hasNext, goToPrevious, goToNext } = useInspectorNavigation(planId);
@@ -143,12 +129,12 @@ export function PlanInspector() {
       <InspectorShell
         isOpen={isOpen}
         onClose={handleClose}
-        title={isDraftMode ? '' : plan?.title || t('plan.inspector.noTitle')}
-        mobileMenuContent={isDraftMode ? undefined : mobileMenuContent}
+        title={plan?.title || t('plan.inspector.noTitle')}
+        mobileMenuContent={mobileMenuContent}
       >
         <InspectorContent
-          isLoading={isDraftMode ? false : isLoading}
-          hasData={isDraftMode ? true : !!plan}
+          isLoading={isLoading}
+          hasData={!!plan}
           emptyMessage={t('plan.inspector.notFound')}
         >
           <PlanInspectorContent />

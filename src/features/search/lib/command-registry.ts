@@ -123,7 +123,8 @@ export const commandRegistry = new CommandRegistry();
 // Command actions interface
 interface CommandActions {
   router: { push: (path: string) => void };
-  openPlanInspector: (planId: string | null) => void;
+  openPlanInspector: (planId: string) => void;
+  createAndOpenEntry: () => Promise<void>;
   openTagCreateModal: () => void;
   navigateToSettings: () => void;
   toggleTheme: () => void;
@@ -134,7 +135,7 @@ interface CommandActions {
 export const registerDefaultCommands = (actions: CommandActions) => {
   const {
     router,
-    openPlanInspector,
+    createAndOpenEntry,
     openTagCreateModal,
     navigateToSettings,
     toggleTheme,
@@ -186,7 +187,7 @@ export const registerDefaultCommands = (actions: CommandActions) => {
       icon: 'plus',
       shortcut: ['N'],
       keywords: ['new', 'add', 'create', '新規', '作成', 'プラン'],
-      action: () => openPlanInspector(null),
+      action: () => void createAndOpenEntry(),
     },
     {
       id: 'create:tag',

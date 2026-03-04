@@ -2,7 +2,8 @@
 
 import { useEffect, useRef } from 'react';
 
-import type { EntryInitialData } from '@/stores/useEntryInspectorStore';
+import { useEntryMutations } from '@/hooks/useEntryMutations';
+import { logger } from '@/lib/logger';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { openDeleteConfirm } from '@/stores/useModalStore';
 import { usePlanClipboardStore } from '@/stores/usePlanClipboardStore';
@@ -16,7 +17,7 @@ interface UseCalendarPlanKeyboardOptions {
   /** 現在選択中のプランのタイトルを取得する関数 */
   getSelectedPlanTitle?: () => string | null;
   /** 新規プラン作成時の初期データ取得関数（現在の日時など） */
-  getInitialPlanData?: () => EntryInitialData | undefined;
+  getInitialPlanData?: () => { start_time?: string; end_time?: string } | undefined;
   /** 現在選択中のプランのコピー情報を取得する関数 */
   getSelectedPlanForCopy?: () => {
     title: string;
@@ -64,6 +65,7 @@ export function useCalendarPlanKeyboard({
   getPasteDateForKeyboard,
 }: UseCalendarPlanKeyboardOptions) {
   const { isOpen, entryId, openInspector, closeInspector } = useEntryInspectorStore();
+  const { createEntry } = useEntryMutations();
 
   // コールバックの最新値を参照
   const onDeletePlanRef = useRef(onDeletePlan);
@@ -71,18 +73,21 @@ export function useCalendarPlanKeyboard({
   const getInitialPlanDataRef = useRef(getInitialPlanData);
   const getSelectedPlanForCopyRef = useRef(getSelectedPlanForCopy);
   const getPasteDateForKeyboardRef = useRef(getPasteDateForKeyboard);
+  const createEntryRef = useRef(createEntry);
   useEffect(() => {
     onDeletePlanRef.current = onDeletePlan;
     getSelectedPlanTitleRef.current = getSelectedPlanTitle;
     getInitialPlanDataRef.current = getInitialPlanData;
     getSelectedPlanForCopyRef.current = getSelectedPlanForCopy;
     getPasteDateForKeyboardRef.current = getPasteDateForKeyboard;
+    createEntryRef.current = createEntry;
   }, [
     onDeletePlan,
     getSelectedPlanTitle,
     getInitialPlanData,
     getSelectedPlanForCopy,
     getPasteDateForKeyboard,
+    createEntry,
   ]);
 
   useEffect(() => {
@@ -157,13 +162,22 @@ export function useCalendarPlanKeyboard({
           const endTime = new Date(startTime);
           endTime.setMinutes(endTime.getMinutes() + copiedPlan.duration);
 
-          const { openInspectorWithDraft } = useEntryInspectorStore.getState();
-          openInspectorWithDraft({
-            title: copiedPlan.title,
-            description: copiedPlan.description,
-            start_time: startTime.toISOString(),
-            end_time: endTime.toISOString(),
-          });
+          // 即DB作成 → Inspector edit mode で開く
+          createEntryRef.current
+            .mutateAsync({
+              title: copiedPlan.title,
+              description: copiedPlan.description ?? undefined,
+              start_time: startTime.toISOString(),
+              end_time: endTime.toISOString(),
+            })
+            .then((result) => {
+              if (result?.id) {
+                openInspector(result.id);
+              }
+            })
+            .catch(() => {
+              logger.error('Failed to paste entry');
+            });
         }
         return;
       }
@@ -172,19 +186,22 @@ export function useCalendarPlanKeyboard({
       if (e.key === 'c' || e.key === 'C') {
         e.preventDefault();
 
-        if (e.shiftKey) {
-          // Shift + C: 時刻指定なしで新規作成
-          openInspector(null);
-        } else {
-          // C: 現在時刻ベースで新規作成
-          const initialData = getInitialPlanDataRef.current?.();
-          // exactOptionalPropertyTypes対応: undefinedの場合はオプションを渡さない
-          if (initialData) {
-            openInspector(null, { initialData });
-          } else {
-            openInspector(null);
-          }
-        }
+        // 即DB作成 → Inspector edit mode で開く
+        const initialData = e.shiftKey ? undefined : getInitialPlanDataRef.current?.();
+        createEntryRef.current
+          .mutateAsync({
+            title: '',
+            start_time: initialData?.start_time,
+            end_time: initialData?.end_time,
+          })
+          .then((result) => {
+            if (result?.id) {
+              openInspector(result.id);
+            }
+          })
+          .catch(() => {
+            logger.error('Failed to create entry');
+          });
         return;
       }
     };
