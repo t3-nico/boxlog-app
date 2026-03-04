@@ -43,7 +43,9 @@ export function useInspectorTagState({ planId, planData, isDraftMode }: UseInspe
   }
 
   // Sync tags from plan data（React推奨: レンダー中のstate調整）
-  const [prevPlanData, setPrevPlanData] = useState(planData);
+  // 初期値を undefined にすることで、placeholderData で即座に planData が
+  // 返る場合でも必ず差分検出 → タグ同期が走る
+  const [prevPlanData, setPrevPlanData] = useState<Plan | undefined>(undefined);
   if (planData !== prevPlanData) {
     setPrevPlanData(planData);
     if (!hasTagChanges && planData !== undefined) {
