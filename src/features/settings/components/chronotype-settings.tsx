@@ -13,9 +13,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Switch } from '@/components/ui/switch';
 import { CACHE_5_MINUTES } from '@/constants/time';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 import { useAutoSaveSettings } from '../hooks/useAutoSaveSettings';
 
 import { SettingRow } from './fields/SettingRow';
@@ -124,6 +126,7 @@ function getPeakHours(zones: ProductivityZone[]): string {
 export function ChronotypeSettings() {
   const t = useTranslations();
   const utils = api.useUtils();
+  const updateStoreSettings = useCalendarSettingsStore((s) => s.updateSettings);
 
   // DBから直接クロノタイプ設定を取得（Zustandストアに依存しない）
   const { data: dbSettings, isPending } = api.userSettings.get.useQuery(undefined, {
@@ -157,7 +160,7 @@ export function ChronotypeSettings() {
     [dbChronotype?.enabled, dbChronotype?.type, dbChronotype?.displayMode, dbChronotype?.opacity],
   );
 
-  // 自動保存システム（DB に直接保存）
+  // 自動保存システム（DB保存 + Zustand store 同期）
   const autoSave = useAutoSaveSettings<ChronotypeAutoSaveSettings>({
     initialValues,
     onSave: async (values) => {
@@ -175,26 +178,38 @@ export function ChronotypeSettings() {
   // タイプ選択ハンドラー
   const handleTypeSelect = useCallback(
     (value: string) => {
-      if (value === NONE_VALUE) {
-        autoSave.updateValue('chronotype', {
-          ...autoSave.values.chronotype,
-          enabled: false,
-        });
-      } else {
-        autoSave.updateValue('chronotype', {
-          ...autoSave.values.chronotype,
-          enabled: true,
-          type: value as ChronotypeType,
-        });
-      }
+      const newChronotype =
+        value === NONE_VALUE
+          ? { ...autoSave.values.chronotype, enabled: false }
+          : { ...autoSave.values.chronotype, enabled: true, type: value as ChronotypeType };
+      // Zustand store を即座に更新（カレンダーに即反映）
+      updateStoreSettings({ chronotype: newChronotype });
+      autoSave.updateValue('chronotype', newChronotype);
     },
-    [autoSave],
+    [autoSave, updateStoreSettings],
+  );
+
+  // タイムライン背景表示トグルハンドラー
+  const handleTimelineToggle = useCallback(
+    (checked: boolean) => {
+      const newChronotype = {
+        ...autoSave.values.chronotype,
+        displayMode: (checked ? 'background' : 'border') as 'border' | 'background' | 'both',
+      };
+      // Zustand store を即座に更新（カレンダーに即反映）
+      updateStoreSettings({ chronotype: newChronotype });
+      autoSave.updateValue('chronotype', newChronotype);
+    },
+    [autoSave, updateStoreSettings],
   );
 
   // 現在選択中のタイプ（未選択の場合は NONE_VALUE）
   const isEnabled = autoSave.values.chronotype.enabled;
   const selectedType = autoSave.values.chronotype.type;
   const selectValue = isEnabled ? selectedType : NONE_VALUE;
+  const showOnTimeline =
+    autoSave.values.chronotype.displayMode === 'background' ||
+    autoSave.values.chronotype.displayMode === 'both';
   const selectedProfile =
     isEnabled && selectedType !== 'custom' ? CHRONOTYPE_PRESETS[selectedType] : null;
 
@@ -226,6 +241,14 @@ export function ChronotypeSettings() {
               </SelectContent>
             </Select>
           </SettingRow>
+          {isEnabled && (
+            <SettingRow
+              label={t('settings.chronotype.showOnTimeline')}
+              description={t('settings.chronotype.showOnTimelineDesc')}
+            >
+              <Switch checked={showOnTimeline} onCheckedChange={handleTimelineToggle} />
+            </SettingRow>
+          )}
         </div>
 
         {/* 参考リンク */}

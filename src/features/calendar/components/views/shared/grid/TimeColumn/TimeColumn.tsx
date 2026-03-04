@@ -49,7 +49,7 @@ export const TimeColumn = memo<TimeColumnProps>(function TimeColumn({
           className="text-muted-foreground relative flex w-full items-start justify-end pr-2 text-xs select-none"
           style={{ height: `${hourHeight}px` }}
         >
-          {showLabel && <span className="bg-background -translate-y-1/2">{label}</span>}
+          {showLabel && <span className="-translate-y-1/2">{label}</span>}
         </div>,
       );
     }
@@ -59,7 +59,7 @@ export const TimeColumn = memo<TimeColumnProps>(function TimeColumn({
 
   return (
     <div
-      className={cn('bg-background sticky left-0 z-10 flex flex-col', className)}
+      className={cn('sticky left-0 z-10 flex flex-col', className)}
       style={{
         width: `${TIME_COLUMN_WIDTH}px`,
         height: `${gridHeight}px`,
