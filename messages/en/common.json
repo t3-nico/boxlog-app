@@ -223,6 +223,12 @@
       "comingSoon": "Profile page coming soon",
       "notFound": "User not found"
     },
+    "entry": {
+      "origin": {
+        "planned": "Planned",
+        "unplanned": "Record only"
+      }
+    },
     "tags": {
       "add": "Add tag",
       "change": "Change tag"

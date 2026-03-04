@@ -1,19 +1,19 @@
 'use client';
 
 /**
- * Inspector の詳細タブ
+ * Inspector の詳細タブ — 3パターン対応
  *
- * Row 0: タグ（カラードット + タグ名）
+ * Row 0: タグ（カラードット + タグ名）+ origin バッジ（past のみ）
  * Row 1: 予定/記録 時間比較セクション
  * Row 2: オプションボタン群
  *
- * 「Time waits for no one」原則:
- * - upcoming: 繰り返し、リマインダーあり / 充実度なし / 記録行なし
- * - active: 充実度あり（先行入力可）/ 繰り返し、リマインダーなし / 記録行あり
- * - past: 充実度あり / 繰り返し、リマインダーなし / 記録行あり
+ * 3パターン:
+ * 1. upcoming + planned: バッジなし / 予定行 + 「予定と同じ」 / 繰り返し・リマインダー
+ * 2. past + planned: 「予定」バッジ / 予定行 + 記録行(diff) / 充実度
+ * 3. past + unplanned: 「記録のみ」バッジ / 記録行のみ / 充実度
  */
 
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 
 import { useTranslations } from 'next-intl';
 import {
@@ -24,25 +24,28 @@ import {
   TimeComparisonSection,
 } from '../shared';
 
-import type { FulfillmentScore } from '@/core/types/entry';
+import { Badge } from '@/components/ui/badge';
+import type {
+  EntryOrigin,
+  EntryWithTags,
+  FulfillmentScore,
+  RecurrenceType,
+} from '@/core/types/entry';
 import type { Tag } from '@/core/types/tag';
 import type { EntryState } from '@/lib/entry-status';
 
-import type { Plan } from '../../../types/plan';
 import { RecurrenceIconButton } from '../../shared/RecurrenceIconButton';
 import { ReminderSelect } from '../../shared/ReminderSelect';
 
-type RecurrenceType = 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays' | null;
-
 interface PlanInspectorDetailsTabProps {
-  plan: Plan;
+  plan: EntryWithTags;
   scheduleDate: Date | undefined;
   startTime: string;
   endTime: string;
   reminderMinutes: number | null;
   selectedTagId: string | null;
   recurrenceRule: string | null;
-  recurrenceType: RecurrenceType;
+  recurrenceType: RecurrenceType | null;
   timeConflictError?: boolean;
   onAutoSave: (field: string, value: string | undefined) => void;
   onScheduleDateChange: (date: Date | undefined) => void;
@@ -52,9 +55,8 @@ interface PlanInspectorDetailsTabProps {
   onTagChange: (tagId: string | null) => void;
   onRepeatTypeChange: (type: string) => void;
   onRecurrenceRuleChange: (rrule: string | null) => void;
-  /** @deprecated kept for story compatibility */
-  isDraftMode?: boolean;
   entryState?: EntryState;
+  origin?: EntryOrigin;
   fulfillmentScore?: FulfillmentScore | null;
   onFulfillmentChange?: (score: FulfillmentScore | null) => void;
   availableTags?: Tag[] | undefined;
@@ -84,6 +86,7 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   onRepeatTypeChange,
   onRecurrenceRuleChange,
   entryState = 'upcoming',
+  origin = 'planned',
   fulfillmentScore,
   onFulfillmentChange,
   availableTags,
@@ -99,12 +102,31 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   // active/past で充実度を表示
   const showFulfillment = entryState !== 'upcoming' && onFulfillmentChange;
 
+  // origin バッジ
+  // upcoming → 「予定」バッジ、past+planned → なし（両行表示で自明）、past+unplanned → 「記録のみ」
+  const originBadge = useMemo(() => {
+    if (entryState === 'upcoming') {
+      return <Badge variant="secondary">{t('common.entry.origin.planned')}</Badge>;
+    }
+    if (origin === 'unplanned') {
+      return <Badge variant="outline">{t('common.entry.origin.unplanned')}</Badge>;
+    }
+    return undefined; // past + planned: 両行表示で自明
+  }, [entryState, origin, t]);
+
+  // メモのプレースホルダー（entryState で出し分け）
+  const notePlaceholder =
+    entryState === 'upcoming'
+      ? t('plan.inspector.note.upcomingPlaceholder')
+      : t('plan.inspector.note.pastPlaceholder');
+
   return (
     <InspectorDetailsLayout
       tagRow={
         <InspectorTagRow
           tagId={selectedTagId}
           onTagChange={onTagChange}
+          originBadge={originBadge}
           {...(availableTags ? { availableTags } : {})}
         />
       }
@@ -121,6 +143,7 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
           onActualStartChange={onActualStartChange ?? (() => {})}
           onActualEndChange={onActualEndChange ?? (() => {})}
           entryState={entryState}
+          origin={origin}
           timeConflictError={timeConflictError}
         />
       }
@@ -133,7 +156,7 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
             labels={{
               editTooltip: t('plan.inspector.editDescription'),
               addTooltip: t('plan.inspector.addDescription'),
-              placeholder: t('plan.inspector.addDescriptionPlaceholder'),
+              placeholder: notePlaceholder,
             }}
           />
           {showFulfillment && (

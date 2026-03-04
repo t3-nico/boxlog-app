@@ -5,7 +5,10 @@
  *
  * カラードット + タグ名を表示し、タップで TagSelectCombobox を開く。
  * タグ未設定時は「+ タグを追加」を表示。
+ * オプションで origin バッジ（「予定」「記録のみ」）を右側に表示。
  */
+
+import type { ReactNode } from 'react';
 
 import { ChevronDown, Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -18,9 +21,16 @@ interface InspectorTagRowProps {
   tagId: string | null;
   onTagChange: (tagId: string | null) => void;
   availableTags?: Tag[];
+  /** origin バッジ（past エントリの「予定」「記録のみ」表示用） */
+  originBadge?: ReactNode;
 }
 
-export function InspectorTagRow({ tagId, onTagChange, availableTags }: InspectorTagRowProps) {
+export function InspectorTagRow({
+  tagId,
+  onTagChange,
+  availableTags,
+  originBadge,
+}: InspectorTagRowProps) {
   const t = useTranslations();
   const { getTagById } = useTagsMap();
 
@@ -28,7 +38,7 @@ export function InspectorTagRow({ tagId, onTagChange, availableTags }: Inspector
   const tagColor = tag?.color || 'var(--muted-foreground)';
 
   return (
-    <div className="px-4 pt-4 pb-2">
+    <div className="flex items-start justify-between gap-2 px-4 pt-4 pb-2">
       <TagSelectCombobox
         selectedTagId={tagId}
         onTagChange={onTagChange}
@@ -61,6 +71,7 @@ export function InspectorTagRow({ tagId, onTagChange, availableTags }: Inspector
           )}
         </button>
       </TagSelectCombobox>
+      {originBadge}
     </div>
   );
 }

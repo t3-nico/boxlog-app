@@ -122,6 +122,10 @@
         "actual": "記録",
         "sameAsPlanned": "予定と同じ"
       },
+      "note": {
+        "upcomingPlaceholder": "何をやる予定？",
+        "pastPlaceholder": "やったことをひとこと..."
+      },
       "records": {
         "link": "Recordを紐付け",
         "unlink": "Record紐付けを解除",

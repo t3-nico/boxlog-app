@@ -223,6 +223,12 @@
       "comingSoon": "プロフィールページは近日公開予定です",
       "notFound": "ユーザーが見つかりません"
     },
+    "entry": {
+      "origin": {
+        "planned": "予定",
+        "unplanned": "記録のみ"
+      }
+    },
     "tags": {
       "add": "タグを追加",
       "change": "タグを変更"

@@ -122,6 +122,10 @@
         "actual": "Actual",
         "sameAsPlanned": "Same as plan"
       },
+      "note": {
+        "upcomingPlaceholder": "What do you plan to do?",
+        "pastPlaceholder": "Quick note on what you did..."
+      },
       "records": {
         "link": "Link record",
         "unlink": "Unlink record",
