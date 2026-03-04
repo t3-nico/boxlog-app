@@ -78,7 +78,7 @@ export function RecurringEditConfirmDialog() {
 
   const dialog = (
     <div
-      className="animate-in fade-in bg-card fixed inset-0 z-[250] flex items-center justify-center duration-150"
+      className="animate-in fade-in bg-card z-overlay-confirm fixed inset-0 flex items-center justify-center duration-150"
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"

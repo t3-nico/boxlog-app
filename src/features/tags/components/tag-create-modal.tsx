@@ -201,7 +201,7 @@ export function TagCreateModal({
 
   const dialog = (
     <div
-      className="fixed inset-0 z-[250] flex items-center justify-center"
+      className="z-overlay-modal fixed inset-0 flex items-center justify-center"
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"
