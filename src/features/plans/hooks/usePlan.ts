@@ -19,7 +19,7 @@ import { api } from '@/lib/trpc';
 export function usePlan(id: string, options?: { includeTags?: boolean; enabled?: boolean }) {
   const utils = api.useUtils();
 
-  return api.plans.getById.useQuery(
+  return api.entries.getById.useQuery(
     {
       id,
       include: options?.includeTags ? { tags: true } : undefined,
@@ -32,12 +32,12 @@ export function usePlan(id: string, options?: { includeTags?: boolean; enabled?:
       // これによりローディング状態をスキップし、UXが大幅に向上
       placeholderData: () => {
         // 全ての plans.list キャッシュを検索してプランを見つける
-        const listData = utils.plans.list.getData();
+        const listData = utils.entries.list.getData();
         if (listData) {
           const found = listData.find((p) => p.id === id);
           if (found) {
             // plans.list の型を getById の戻り型に合わせる
-            return found as ReturnType<typeof utils.plans.getById.getData>;
+            return found as ReturnType<typeof utils.entries.getById.getData>;
           }
         }
         return undefined;

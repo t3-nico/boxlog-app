@@ -9,7 +9,7 @@ import { api } from '@/lib/trpc';
  * list / getById 両方のキャッシュを一括更新する。
  * CalendarCard等での即時表示に必要。
  */
-export function useUpdateEntityTagsInCache(entity: 'plans') {
+export function useUpdateEntityTagsInCache(entity: 'entries') {
   const queryClient = useQueryClient();
   const utils = api.useUtils();
 
@@ -39,12 +39,12 @@ export function useUpdateEntityTagsInCache(entity: 'plans') {
       );
 
       // 2. plans.getById のキャッシュを更新
-      const updater = (oldData: ReturnType<typeof utils.plans.getById.getData>) => {
+      const updater = (oldData: ReturnType<typeof utils.entries.getById.getData>) => {
         if (!oldData) return oldData;
         return { ...oldData, tagIds: newTagIds };
       };
-      utils.plans.getById.setData({ id: entityId }, updater);
-      utils.plans.getById.setData({ id: entityId, include: { tags: true } }, updater);
+      utils.entries.getById.setData({ id: entityId }, updater);
+      utils.entries.getById.setData({ id: entityId, include: { tags: true } }, updater);
     },
     [queryClient, entity, utils],
   );

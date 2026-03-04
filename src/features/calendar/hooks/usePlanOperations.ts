@@ -58,7 +58,7 @@ export const usePlanOperations = () => {
             });
 
             await createInstance.mutateAsync({
-              planId: decoded.parentPlanId,
+              entryId: decoded.parentPlanId,
               instanceDate: decoded.instanceDate,
               exceptionType: isSameDate ? 'modified' : 'moved',
               instanceStart: updates.startTime.toISOString(),
@@ -68,8 +68,8 @@ export const usePlanOperations = () => {
             });
 
             // キャッシュを更新
-            utils.plans.list.invalidate();
-            utils.plans.getInstances.invalidate();
+            utils.entries.list.invalidate();
+            utils.entries.getInstances.invalidate();
           } else {
             // 通常プランの更新
             updateEntry.mutate({
@@ -107,7 +107,7 @@ export const usePlanOperations = () => {
             });
 
             await createInstance.mutateAsync({
-              planId: decoded.parentPlanId,
+              entryId: decoded.parentPlanId,
               instanceDate: decoded.instanceDate,
               exceptionType: isSameDate ? 'modified' : 'moved',
               instanceStart: updatedPlan.startDate.toISOString(),
@@ -115,8 +115,8 @@ export const usePlanOperations = () => {
               ...(isSameDate ? {} : { originalDate: newDate }),
             });
 
-            utils.plans.list.invalidate();
-            utils.plans.getInstances.invalidate();
+            utils.entries.list.invalidate();
+            utils.entries.getInstances.invalidate();
           } else {
             // 通常プランの更新
             logger.log('🔧 プラン更新 (CalendarPlan形式):', {

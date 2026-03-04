@@ -33,7 +33,7 @@ export function MonthlyTrendChart() {
   const period = useStatsFilterStore((s) => s.period);
   const months = useMemo(() => computeMonthCount(period), [period]);
   const queryInput = months ? { months } : undefined;
-  const { data, isPending } = api.plans.getMonthlyTrend.useQuery(queryInput);
+  const { data, isPending } = api.entries.getMonthlyTrend.useQuery(queryInput);
 
   if (isPending) {
     return (

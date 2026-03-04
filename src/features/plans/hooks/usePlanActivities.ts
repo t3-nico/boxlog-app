@@ -38,9 +38,9 @@ export function usePlanActivities(
   const order = options?.order ?? 'desc';
   const enabled = options?.enabled ?? true;
 
-  const input = { plan_id: planId, limit, offset, order };
+  const input = { entry_id: planId, limit, offset, order };
 
-  const activitiesProxy = api.plans.activities as unknown as ActivityRouterProxy;
+  const activitiesProxy = api.entries.activities as unknown as ActivityRouterProxy;
   const query = activitiesProxy.useQuery(input, {
     retry: 1,
     refetchOnWindowFocus: false,
@@ -50,11 +50,11 @@ export function usePlanActivities(
 
   useActivityRealtimeSync({
     entityId: planId,
-    channelPrefix: 'plan-activities',
-    table: 'plan_activities',
-    filterColumn: 'plan_id',
+    channelPrefix: 'entry-activities',
+    table: 'entry_activities',
+    filterColumn: 'entry_id',
     queryKey: getQueryKey(
-      api.plans.activities as Parameters<typeof getQueryKey>[0],
+      api.entries.activities as Parameters<typeof getQueryKey>[0],
       input,
       'query',
     ),

@@ -41,7 +41,7 @@ export function PlanCreateTrigger({
   // バックエンド（PlanService.checkTimeOverlap）と同じロジック
   const checkOverlap = useCallback(
     (start: Date, end: Date): boolean => {
-      const plans = utils.plans.list.getData();
+      const plans = utils.entries.list.getData();
       if (!plans || plans.length === 0) return false;
 
       return plans.some((p) => {
@@ -52,7 +52,7 @@ export function PlanCreateTrigger({
         return pStart < end && pEnd > start;
       });
     },
-    [utils.plans.list],
+    [utils.entries.list],
   );
 
   // 空き時間を探す（最大2時間先まで）

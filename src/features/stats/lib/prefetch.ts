@@ -10,13 +10,13 @@ export async function prefetchStatsData() {
   const helpers = await createServerHelpers();
 
   await Promise.all([
-    helpers.plans.getStreak.prefetch(),
-    helpers.plans.getDailyHours.prefetch({ year: new Date().getFullYear() }),
+    helpers.entries.getStreak.prefetch(),
+    helpers.entries.getDailyHours.prefetch({ year: new Date().getFullYear() }),
     // 以下はデフォルト期間('all')ではinput不要
-    helpers.plans.getTimeByTag.prefetch(),
-    helpers.plans.getHourlyDistribution.prefetch(),
-    helpers.plans.getDayOfWeekDistribution.prefetch(),
-    helpers.plans.getMonthlyTrend.prefetch(),
+    helpers.entries.getTimeByTag.prefetch(),
+    helpers.entries.getHourlyDistribution.prefetch(),
+    helpers.entries.getDayOfWeekDistribution.prefetch(),
+    helpers.entries.getMonthlyTrend.prefetch(),
   ]);
 
   return { helpers, dehydratedState: dehydrate(helpers.queryClient) };

@@ -19,13 +19,13 @@ export function useMergeTag() {
       await utils.tags.list.cancel();
       await utils.tags.getById.cancel({ id: sourceTagId });
       await utils.tags.getById.cancel({ id: targetTagId });
-      await utils.plans.getTagStats.cancel();
-      await utils.plans.list.cancel();
+      await utils.entries.getTagStats.cancel();
+      await utils.entries.list.cancel();
 
       const previousData = utils.tags.list.getData();
       const previousSourceDetail = utils.tags.getById.getData({ id: sourceTagId });
       const previousTargetDetail = utils.tags.getById.getData({ id: targetTagId });
-      const previousTagStats = utils.plans.getTagStats.getData();
+      const previousTagStats = utils.entries.getTagStats.getData();
 
       utils.tags.list.setData(undefined, (old) => {
         if (!old) return old;
@@ -59,7 +59,7 @@ export function useMergeTag() {
         utils.tags.getById.setData({ id: context.targetTagId }, context.previousTargetDetail);
       }
       if (context?.previousTagStats) {
-        utils.plans.getTagStats.setData(undefined, context.previousTagStats);
+        utils.entries.getTagStats.setData(undefined, context.previousTagStats);
       }
       toast.error(t('merge.failed'));
     },
@@ -68,8 +68,8 @@ export function useMergeTag() {
       void utils.tags.list.invalidate();
       void utils.tags.getById.invalidate({ id: input.sourceTagId });
       void utils.tags.getById.invalidate({ id: input.targetTagId });
-      void utils.plans.list.invalidate();
-      void utils.plans.getTagStats.refetch();
+      void utils.entries.list.invalidate();
+      void utils.entries.getTagStats.refetch();
     },
   });
 }

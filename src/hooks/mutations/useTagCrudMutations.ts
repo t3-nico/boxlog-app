@@ -130,7 +130,7 @@ export function useUpdateTag() {
     },
     onSettled: (_data, _err, input) => {
       decrementMutation();
-      void utils.plans.list.invalidate();
+      void utils.entries.list.invalidate();
       void utils.tags.list.invalidate();
       void utils.tags.getById.invalidate({ id: input.id });
     },
@@ -191,7 +191,7 @@ export function useDeleteTag() {
       decrementMutation();
       void utils.tags.list.invalidate();
       void utils.tags.getById.invalidate({ id: input.id });
-      void utils.plans.list.invalidate();
+      void utils.entries.list.invalidate();
     },
   });
 }
@@ -233,7 +233,7 @@ export function useRenameTag() {
       decrementMutation();
       void utils.tags.list.invalidate();
       void utils.tags.getById.invalidate({ id: input.id });
-      void utils.plans.list.invalidate();
+      void utils.entries.list.invalidate();
     },
   });
 }
@@ -267,7 +267,7 @@ export function useUpdateTagColor() {
       decrementMutation();
       void utils.tags.list.invalidate();
       void utils.tags.getById.invalidate({ id: input.id });
-      void utils.plans.list.invalidate();
+      void utils.entries.list.invalidate();
     },
   });
 }
@@ -319,7 +319,7 @@ export function useRenameGroup() {
     onSettled: () => {
       decrementMutation();
       void utils.tags.list.invalidate();
-      void utils.plans.list.invalidate();
+      void utils.entries.list.invalidate();
     },
   });
 }
@@ -402,7 +402,7 @@ export function useUngroupTags() {
     onSettled: () => {
       decrementMutation();
       void utils.tags.list.invalidate();
-      void utils.plans.list.invalidate();
+      void utils.entries.list.invalidate();
     },
   });
 }
@@ -448,8 +448,8 @@ export function useDeleteGroup() {
     onSettled: () => {
       decrementMutation();
       void utils.tags.list.invalidate();
-      void utils.plans.list.invalidate();
-      void utils.plans.getTagStats.invalidate();
+      void utils.entries.list.invalidate();
+      void utils.entries.getTagStats.invalidate();
     },
   });
 }

@@ -92,8 +92,8 @@ export async function invalidateEntityCaches(
     await utils.entries.getCumulativeTime.invalidate();
   }
 
-  // plans の場合: 累積時間も無効化（後方互換）
+  // plans の場合も entries 経由で無効化（後方互換）
   if (entityName === 'plans') {
-    await utils.plans.getCumulativeTime.invalidate();
+    await utils.entries.getCumulativeTime.invalidate();
   }
 }

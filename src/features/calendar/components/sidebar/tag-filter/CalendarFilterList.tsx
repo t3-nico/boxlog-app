@@ -33,7 +33,7 @@ import { TagFlatList } from './components/TagFlatList';
 export function CalendarFilterList() {
   const t = useTranslations();
   const { data: tags, isLoading: tagsLoading } = useTags();
-  const { data: tagStats } = api.plans.getTagStats.useQuery();
+  const { data: tagStats } = api.entries.getTagStats.useQuery();
 
   const tagPlanCounts = useMemo(() => tagStats?.counts ?? {}, [tagStats?.counts]);
 

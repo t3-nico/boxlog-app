@@ -5,9 +5,9 @@ import { api } from '@/lib/trpc';
 
 import type { PlanInstanceException } from '@/lib/plan-recurrence';
 
-// plan_instances テーブルの行型
+// entry_instances テーブルの行型
 interface PlanInstance {
-  plan_id: string;
+  entry_id: string;
   instance_date: string;
   exception_type: 'modified' | 'cancelled' | 'moved' | null;
   title: string | null;
@@ -36,9 +36,9 @@ export function usePlanInstances(
 ) {
   const { startDate, endDate, enabled = true } = options ?? {};
 
-  return api.plans.getInstances.useQuery(
+  return api.entries.getInstances.useQuery(
     {
-      planIds,
+      entryIds: planIds,
       startDate,
       endDate,
     },
@@ -58,7 +58,7 @@ export function usePlanInstances(
  */
 export function instancesToExceptionsMap(
   instances: Array<{
-    plan_id: string;
+    entry_id: string;
     instance_date: string;
     exception_type: string | null;
     title: string | null;
@@ -82,9 +82,9 @@ export function instancesToExceptionsMap(
       originalDate: instance.original_date ?? undefined,
     };
 
-    const existing = map.get(instance.plan_id) ?? [];
+    const existing = map.get(instance.entry_id) ?? [];
     existing.push(exception);
-    map.set(instance.plan_id, existing);
+    map.set(instance.entry_id, existing);
   }
 
   return map;
@@ -101,15 +101,15 @@ export function usePlanInstanceMutations() {
   const queryClient = useQueryClient();
 
   // 例外作成（楽観的更新付き）
-  const createInstance = api.plans.createInstance.useMutation({
+  const createInstance = api.entries.createInstance.useMutation({
     // 楽観的更新: 例外作成直後に即座にUIを更新
     onMutate: async (input) => {
       // 進行中のクエリをキャンセル
-      await utils.plans.getInstances.cancel();
+      await utils.entries.getInstances.cancel();
 
       // 一時的な例外を作成
       const tempInstance: PlanInstance = {
-        plan_id: input.planId,
+        entry_id: input.entryId,
         instance_date: input.instanceDate,
         exception_type: input.exceptionType,
         title: input.title ?? null,
@@ -122,12 +122,13 @@ export function usePlanInstanceMutations() {
       // 該当planIdを含むすべてのキャッシュを楽観的に更新
       // getInstancesはplanIds[]をキーにするため、部分一致で更新が必要
       queryClient.setQueriesData<PlanInstance[]>(
-        { queryKey: [['plans', 'getInstances']], exact: false },
+        { queryKey: [['entries', 'getInstances']], exact: false },
         (oldData) => {
           if (!oldData) return oldData;
           // 既存の同一日付の例外があれば置換、なければ追加
           const filtered = oldData.filter(
-            (inst) => !(inst.plan_id === input.planId && inst.instance_date === input.instanceDate),
+            (inst) =>
+              !(inst.entry_id === input.entryId && inst.instance_date === input.instanceDate),
           );
           return [...filtered, tempInstance];
         },
@@ -137,41 +138,42 @@ export function usePlanInstanceMutations() {
     },
     onSuccess: () => {
       // サーバーからの実データで同期（IDなどが付与される可能性）
-      void utils.plans.getInstances.invalidate();
-      void utils.plans.list.invalidate();
+      void utils.entries.getInstances.invalidate();
+      void utils.entries.list.invalidate();
     },
     onError: () => {
       // エラー時: ロールバック（invalidateで元の状態に戻す）
-      void utils.plans.getInstances.invalidate();
+      void utils.entries.getInstances.invalidate();
     },
   });
 
   // 例外削除（楽観的更新付き）
-  const deleteInstance = api.plans.deleteInstance.useMutation({
+  const deleteInstance = api.entries.deleteInstance.useMutation({
     // 楽観的更新: 例外削除直後に即座にUIを更新
     onMutate: async (input) => {
       // 進行中のクエリをキャンセル
-      await utils.plans.getInstances.cancel();
+      await utils.entries.getInstances.cancel();
 
       // 該当planIdを含むすべてのキャッシュから例外を削除
       queryClient.setQueriesData<PlanInstance[]>(
-        { queryKey: [['plans', 'getInstances']], exact: false },
+        { queryKey: [['entries', 'getInstances']], exact: false },
         (oldData) => {
           if (!oldData) return oldData;
           return oldData.filter(
-            (inst) => !(inst.plan_id === input.planId && inst.instance_date === input.instanceDate),
+            (inst) =>
+              !(inst.entry_id === input.entryId && inst.instance_date === input.instanceDate),
           );
         },
       );
 
-      return { deletedPlanId: input.planId, deletedDate: input.instanceDate };
+      return { deletedPlanId: input.entryId, deletedDate: input.instanceDate };
     },
     onSuccess: () => {
-      void utils.plans.getInstances.invalidate();
+      void utils.entries.getInstances.invalidate();
     },
     onError: () => {
       // エラー時: ロールバック
-      void utils.plans.getInstances.invalidate();
+      void utils.entries.getInstances.invalidate();
     },
   });
 

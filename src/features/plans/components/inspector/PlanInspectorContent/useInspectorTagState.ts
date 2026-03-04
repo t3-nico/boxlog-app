@@ -19,7 +19,7 @@ interface UseInspectorTagStateProps {
 }
 
 export function useInspectorTagState({ planId, planData, isDraftMode }: UseInspectorTagStateProps) {
-  const updateTagsInCache = useUpdateEntityTagsInCache('plans');
+  const updateTagsInCache = useUpdateEntityTagsInCache('entries');
   const { setPlanTags } = usePlanTags();
 
   // Tags state（単一タグ）

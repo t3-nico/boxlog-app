@@ -33,7 +33,7 @@ export function DayOfWeekChart() {
   const period = useStatsFilterStore((s) => s.period);
   const dateRange = useMemo(() => computeDateRange(period), [period]);
   const queryInput = dateRange.startDate ? dateRange : undefined;
-  const { data, isPending } = api.plans.getDayOfWeekDistribution.useQuery(queryInput);
+  const { data, isPending } = api.entries.getDayOfWeekDistribution.useQuery(queryInput);
 
   if (isPending) {
     return (

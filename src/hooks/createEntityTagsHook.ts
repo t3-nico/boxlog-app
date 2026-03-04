@@ -19,9 +19,9 @@ type TRPCUtils = ReturnType<typeof api.useUtils>;
  */
 export interface CreateEntityTagsHookOptions {
   /** エンティティ名 */
-  entityName: 'plans';
+  entityName: 'entries';
   /** エンティティIDフィールド名 */
-  entityIdField: 'planId';
+  entityIdField: 'entryId';
   /** TagStats更新を有効化 */
   enableTagStats?: boolean;
 }
@@ -107,18 +107,18 @@ export function useEntityTagsHook(
   // addTag mutation
   const addTagMutation = api[entityName].addTag.useMutation({
     onMutate: async (variables) => {
-      const entityId = variables.planId;
+      const entityId = variables.entryId;
       const { tagId } = variables;
 
       await utils[entityName].list.cancel();
       await utils[entityName].getById.cancel({ id: entityId });
       if (enableTagStats) {
-        await utils.plans.getTagStats.cancel();
+        await utils.entries.getTagStats.cancel();
       }
 
       const previousListData = utils[entityName].list.getData();
       const previousEntityData = utils[entityName].getById.getData({ id: entityId });
-      const previousTagStats = enableTagStats ? utils.plans.getTagStats.getData() : undefined;
+      const previousTagStats = enableTagStats ? utils.entries.getTagStats.getData() : undefined;
 
       const currentTagIds = getCurrentEntityTagIds(entityId);
       if (!currentTagIds.includes(tagId)) {
@@ -127,7 +127,7 @@ export function useEntityTagsHook(
         if (enableTagStats && previousTagStats) {
           const newCounts = { ...previousTagStats.counts };
           newCounts[tagId] = (newCounts[tagId] ?? 0) + 1;
-          utils.plans.getTagStats.setData(undefined, {
+          utils.entries.getTagStats.setData(undefined, {
             ...previousTagStats,
             counts: newCounts,
           });
@@ -137,7 +137,7 @@ export function useEntityTagsHook(
       return { previousListData, previousEntityData, previousTagStats, entityId };
     },
     onError: (_err, variables, context) => {
-      const entityId = variables.planId;
+      const entityId = variables.entryId;
       if (context?.previousListData) {
         utils[entityName].list.setData(undefined, context.previousListData as never);
       }
@@ -145,15 +145,15 @@ export function useEntityTagsHook(
         utils[entityName].getById.setData({ id: entityId }, context.previousEntityData as never);
       }
       if (enableTagStats && context?.previousTagStats) {
-        utils.plans.getTagStats.setData(undefined, context.previousTagStats);
+        utils.entries.getTagStats.setData(undefined, context.previousTagStats);
       }
     },
     onSettled: (_data, _err, variables) => {
-      const entityId = variables.planId;
+      const entityId = variables.entryId;
       void utils[entityName].getById.invalidate({ id: entityId });
       void utils[entityName].list.invalidate();
       if (enableTagStats) {
-        void utils.plans.getTagStats.invalidate();
+        void utils.entries.getTagStats.invalidate();
       }
     },
   });
@@ -161,18 +161,18 @@ export function useEntityTagsHook(
   // removeTag mutation
   const removeTagMutation = api[entityName].removeTag.useMutation({
     onMutate: async (variables) => {
-      const entityId = variables.planId;
+      const entityId = variables.entryId;
       const { tagId } = variables;
 
       await utils[entityName].list.cancel();
       await utils[entityName].getById.cancel({ id: entityId });
       if (enableTagStats) {
-        await utils.plans.getTagStats.cancel();
+        await utils.entries.getTagStats.cancel();
       }
 
       const previousListData = utils[entityName].list.getData();
       const previousEntityData = utils[entityName].getById.getData({ id: entityId });
-      const previousTagStats = enableTagStats ? utils.plans.getTagStats.getData() : undefined;
+      const previousTagStats = enableTagStats ? utils.entries.getTagStats.getData() : undefined;
 
       const currentTagIds = getCurrentEntityTagIds(entityId);
       const newTagIds = currentTagIds.filter((id) => id !== tagId);
@@ -183,7 +183,7 @@ export function useEntityTagsHook(
         if (newCounts[tagId] !== undefined && newCounts[tagId] > 0) {
           newCounts[tagId] = newCounts[tagId] - 1;
         }
-        utils.plans.getTagStats.setData(undefined, {
+        utils.entries.getTagStats.setData(undefined, {
           ...previousTagStats,
           counts: newCounts,
         });
@@ -192,7 +192,7 @@ export function useEntityTagsHook(
       return { previousListData, previousEntityData, previousTagStats, entityId };
     },
     onError: (_err, variables, context) => {
-      const entityId = variables.planId;
+      const entityId = variables.entryId;
       if (context?.previousListData) {
         utils[entityName].list.setData(undefined, context.previousListData as never);
       }
@@ -200,15 +200,15 @@ export function useEntityTagsHook(
         utils[entityName].getById.setData({ id: entityId }, context.previousEntityData as never);
       }
       if (enableTagStats && context?.previousTagStats) {
-        utils.plans.getTagStats.setData(undefined, context.previousTagStats);
+        utils.entries.getTagStats.setData(undefined, context.previousTagStats);
       }
     },
     onSettled: (_data, _err, variables) => {
-      const entityId = variables.planId;
+      const entityId = variables.entryId;
       void utils[entityName].getById.invalidate({ id: entityId });
       void utils[entityName].list.invalidate();
       if (enableTagStats) {
-        void utils.plans.getTagStats.invalidate();
+        void utils.entries.getTagStats.invalidate();
       }
     },
   });
@@ -216,18 +216,18 @@ export function useEntityTagsHook(
   // setTags mutation
   const setTagsMutation = api[entityName].setTags.useMutation({
     onMutate: async (variables) => {
-      const entityId = variables.planId;
+      const entityId = variables.entryId;
       const { tagIds } = variables;
 
       await utils[entityName].list.cancel();
       await utils[entityName].getById.cancel({ id: entityId });
       if (enableTagStats) {
-        await utils.plans.getTagStats.cancel();
+        await utils.entries.getTagStats.cancel();
       }
 
       const previousListData = utils[entityName].list.getData();
       const previousEntityData = utils[entityName].getById.getData({ id: entityId });
-      const previousTagStats = enableTagStats ? utils.plans.getTagStats.getData() : undefined;
+      const previousTagStats = enableTagStats ? utils.entries.getTagStats.getData() : undefined;
 
       const currentTagIds = getCurrentEntityTagIds(entityId);
       updateEntityTagIdsInCache(entityId, tagIds);
@@ -248,7 +248,7 @@ export function useEntityTagsHook(
           }
         }
 
-        utils.plans.getTagStats.setData(undefined, {
+        utils.entries.getTagStats.setData(undefined, {
           ...previousTagStats,
           counts: newCounts,
         });
@@ -257,7 +257,7 @@ export function useEntityTagsHook(
       return { previousListData, previousEntityData, previousTagStats, entityId };
     },
     onError: (_err, variables, context) => {
-      const entityId = variables.planId;
+      const entityId = variables.entryId;
       if (context?.previousListData) {
         utils[entityName].list.setData(undefined, context.previousListData as never);
       }
@@ -265,15 +265,15 @@ export function useEntityTagsHook(
         utils[entityName].getById.setData({ id: entityId }, context.previousEntityData as never);
       }
       if (enableTagStats && context?.previousTagStats) {
-        utils.plans.getTagStats.setData(undefined, context.previousTagStats);
+        utils.entries.getTagStats.setData(undefined, context.previousTagStats);
       }
     },
     onSettled: (_data, _err, variables) => {
-      const entityId = variables.planId;
+      const entityId = variables.entryId;
       void utils[entityName].getById.invalidate({ id: entityId });
       void utils[entityName].list.invalidate();
       if (enableTagStats) {
-        void utils.plans.getTagStats.invalidate();
+        void utils.entries.getTagStats.invalidate();
       }
     },
   });
@@ -282,7 +282,7 @@ export function useEntityTagsHook(
   const addTag = useCallback(
     async (entityId: string, tagId: string): Promise<boolean> => {
       try {
-        await addTagMutation.mutateAsync({ planId: entityId, tagId });
+        await addTagMutation.mutateAsync({ entryId: entityId, tagId });
         return true;
       } catch (error) {
         if (enableTagStats) {
@@ -297,7 +297,7 @@ export function useEntityTagsHook(
   const removeTag = useCallback(
     async (entityId: string, tagId: string): Promise<boolean> => {
       try {
-        await removeTagMutation.mutateAsync({ planId: entityId, tagId });
+        await removeTagMutation.mutateAsync({ entryId: entityId, tagId });
         return true;
       } catch (error) {
         if (enableTagStats) {
@@ -312,7 +312,7 @@ export function useEntityTagsHook(
   const setTags = useCallback(
     async (entityId: string, tagIds: string[]): Promise<boolean> => {
       try {
-        await setTagsMutation.mutateAsync({ planId: entityId, tagIds });
+        await setTagsMutation.mutateAsync({ entryId: entityId, tagIds });
         return true;
       } catch {
         return false;

@@ -19,8 +19,8 @@ export async function prefetchCalendarData(view: CalendarViewType, targetDate: D
   };
 
   await Promise.all([
-    helpers.plans.list.prefetch(dateFilter),
-    helpers.plans.getTagStats.prefetch(),
+    helpers.entries.list.prefetch(dateFilter),
+    helpers.entries.getTagStats.prefetch(),
     helpers.tags.list.prefetch(),
   ]);
 

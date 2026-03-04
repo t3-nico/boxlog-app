@@ -43,7 +43,7 @@ export function useInspectorSaveClose({
   clearPendingChanges,
 }: UseInspectorSaveCloseProps) {
   const t = useTranslations();
-  const updateTagsInCache = useUpdateEntityTagsInCache('plans');
+  const updateTagsInCache = useUpdateEntityTagsInCache('entries');
   const { createEntry } = useEntryMutations();
 
   /**
