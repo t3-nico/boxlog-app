@@ -13,7 +13,7 @@
 
 import { memo, useCallback, useMemo } from 'react';
 
-import { AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { AlertCircle, Minus, Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { ClockTimePicker } from '@/components/ui/clock-time-picker';
@@ -119,7 +119,7 @@ const TimePickerWithAdjust = memo(function TimePickerWithAdjust({
         disabled={disabled}
         aria-label="15分前"
       >
-        <ChevronLeft className="size-3.5" />
+        <Minus className="size-3" />
       </button>
       <ClockTimePicker
         value={value}
@@ -136,7 +136,7 @@ const TimePickerWithAdjust = memo(function TimePickerWithAdjust({
         disabled={disabled}
         aria-label="15分後"
       >
-        <ChevronRight className="size-3.5" />
+        <Plus className="size-3" />
       </button>
     </div>
   );
