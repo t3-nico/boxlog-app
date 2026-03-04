@@ -115,11 +115,6 @@ export const AllColors: Story = {
         <ColorSwatch tailwindClass="bg-chart-5" />
       </ColorGroup>
 
-      <ColorGroup title="Calendar（カレンダー専用）">
-        <ColorSwatch tailwindClass="bg-plan-box" description="Plan（予定）の背景：sky blue" />
-        <ColorSwatch tailwindClass="bg-record-box" description="Record（実績）の背景：green" />
-      </ColorGroup>
-
       <ColorGroup title="Tag Colors（ダークモードで明度調整）">
         <ColorSwatch tailwindClass="bg-tag-blue" description="Blue（デフォルト）" />
         <ColorSwatch tailwindClass="bg-tag-green" description="Green" />
