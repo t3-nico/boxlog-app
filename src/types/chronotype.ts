@@ -87,7 +87,7 @@ export const CHRONOTYPE_PRESETS: Record<ChronotypeType, ChronotypeProfile> = {
 
 /**
  * 生産性レベルに対応するセマンティックカラークラス
- * globals.css で定義された --chronotype-* CSS変数を使用
+ * tokens/colors.css で定義された --chronotype-* CSS変数を使用
  */
 export const LEVEL_COLORS: Record<ProductivityZone['level'], string> = {
   peak: 'bg-[var(--chronotype-peak)]',

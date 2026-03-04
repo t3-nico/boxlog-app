@@ -12,16 +12,16 @@
 
 ## Tech Stack
 
-| カテゴリ           | 技術                                                |
-| ------------------ | --------------------------------------------------- |
-| **フレームワーク** | Next.js 15 (App Router), React 19                   |
-| **言語**           | TypeScript (strict mode)                            |
-| **スタイリング**   | Tailwind CSS v4, globals.css セマンティックトークン |
-| **状態管理**       | Zustand（グローバル）, useState（ローカル）         |
-| **データ**         | Supabase, tRPC v11, Zod                             |
-| **UI**             | shadcn/ui                                           |
-| **CI/品質**        | Lighthouse CI, Vitest, Playwright                   |
-| **アナリティクス** | Sentry                                              |
+| カテゴリ           | 技術                                                          |
+| ------------------ | ------------------------------------------------------------- |
+| **フレームワーク** | Next.js 15 (App Router), React 19                             |
+| **言語**           | TypeScript (strict mode)                                      |
+| **スタイリング**   | Tailwind CSS v4, セマンティックトークン（src/styles/tokens/） |
+| **状態管理**       | Zustand（グローバル）, useState（ローカル）                   |
+| **データ**         | Supabase, tRPC v11, Zod                                       |
+| **UI**             | shadcn/ui                                                     |
+| **CI/品質**        | Lighthouse CI, Vitest, Playwright                             |
+| **アナリティクス** | Sentry                                                        |
 
 ## 主要機能（Features）
 

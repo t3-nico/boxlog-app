@@ -511,7 +511,7 @@ html.dark .docblock-code-toggle {
 
 ### dayoptTheme.ts
 
-Storybook の `create()` API は CSS 変数を受け付けないため、`globals.css` のデザイントークンから変換した hex 値を使用。トークン変更時はこのファイルも更新すること。
+Storybook の `create()` API は CSS 変数を受け付けないため、`tokens/colors.css` のデザイントークンから変換した hex 値を使用。トークン変更時はこのファイルも更新すること。
 
 ### Story作成者が守ること
 

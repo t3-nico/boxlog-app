@@ -3,9 +3,9 @@
  * 全メールテンプレートで使用する共通スタイル定義
  *
  * メールクライアントは CSS変数(var(--xxx)) や OKLCH をサポートしないため、
- * globals.css のセマンティックトークンを hex に変換して定義。
+ * src/styles/tokens/colors.css のセマンティックトークンを hex に変換して定義。
  *
- * トークンマッピング (globals.css :root → hex):
+ * トークンマッピング (tokens/colors.css :root → hex):
  *   --background    oklch(0.99 0 0)             → #fafafa
  *   --foreground    oklch(0.25 0 0)             → #1c1c1c
  *   --container     oklch(0.93 0 0)             → #e5e5e5
@@ -22,7 +22,7 @@
 import type { CSSProperties } from 'react';
 
 /**
- * カラートークン（globals.css セマンティックトークン準拠）
+ * カラートークン（tokens/colors.css セマンティックトークン準拠）
  *
  * メールはライトモード固定。ダークモード値は不要。
  */

@@ -73,7 +73,7 @@ export const Guidelines: Story = {
         <h2 className="border-border mb-4 border-b pb-2 text-lg font-bold">構成</h2>
         <div className="text-muted-foreground space-y-1 font-mono text-sm">
           <p>src/emails/</p>
-          <p className="pl-4">styles.ts — 共通スタイル（globals.css トークン → hex）</p>
+          <p className="pl-4">styles.ts — 共通スタイル（tokens/colors.css トークン → hex）</p>
           <p className="pl-4">WelcomeEmail.tsx — 新規登録</p>
           <p className="pl-4">ConfirmEmail.tsx — メール確認（Auth）</p>
           <p className="pl-4">PasswordResetEmail.tsx — PW リセット（Auth）</p>
@@ -87,7 +87,8 @@ export const Guidelines: Story = {
       <section>
         <h2 className="border-border mb-4 border-b pb-2 text-lg font-bold">カラートークン</h2>
         <p className="text-muted-foreground mb-4 text-sm">
-          メールクライアントは CSS変数・OKLCH 未対応のため、globals.css トークンを hex に変換。
+          メールクライアントは CSS変数・OKLCH 未対応のため、tokens/colors.css トークンを hex
+          に変換。
         </p>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {Object.entries(colors).map(([name, hex]) => (

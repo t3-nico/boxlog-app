@@ -100,7 +100,7 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
       onClick={handleGridClick}
       onMouseDown={handleMouseDown}
     >
-      {/* スクロールバーはglobals.cssのグローバルスタイルを使用 */}
+      {/* スクロールバーはbase.css / calendar.cssのグローバルスタイルを使用 */}
       {/* 時間列（固定） */}
       <TimeColumn startHour={startHour} endHour={endHour} hourHeight={hourHeight} />
 

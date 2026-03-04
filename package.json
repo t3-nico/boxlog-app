@@ -6,7 +6,7 @@
     "*.css",
     "*.scss",
     "*.sass",
-    "src/app/globals.css"
+    "src/styles/globals.css"
   ],
   "scripts": {
     "dev": "NODE_OPTIONS='--max-old-space-size=12288' next dev",

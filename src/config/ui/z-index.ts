@@ -2,7 +2,7 @@
  * z-index階層定義
  *
  * @deprecated Tailwindクラスを使用してください: z-modal, z-tooltip, z-dropdown など
- * 定義は globals.css の @theme セクションにあります。
+ * 定義は src/styles/tokens/z-index.css にあります。
  * ドキュメント: Storybook > Tokens > ZIndex
  *
  * UIコンポーネントのスタッキング順序を一元管理

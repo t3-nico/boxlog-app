@@ -94,7 +94,7 @@ export const calendarStyles: CalendarStyles = {
 
   // 統合：calendar-layout.cssからの移行（重複を避けてレイアウト専用に）
   layout: {
-    // カスタムスクロールバー（globals.cssのセマンティックスタイルを使用）
+    // カスタムスクロールバー（animations.css / calendar.cssのスタイルを使用）
     scrollbar: 'scrollbar-thin',
 
     // タッチデバイス最適化
@@ -123,7 +123,7 @@ export const calendarStyles: CalendarStyles = {
   },
 } as const;
 
-// カスタムCSS変数とキーフレームアニメーション（globals.cssに追加する場合）
+// カスタムCSS変数とキーフレームアニメーション（calendar.cssに定義済み）
 export const calendarCustomCSS = `
 /* Calendar Custom Animations - calendar-layout.cssから移行 */
 @keyframes calendar-zoom-in {

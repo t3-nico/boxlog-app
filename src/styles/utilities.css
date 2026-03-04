@@ -1,0 +1,86 @@
+/* ============================================
+ * scroll-snapユーティリティ
+ *
+ * スナップスクロールを実現するためのユーティリティクラス
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Scroll_Snap
+ * ============================================ */
+
+/* スナップコンテナ */
+.snap-y {
+  scroll-snap-type: y mandatory;
+}
+
+.snap-y-proximity {
+  scroll-snap-type: y proximity;
+}
+
+.snap-x {
+  scroll-snap-type: x mandatory;
+}
+
+.snap-x-proximity {
+  scroll-snap-type: x proximity;
+}
+
+/* スナップアイテム */
+.snap-start {
+  scroll-snap-align: start;
+}
+
+.snap-center {
+  scroll-snap-align: center;
+}
+
+.snap-end {
+  scroll-snap-align: end;
+}
+
+/* スナップ停止（各アイテムで必ず停止） */
+.snap-stop {
+  scroll-snap-stop: always;
+}
+
+/* ============================================
+ * aspect-ratioユーティリティ
+ *
+ * レスポンシブな要素のアスペクト比を維持
+ * 画像、動画、チャートカード等に使用
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/CSS/aspect-ratio
+ * ============================================ */
+
+/* 一般的なアスペクト比 */
+.aspect-square {
+  aspect-ratio: 1 / 1;
+}
+
+.aspect-video {
+  aspect-ratio: 16 / 9;
+}
+
+.aspect-photo {
+  aspect-ratio: 4 / 3;
+}
+
+.aspect-portrait {
+  aspect-ratio: 3 / 4;
+}
+
+.aspect-wide {
+  aspect-ratio: 21 / 9;
+}
+
+/* チャートカード用（ダッシュボード向け） */
+.aspect-chart {
+  aspect-ratio: 16 / 10;
+}
+
+.aspect-chart-tall {
+  aspect-ratio: 4 / 5;
+}
+
+/* カード用 */
+.aspect-card {
+  aspect-ratio: 3 / 2;
+}

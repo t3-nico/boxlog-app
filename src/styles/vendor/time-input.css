@@ -1,0 +1,14 @@
+/* ============================================
+ * 時刻input内部のWebKit要素のギャップ削除
+ * ============================================ */
+input[type='time']::-webkit-datetime-edit-fields-wrapper {
+  gap: 0 !important;
+}
+
+input[type='time']::-webkit-datetime-edit-hour-field {
+  margin-right: 0 !important;
+}
+
+input[type='time']::-webkit-datetime-edit-minute-field {
+  margin-left: 0 !important;
+}

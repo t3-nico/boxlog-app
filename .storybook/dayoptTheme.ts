@@ -1,12 +1,12 @@
 /**
  * Dayopt Storybook カスタムテーマ
  *
- * globals.css のデザイントークンから変換したhex値を使用。
+ * src/styles/tokens/colors.css のデザイントークンから変換したhex値を使用。
  * Storybook の create() API は CSS変数を受け付けないため、
  * 各値にトークン参照コメントを付けて同期を保つ。
  *
  * トークン変更時はこのファイルも更新すること。
- * @see src/styles/globals.css
+ * @see src/styles/tokens/colors.css
  */
 import { create } from 'storybook/theming/create';
 
@@ -15,7 +15,7 @@ export const dayoptLightTheme = create({
   brandTitle: 'Dayopt Design System',
   brandTarget: '_self',
 
-  // globals.css body font-family と同一スタック
+  // base.css body font-family と同一スタック
   fontBase:
     "Inter, 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
   fontCode: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Monaco, Consolas, monospace",
@@ -60,7 +60,7 @@ export const dayoptDarkTheme = create({
   brandTitle: 'Dayopt Design System',
   brandTarget: '_self',
 
-  // globals.css body font-family と同一スタック
+  // base.css body font-family と同一スタック
   fontBase:
     "Inter, 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
   fontCode: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Monaco, Consolas, monospace",

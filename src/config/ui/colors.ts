@@ -2,7 +2,7 @@
  * タグカラー定義
  *
  * HEX値とCSS変数名のマッピング
- * globals.css の --tag-* トークンと対応
+ * src/styles/tokens/colors.css の --tag-* トークンと対応
  */
 export const TAG_COLORS = {
   blue: { hex: '#3B82F6', cssVar: 'var(--tag-blue)', tailwind: 'bg-tag-blue' },

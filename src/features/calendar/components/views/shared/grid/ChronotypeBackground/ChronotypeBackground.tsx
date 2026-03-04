@@ -8,7 +8,7 @@ import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 import { CHRONOTYPE_PRESETS, type ProductivityZone } from '@/types/chronotype';
 
 /**
- * タイムライン背景用の tint カラー（globals.css の --chronotype-tint-* を使用）
+ * タイムライン背景用の tint カラー（tokens/colors.css の --chronotype-tint-* を使用）
  * 元のトークン（--chronotype-*）は solid fill 用で light mode だと薄すぎるため、
  * 背景 tint 専用トークンで彩度高め + alpha 込みの色を定義。
  */

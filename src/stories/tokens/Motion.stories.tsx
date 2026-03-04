@@ -193,7 +193,7 @@ data-[state=closed]:animate-out`}
             {`// motion-reduceでアニメーション無効化
 className="animate-in fade-in motion-reduce:animate-none"
 
-// globals.cssで自動適用済み
+// reduced-motion.cssで自動適用済み
 .animate-in,
 .animate-out,
 .animate-shimmer {

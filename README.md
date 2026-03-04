@@ -18,16 +18,16 @@ npm run dev
 
 ## ⚙️ 主要技術
 
-| カテゴリ           | 技術                                                  |
-| ------------------ | ----------------------------------------------------- |
-| **フレームワーク** | Next.js 15 (App Router), React 19, TypeScript 5       |
-| **UIライブラリ**   | shadcn/ui (Radix UI)                                  |
-| **スタイリング**   | Tailwind CSS v4, セマンティックトークン (globals.css) |
-| **状態管理**       | Zustand (グローバル), TanStack Query (サーバー状態)   |
-| **API**            | tRPC 11 (型安全なAPI)                                 |
-| **データベース**   | Supabase (PostgreSQL + Auth + Realtime)               |
-| **バリデーション** | Zod                                                   |
-| **テスト**         | Vitest, Playwright                                    |
+| カテゴリ           | 技術                                                         |
+| ------------------ | ------------------------------------------------------------ |
+| **フレームワーク** | Next.js 15 (App Router), React 19, TypeScript 5              |
+| **UIライブラリ**   | shadcn/ui (Radix UI)                                         |
+| **スタイリング**   | Tailwind CSS v4, セマンティックトークン (src/styles/tokens/) |
+| **状態管理**       | Zustand (グローバル), TanStack Query (サーバー状態)          |
+| **API**            | tRPC 11 (型安全なAPI)                                        |
+| **データベース**   | Supabase (PostgreSQL + Auth + Realtime)                      |
+| **バリデーション** | Zod                                                          |
+| **テスト**         | Vitest, Playwright                                           |
 
 ## 📋 開発時の重要ルール
 
@@ -42,7 +42,7 @@ npm run dev         # 開発サーバー起動
 ### コーディング規約
 
 1. **コンポーネント**: 関数宣言 + 名前付きエクスポート（`React.FC`禁止）
-2. **スタイリング**: `globals.css`のセマンティックトークン使用（`bg-card`, `text-foreground`等）
+2. **スタイリング**: セマンティックトークン使用（`bg-card`, `text-foreground`等、定義: `src/styles/tokens/`）
 3. **型定義**: `any`型禁止、厳密な型定義必須
 4. **UIコンポーネント選択**: shadcn/ui → カスタム実装
 
