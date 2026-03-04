@@ -166,8 +166,8 @@ export function TimeComparisonSection({
   const isPlannedRowDisabled = isUnplanned;
   // 記録行: upcoming+planned では placeholder、それ以外は編集可
   const showActualPlaceholder = entryState === 'upcoming' && !isUnplanned;
-  // ±ボタンは past/active のみ表示
-  const showAdjust = entryState !== 'upcoming';
+  // ±ボタンは予定行・記録行の両方に常に表示
+  const showAdjust = true;
 
   // 予定行の自動調整
   const {
