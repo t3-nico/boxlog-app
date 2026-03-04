@@ -17,6 +17,7 @@ import {
 } from '../../shared';
 import { InlineTagPalette } from '../../shared/components/InlineTagPalette';
 import { PanelDragPreview } from '../../shared/components/PanelDragPreview';
+import { ChronotypeBackground } from '../../shared/grid/ChronotypeBackground';
 import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop';
 import { useResponsiveHourHeight } from '../../shared/hooks/useResponsiveHourHeight';
 import type { WeekPlanPosition } from '../WeekView.types';
@@ -60,11 +61,6 @@ export const WeekContent = React.memo(function WeekContent({
   // Inspectorで開いているプランのIDを取得
   const inspectorPlanId = useEntryInspectorStore((state) => state.entryId);
   const isInspectorOpen = useEntryInspectorStore((state) => state.isOpen);
-
-  // TODO: entries統合後、status概念は削除されたため要リファクタ
-  const handleStatusChange = useCallback((_planId: string, _newStatus: 'open' | 'closed') => {
-    // entries モデルには status フィールドがないため no-op
-  }, []);
 
   // レスポンシブな高さ
   const HOUR_HEIGHT = useResponsiveHourHeight();
@@ -177,6 +173,7 @@ export const WeekContent = React.memo(function WeekContent({
       >
         {/* 背景グリッド */}
         <div className="absolute inset-0" style={{ height: gridHeight }}>
+          <ChronotypeBackground startHour={0} endHour={24} hourHeight={HOUR_HEIGHT} />
           {timeGrid}
         </div>
       </CalendarDragSelection>
@@ -266,7 +263,6 @@ export const WeekContent = React.memo(function WeekContent({
                         ? (dragState.snappedPosition.height ?? currentHeight)
                         : currentHeight,
                   }}
-                  onStatusChange={handleStatusChange}
                   // クリックは useDragAndDrop で処理されるため削除
                   onContextMenu={(plan: CalendarPlan, e: React.MouseEvent) =>
                     handlePlanContextMenu(plan, e)

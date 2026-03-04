@@ -22,8 +22,7 @@ interface AgendaListItemProps {
  * AgendaListItem - 日別グループ内のアイテム表示
  *
  * レイアウト: 縦線 | 時間 | タイトル | タグ
- * - Plan: 左端の縦線（bg-plan-box）
- * - Record: 左端の縦線（bg-record-box）
+ * - 左端の縦線はタグカラーを反映（タグ未設定時はentry-default）
  */
 export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemProps) {
   const t = useTranslations('calendar');
@@ -36,9 +35,6 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
 
   // 選択中のタグID（単一）
   const selectedTagId = plan.tagId ?? null;
-
-  // Record判定
-  const isRecord = plan.type === 'record';
 
   const handleClick = () => {
     onClick?.(plan);
@@ -78,12 +74,10 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
         'transition-colors duration-150',
       )}
     >
-      {/* 左端の縦線（Record: bg-record-box, Plan: bg-plan-box） */}
+      {/* 左端の縦線（タグカラー反映） */}
       <div
-        className={cn(
-          'h-6 w-0.5 shrink-0 rounded-full',
-          isRecord ? 'bg-record-box' : 'bg-plan-box',
-        )}
+        className="h-6 w-0.5 shrink-0 rounded-full"
+        style={{ backgroundColor: tag?.color || 'var(--entry-default)' }}
       />
 
       {/* クリック可能エリア */}
@@ -107,9 +101,6 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
           <span className="text-foreground truncate font-normal">
             {plan.title || t('event.noTitle')}
           </span>
-          {isRecord && plan.linkedPlanTitle && (
-            <span className="text-muted-foreground ml-2 text-xs">({plan.linkedPlanTitle})</span>
-          )}
         </div>
       </button>
 

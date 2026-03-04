@@ -12,7 +12,6 @@ import { useTranslations } from 'next-intl';
 
 import { formatTimeRange } from '@/lib/date';
 import type { CalendarPlan } from '../../../../../types/calendar.types';
-import { TagsContainer } from './TagsContainer';
 
 interface PlanCardContentProps {
   plan: CalendarPlan;
@@ -20,7 +19,6 @@ interface PlanCardContentProps {
   showTime?: boolean;
   timeFormat?: '12h' | '24h';
   previewTime?: { start: Date; end: Date } | null; // ドラッグ中のプレビュー時間
-  hasCheckbox?: boolean; // チェックボックスがある場合は左パディングを追加
   isMobile?: boolean; // モバイル表示（Googleカレンダー風シンプル表示）
 }
 
@@ -46,7 +44,6 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
   showTime = true,
   timeFormat = '24h',
   previewTime = null,
-  hasCheckbox = false,
   isMobile = false,
 }) {
   const t = useTranslations();
@@ -68,7 +65,7 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
   if (isCompact) {
     // コンパクト表示：タイトルのみ
     return (
-      <div className={`flex h-full items-center gap-1 ${hasCheckbox ? 'pl-4' : ''}`}>
+      <div className="flex h-full items-center gap-1">
         <span className={`text-foreground truncate text-sm leading-tight font-normal`}>
           {plan.title || t('calendar.event.noTitle')}
         </span>
@@ -78,9 +75,7 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
 
   // 通常表示：タイトル #番号 + 時間 + アイコン + タグの順番（優先度順）
   return (
-    <div
-      className={`relative flex h-full flex-col gap-1 overflow-hidden ${hasCheckbox ? 'pl-6' : ''}`}
-    >
+    <div className="relative flex h-full flex-col gap-1 overflow-hidden">
       {/* タイトル（最優先） */}
       <div className="flex flex-shrink-0 items-baseline gap-1 text-sm leading-tight font-normal">
         <span className={`${isCompact ? 'line-clamp-1' : 'line-clamp-2'} text-foreground`}>
@@ -106,9 +101,6 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
           )}
         </div>
       )}
-
-      {/* タグ表示（横幅いっぱいに表示、入りきらないものは+Nで表示） */}
-      {plan.tagId && <TagsContainer tagIds={[plan.tagId]} />}
     </div>
   );
 });

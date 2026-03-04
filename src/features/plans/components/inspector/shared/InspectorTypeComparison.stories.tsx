@@ -121,7 +121,7 @@ interface FormStyleProps {
 // Plan フォーム（手動レイアウト — タイトル横線を正確に配置するため）
 // ---------------------------------------------------------------------------
 
-function PlanForm({ typeLabel, variant, titleAccent }: FormStyleProps) {
+function PlanForm({ typeLabel, variant: _variant, titleAccent }: FormStyleProps) {
   const [tagId, setTagId] = useState<string | null>('tag-1');
   const [scheduleDate, setScheduleDate] = useState<Date | undefined>(new Date('2024-01-15'));
   const [startTime, setStartTime] = useState('10:00');
@@ -129,18 +129,13 @@ function PlanForm({ typeLabel, variant, titleAccent }: FormStyleProps) {
   const [reminderMinutes, setReminderMinutes] = useState<number | null>(15);
 
   return (
-    <InspectorFrame variant={variant}>
+    <InspectorFrame>
       <EditHeader typeLabel={typeLabel} />
       <div>
         {/* Row 1: タイトル */}
         <div className={cn('px-4 pt-4 pb-2', titleAccent && 'flex items-center gap-2')}>
           {titleAccent && (
-            <div
-              className={cn(
-                'h-6 w-[3px] shrink-0 rounded-full',
-                titleAccent === 'plan' ? 'bg-plan-border' : 'bg-record-border',
-              )}
-            />
+            <div className={cn('h-6 w-[3px] shrink-0 rounded-full', 'bg-muted-foreground')} />
           )}
           <TitleInput
             value="チームミーティング"
@@ -186,7 +181,7 @@ function PlanForm({ typeLabel, variant, titleAccent }: FormStyleProps) {
 // Record フォーム
 // ---------------------------------------------------------------------------
 
-function RecordForm({ typeLabel, variant, titleAccent }: FormStyleProps) {
+function RecordForm({ typeLabel, variant: _variant, titleAccent }: FormStyleProps) {
   const [tagId, setTagId] = useState<string | null>('tag-1');
   const [scheduleDate, setScheduleDate] = useState<Date | undefined>(new Date('2024-01-15'));
   const [startTime, setStartTime] = useState('09:00');
@@ -194,18 +189,13 @@ function RecordForm({ typeLabel, variant, titleAccent }: FormStyleProps) {
   const [score, setScore] = useState<FulfillmentScore | null>(3);
 
   return (
-    <InspectorFrame variant={variant}>
+    <InspectorFrame>
       <EditHeader typeLabel={typeLabel} />
       <div>
         {/* Row 1: タイトル */}
         <div className={cn('px-4 pt-4 pb-2', titleAccent && 'flex items-center gap-2')}>
           {titleAccent && (
-            <div
-              className={cn(
-                'h-6 w-[3px] shrink-0 rounded-full',
-                titleAccent === 'plan' ? 'bg-plan-border' : 'bg-record-border',
-              )}
-            />
+            <div className={cn('h-6 w-[3px] shrink-0 rounded-full', 'bg-muted-foreground')} />
           )}
           <TitleInput
             value="開発作業"

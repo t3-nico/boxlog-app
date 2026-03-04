@@ -64,7 +64,7 @@ interface InspectorHeaderProps {
  * ```
  */
 export function InspectorHeader({
-  variant = 'plan',
+  variant: _variant = 'plan',
   hasPrevious = false,
   hasNext = false,
   onClose,
@@ -94,7 +94,7 @@ export function InspectorHeader({
     <div
       className={cn(
         'relative sticky top-0 z-10 flex shrink-0 items-center justify-between px-4 pt-4 pb-2',
-        variant === 'record' ? 'bg-record-box' : 'bg-card',
+        'bg-card',
       )}
     >
       {/* ドラッグハンドル（背景レイヤー） */}

@@ -95,7 +95,7 @@ export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
         'bg-transparent',
         // Card デフォルト打ち消し
         'rounded-none border-0 shadow-none',
-        // ホバー（オーバーレイ方式: bg-plan-box を保ちつつ暗くする）
+        // ホバーオーバーレイ
         'after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:transition-colors',
         'hover:after:bg-state-hover',
         // トランジション

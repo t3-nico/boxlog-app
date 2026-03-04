@@ -3,7 +3,7 @@
 import { useCallback } from 'react';
 
 import { format, startOfDay } from 'date-fns';
-import { Clock, PenLine } from 'lucide-react';
+import { Clock } from 'lucide-react';
 
 import type { CalendarPlan } from '../../../../types/calendar.types';
 
@@ -16,14 +16,11 @@ interface TimesheetPlanRowProps {
 }
 
 /**
- * TimesheetPlanRow - 個別プラン行
+ * TimesheetPlanRow - 個別エントリー行
  *
- * タイプインジケータ（Plan: Clock blue, Record: PenLine green）で視覚区別。
  * クリックで Inspector 起動。
  */
 export function TimesheetPlanRow({ plan, weekDates, onPlanClick }: TimesheetPlanRowProps) {
-  const isRecord = plan.type === 'record';
-
   const handleClick = useCallback(() => {
     onPlanClick?.(plan);
   }, [plan, onPlanClick]);
@@ -37,11 +34,7 @@ export function TimesheetPlanRow({ plan, weekDates, onPlanClick }: TimesheetPlan
     <tr className="hover:bg-state-hover cursor-pointer transition-colors" onClick={handleClick}>
       <td className="px-3 py-1.5">
         <div className="flex items-center gap-2 pl-6">
-          {isRecord ? (
-            <PenLine className="text-record-border h-3 w-3 shrink-0" />
-          ) : (
-            <Clock className="text-plan-border h-3 w-3 shrink-0" />
-          )}
+          <Clock className="text-muted-foreground h-3 w-3 shrink-0" />
           <span className="truncate text-xs">{plan.title}</span>
         </div>
       </td>

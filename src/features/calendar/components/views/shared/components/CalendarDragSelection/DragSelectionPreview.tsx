@@ -26,7 +26,7 @@ interface DragSelectionPreviewProps {
 
 /**
  * ドラッグ選択範囲のプレビュー表示
- * - InlineTagPaletteのハイライトと同じ見た目（bg-plan-box + 時間ラベル）
+ * - InlineTagPaletteのハイライトと同じ見た目（entry-default + 時間ラベル）
  * - 重複時は赤背景でエラー表示
  */
 export const DragSelectionPreview = memo(function DragSelectionPreview({
@@ -68,8 +68,14 @@ export const DragSelectionPreview = memo(function DragSelectionPreview({
   // 通常時: 時間ラベル + 合計時間を目立たせる
   return (
     <div
-      className="bg-plan-box border-plan-border pointer-events-none absolute right-0 left-0 rounded-md border"
-      style={{ top, height, zIndex: 1000 }}
+      className="pointer-events-none absolute right-0 left-0 rounded-md border"
+      style={{
+        top,
+        height,
+        zIndex: 1000,
+        borderColor: 'var(--entry-default)',
+        backgroundColor: 'color-mix(in oklch, var(--entry-default) 12%, var(--background))',
+      }}
     >
       <div className="flex h-full flex-col justify-between p-2">
         <span className="text-foreground text-sm font-semibold tabular-nums">{timeLabel}</span>

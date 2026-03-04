@@ -5,7 +5,7 @@ import type { CalendarPlan } from '../../../../types/calendar.types';
 import { DragSelectionPreview } from './CalendarDragSelection/DragSelectionPreview';
 import { PlanCard } from './PlanCard/PlanCard';
 
-/** カレンダー上のカード（Plan/Record/Draft）の全バリエーション。 */
+/** カレンダー上のエントリーカード + ドラッグプレビューの全バリエーション。 */
 const meta = {
   title: 'Features/Calendar/Cards',
   parameters: {
@@ -30,14 +30,14 @@ function Slot({ children, height = 72 }: { children: React.ReactNode; height?: n
   );
 }
 
-const basePlan: CalendarPlan = {
-  id: 'plan-1',
+const baseEntry: CalendarPlan = {
+  id: 'entry-1',
   title: 'チームミーティング',
   description: '週次の進捗確認',
   startDate: new Date('2024-01-15T10:00:00'),
   endDate: new Date('2024-01-15T11:00:00'),
   status: 'open',
-  color: 'var(--primary)',
+  color: '',
   createdAt: new Date(),
   updatedAt: new Date(),
   displayStartDate: new Date('2024-01-15T10:00:00'),
@@ -45,7 +45,6 @@ const basePlan: CalendarPlan = {
   duration: 60,
   isMultiDay: false,
   isRecurring: false,
-  type: 'plan',
 };
 
 const basePosition = {
@@ -60,45 +59,21 @@ const formatTime = (hour: number, minute: number) => {
 };
 
 // ---------------------------------------------------------------------------
-// Plan系
+// Entry カード
 // ---------------------------------------------------------------------------
 
-/** 通常のPlan。完了済み・選択中・繰り返しのバリエーション含む。 */
-export const Plan: Story = {
+/** 通常のEntry。選択中・繰り返しのバリエーション含む。 */
+export const Entry: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
       <Slot>
-        <PlanCard plan={basePlan} position={basePosition} />
+        <PlanCard plan={baseEntry} position={basePosition} />
       </Slot>
       <Slot>
-        <PlanCard plan={{ ...basePlan, status: 'closed' }} position={basePosition} />
+        <PlanCard plan={baseEntry} position={basePosition} isSelected />
       </Slot>
       <Slot>
-        <PlanCard plan={basePlan} position={basePosition} isSelected />
-      </Slot>
-      <Slot>
-        <PlanCard plan={{ ...basePlan, isRecurring: true }} position={basePosition} />
-      </Slot>
-    </div>
-  ),
-};
-
-/** Record（実績記録）。3px左縦線アクセント（record-border）で区別、右側のみ角丸。 */
-export const Record: Story = {
-  render: () => (
-    <div className="flex flex-col gap-4">
-      <Slot>
-        <PlanCard
-          plan={{ ...basePlan, id: 'record-1', type: 'record', title: '開発作業' }}
-          position={basePosition}
-        />
-      </Slot>
-      <Slot>
-        <PlanCard
-          plan={{ ...basePlan, id: 'record-2', type: 'record', title: '選択中のRecord' }}
-          position={basePosition}
-          isSelected
-        />
+        <PlanCard plan={{ ...baseEntry, isRecurring: true }} position={basePosition} />
       </Slot>
     </div>
   ),
@@ -133,12 +108,12 @@ export const DraftOverlapping: Story = {
   ),
 };
 
-/** Inspector表示後のドラフト。isDraft=trueでチェックボックス無効・ドラッグ不可。 */
+/** Inspector表示後のドラフト。ドラッグ不可。 */
 export const DraftCreating: Story = {
   render: () => (
     <Slot>
       <PlanCard
-        plan={{ ...basePlan, id: '__draft__', title: '', isDraft: true }}
+        plan={{ ...baseEntry, id: '__draft__', title: '', isDraft: true }}
         position={basePosition}
       />
     </Slot>
@@ -153,17 +128,17 @@ export const DraftCreating: Story = {
 export const WithReminder: Story = {
   render: () => (
     <Slot>
-      <PlanCard plan={{ ...basePlan, reminder_minutes: 15 }} position={basePosition} />
+      <PlanCard plan={{ ...baseEntry, reminder_minutes: 15 }} position={basePosition} />
     </Slot>
   ),
 };
 
-/** タグ付きのPlan。 */
+/** タグ付きのEntry。タグカラーがカード背景・左ボーダーに反映される。 */
 export const WithTags: Story = {
   render: () => (
     <Slot height={100}>
       <PlanCard
-        plan={{ ...basePlan, tagId: 'tag-1' }}
+        plan={{ ...baseEntry, tagId: 'tag-1' }}
         position={{ ...basePosition, height: 100 }}
       />
     </Slot>
@@ -179,16 +154,16 @@ export const SizeVariations: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
       <Slot height={18}>
-        <PlanCard plan={basePlan} position={{ ...basePosition, height: 18 }} />
+        <PlanCard plan={baseEntry} position={{ ...basePosition, height: 18 }} />
       </Slot>
       <Slot height={36}>
-        <PlanCard plan={basePlan} position={{ ...basePosition, height: 36 }} />
+        <PlanCard plan={baseEntry} position={{ ...basePosition, height: 36 }} />
       </Slot>
       <Slot>
-        <PlanCard plan={basePlan} position={basePosition} />
+        <PlanCard plan={baseEntry} position={basePosition} />
       </Slot>
       <Slot height={144}>
-        <PlanCard plan={basePlan} position={{ ...basePosition, height: 144 }} />
+        <PlanCard plan={baseEntry} position={{ ...basePosition, height: 144 }} />
       </Slot>
     </div>
   ),
@@ -203,22 +178,13 @@ export const AllPatterns: Story = {
   render: () => (
     <div className="flex flex-col items-start gap-6">
       <Slot>
-        <PlanCard plan={basePlan} position={basePosition} />
+        <PlanCard plan={baseEntry} position={basePosition} />
       </Slot>
       <Slot>
-        <PlanCard plan={{ ...basePlan, status: 'closed' }} position={basePosition} />
+        <PlanCard plan={baseEntry} position={basePosition} isSelected />
       </Slot>
       <Slot>
-        <PlanCard plan={basePlan} position={basePosition} isSelected />
-      </Slot>
-      <Slot>
-        <PlanCard plan={{ ...basePlan, isRecurring: true }} position={basePosition} />
-      </Slot>
-      <Slot>
-        <PlanCard
-          plan={{ ...basePlan, id: 'record-1', type: 'record', title: '開発作業' }}
-          position={basePosition}
-        />
+        <PlanCard plan={{ ...baseEntry, isRecurring: true }} position={basePosition} />
       </Slot>
       <Slot>
         <DragSelectionPreview
@@ -228,7 +194,7 @@ export const AllPatterns: Story = {
       </Slot>
       <Slot>
         <PlanCard
-          plan={{ ...basePlan, id: '__draft__', title: '', isDraft: true }}
+          plan={{ ...baseEntry, id: '__draft__', title: '', isDraft: true }}
           position={basePosition}
         />
       </Slot>
@@ -240,22 +206,22 @@ export const AllPatterns: Story = {
         />
       </Slot>
       <Slot>
-        <PlanCard plan={{ ...basePlan, reminder_minutes: 15 }} position={basePosition} />
+        <PlanCard plan={{ ...baseEntry, reminder_minutes: 15 }} position={basePosition} />
       </Slot>
       <Slot height={100}>
         <PlanCard
-          plan={{ ...basePlan, tagId: 'tag-1' }}
+          plan={{ ...baseEntry, tagId: 'tag-1' }}
           position={{ ...basePosition, height: 100 }}
         />
       </Slot>
       <Slot height={18}>
-        <PlanCard plan={basePlan} position={{ ...basePosition, height: 18 }} />
+        <PlanCard plan={baseEntry} position={{ ...basePosition, height: 18 }} />
       </Slot>
       <Slot height={36}>
-        <PlanCard plan={basePlan} position={{ ...basePosition, height: 36 }} />
+        <PlanCard plan={baseEntry} position={{ ...basePosition, height: 36 }} />
       </Slot>
       <Slot height={144}>
-        <PlanCard plan={basePlan} position={{ ...basePosition, height: 144 }} />
+        <PlanCard plan={baseEntry} position={{ ...basePosition, height: 144 }} />
       </Slot>
     </div>
   ),
