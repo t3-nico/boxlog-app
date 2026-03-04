@@ -117,6 +117,11 @@
       "tags": {
         "add": "タグを追加"
       },
+      "time": {
+        "planned": "予定",
+        "actual": "記録",
+        "sameAsPlanned": "予定と同じ"
+      },
       "records": {
         "link": "Recordを紐付け",
         "unlink": "Record紐付けを解除",

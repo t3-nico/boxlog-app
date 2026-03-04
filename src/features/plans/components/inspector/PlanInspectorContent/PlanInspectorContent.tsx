@@ -22,7 +22,6 @@ import { InspectorHeader, useDragHandle } from '../shared';
 
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 
-import { PlanActivityPopover } from './ActivityPopover';
 import { PlanInspectorDetailsTab } from './PlanInspectorDetailsTab';
 import { PlanInspectorMenu } from './PlanInspectorMenu';
 import { usePlanInspectorContentLogic } from './usePlanInspectorContentLogic';
@@ -43,16 +42,19 @@ export function PlanInspectorContent() {
     goToNext,
     selectedTagId,
     handleTagChange,
-    titleRef,
     scheduleDate,
     startTime,
     endTime,
     reminderMinutes,
+    actualStartTime,
+    actualEndTime,
     handleReminderChange,
     timeConflictError,
     handleScheduleDateChange,
     handleStartTimeChange,
     handleEndTimeChange,
+    handleActualStartChange,
+    handleActualEndChange,
     autoSave,
     updatePlan,
     handleDelete,
@@ -126,7 +128,6 @@ export function PlanInspectorContent() {
           closeLabel={t('common.actions.close')}
           previousLabel={t('common.aria.previous')}
           nextLabel={t('common.aria.next')}
-          extraRightContent={planId ? <PlanActivityPopover planId={planId} /> : undefined}
           menuContent={menuContent}
         />
       )}
@@ -135,7 +136,6 @@ export function PlanInspectorContent() {
       <div className={cn('flex-1 overflow-y-auto')}>
         <PlanInspectorDetailsTab
           plan={plan}
-          titleRef={titleRef}
           scheduleDate={scheduleDate}
           startTime={startTime}
           endTime={endTime}
@@ -194,6 +194,10 @@ export function PlanInspectorContent() {
           entryState={isDraftMode ? (isDraftPast ? 'past' : 'upcoming') : entryState}
           fulfillmentScore={fulfillmentScore}
           onFulfillmentChange={handleFulfillmentChange}
+          actualStart={actualStartTime}
+          actualEnd={actualEndTime}
+          onActualStartChange={handleActualStartChange}
+          onActualEndChange={handleActualEndChange}
         />
       </div>
 

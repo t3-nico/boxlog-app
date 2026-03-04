@@ -39,9 +39,9 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   const isMobile = useMediaQuery(MEDIA_QUERIES.mobile);
   const { getTagById } = useTagsMap();
 
-  // タグカラーを取得（未設定時はデフォルト色）
-  const tagColor = plan.tagId ? getTagById(plan.tagId)?.color : undefined;
-  const accentColor = tagColor || 'var(--entry-default)';
+  // タグ情報を取得（未設定時はデフォルト色）
+  const tag = plan.tagId ? getTagById(plan.tagId) : undefined;
+  const accentColor = tag?.color || 'var(--entry-default)';
 
   // ドラフト（未保存プレビュー）かどうか判定
   const isDraft = plan.isDraft === true;
@@ -214,10 +214,13 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       draggable={false}
       role="group"
       tabIndex={0}
-      aria-label={isDraft ? `draft: ${plan.title}` : `entry: ${plan.title}`}
+      aria-label={
+        isDraft ? `draft: ${tag?.name ?? plan.title}` : `entry: ${tag?.name ?? plan.title}`
+      }
     >
       <PlanCardContent
         plan={plan}
+        tagName={tag?.name ?? null}
         isCompact={safePosition.height < 40}
         showTime={safePosition.height >= 30}
         previewTime={previewTime}

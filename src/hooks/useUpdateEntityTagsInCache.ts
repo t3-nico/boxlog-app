@@ -32,16 +32,18 @@ export function useUpdateEntityTagsInCache(entity: 'entries') {
         },
         (oldData: unknown) => {
           if (!oldData || !Array.isArray(oldData)) return oldData;
-          return oldData.map((item: { id: string; tagIds?: string[] }) =>
-            item.id === entityId ? { ...item, tagIds: newTagIds } : item,
+          const newTagId = newTagIds[0] ?? null;
+          return oldData.map((item: { id: string; tagId?: string | null }) =>
+            item.id === entityId ? { ...item, tagId: newTagId } : item,
           );
         },
       );
 
-      // 2. plans.getById のキャッシュを更新
+      // 2. entries.getById のキャッシュを更新
+      const newTagId = newTagIds[0] ?? null;
       const updater = (oldData: ReturnType<typeof utils.entries.getById.getData>) => {
         if (!oldData) return oldData;
-        return { ...oldData, tagIds: newTagIds };
+        return { ...oldData, tagId: newTagId };
       };
       utils.entries.getById.setData({ id: entityId }, updater);
       utils.entries.getById.setData({ id: entityId, include: { tags: true } }, updater);

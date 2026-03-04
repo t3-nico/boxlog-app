@@ -117,6 +117,11 @@
       "tags": {
         "add": "Add tag"
       },
+      "time": {
+        "planned": "Plan",
+        "actual": "Actual",
+        "sameAsPlanned": "Same as plan"
+      },
       "records": {
         "link": "Link record",
         "unlink": "Unlink record",

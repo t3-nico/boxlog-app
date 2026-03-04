@@ -28,6 +28,114 @@ export type Database = {
   };
   public: {
     Tables: {
+      _backup_record_activities: {
+        Row: {
+          action_type: string | null;
+          created_at: string | null;
+          field_name: string | null;
+          id: string | null;
+          metadata: Json | null;
+          new_value: string | null;
+          old_value: string | null;
+          record_id: string | null;
+          schema_version: number | null;
+          user_id: string | null;
+        };
+        Insert: {
+          action_type?: string | null;
+          created_at?: string | null;
+          field_name?: string | null;
+          id?: string | null;
+          metadata?: Json | null;
+          new_value?: string | null;
+          old_value?: string | null;
+          record_id?: string | null;
+          schema_version?: number | null;
+          user_id?: string | null;
+        };
+        Update: {
+          action_type?: string | null;
+          created_at?: string | null;
+          field_name?: string | null;
+          id?: string | null;
+          metadata?: Json | null;
+          new_value?: string | null;
+          old_value?: string | null;
+          record_id?: string | null;
+          schema_version?: number | null;
+          user_id?: string | null;
+        };
+        Relationships: [];
+      };
+      _backup_record_tags: {
+        Row: {
+          created_at: string | null;
+          id: string | null;
+          record_id: string | null;
+          tag_id: string | null;
+          user_id: string | null;
+        };
+        Insert: {
+          created_at?: string | null;
+          id?: string | null;
+          record_id?: string | null;
+          tag_id?: string | null;
+          user_id?: string | null;
+        };
+        Update: {
+          created_at?: string | null;
+          id?: string | null;
+          record_id?: string | null;
+          tag_id?: string | null;
+          user_id?: string | null;
+        };
+        Relationships: [];
+      };
+      _backup_records: {
+        Row: {
+          created_at: string | null;
+          description: string | null;
+          duration_minutes: number | null;
+          end_time: string | null;
+          fulfillment_score: number | null;
+          id: string | null;
+          plan_id: string | null;
+          start_time: string | null;
+          title: string | null;
+          updated_at: string | null;
+          user_id: string | null;
+          worked_at: string | null;
+        };
+        Insert: {
+          created_at?: string | null;
+          description?: string | null;
+          duration_minutes?: number | null;
+          end_time?: string | null;
+          fulfillment_score?: number | null;
+          id?: string | null;
+          plan_id?: string | null;
+          start_time?: string | null;
+          title?: string | null;
+          updated_at?: string | null;
+          user_id?: string | null;
+          worked_at?: string | null;
+        };
+        Update: {
+          created_at?: string | null;
+          description?: string | null;
+          duration_minutes?: number | null;
+          end_time?: string | null;
+          fulfillment_score?: number | null;
+          id?: string | null;
+          plan_id?: string | null;
+          start_time?: string | null;
+          title?: string | null;
+          updated_at?: string | null;
+          user_id?: string | null;
+          worked_at?: string | null;
+        };
+        Relationships: [];
+      };
       ai_usage: {
         Row: {
           created_at: string;
@@ -121,95 +229,10 @@ export type Database = {
         };
         Relationships: [];
       };
-      login_attempts: {
-        Row: {
-          attempt_time: string;
-          created_at: string;
-          email: string;
-          id: string;
-          ip_address: string | null;
-          is_successful: boolean;
-          user_agent: string | null;
-        };
-        Insert: {
-          attempt_time?: string;
-          created_at?: string;
-          email: string;
-          id?: string;
-          ip_address?: string | null;
-          is_successful?: boolean;
-          user_agent?: string | null;
-        };
-        Update: {
-          attempt_time?: string;
-          created_at?: string;
-          email?: string;
-          id?: string;
-          ip_address?: string | null;
-          is_successful?: boolean;
-          user_agent?: string | null;
-        };
-        Relationships: [];
-      };
-      mfa_recovery_codes: {
-        Row: {
-          code_hash: string;
-          created_at: string;
-          id: string;
-          used_at: string | null;
-          user_id: string;
-        };
-        Insert: {
-          code_hash: string;
-          created_at?: string;
-          id?: string;
-          used_at?: string | null;
-          user_id: string;
-        };
-        Update: {
-          code_hash?: string;
-          created_at?: string;
-          id?: string;
-          used_at?: string | null;
-          user_id?: string;
-        };
-        Relationships: [];
-      };
-      notification_preferences: {
-        Row: {
-          created_at: string;
-          default_reminder_minutes: number | null;
-          enable_browser_notifications: boolean;
-          enable_email_notifications: boolean;
-          enable_push_notifications: boolean;
-          id: string;
-          updated_at: string;
-          user_id: string;
-        };
-        Insert: {
-          created_at?: string;
-          default_reminder_minutes?: number | null;
-          enable_browser_notifications?: boolean;
-          enable_email_notifications?: boolean;
-          enable_push_notifications?: boolean;
-          id?: string;
-          updated_at?: string;
-          user_id: string;
-        };
-        Update: {
-          created_at?: string;
-          default_reminder_minutes?: number | null;
-          enable_browser_notifications?: boolean;
-          enable_email_notifications?: boolean;
-          enable_push_notifications?: boolean;
-          id?: string;
-          updated_at?: string;
-          user_id?: string;
-        };
-        Relationships: [];
-      };
       entries: {
         Row: {
+          actual_end_time: string | null;
+          actual_start_time: string | null;
           created_at: string | null;
           description: string | null;
           duration_minutes: number | null;
@@ -230,6 +253,8 @@ export type Database = {
           user_id: string;
         };
         Insert: {
+          actual_end_time?: string | null;
+          actual_start_time?: string | null;
           created_at?: string | null;
           description?: string | null;
           duration_minutes?: number | null;
@@ -250,6 +275,8 @@ export type Database = {
           user_id: string;
         };
         Update: {
+          actual_end_time?: string | null;
+          actual_start_time?: string | null;
           created_at?: string | null;
           description?: string | null;
           duration_minutes?: number | null;
@@ -394,7 +421,7 @@ export type Database = {
           {
             foreignKeyName: 'plan_tags_plan_id_fkey';
             columns: ['entry_id'];
-            isOneToOne: false;
+            isOneToOne: true;
             referencedRelation: 'entries';
             referencedColumns: ['id'];
           },
@@ -407,13 +434,100 @@ export type Database = {
           },
         ];
       };
+      login_attempts: {
+        Row: {
+          attempt_time: string;
+          created_at: string;
+          email: string;
+          id: string;
+          ip_address: string | null;
+          is_successful: boolean;
+          user_agent: string | null;
+        };
+        Insert: {
+          attempt_time?: string;
+          created_at?: string;
+          email: string;
+          id?: string;
+          ip_address?: string | null;
+          is_successful?: boolean;
+          user_agent?: string | null;
+        };
+        Update: {
+          attempt_time?: string;
+          created_at?: string;
+          email?: string;
+          id?: string;
+          ip_address?: string | null;
+          is_successful?: boolean;
+          user_agent?: string | null;
+        };
+        Relationships: [];
+      };
+      mfa_recovery_codes: {
+        Row: {
+          code_hash: string;
+          created_at: string;
+          id: string;
+          used_at: string | null;
+          user_id: string;
+        };
+        Insert: {
+          code_hash: string;
+          created_at?: string;
+          id?: string;
+          used_at?: string | null;
+          user_id: string;
+        };
+        Update: {
+          code_hash?: string;
+          created_at?: string;
+          id?: string;
+          used_at?: string | null;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      notification_preferences: {
+        Row: {
+          created_at: string;
+          default_reminder_minutes: number | null;
+          enable_browser_notifications: boolean;
+          enable_email_notifications: boolean;
+          enable_push_notifications: boolean;
+          id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          default_reminder_minutes?: number | null;
+          enable_browser_notifications?: boolean;
+          enable_email_notifications?: boolean;
+          enable_push_notifications?: boolean;
+          id?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          default_reminder_minutes?: number | null;
+          enable_browser_notifications?: boolean;
+          enable_email_notifications?: boolean;
+          enable_push_notifications?: boolean;
+          id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       notifications: {
         Row: {
           created_at: string;
           data: Json | null;
+          entry_id: string | null;
           id: string;
           is_read: boolean;
-          plan_id: string | null;
           read_at: string | null;
           reflection_id: string | null;
           type: string;
@@ -422,9 +536,9 @@ export type Database = {
         Insert: {
           created_at?: string;
           data?: Json | null;
+          entry_id?: string | null;
           id?: string;
           is_read?: boolean;
-          plan_id?: string | null;
           read_at?: string | null;
           reflection_id?: string | null;
           type: string;
@@ -433,9 +547,9 @@ export type Database = {
         Update: {
           created_at?: string;
           data?: Json | null;
+          entry_id?: string | null;
           id?: string;
           is_read?: boolean;
-          plan_id?: string | null;
           read_at?: string | null;
           reflection_id?: string | null;
           type?: string;
@@ -443,213 +557,20 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'notifications_related_plan_id_fkey';
-            columns: ['plan_id'];
-            isOneToOne: false;
-            referencedRelation: 'plans';
-            referencedColumns: ['id'];
-          },
-          {
             foreignKeyName: 'notifications_reflection_id_fkey';
             columns: ['reflection_id'];
             isOneToOne: false;
             referencedRelation: 'reflections';
             referencedColumns: ['id'];
           },
-        ];
-      };
-      plan_activities: {
-        Row: {
-          action_type: string;
-          created_at: string;
-          field_name: string | null;
-          id: string;
-          metadata: Json | null;
-          new_value: string | null;
-          old_value: string | null;
-          plan_id: string | null;
-          schema_version: number;
-          user_id: string;
-        };
-        Insert: {
-          action_type: string;
-          created_at?: string;
-          field_name?: string | null;
-          id?: string;
-          metadata?: Json | null;
-          new_value?: string | null;
-          old_value?: string | null;
-          plan_id?: string | null;
-          schema_version?: number;
-          user_id: string;
-        };
-        Update: {
-          action_type?: string;
-          created_at?: string;
-          field_name?: string | null;
-          id?: string;
-          metadata?: Json | null;
-          new_value?: string | null;
-          old_value?: string | null;
-          plan_id?: string | null;
-          schema_version?: number;
-          user_id?: string;
-        };
-        Relationships: [
           {
-            foreignKeyName: 'plan_activities_plan_id_fkey';
-            columns: ['plan_id'];
+            foreignKeyName: 'notifications_related_plan_id_fkey';
+            columns: ['entry_id'];
             isOneToOne: false;
-            referencedRelation: 'plans';
+            referencedRelation: 'entries';
             referencedColumns: ['id'];
           },
         ];
-      };
-      plan_instances: {
-        Row: {
-          created_at: string;
-          description: string | null;
-          exception_type: string | null;
-          id: string;
-          instance_date: string;
-          instance_end: string | null;
-          instance_start: string | null;
-          original_date: string | null;
-          plan_id: string;
-          title: string | null;
-          updated_at: string;
-        };
-        Insert: {
-          created_at?: string;
-          description?: string | null;
-          exception_type?: string | null;
-          id?: string;
-          instance_date: string;
-          instance_end?: string | null;
-          instance_start?: string | null;
-          original_date?: string | null;
-          plan_id: string;
-          title?: string | null;
-          updated_at?: string;
-        };
-        Update: {
-          created_at?: string;
-          description?: string | null;
-          exception_type?: string | null;
-          id?: string;
-          instance_date?: string;
-          instance_end?: string | null;
-          instance_start?: string | null;
-          original_date?: string | null;
-          plan_id?: string;
-          title?: string | null;
-          updated_at?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'plan_instances_plan_id_fkey';
-            columns: ['plan_id'];
-            isOneToOne: false;
-            referencedRelation: 'plans';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
-      plan_tags: {
-        Row: {
-          created_at: string | null;
-          id: string;
-          plan_id: string;
-          tag_id: string;
-          user_id: string;
-        };
-        Insert: {
-          created_at?: string | null;
-          id?: string;
-          plan_id: string;
-          tag_id: string;
-          user_id: string;
-        };
-        Update: {
-          created_at?: string | null;
-          id?: string;
-          plan_id?: string;
-          tag_id?: string;
-          user_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'plan_tags_plan_id_fkey';
-            columns: ['plan_id'];
-            isOneToOne: false;
-            referencedRelation: 'plans';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'plan_tags_tag_id_fkey';
-            columns: ['tag_id'];
-            isOneToOne: false;
-            referencedRelation: 'tags';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
-      plans: {
-        Row: {
-          completed_at: string | null;
-          created_at: string | null;
-          description: string | null;
-          end_time: string | null;
-          id: string;
-          recurrence_end_date: string | null;
-          recurrence_rule: string | null;
-          recurrence_type: string | null;
-          reminder_at: string | null;
-          reminder_minutes: number | null;
-          reminder_sent: boolean;
-          start_time: string | null;
-          status: string;
-          title: string;
-          updated_at: string | null;
-          user_id: string;
-        };
-        Insert: {
-          completed_at?: string | null;
-          created_at?: string | null;
-          description?: string | null;
-          end_time?: string | null;
-          id?: string;
-          recurrence_end_date?: string | null;
-          recurrence_rule?: string | null;
-          recurrence_type?: string | null;
-          reminder_at?: string | null;
-          reminder_minutes?: number | null;
-          reminder_sent?: boolean;
-          start_time?: string | null;
-          status?: string;
-          title: string;
-          updated_at?: string | null;
-          user_id: string;
-        };
-        Update: {
-          completed_at?: string | null;
-          created_at?: string | null;
-          description?: string | null;
-          end_time?: string | null;
-          id?: string;
-          recurrence_end_date?: string | null;
-          recurrence_rule?: string | null;
-          recurrence_type?: string | null;
-          reminder_at?: string | null;
-          reminder_minutes?: number | null;
-          reminder_sent?: boolean;
-          start_time?: string | null;
-          status?: string;
-          title?: string;
-          updated_at?: string | null;
-          user_id?: string;
-        };
-        Relationships: [];
       };
       profiles: {
         Row: {
@@ -681,237 +602,93 @@ export type Database = {
         };
         Relationships: [];
       };
-      record_activities: {
-        Row: {
-          action_type: string;
-          created_at: string;
-          field_name: string | null;
-          id: string;
-          metadata: Json | null;
-          new_value: string | null;
-          old_value: string | null;
-          record_id: string | null;
-          schema_version: number;
-          user_id: string;
-        };
-        Insert: {
-          action_type: string;
-          created_at?: string;
-          field_name?: string | null;
-          id?: string;
-          metadata?: Json | null;
-          new_value?: string | null;
-          old_value?: string | null;
-          record_id?: string | null;
-          schema_version?: number;
-          user_id: string;
-        };
-        Update: {
-          action_type?: string;
-          created_at?: string;
-          field_name?: string | null;
-          id?: string;
-          metadata?: Json | null;
-          new_value?: string | null;
-          old_value?: string | null;
-          record_id?: string | null;
-          schema_version?: number;
-          user_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'record_activities_record_id_fkey';
-            columns: ['record_id'];
-            isOneToOne: false;
-            referencedRelation: 'records';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
-      record_tags: {
-        Row: {
-          created_at: string;
-          id: string;
-          record_id: string;
-          tag_id: string;
-          user_id: string;
-        };
-        Insert: {
-          created_at?: string;
-          id?: string;
-          record_id: string;
-          tag_id: string;
-          user_id: string;
-        };
-        Update: {
-          created_at?: string;
-          id?: string;
-          record_id?: string;
-          tag_id?: string;
-          user_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'record_tags_record_id_fkey';
-            columns: ['record_id'];
-            isOneToOne: false;
-            referencedRelation: 'records';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'record_tags_tag_id_fkey';
-            columns: ['tag_id'];
-            isOneToOne: false;
-            referencedRelation: 'tags';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
       reflections: {
         Row: {
-          id: string;
-          user_id: string;
-          period_type: string;
-          period_start: string;
-          period_end: string;
-          title: string;
           activities: Json;
-          insights: string;
-          question: string;
-          model_used: string | null;
-          prompt_tokens: number | null;
           completion_tokens: number | null;
-          user_note: string;
           created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          user_id: string;
-          period_type: string;
-          period_start: string;
-          period_end: string;
-          title: string;
-          activities?: Json;
-          insights?: string;
-          question?: string;
-          model_used?: string | null;
-          prompt_tokens?: number | null;
-          completion_tokens?: number | null;
-          user_note?: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          user_id?: string;
-          period_type?: string;
-          period_start?: string;
-          period_end?: string;
-          title?: string;
-          activities?: Json;
-          insights?: string;
-          question?: string;
-          model_used?: string | null;
-          prompt_tokens?: number | null;
-          completion_tokens?: number | null;
-          user_note?: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'reflections_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: false;
-            referencedRelation: 'users';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
-      records: {
-        Row: {
-          created_at: string;
-          description: string | null;
-          duration_minutes: number;
-          end_time: string | null;
-          fulfillment_score: number | null;
           id: string;
-          plan_id: string | null;
-          start_time: string | null;
-          title: string | null;
+          insights: string;
+          model_used: string | null;
+          period_end: string;
+          period_start: string;
+          period_type: string;
+          prompt_tokens: number | null;
+          question: string;
+          title: string;
           updated_at: string;
           user_id: string;
-          worked_at: string;
+          user_note: string;
         };
         Insert: {
+          activities?: Json;
+          completion_tokens?: number | null;
           created_at?: string;
-          description?: string | null;
-          duration_minutes: number;
-          end_time?: string | null;
-          fulfillment_score?: number | null;
           id?: string;
-          plan_id?: string | null;
-          start_time?: string | null;
-          title?: string | null;
+          insights?: string;
+          model_used?: string | null;
+          period_end: string;
+          period_start: string;
+          period_type: string;
+          prompt_tokens?: number | null;
+          question?: string;
+          title: string;
           updated_at?: string;
           user_id: string;
-          worked_at: string;
+          user_note?: string;
         };
         Update: {
+          activities?: Json;
+          completion_tokens?: number | null;
           created_at?: string;
-          description?: string | null;
-          duration_minutes?: number;
-          end_time?: string | null;
-          fulfillment_score?: number | null;
           id?: string;
-          plan_id?: string | null;
-          start_time?: string | null;
-          title?: string | null;
+          insights?: string;
+          model_used?: string | null;
+          period_end?: string;
+          period_start?: string;
+          period_type?: string;
+          prompt_tokens?: number | null;
+          question?: string;
+          title?: string;
           updated_at?: string;
           user_id?: string;
-          worked_at?: string;
+          user_note?: string;
         };
-        Relationships: [
-          {
-            foreignKeyName: 'records_plan_id_fkey';
-            columns: ['plan_id'];
-            isOneToOne: false;
-            referencedRelation: 'plans';
-            referencedColumns: ['id'];
-          },
-        ];
+        Relationships: [];
       };
       tags: {
         Row: {
           color: string | null;
           created_at: string | null;
+          description: string | null;
           id: string;
           is_active: boolean;
           name: string;
           sort_order: number;
           updated_at: string | null;
-          user_id: string | null;
+          user_id: string;
         };
         Insert: {
           color?: string | null;
           created_at?: string | null;
+          description?: string | null;
           id?: string;
           is_active?: boolean;
           name: string;
           sort_order?: number;
           updated_at?: string | null;
-          user_id?: string | null;
+          user_id: string;
         };
         Update: {
           color?: string | null;
           created_at?: string | null;
+          description?: string | null;
           id?: string;
           is_active?: boolean;
           name?: string;
           sort_order?: number;
           updated_at?: string | null;
-          user_id?: string | null;
+          user_id?: string;
         };
         Relationships: [];
       };
@@ -1016,26 +793,75 @@ export type Database = {
       cleanup_old_auth_audit_logs: { Args: never; Returns: undefined };
       cleanup_old_login_attempts: { Args: never; Returns: undefined };
       cleanup_old_plan_activities: { Args: never; Returns: undefined };
-      cleanup_old_record_activities: { Args: never; Returns: undefined };
       count_unused_recovery_codes: {
         Args: { p_user_id: string };
         Returns: number;
       };
-      create_plan_with_tags: {
-        Args: {
-          p_description?: string;
-          p_scheduled_date?: string;
-          p_tag_ids?: string[];
-          p_title: string;
-          p_user_id: string;
-        };
-        Returns: Json;
-      };
       delete_old_notifications: { Args: never; Returns: undefined };
-      delete_plan_with_cleanup: {
-        Args: { p_plan_id: string; p_user_id: string };
-        Returns: Json;
+      get_active_dates: {
+        Args: { p_since: string; p_user_id: string };
+        Returns: {
+          active_date: string;
+        }[];
       };
+      get_active_users_for_reflection: {
+        Args: {
+          p_limit?: number;
+          p_threshold_days?: number;
+          p_week_start: string;
+        };
+        Returns: {
+          entry_count: number;
+          user_id: string;
+        }[];
+      };
+      get_daily_hours: {
+        Args: { p_end_date: string; p_start_date: string; p_user_id: string };
+        Returns: {
+          date: string;
+          hours: number;
+        }[];
+      };
+      get_dow_distribution: {
+        Args: { p_end_date?: string; p_start_date?: string; p_user_id: string };
+        Returns: {
+          dow: number;
+          hours: number;
+        }[];
+      };
+      get_energy_map: {
+        Args: { p_end_date: string; p_start_date: string; p_user_id: string };
+        Returns: {
+          avg_fulfillment: number;
+          dow: number;
+          entry_count: number;
+          hour: number;
+          total_minutes: number;
+        }[];
+      };
+      get_fulfillment_trend: {
+        Args: { p_end_date: string; p_start_date: string; p_user_id: string };
+        Returns: {
+          avg_score: number;
+          count: number;
+          date: string;
+        }[];
+      };
+      get_hourly_distribution: {
+        Args: { p_end_date?: string; p_start_date?: string; p_user_id: string };
+        Returns: {
+          hour: number;
+          hours: number;
+        }[];
+      };
+      get_monthly_hours: {
+        Args: { p_start_date: string; p_user_id: string };
+        Returns: {
+          hours: number;
+          month: string;
+        }[];
+      };
+      get_plan_summary: { Args: { p_user_id: string }; Returns: Json };
       get_tag_stats: {
         Args: { p_user_id: string };
         Returns: {
@@ -1044,28 +870,52 @@ export type Database = {
           tag_id: string;
         }[];
       };
+      get_timeboxing_adherence: {
+        Args: { p_end_date: string; p_start_date: string; p_user_id: string };
+        Returns: Json;
+      };
+      get_total_time: { Args: { p_user_id: string }; Returns: Json };
+      get_weekly_focus_score: {
+        Args: { p_user_id: string; p_weeks?: number };
+        Returns: {
+          focus_score: number;
+          total_minutes: number;
+          week_start: string;
+        }[];
+      };
+      get_weekly_reflection_data: {
+        Args: { p_user_id: string; p_week_start: string };
+        Returns: Json;
+      };
       increment_ai_usage: {
         Args: { p_month: string; p_user_id: string };
         Returns: undefined;
       };
-      merge_tags: {
+      merge_tags:
+        | {
+            Args: {
+              p_source_tag_id: string;
+              p_target_tag_id: string;
+              p_user_id: string;
+            };
+            Returns: Json;
+          }
+        | {
+            Args: {
+              p_source_tag_ids: string[];
+              p_target_tag_id: string;
+              p_user_id: string;
+            };
+            Returns: Json;
+          };
+      record_login_attempt: {
         Args: {
-          p_source_tag_id: string;
-          p_target_tag_id: string;
-          p_user_id: string;
+          p_email: string;
+          p_ip_address?: string;
+          p_is_successful?: boolean;
+          p_user_agent?: string;
         };
-        Returns: Json;
-      };
-      update_plan_with_tags: {
-        Args: {
-          p_description?: string;
-          p_plan_id: string;
-          p_scheduled_date?: string;
-          p_tag_ids?: string[];
-          p_title?: string;
-          p_user_id: string;
-        };
-        Returns: Json;
+        Returns: string;
       };
       use_recovery_code: {
         Args: { p_code_hash: string; p_user_id: string };

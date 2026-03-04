@@ -146,10 +146,14 @@ export function usePlanInspectorContentLogic() {
     startTime,
     endTime,
     reminderMinutes,
+    actualStartTime,
+    actualEndTime,
     handleScheduleDateChange,
     handleStartTimeChange,
     handleEndTimeChange,
     handleReminderChange,
+    handleActualStartChange,
+    handleActualEndChange,
   } = useInspectorTimeState({
     plan,
     planId: entryId,
@@ -318,6 +322,8 @@ export function usePlanInspectorContentLogic() {
     startTime,
     endTime,
     reminderMinutes,
+    actualStartTime,
+    actualEndTime,
     handleReminderChange,
     timeConflictError,
 
@@ -325,6 +331,8 @@ export function usePlanInspectorContentLogic() {
     handleScheduleDateChange,
     handleStartTimeChange,
     handleEndTimeChange,
+    handleActualStartChange,
+    handleActualEndChange,
     autoSave,
     updatePlan,
 

@@ -2,7 +2,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ChevronDown, ChevronUp, MoreHorizontal, X } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -221,7 +221,6 @@ function PlanFormStory({
   initialReminderMinutes?: number | null;
   timeConflictError?: boolean;
 }) {
-  const titleRef = useRef<HTMLInputElement | null>(null);
   const [tagId, setTagId] = useState<string | null>(initialTagId);
   const [scheduleDate, setScheduleDate] = useState<Date | undefined>(initialScheduleDate);
   const [startTime, setStartTime] = useState(initialStartTime);
@@ -234,7 +233,6 @@ function PlanFormStory({
       <div>
         <PlanInspectorDetailsTab
           plan={plan}
-          titleRef={titleRef}
           scheduleDate={scheduleDate}
           startTime={startTime}
           endTime={endTime}

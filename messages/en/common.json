@@ -223,6 +223,10 @@
       "comingSoon": "Profile page coming soon",
       "notFound": "User not found"
     },
+    "tags": {
+      "add": "Add tag",
+      "change": "Change tag"
+    },
     "theme": {
       "light": "Light Mode",
       "dark": "Dark Mode"

@@ -1,31 +1,29 @@
 'use client';
 
 /**
- * Inspector の詳細タブ（Toggl風3行レイアウト）
+ * Inspector の詳細タブ
  *
- * Row 1: Title
- * Row 2: Date + Time + Duration
- * Row 3: Tags + [Description] + [Fulfillment*] + [Recurrence*] + [Reminder*]
+ * Row 0: タグ（カラードット + タグ名）
+ * Row 1: 予定/記録 時間比較セクション
+ * Row 2: オプションボタン群
  *
  * 「Time waits for no one」原則:
- * - upcoming: 繰り返し、リマインダーあり / 充実度なし
- * - active: 充実度あり（先行入力可）/ 繰り返し、リマインダーなし
- * - past: 充実度あり / 繰り返し、リマインダーなし
+ * - upcoming: 繰り返し、リマインダーあり / 充実度なし / 記録行なし
+ * - active: 充実度あり（先行入力可）/ 繰り返し、リマインダーなし / 記録行あり
+ * - past: 充実度あり / 繰り返し、リマインダーなし / 記録行あり
  */
 
-import { memo, useCallback } from 'react';
+import { memo } from 'react';
 
 import { useTranslations } from 'next-intl';
 import {
   FulfillmentButton,
   InspectorDetailsLayout,
+  InspectorTagRow,
   NoteIconButton,
-  ScheduleRow,
-  TagsIconButton,
-  TitleInput,
+  TimeComparisonSection,
 } from '../shared';
 
-import { SuggestInput } from '@/components/common/SuggestInput';
 import type { FulfillmentScore } from '@/core/types/entry';
 import type { Tag } from '@/core/types/tag';
 import type { EntryState } from '@/lib/entry-status';
@@ -38,7 +36,6 @@ type RecurrenceType = 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'week
 
 interface PlanInspectorDetailsTabProps {
   plan: Plan;
-  titleRef: React.RefObject<HTMLInputElement | null>;
   scheduleDate: Date | undefined;
   startTime: string;
   endTime: string;
@@ -55,19 +52,21 @@ interface PlanInspectorDetailsTabProps {
   onTagChange: (tagId: string | null) => void;
   onRepeatTypeChange: (type: string) => void;
   onRecurrenceRuleChange: (rrule: string | null) => void;
+  /** @deprecated kept for story compatibility */
   isDraftMode?: boolean;
-  /** 時間位置ベースの状態（upcoming/active/past） */
   entryState?: EntryState;
-  /** 充実度スコア */
   fulfillmentScore?: FulfillmentScore | null;
-  /** 充実度変更コールバック */
   onFulfillmentChange?: (score: FulfillmentScore | null) => void;
   availableTags?: Tag[] | undefined;
+  // 記録時間（actual）
+  actualStart?: string | null;
+  actualEnd?: string | null;
+  onActualStartChange?: (time: string | null) => void;
+  onActualEndChange?: (time: string | null) => void;
 }
 
 export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   plan,
-  titleRef,
   scheduleDate,
   startTime,
   endTime,
@@ -84,78 +83,49 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   onTagChange,
   onRepeatTypeChange,
   onRecurrenceRuleChange,
-  isDraftMode = false,
   entryState = 'upcoming',
   fulfillmentScore,
   onFulfillmentChange,
   availableTags,
+  actualStart = null,
+  actualEnd = null,
+  onActualStartChange,
+  onActualEndChange,
 }: PlanInspectorDetailsTabProps) {
   const t = useTranslations();
-
-  // past entries は record サジェスト、それ以外は plan サジェスト
-  const suggestType = entryState === 'past' ? 'record' : 'plan';
-
-  // past entries は "何をしてた？" プレースホルダー
-  const titlePlaceholder =
-    entryState === 'past'
-      ? t('plan.inspector.recordCreate.titlePlaceholder')
-      : isDraftMode
-        ? t('plan.inspector.addTitle')
-        : t('calendar.event.noTitle');
 
   // upcoming のみ繰り返し・リマインダーを表示
   const showRecurrence = entryState === 'upcoming';
   // active/past で充実度を表示
   const showFulfillment = entryState !== 'upcoming' && onFulfillmentChange;
 
-  const handleSuggestionSelect = useCallback(
-    (entry: { title: string; tagId: string | null }) => {
-      onAutoSave('title', entry.title);
-      onTagChange(entry.tagId);
-    },
-    [onAutoSave, onTagChange],
-  );
-
   return (
     <InspectorDetailsLayout
-      title={
-        isDraftMode ? (
-          <SuggestInput
-            value={plan.title}
-            onChange={(value) => onAutoSave('title', value)}
-            onSuggestionSelect={handleSuggestionSelect}
-            type={suggestType}
-            placeholder={titlePlaceholder}
-            autoFocus
-          />
-        ) : (
-          <TitleInput
-            ref={titleRef}
-            value={plan.title}
-            onChange={(value) => onAutoSave('title', value)}
-            placeholder={titlePlaceholder}
-          />
-        )
+      tagRow={
+        <InspectorTagRow
+          tagId={selectedTagId}
+          onTagChange={onTagChange}
+          {...(availableTags ? { availableTags } : {})}
+        />
       }
       schedule={
-        <ScheduleRow
+        <TimeComparisonSection
           selectedDate={scheduleDate}
-          startTime={startTime}
-          endTime={endTime}
           onDateChange={onScheduleDateChange}
-          onStartTimeChange={onStartTimeChange}
-          onEndTimeChange={onEndTimeChange}
+          plannedStart={startTime}
+          plannedEnd={endTime}
+          onPlannedStartChange={onStartTimeChange}
+          onPlannedEndChange={onEndTimeChange}
+          actualStart={actualStart ?? null}
+          actualEnd={actualEnd ?? null}
+          onActualStartChange={onActualStartChange ?? (() => {})}
+          onActualEndChange={onActualEndChange ?? (() => {})}
+          entryState={entryState}
           timeConflictError={timeConflictError}
         />
       }
       options={
         <>
-          <TagsIconButton
-            tagId={selectedTagId}
-            onTagChange={onTagChange}
-            popoverSide="bottom"
-            {...(availableTags ? { availableTags } : {})}
-          />
           <NoteIconButton
             id={plan.id}
             note={plan.description || ''}

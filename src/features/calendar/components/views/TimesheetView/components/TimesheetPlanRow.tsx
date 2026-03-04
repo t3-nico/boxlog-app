@@ -7,6 +7,7 @@ import { Clock } from 'lucide-react';
 
 import type { CalendarPlan } from '../../../../types/calendar.types';
 
+import { useTagsMap } from '@/hooks/useTagsMap';
 import { formatMinutes } from '../hooks/useTimesheetData';
 
 interface TimesheetPlanRowProps {
@@ -21,9 +22,12 @@ interface TimesheetPlanRowProps {
  * クリックで Inspector 起動。
  */
 export function TimesheetPlanRow({ plan, weekDates, onPlanClick }: TimesheetPlanRowProps) {
+  const { getTagById } = useTagsMap();
   const handleClick = useCallback(() => {
     onPlanClick?.(plan);
   }, [plan, onPlanClick]);
+
+  const tagName = plan.tagId ? getTagById(plan.tagId)?.name : null;
 
   // プランが表示される日のキー
   const planDateKey = plan.displayStartDate
@@ -35,7 +39,7 @@ export function TimesheetPlanRow({ plan, weekDates, onPlanClick }: TimesheetPlan
       <td className="px-3 py-1.5">
         <div className="flex items-center gap-2 pl-6">
           <Clock className="text-muted-foreground h-3 w-3 shrink-0" />
-          <span className="truncate text-xs">{plan.title}</span>
+          <span className="truncate text-xs">{tagName || plan.title}</span>
         </div>
       </td>
       {weekDates.map((date) => {

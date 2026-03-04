@@ -14,7 +14,6 @@ import { cn } from '@/lib/utils';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 import { useCalendarDragStore } from '../../../../stores/useCalendarDragStore';
 
-import { calendarStyles } from '../../../../theme/styles';
 import { useResponsiveHourHeight } from '../hooks/useResponsiveHourHeight';
 
 interface PanelDragPreviewProps {
@@ -50,13 +49,14 @@ export const PanelDragPreview = memo(function PanelDragPreview({
     <div
       className={cn(
         'pointer-events-none absolute left-0 w-full',
+        'rounded-r-lg border-l-[3px]',
         'after:bg-state-selected after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit]',
-        calendarStyles.event.borderRadius,
       )}
       style={{
         top: `${snappedPosition.top}px`,
         height: `${height}px`,
         zIndex: 1000,
+        borderLeftColor: 'var(--entry-default)',
         backgroundColor: 'color-mix(in oklch, var(--entry-default) 12%, var(--background))',
       }}
     >

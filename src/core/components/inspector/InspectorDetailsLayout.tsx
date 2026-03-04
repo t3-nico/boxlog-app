@@ -1,31 +1,24 @@
 'use client';
 
 /**
- * Inspector 詳細レイアウト（3行構造）
+ * Inspector 詳細レイアウト
  *
- * Plan/Record Inspector共通の3行レイアウトを提供
- * - Row 1: タイトル入力
- * - Row 2: スケジュール選択
- * - Row 3: オプションボタン群（タグ、ノート、その他）
+ * - Row 0: タグ表示（カラードット + タグ名）
+ * - Row 1: スケジュール選択
+ * - Row 2: オプションボタン群（ノート、充実度、繰り返し等）
  *
  * Slotベースで柔軟にコンテンツを挿入可能
  */
 
 import type { ReactNode } from 'react';
 
-import { cn } from '@/lib/utils';
-
 export interface InspectorDetailsLayoutProps {
-  /** Row 1: タイトル入力コンポーネント */
-  title: ReactNode;
-  /** Row 2: スケジュール選択コンポーネント */
+  /** Row 0: タグ表示（カラードット + タグ名） */
+  tagRow?: ReactNode;
+  /** Row 1: スケジュール選択コンポーネント */
   schedule: ReactNode;
-  /** Row 3: オプションボタン群 */
+  /** Row 2: オプションボタン群 */
   options: ReactNode;
-  /** Row 1追加コンテンツ（タイトル横のアクセント線など） */
-  titlePrefix?: ReactNode;
-  /** Row 1のカスタムクラス */
-  titleClassName?: string;
 }
 
 /**
@@ -34,11 +27,10 @@ export interface InspectorDetailsLayoutProps {
  * @example
  * ```tsx
  * <InspectorDetailsLayout
- *   title={<TitleInput value={title} onChange={setTitle} />}
- *   schedule={<ScheduleRow ... />}
+ *   tagRow={<InspectorTagRow tagId={tagId} onTagChange={setTagId} />}
+ *   schedule={<TimeComparisonSection ... />}
  *   options={
  *     <>
- *       <TagsIconButton />
  *       <NoteIconButton />
  *       <FulfillmentButton />
  *     </>
@@ -46,27 +38,16 @@ export interface InspectorDetailsLayoutProps {
  * />
  * ```
  */
-export function InspectorDetailsLayout({
-  title,
-  schedule,
-  options,
-  titlePrefix,
-  titleClassName,
-}: InspectorDetailsLayoutProps) {
+export function InspectorDetailsLayout({ tagRow, schedule, options }: InspectorDetailsLayoutProps) {
   return (
     <div>
-      {/* Row 1: タイトル */}
-      <div
-        className={cn('px-4 pt-4 pb-2', titlePrefix && 'flex items-center gap-2', titleClassName)}
-      >
-        {titlePrefix}
-        {title}
-      </div>
+      {/* Row 0: タグ */}
+      {tagRow}
 
-      {/* Row 2: スケジュール */}
+      {/* Row 1: スケジュール */}
       {schedule}
 
-      {/* Row 3: オプション */}
+      {/* Row 2: オプション */}
       <div className="flex flex-wrap items-center gap-1 px-4 pt-2 pb-4">{options}</div>
     </div>
   );

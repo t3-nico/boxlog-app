@@ -28,6 +28,8 @@ export interface DraftEntry {
   origin: EntryOrigin;
   start_time: string | null;
   end_time: string | null;
+  actual_start_time?: string | null;
+  actual_end_time?: string | null;
   reminder_minutes?: number | null;
   fulfillment_score?: FulfillmentScore | null;
   recurrence_type?: RecurrenceType | null;
@@ -44,6 +46,8 @@ export interface PendingChanges {
   description?: string;
   start_time?: string | null;
   end_time?: string | null;
+  actual_start_time?: string | null;
+  actual_end_time?: string | null;
   reminder_minutes?: number | null;
   recurrence_type?: RecurrenceType | null;
   recurrence_rule?: string | null;

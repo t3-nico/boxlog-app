@@ -52,6 +52,8 @@ export interface Entry {
   origin: EntryOrigin;
   start_time: string | null;
   end_time: string | null;
+  actual_start_time: string | null;
+  actual_end_time: string | null;
   duration_minutes: number | null;
   fulfillment_score: FulfillmentScore | null;
   recurrence_type: RecurrenceType | null;
@@ -80,6 +82,8 @@ export interface CreateEntryInput {
   origin?: EntryOrigin;
   start_time?: string;
   end_time?: string;
+  actual_start_time?: string;
+  actual_end_time?: string;
   duration_minutes?: number;
   fulfillment_score?: FulfillmentScore;
   recurrence_type?: RecurrenceType;
@@ -97,6 +101,8 @@ export interface UpdateEntryInput {
   origin?: EntryOrigin;
   start_time?: string;
   end_time?: string;
+  actual_start_time?: string | null;
+  actual_end_time?: string | null;
   duration_minutes?: number;
   fulfillment_score?: FulfillmentScore | null;
   recurrence_type?: RecurrenceType;

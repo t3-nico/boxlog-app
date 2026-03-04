@@ -15,6 +15,7 @@ import type { CalendarPlan } from '../../../../../types/calendar.types';
 
 interface PlanCardContentProps {
   plan: CalendarPlan;
+  tagName: string | null;
   isCompact?: boolean;
   showTime?: boolean;
   timeFormat?: '12h' | '24h';
@@ -40,6 +41,7 @@ function parseplanEndDate(plan: CalendarPlan): Date | null {
 
 export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardContent({
   plan,
+  tagName,
   isCompact = false,
   showTime = true,
   timeFormat = '24h',
@@ -52,35 +54,35 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
   const planStart = parseplanStartDate(plan);
   const planEnd = parseplanEndDate(plan);
 
+  // 表示テキスト: タグ名 or フォールバック
+  const displayLabel = tagName || t('common.tags.add');
+
   // モバイル表示: Googleカレンダー風のシンプルな表示
-  // チェックボックスの横にタイトルを1行で省略表示
   if (isMobile) {
     return (
-      <span className={`text-foreground min-w-0 flex-1 truncate text-xs leading-tight font-normal`}>
-        {plan.title || t('calendar.event.noTitle')}
+      <span className="text-foreground min-w-0 flex-1 truncate text-xs leading-tight font-normal">
+        {displayLabel}
       </span>
     );
   }
 
   if (isCompact) {
-    // コンパクト表示：タイトルのみ
+    // コンパクト表示：タグ名のみ
     return (
       <div className="flex h-full items-center gap-1">
-        <span className={`text-foreground truncate text-sm leading-tight font-normal`}>
-          {plan.title || t('calendar.event.noTitle')}
+        <span className="text-foreground truncate text-sm leading-tight font-normal">
+          {displayLabel}
         </span>
       </div>
     );
   }
 
-  // 通常表示：タイトル #番号 + 時間 + アイコン + タグの順番（優先度順）
+  // 通常表示：タグ名 + 時間 + アイコンの順番（優先度順）
   return (
     <div className="relative flex h-full flex-col gap-1 overflow-hidden">
-      {/* タイトル（最優先） */}
+      {/* タグ名（最優先） */}
       <div className="flex flex-shrink-0 items-baseline gap-1 text-sm leading-tight font-normal">
-        <span className={`${isCompact ? 'line-clamp-1' : 'line-clamp-2'} text-foreground`}>
-          {plan.title || t('calendar.event.noTitle')}
-        </span>
+        <span className="text-foreground line-clamp-2">{displayLabel}</span>
       </div>
 
       {/* 時間表示 + アイコン（第2優先） */}

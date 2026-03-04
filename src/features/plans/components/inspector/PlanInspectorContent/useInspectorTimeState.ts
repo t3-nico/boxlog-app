@@ -60,6 +60,9 @@ export function useInspectorTimeState({
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [reminderMinutes, setReminderMinutes] = useState<number | null>(null);
+  // 記録時間（actual）— null = 予定と同じ
+  const [actualStartTime, setActualStartTime] = useState<string | null>(null);
+  const [actualEndTime, setActualEndTime] = useState<string | null>(null);
 
   // Initialize state from plan data or draftPlan
   useEffect(() => {
@@ -87,6 +90,9 @@ export function useInspectorTimeState({
 
       // リマインダーのデフォルトは常に null（なし）
       setReminderMinutes(draftPlan.reminder_minutes ?? null);
+      // ドラフトモードは記録時間なし
+      setActualStartTime(null);
+      setActualEndTime(null);
       return;
     }
 
@@ -113,6 +119,24 @@ export function useInspectorTimeState({
       }
 
       setReminderMinutes('reminder_minutes' in plan ? (plan.reminder_minutes ?? null) : null);
+
+      // 記録時間の初期化（null = 予定と同じ）
+      if ('actual_start_time' in plan && plan.actual_start_time) {
+        const actStartDate = parseISOToUserTimezone(plan.actual_start_time as string, timezone);
+        setActualStartTime(
+          `${actStartDate.getHours().toString().padStart(2, '0')}:${actStartDate.getMinutes().toString().padStart(2, '0')}`,
+        );
+      } else {
+        setActualStartTime(null);
+      }
+      if ('actual_end_time' in plan && plan.actual_end_time) {
+        const actEndDate = parseISOToUserTimezone(plan.actual_end_time as string, timezone);
+        setActualEndTime(
+          `${actEndDate.getHours().toString().padStart(2, '0')}:${actEndDate.getMinutes().toString().padStart(2, '0')}`,
+        );
+      } else {
+        setActualEndTime(null);
+      }
     } else if (!plan && initialData) {
       if (initialData.start_time) {
         const startDate = parseISOToUserTimezone(initialData.start_time, timezone);
@@ -288,6 +312,54 @@ export function useInspectorTimeState({
     [isDraftMode, planId, updateDraft, updatePlan],
   );
 
+  // 記録時間変更ハンドラー
+  const handleActualStartChange = useCallback(
+    (time: string | null) => {
+      setActualStartTime(time);
+
+      if (time && scheduleDate) {
+        const [hours, minutes] = time.split(':').map(Number);
+        const isoValue = localTimeToUTCISO(scheduleDate, hours ?? 0, minutes ?? 0, timezone);
+        if (isDraftMode) {
+          updateDraft({ actual_start_time: isoValue });
+        } else {
+          addPendingChange({ actual_start_time: isoValue });
+        }
+      } else {
+        // null → 予定と同じに戻す
+        if (isDraftMode) {
+          updateDraft({ actual_start_time: null });
+        } else {
+          addPendingChange({ actual_start_time: null });
+        }
+      }
+    },
+    [scheduleDate, isDraftMode, updateDraft, addPendingChange, timezone],
+  );
+
+  const handleActualEndChange = useCallback(
+    (time: string | null) => {
+      setActualEndTime(time);
+
+      if (time && scheduleDate) {
+        const [hours, minutes] = time.split(':').map(Number);
+        const isoValue = localTimeToUTCISO(scheduleDate, hours ?? 0, minutes ?? 0, timezone);
+        if (isDraftMode) {
+          updateDraft({ actual_end_time: isoValue });
+        } else {
+          addPendingChange({ actual_end_time: isoValue });
+        }
+      } else {
+        if (isDraftMode) {
+          updateDraft({ actual_end_time: null });
+        } else {
+          addPendingChange({ actual_end_time: null });
+        }
+      }
+    },
+    [scheduleDate, isDraftMode, updateDraft, addPendingChange, timezone],
+  );
+
   return {
     timezone,
     timeConflictError,
@@ -297,9 +369,13 @@ export function useInspectorTimeState({
     startTime,
     endTime,
     reminderMinutes,
+    actualStartTime,
+    actualEndTime,
     handleScheduleDateChange,
     handleStartTimeChange,
     handleEndTimeChange,
     handleReminderChange,
+    handleActualStartChange,
+    handleActualEndChange,
   };
 }

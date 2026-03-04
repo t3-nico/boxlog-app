@@ -65,15 +65,15 @@ export const DragSelectionPreview = memo(function DragSelectionPreview({
     );
   }
 
-  // 通常時: 時間ラベル + 合計時間を目立たせる
+  // 通常時: PlanCardと同じデザイン（左ボーダーアクセント + 右角丸）
   return (
     <div
-      className="pointer-events-none absolute right-0 left-0 rounded-md border"
+      className="pointer-events-none absolute right-0 left-0 rounded-r-lg border-l-[3px]"
       style={{
         top,
         height,
         zIndex: 1000,
-        borderColor: 'var(--entry-default)',
+        borderLeftColor: 'var(--entry-default)',
         backgroundColor: 'color-mix(in oklch, var(--entry-default) 12%, var(--background))',
       }}
     >

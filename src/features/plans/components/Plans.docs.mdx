@@ -17,7 +17,6 @@ import { Meta } from '@storybook/addon-docs/blocks';
 | 繰り返し | RRULE ベース（daily / weekly / monthly / yearly） |
 | タグ | 多対多（`plan_tags` 経由） |
 | リマインダー | 開始N分前（5/10/15/30） |
-| アクティビティ | 全操作の監査ログ |
 
 ---
 
@@ -32,10 +31,7 @@ PlanInspector                   Intercepting Route シェル
 │   │   ├── RecurrenceIconButton → RecurrenceDialog
 │   │   ├── ReminderSelect      リマインダー設定
 │   │   ├── TagsIconButton      タグエディタ
-│   │   ├── NoteIconButton      説明エディタ
-│   │   └── RecordCreateForm    完了時Record作成フォーム
-│   └── ActivityTab             変更履歴
-│       └── ActivityPopover     アクティビティ表示
+│   │   └── NoteIconButton      説明エディタ
 ├── PlanInspectorMenu           アクションメニュー
 └── DraggableInspector          ドラッグ移動対応シェル
 
@@ -68,7 +64,6 @@ RecurringEditConfirmDialog      繰り返し編集スコープ選択
 | `usePlans(filters)` | プラン一覧取得（staleTime: 30s） |
 | `usePlan(id)` | 単一プラン取得（キャッシュからplaceholder） |
 | `usePlanMutations()` | CRUD（楽観的更新付き） |
-| `usePlanActivities(planId)` | アクティビティログ + Realtime |
 | `usePlanTags(planId)` | タグ取得 |
 | `usePlanInstances(planId)` | 繰り返しインスタンス取得 |
 
@@ -83,7 +78,6 @@ RecurringEditConfirmDialog      繰り返し編集スコープ選択
 | `instances` | list, create, delete |
 | `recurrence` | splitRecurrence |
 | `tags` | addTag, removeTag, setTags |
-| `activities` | list, create |
 | `statistics` | getStats, getTagStats, getTotalTime ほか11種 |
 | `statsView` | getStatsViewData |
 

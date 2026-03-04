@@ -20,13 +20,6 @@ export type {
   UpdatePlanInput,
 } from './types/plan';
 
-export type {
-  ActivityActionType,
-  ActivityIconColor,
-  PlanActivity,
-  PlanActivityDisplay,
-} from './types/activity';
-
 // =============================================================================
 // Stores (Re-export from shared stores)
 // =============================================================================
@@ -49,7 +42,6 @@ export {
 export { usePlanTags } from '@/hooks/usePlanTags';
 export { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
 export { usePlan, useplan } from './hooks/usePlan';
-export { usePlanActivities } from './hooks/usePlanActivities';
 
 // =============================================================================
 // Utils
@@ -86,7 +78,6 @@ export { TimeSelect } from './components/shared/TimeSelect';
 // Inspector shared components
 export { useInspectorKeyboard } from './components/inspector/hooks';
 export {
-  ActivityPopover,
   DraggableInspector,
   InspectorContent,
   InspectorDetailsLayout,
@@ -96,4 +87,3 @@ export {
   TitleInput,
   useDragHandle,
 } from './components/inspector/shared';
-export type { ActivityDisplayItem } from './components/inspector/shared';

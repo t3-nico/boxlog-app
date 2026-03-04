@@ -142,7 +142,8 @@ export function TagSelectCombobox({
     <Popover open={isOpen} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
       <PopoverContent
-        className={cn('w-[280px] p-0', isOverlay && 'z-overlay-popover')}
+        className="w-[280px] p-0"
+        style={isOverlay ? { zIndex: 'var(--z-index-overlay-popover)' } : undefined}
         align={align}
         side={side}
         alignOffset={alignOffset}
