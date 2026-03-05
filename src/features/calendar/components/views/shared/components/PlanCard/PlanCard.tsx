@@ -13,6 +13,7 @@ import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useTagsMap } from '@/hooks/useTagsMap';
 import { cn } from '@/lib/utils';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 
 import { MIN_EVENT_HEIGHT, Z_INDEX } from '../../constants/grid.constants';
 import type { PlanCardProps } from '../../types/plan.types';
@@ -76,13 +77,25 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     [safePosition, isSelected, isDragging, accentColor, style],
   );
 
+  // アンカー位置の設定（Inspector 配置用）
+  const setAnchorRect = useEntryInspectorStore((s) => s.setAnchorRect);
+
   // イベントハンドラー
   const handleClick = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
+      const rect = e.currentTarget.getBoundingClientRect();
+      setAnchorRect({
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height,
+      });
       onClick?.(plan);
     },
-    [onClick, plan],
+    [onClick, plan, setAnchorRect],
   );
 
   const handleContextMenu = useCallback(

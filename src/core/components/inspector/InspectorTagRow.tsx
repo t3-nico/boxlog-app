@@ -5,15 +5,21 @@
  *
  * カラードット + タグ名を表示し、タップで TagSelectCombobox を開く。
  * タグ未設定時は「+ タグを追加」を表示。
- * オプションで origin バッジ（「予定」「記録のみ」）を右側に表示。
+ * 右側に origin バッジ + ⋯ メニューを配置。
  */
 
 import type { ReactNode } from 'react';
 
-import { ChevronDown, Plus } from 'lucide-react';
+import { ChevronDown, MoreHorizontal, Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { TagSelectCombobox } from '@/components/tags/TagSelectCombobox';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import type { Tag } from '@/core/types/tag';
 import { useTagsMap } from '@/hooks/useTagsMap';
 
@@ -23,6 +29,8 @@ interface InspectorTagRowProps {
   availableTags?: Tag[];
   /** origin バッジ（past エントリの「予定」「記録のみ」表示用） */
   originBadge?: ReactNode;
+  /** ⋯ ドロップダウンメニューの内容 */
+  menuContent?: ReactNode;
 }
 
 export function InspectorTagRow({
@@ -30,6 +38,7 @@ export function InspectorTagRow({
   onTagChange,
   availableTags,
   originBadge,
+  menuContent,
 }: InspectorTagRowProps) {
   const t = useTranslations();
   const { getTagById } = useTagsMap();
@@ -71,7 +80,29 @@ export function InspectorTagRow({
           )}
         </button>
       </TagSelectCombobox>
-      {originBadge}
+
+      {/* 右側: badge + メニュー */}
+      <div className="flex items-center gap-1">
+        {originBadge}
+        {menuContent && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                icon
+                className="focus-visible:ring-0"
+                aria-label={t('common.actions.options')}
+              >
+                <MoreHorizontal className="size-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              {menuContent}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+      </div>
     </div>
   );
 }

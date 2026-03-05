@@ -118,6 +118,7 @@
         "add": "タグを追加"
       },
       "time": {
+        "date": "日付",
         "planned": "予定",
         "actual": "記録",
         "sameAsPlanned": "予定と同じ",

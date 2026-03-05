@@ -1,12 +1,16 @@
-export { DraggableInspector, useDragHandle } from './DraggableInspector';
+export { DateNavigatorRow } from './DateNavigatorRow';
+export { DraggableInspector } from './DraggableInspector';
 export { FulfillmentButton } from './FulfillmentButton';
+export { InlineNoteSection } from './InlineNoteSection';
 export { InspectorContent } from './InspectorContent';
 export { InspectorDetailsLayout } from './InspectorDetailsLayout';
 export type { InspectorDetailsLayoutProps } from './InspectorDetailsLayout';
 export { InspectorHeader } from './InspectorHeader';
 export { InspectorShell } from './InspectorShell';
 export { InspectorTagRow } from './InspectorTagRow';
+export { InspectorTimeSection } from './InspectorTimeSection';
 export { NoteIconButton } from './NoteIconButton';
 export { ScheduleRow } from './ScheduleRow';
-export { TimeComparisonSection } from './TimeComparisonSection';
+export { TimeConflictAlert } from './TimeConflictAlert';
+export { TimeRow, TimeRowPlaceholder } from './TimeRow';
 export { TitleInput } from './TitleInput';

@@ -118,6 +118,7 @@
         "add": "Add tag"
       },
       "time": {
+        "date": "Date",
         "planned": "Plan",
         "actual": "Actual",
         "sameAsPlanned": "Same as plan",

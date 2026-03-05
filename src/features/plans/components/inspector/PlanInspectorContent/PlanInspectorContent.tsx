@@ -9,30 +9,21 @@
  * - ドラフトモードなし（即DB保存 + edit mode）
  */
 
-import { useTranslations } from 'next-intl';
 import { useCallback, useMemo } from 'react';
 
 import type { EntryOrigin, FulfillmentScore } from '@/core/types/entry';
 import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { getEntryState } from '@/lib/entry-status';
 import { cn } from '@/lib/utils';
-import { InspectorHeader } from '../shared';
 
 import { PlanInspectorDetailsTab } from './PlanInspectorDetailsTab';
 import { PlanInspectorMenu } from './PlanInspectorMenu';
 import { usePlanInspectorContentLogic } from './usePlanInspectorContentLogic';
 
 export function PlanInspectorContent() {
-  const t = useTranslations();
-
   const {
     planId,
     plan,
-    saveAndClose,
-    hasPrevious,
-    hasNext,
-    goToPrevious,
-    goToNext,
     selectedTagId,
     handleTagChange,
     scheduleDate,
@@ -101,23 +92,11 @@ export function PlanInspectorContent() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      {/* ヘッダー */}
-      <InspectorHeader
-        hasPrevious={hasPrevious}
-        hasNext={hasNext}
-        onClose={saveAndClose}
-        onPrevious={goToPrevious}
-        onNext={goToNext}
-        closeLabel={t('common.actions.close')}
-        previousLabel={t('common.aria.previous')}
-        nextLabel={t('common.aria.next')}
-        menuContent={menuContent}
-      />
-
       {/* コンテンツ部分 */}
       <div className={cn('flex-1 overflow-y-auto')}>
         <PlanInspectorDetailsTab
           plan={plan}
+          menuContent={menuContent}
           scheduleDate={scheduleDate}
           startTime={startTime}
           endTime={endTime}

@@ -13,15 +13,16 @@
  * 3. past + unplanned: 「記録のみ」バッジ / 記録行のみ / 充実度
  */
 
+import type { ReactNode } from 'react';
 import { memo, useMemo } from 'react';
 
 import { useTranslations } from 'next-intl';
 import {
   FulfillmentButton,
+  InlineNoteSection,
   InspectorDetailsLayout,
   InspectorTagRow,
-  NoteIconButton,
-  TimeComparisonSection,
+  InspectorTimeSection,
 } from '../shared';
 
 import { Badge } from '@/components/ui/badge';
@@ -39,6 +40,8 @@ import { ReminderSelect } from '../../shared/ReminderSelect';
 
 interface PlanInspectorDetailsTabProps {
   plan: EntryWithTags;
+  /** ⋯ メニューの内容（InspectorTagRow に伝搬） */
+  menuContent?: ReactNode;
   scheduleDate: Date | undefined;
   startTime: string;
   endTime: string;
@@ -69,6 +72,7 @@ interface PlanInspectorDetailsTabProps {
 
 export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   plan,
+  menuContent,
   scheduleDate,
   startTime,
   endTime,
@@ -127,11 +131,12 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
           tagId={selectedTagId}
           onTagChange={onTagChange}
           originBadge={originBadge}
+          menuContent={menuContent}
           {...(availableTags ? { availableTags } : {})}
         />
       }
       schedule={
-        <TimeComparisonSection
+        <InspectorTimeSection
           selectedDate={scheduleDate}
           onDateChange={onScheduleDateChange}
           plannedStart={startTime}
@@ -147,18 +152,15 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
           timeConflictError={timeConflictError}
         />
       }
+      note={
+        <InlineNoteSection
+          note={plan.description || ''}
+          onNoteChange={(text) => onAutoSave('description', text)}
+          placeholder={notePlaceholder}
+        />
+      }
       options={
         <>
-          <NoteIconButton
-            id={plan.id}
-            note={plan.description || ''}
-            onNoteChange={(html) => onAutoSave('description', html)}
-            labels={{
-              editTooltip: t('plan.inspector.editDescription'),
-              addTooltip: t('plan.inspector.addDescription'),
-              placeholder: notePlaceholder,
-            }}
-          />
           {showFulfillment && (
             <FulfillmentButton
               score={fulfillmentScore ?? null}

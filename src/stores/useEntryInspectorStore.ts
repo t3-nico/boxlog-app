@@ -26,6 +26,16 @@ export interface PendingChanges {
   fulfillment_score?: FulfillmentScore | null;
 }
 
+/** Inspector ポップオーバーのアンカー位置 */
+export interface AnchorRect {
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+  width: number;
+  height: number;
+}
+
 /**
  * Entry Inspector Store の状態
  */
@@ -38,6 +48,8 @@ interface EntryInspectorState {
   instanceDate: string | null;
   /** 未保存の変更（Google Calendar準拠: 閉じる時に一括保存） */
   pendingChanges: PendingChanges | null;
+  /** クリックされた要素の位置（Inspector の配置に使用） */
+  anchorRect: AnchorRect | null;
 }
 
 /**
@@ -53,6 +65,8 @@ interface EntryInspectorActions {
   ) => void;
   /** Inspector を閉じる */
   closeInspector: () => void;
+  /** アンカー位置を設定（PlanCard クリック時に呼ぶ） */
+  setAnchorRect: (rect: AnchorRect) => void;
   /** 未保存の変更を追加（Google Calendar準拠） */
   addPendingChange: (changes: Partial<PendingChanges>) => void;
   /** 未保存の変更をクリア */
@@ -73,6 +87,7 @@ export const useEntryInspectorStore = create<EntryInspectorStore>()(
       entryId: null,
       instanceDate: null,
       pendingChanges: null,
+      anchorRect: null,
 
       openInspector: (entryId, options) =>
         set(
@@ -97,11 +112,14 @@ export const useEntryInspectorStore = create<EntryInspectorStore>()(
             entryId: null,
             instanceDate: null,
             pendingChanges: null,
+            anchorRect: null,
           },
           false,
           'closeInspector',
         );
       },
+
+      setAnchorRect: (rect) => set({ anchorRect: rect }, false, 'setAnchorRect'),
 
       addPendingChange: (changes) =>
         set(

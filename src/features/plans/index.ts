@@ -85,5 +85,4 @@ export {
   InspectorShell,
   NoteIconButton,
   TitleInput,
-  useDragHandle,
 } from './components/inspector/shared';

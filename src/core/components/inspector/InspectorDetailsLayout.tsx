@@ -5,9 +5,10 @@
  *
  * - Row 0: タグ表示（カラードット + タグ名）
  * - Row 1: スケジュール選択
- * - Row 2: オプションボタン群（ノート、充実度、繰り返し等）
+ * - Row 2: メモ（インラインテキストエリア）
+ * - Row 3: オプションチップ群
  *
- * Slotベースで柔軟にコンテンツを挿入可能
+ * セクション間は余白で区切る（線なし）
  */
 
 import type { ReactNode } from 'react';
@@ -17,28 +18,18 @@ export interface InspectorDetailsLayoutProps {
   tagRow?: ReactNode;
   /** Row 1: スケジュール選択コンポーネント */
   schedule: ReactNode;
-  /** Row 2: オプションボタン群 */
+  /** Row 2: メモ（インラインテキストエリア） */
+  note?: ReactNode;
+  /** Row 3: オプションボタン群 */
   options: ReactNode;
 }
 
-/**
- * Inspector詳細レイアウト
- *
- * @example
- * ```tsx
- * <InspectorDetailsLayout
- *   tagRow={<InspectorTagRow tagId={tagId} onTagChange={setTagId} />}
- *   schedule={<TimeComparisonSection ... />}
- *   options={
- *     <>
- *       <NoteIconButton />
- *       <FulfillmentButton />
- *     </>
- *   }
- * />
- * ```
- */
-export function InspectorDetailsLayout({ tagRow, schedule, options }: InspectorDetailsLayoutProps) {
+export function InspectorDetailsLayout({
+  tagRow,
+  schedule,
+  note,
+  options,
+}: InspectorDetailsLayoutProps) {
   return (
     <div>
       {/* Row 0: タグ */}
@@ -47,8 +38,11 @@ export function InspectorDetailsLayout({ tagRow, schedule, options }: InspectorD
       {/* Row 1: スケジュール */}
       {schedule}
 
-      {/* Row 2: オプション */}
-      <div className="flex flex-wrap items-center gap-1 px-4 pt-2 pb-4">{options}</div>
+      {/* Row 2: メモ */}
+      {note}
+
+      {/* Row 3: オプション */}
+      <div className="flex flex-wrap items-center gap-1 px-4 pt-3 pb-4">{options}</div>
     </div>
   );
 }

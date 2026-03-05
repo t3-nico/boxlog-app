@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { useDateFormat } from '@/hooks/useDateFormat';
 import { useTagsMap } from '@/hooks/useTagsMap';
 import { cn } from '@/lib/utils';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import type { CalendarPlan } from '../../../../types/calendar.types';
 
 interface AgendaListItemProps {
@@ -29,7 +30,18 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
   // 選択中のタグID（単一）
   const selectedTagId = plan.tagId ?? null;
 
-  const handleClick = () => {
+  const setAnchorRect = useEntryInspectorStore((s) => s.setAnchorRect);
+
+  const handleClick = (e: React.MouseEvent) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setAnchorRect({
+      top: rect.top,
+      right: rect.right,
+      bottom: rect.bottom,
+      left: rect.left,
+      width: rect.width,
+      height: rect.height,
+    });
     onClick?.(plan);
   };
 

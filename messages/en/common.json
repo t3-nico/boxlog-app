@@ -66,7 +66,8 @@
       "updating": "Updating...",
       "archiving": "Archiving...",
       "restoring": "Restoring...",
-      "clear": "Clear"
+      "clear": "Clear",
+      "options": "Options"
     },
     "confirm": {
       "delete": {

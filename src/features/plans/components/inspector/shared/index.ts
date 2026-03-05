@@ -2,16 +2,16 @@
 export {
   DraggableInspector,
   FulfillmentButton,
+  InlineNoteSection,
   InspectorContent,
   InspectorDetailsLayout,
   InspectorHeader,
   InspectorShell,
   InspectorTagRow,
+  InspectorTimeSection,
   NoteIconButton,
   ScheduleRow,
-  TimeComparisonSection,
   TitleInput,
-  useDragHandle,
 } from '@/core/components/inspector';
 
 // Feature-dependent components (re-exported from shared)
