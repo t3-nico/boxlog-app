@@ -125,6 +125,8 @@
         "noPlanned": "No plan"
       },
       "note": {
+        "label": "Note",
+        "placeholder": "Add a note...",
         "upcomingPlaceholder": "What do you plan to do?",
         "pastPlaceholder": "Quick note on what you did..."
       },

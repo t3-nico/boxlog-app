@@ -1,18 +1,16 @@
 'use client';
 
 /**
- * インラインメモセクション（プレーンテキスト）
+ * インラインメモ行
  *
- * Inspector 内にインライン表示される textarea。
- * リッチテキストは不要 — シンプルなプレーンテキストで十分。
+ * DateNavigatorRow / TimeRow と同じ「ラベル + コンテンツ」形式。
+ * プレーンテキスト textarea をインライン表示。
  *
  * 既存データが HTML 形式の場合は自動的にタグを除去して表示。
  * 保存はプレーンテキストで行う。
  */
 
 import { useMemo } from 'react';
-
-import { StickyNote } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
@@ -33,6 +31,7 @@ function stripHtml(html: string): string {
 }
 
 interface InlineNoteSectionProps {
+  label: string;
   note: string;
   onNoteChange: (text: string) => void;
   placeholder?: string;
@@ -40,6 +39,7 @@ interface InlineNoteSectionProps {
 }
 
 export function InlineNoteSection({
+  label,
   note,
   onNoteChange,
   placeholder,
@@ -48,17 +48,17 @@ export function InlineNoteSection({
   const displayNote = useMemo(() => stripHtml(note), [note]);
 
   return (
-    <div className="flex gap-2 px-4 py-2">
-      <StickyNote className="text-muted-foreground mt-0.5 size-4 flex-shrink-0" />
+    <div className="flex items-start gap-1">
+      <span className="text-muted-foreground w-12 flex-shrink-0 pt-1 text-sm">{label}</span>
       <textarea
         value={displayNote}
         onChange={(e) => onNoteChange(e.target.value)}
         placeholder={placeholder}
         disabled={disabled}
-        rows={2}
+        rows={1}
         className={cn(
           'text-foreground placeholder:text-muted-foreground w-full resize-none bg-transparent text-sm outline-none',
-          'max-h-32 min-h-10 overflow-y-auto',
+          'max-h-32 min-h-7 overflow-y-auto',
         )}
       />
     </div>

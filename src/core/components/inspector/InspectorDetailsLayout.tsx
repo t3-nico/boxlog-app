@@ -39,10 +39,10 @@ export function InspectorDetailsLayout({
       {schedule}
 
       {/* Row 2: メモ */}
-      {note}
+      {note && <div className="px-6 py-2">{note}</div>}
 
       {/* Row 3: オプション */}
-      <div className="flex flex-wrap items-center gap-1 px-4 pt-3 pb-4">{options}</div>
+      <div className="flex flex-wrap items-center gap-1 px-4 pt-3 pb-6">{options}</div>
     </div>
   );
 }

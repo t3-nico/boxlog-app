@@ -102,6 +102,7 @@ export function PlanInspectorContent() {
           endTime={endTime}
           reminderMinutes={reminderMinutes}
           selectedTagId={selectedTagId}
+          onTagChange={handleTagChange}
           recurrenceRule={(() => {
             if (!planId) return null;
             const cache = getCache(planId);
@@ -121,7 +122,6 @@ export function PlanInspectorContent() {
           onStartTimeChange={handleStartTimeChange}
           onEndTimeChange={handleEndTimeChange}
           onReminderChange={handleReminderChange}
-          onTagChange={handleTagChange}
           onRepeatTypeChange={(type) => {
             if (!planId) return;
             updatePlan.mutate({

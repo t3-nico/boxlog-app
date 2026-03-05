@@ -142,7 +142,7 @@ export function InspectorTimeSection({
   const diffDisplay = formatDiffDisplay(diffMinutes);
 
   return (
-    <div className="flex flex-col gap-1 px-4 py-2">
+    <div className="flex flex-col gap-1 px-6 py-2">
       {/* 日付 */}
       <DateNavigatorRow
         label={t('plan.inspector.time.date')}

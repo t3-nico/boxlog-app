@@ -125,6 +125,8 @@
         "noPlanned": "予定なし"
       },
       "note": {
+        "label": "メモ",
+        "placeholder": "メモを追加...",
         "upcomingPlaceholder": "何をやる予定？",
         "pastPlaceholder": "やったことをひとこと..."
       },

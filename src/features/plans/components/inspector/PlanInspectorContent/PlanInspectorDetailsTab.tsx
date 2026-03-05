@@ -3,18 +3,13 @@
 /**
  * Inspector の詳細タブ — 3パターン対応
  *
- * Row 0: タグ（カラードット + タグ名）+ origin バッジ（past のみ）
+ * Row 0: タグ（カラードット + タグ名）+ ⋯ メニュー
  * Row 1: 予定/記録 時間比較セクション
  * Row 2: オプションボタン群
- *
- * 3パターン:
- * 1. upcoming + planned: バッジなし / 予定行 + 「予定と同じ」 / 繰り返し・リマインダー
- * 2. past + planned: 「予定」バッジ / 予定行 + 記録行(diff) / 充実度
- * 3. past + unplanned: 「記録のみ」バッジ / 記録行のみ / 充実度
  */
 
 import type { ReactNode } from 'react';
-import { memo, useMemo } from 'react';
+import { memo } from 'react';
 
 import { useTranslations } from 'next-intl';
 import {
@@ -25,14 +20,12 @@ import {
   InspectorTimeSection,
 } from '../shared';
 
-import { Badge } from '@/components/ui/badge';
 import type {
   EntryOrigin,
   EntryWithTags,
   FulfillmentScore,
   RecurrenceType,
 } from '@/core/types/entry';
-import type { Tag } from '@/core/types/tag';
 import type { EntryState } from '@/lib/entry-status';
 
 import { RecurrenceIconButton } from '../../shared/RecurrenceIconButton';
@@ -47,6 +40,7 @@ interface PlanInspectorDetailsTabProps {
   endTime: string;
   reminderMinutes: number | null;
   selectedTagId: string | null;
+  onTagChange: (tagId: string | null) => void;
   recurrenceRule: string | null;
   recurrenceType: RecurrenceType | null;
   timeConflictError?: boolean;
@@ -55,14 +49,12 @@ interface PlanInspectorDetailsTabProps {
   onStartTimeChange: (time: string) => void;
   onEndTimeChange: (time: string) => void;
   onReminderChange: (minutes: number | null) => void;
-  onTagChange: (tagId: string | null) => void;
   onRepeatTypeChange: (type: string) => void;
   onRecurrenceRuleChange: (rrule: string | null) => void;
   entryState?: EntryState;
   origin?: EntryOrigin;
   fulfillmentScore?: FulfillmentScore | null;
   onFulfillmentChange?: (score: FulfillmentScore | null) => void;
-  availableTags?: Tag[] | undefined;
   // 記録時間（actual）
   actualStart?: string | null;
   actualEnd?: string | null;
@@ -78,6 +70,7 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   endTime,
   reminderMinutes,
   selectedTagId,
+  onTagChange,
   recurrenceRule,
   recurrenceType,
   timeConflictError = false,
@@ -86,14 +79,12 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   onStartTimeChange,
   onEndTimeChange,
   onReminderChange,
-  onTagChange,
   onRepeatTypeChange,
   onRecurrenceRuleChange,
   entryState = 'upcoming',
   origin = 'planned',
   fulfillmentScore,
   onFulfillmentChange,
-  availableTags,
   actualStart = null,
   actualEnd = null,
   onActualStartChange,
@@ -106,33 +97,13 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   // active/past で充実度を表示
   const showFulfillment = entryState !== 'upcoming' && onFulfillmentChange;
 
-  // origin バッジ
-  // upcoming → 「予定」バッジ、past+planned → なし（両行表示で自明）、past+unplanned → 「記録のみ」
-  const originBadge = useMemo(() => {
-    if (entryState === 'upcoming') {
-      return <Badge variant="secondary">{t('common.entry.origin.planned')}</Badge>;
-    }
-    if (origin === 'unplanned') {
-      return <Badge variant="outline">{t('common.entry.origin.unplanned')}</Badge>;
-    }
-    return undefined; // past + planned: 両行表示で自明
-  }, [entryState, origin, t]);
-
-  // メモのプレースホルダー（entryState で出し分け）
-  const notePlaceholder =
-    entryState === 'upcoming'
-      ? t('plan.inspector.note.upcomingPlaceholder')
-      : t('plan.inspector.note.pastPlaceholder');
-
   return (
     <InspectorDetailsLayout
       tagRow={
         <InspectorTagRow
           tagId={selectedTagId}
           onTagChange={onTagChange}
-          originBadge={originBadge}
           menuContent={menuContent}
-          {...(availableTags ? { availableTags } : {})}
         />
       }
       schedule={
@@ -154,9 +125,10 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
       }
       note={
         <InlineNoteSection
+          label={t('plan.inspector.note.label')}
           note={plan.description || ''}
           onNoteChange={(text) => onAutoSave('description', text)}
-          placeholder={notePlaceholder}
+          placeholder={t('plan.inspector.note.placeholder')}
         />
       }
       options={

@@ -232,7 +232,8 @@
     },
     "tags": {
       "add": "Add tag",
-      "change": "Change tag"
+      "change": "Change tag",
+      "noTag": "No tag"
     },
     "theme": {
       "light": "Light Mode",

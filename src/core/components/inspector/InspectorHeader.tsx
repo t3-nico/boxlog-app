@@ -86,7 +86,7 @@ export function InspectorHeader({
   return (
     <div
       className={cn(
-        'sticky top-0 z-10 flex shrink-0 items-center justify-between px-4 pt-4 pb-2',
+        'sticky top-0 z-10 flex shrink-0 items-center justify-between px-6 pt-6 pb-2',
         'bg-card',
       )}
     >
