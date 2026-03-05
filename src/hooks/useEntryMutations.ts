@@ -70,13 +70,15 @@ export function useEntryMutations() {
       const origin =
         input.origin ??
         (input.start_time && isTimePast(input.start_time) ? 'unplanned' : 'planned');
-      const tempEntry = {
+      const tempEntry: Awaited<ReturnType<typeof utils.entries.list.fetch>>[number] = {
         id: tempId,
         title: input.title,
         description: input.description ?? null,
         origin,
         start_time: input.start_time ?? null,
         end_time: input.end_time ?? null,
+        actual_start_time: null,
+        actual_end_time: null,
         duration_minutes: input.duration_minutes ?? null,
         fulfillment_score: input.fulfillment_score ?? null,
         recurrence_type: input.recurrence_type ?? null,

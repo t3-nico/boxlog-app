@@ -16,7 +16,7 @@ export const createPlanSchema = z.object({
   // Google Calendar準拠: 空タイトルを許可（表示時に「（タイトルなし）」）
   title: z.string().max(200, 'validation.title.maxLength'),
   description: z.string().max(10000, 'validation.description.maxLength').optional(), // Markdown対応のため拡張
-  status: planStatusSchema,
+  status: planStatusSchema.optional(), // entries table no longer has status column
   start_time: z.string().datetime().nullable().optional(), // 開始日時（ISO 8601形式）
   end_time: z.string().datetime().nullable().optional(), // 終了日時（ISO 8601形式）
   recurrence_type: recurrenceTypeSchema.optional(), // 繰り返しタイプ（シンプル版）

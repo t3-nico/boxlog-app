@@ -43,31 +43,36 @@ export const statsViewRouter = createTRPCRouter({
 
     // 並列で4つのデータセットを取得
     const [plansResult, recordsResult, prevRecordsResult, tagsResult] = await Promise.all([
-      // 1. 今週の Plans (start_time が期間内)
+      // 1. 今週の planned entries (start_time が期間内)
       supabase
-        .from('plans')
+        .from('entries')
         .select('id, start_time, end_time')
         .eq('user_id', userId)
+        .eq('origin', 'planned')
         .not('start_time', 'is', null)
         .not('end_time', 'is', null)
         .gte('start_time', `${startDate}T00:00:00`)
         .lte('start_time', `${endDate}T23:59:59`),
 
-      // 2. 今週の Records (worked_at が期間内)
+      // 2. 今週の unplanned entries (実績、start_time が期間内)
       supabase
-        .from('records')
-        .select('id, duration_minutes, worked_at')
+        .from('entries')
+        .select('id, duration_minutes, start_time')
         .eq('user_id', userId)
-        .gte('worked_at', startDate)
-        .lte('worked_at', endDate),
+        .eq('origin', 'unplanned')
+        .not('start_time', 'is', null)
+        .gte('start_time', `${startDate}T00:00:00`)
+        .lte('start_time', `${endDate}T23:59:59`),
 
-      // 3. 前週の Records (worked_at が前期間内)
+      // 3. 前週の unplanned entries (実績、start_time が前期間内)
       supabase
-        .from('records')
-        .select('id, duration_minutes, worked_at')
+        .from('entries')
+        .select('id, duration_minutes, start_time')
         .eq('user_id', userId)
-        .gte('worked_at', prevStartDate)
-        .lte('worked_at', prevEndDate),
+        .eq('origin', 'unplanned')
+        .not('start_time', 'is', null)
+        .gte('start_time', `${prevStartDate}T00:00:00`)
+        .lte('start_time', `${prevEndDate}T23:59:59`),
 
       // 4. ユーザーのタグ一覧
       supabase.from('tags').select('id, name, color').eq('user_id', userId),
@@ -82,13 +87,13 @@ export const statsViewRouter = createTRPCRouter({
     if (recordsResult.error) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: `Failed to fetch records: ${recordsResult.error.message}`,
+        message: `Failed to fetch unplanned entries: ${recordsResult.error.message}`,
       });
     }
     if (prevRecordsResult.error) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: `Failed to fetch previous records: ${prevRecordsResult.error.message}`,
+        message: `Failed to fetch previous unplanned entries: ${prevRecordsResult.error.message}`,
       });
     }
     if (tagsResult.error) {
@@ -103,25 +108,25 @@ export const statsViewRouter = createTRPCRouter({
     const prevRecords = prevRecordsResult.data;
     const tags = tagsResult.data;
 
-    // Plan-tag 関連を取得
+    // Entry-tag 関連を取得
     const planIds = plans.map((p) => p.id);
     const recordIds = records.map((r) => r.id);
     const prevRecordIds = prevRecords.map((r) => r.id);
 
     const [planTagsResult, recordTagsResult, prevRecordTagsResult] = await Promise.all([
       planIds.length > 0
-        ? supabase.from('plan_tags').select('plan_id, tag_id').in('plan_id', planIds)
-        : Promise.resolve({ data: [] as Array<{ plan_id: string; tag_id: string }>, error: null }),
+        ? supabase.from('entry_tags').select('entry_id, tag_id').in('entry_id', planIds)
+        : Promise.resolve({ data: [] as Array<{ entry_id: string; tag_id: string }>, error: null }),
       recordIds.length > 0
-        ? supabase.from('record_tags').select('record_id, tag_id').in('record_id', recordIds)
+        ? supabase.from('entry_tags').select('entry_id, tag_id').in('entry_id', recordIds)
         : Promise.resolve({
-            data: [] as Array<{ record_id: string; tag_id: string }>,
+            data: [] as Array<{ entry_id: string; tag_id: string }>,
             error: null,
           }),
       prevRecordIds.length > 0
-        ? supabase.from('record_tags').select('record_id, tag_id').in('record_id', prevRecordIds)
+        ? supabase.from('entry_tags').select('entry_id, tag_id').in('entry_id', prevRecordIds)
         : Promise.resolve({
-            data: [] as Array<{ record_id: string; tag_id: string }>,
+            data: [] as Array<{ entry_id: string; tag_id: string }>,
             error: null,
           }),
     ]);
@@ -129,19 +134,19 @@ export const statsViewRouter = createTRPCRouter({
     if (planTagsResult.error) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: `Failed to fetch plan tags: ${planTagsResult.error.message}`,
+        message: `Failed to fetch entry tags for plans: ${planTagsResult.error.message}`,
       });
     }
     if (recordTagsResult.error) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: `Failed to fetch record tags: ${recordTagsResult.error.message}`,
+        message: `Failed to fetch entry tags for records: ${recordTagsResult.error.message}`,
       });
     }
     if (prevRecordTagsResult.error) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: `Failed to fetch prev record tags: ${prevRecordTagsResult.error.message}`,
+        message: `Failed to fetch entry tags for prev records: ${prevRecordTagsResult.error.message}`,
       });
     }
 
@@ -164,7 +169,7 @@ export const statsViewRouter = createTRPCRouter({
           totalPlannedMinutes += minutes;
 
           const tagIdsForPlan = planTags
-            .filter((pt) => pt.plan_id === plan.id)
+            .filter((pt) => pt.entry_id === plan.id)
             .map((pt) => pt.tag_id);
 
           if (tagIdsForPlan.length === 0) {
@@ -192,7 +197,7 @@ export const statsViewRouter = createTRPCRouter({
         totalActualMinutes += minutes;
 
         const tagIdsForRecord = recordTags
-          .filter((rt) => rt.record_id === record.id)
+          .filter((rt) => rt.entry_id === record.id)
           .map((rt) => rt.tag_id);
 
         if (tagIdsForRecord.length === 0) {
@@ -218,7 +223,7 @@ export const statsViewRouter = createTRPCRouter({
         totalPreviousActualMinutes += minutes;
 
         const tagIdsForRecord = prevRecordTags
-          .filter((rt) => rt.record_id === record.id)
+          .filter((rt) => rt.entry_id === record.id)
           .map((rt) => rt.tag_id);
 
         if (tagIdsForRecord.length === 0) {
@@ -292,7 +297,7 @@ export const statsViewRouter = createTRPCRouter({
     }
     let todayActualMinutes = 0;
     for (const record of records) {
-      if (record.worked_at === input.todayDate) {
+      if (record.start_time?.startsWith(input.todayDate)) {
         todayActualMinutes += record.duration_minutes ?? 0;
       }
     }

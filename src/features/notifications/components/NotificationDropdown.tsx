@@ -28,10 +28,10 @@ import { NotificationItem } from './NotificationItem';
 interface NotificationData {
   id: string;
   type: NotificationType;
-  plan_id: string | null;
+  entry_id: string | null;
   is_read: boolean;
   created_at: string;
-  plans?: { title: string } | null;
+  entries?: { title: string } | null;
 }
 
 interface NotificationDropdownProps {
@@ -161,7 +161,7 @@ export function NotificationDropdown({
                     key={notification.id}
                     id={notification.id}
                     type={notification.type}
-                    planTitle={notification.plans?.title ?? undefined}
+                    planTitle={notification.entries?.title ?? undefined}
                     isRead={notification.is_read}
                     createdAt={notification.created_at}
                     locale={locale as 'ja' | 'en'}

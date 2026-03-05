@@ -31,7 +31,7 @@ export const instancesRouter = createTRPCRouter({
 
       // Verify plan ownership (user's plans only)
       const { data: userPlans, error: plansError } = await supabase
-        .from('plans')
+        .from('entries')
         .select('id')
         .eq('user_id', userId)
         .in('id', planIds);
@@ -48,8 +48,8 @@ export const instancesRouter = createTRPCRouter({
         return [];
       }
 
-      // Get exception info from plan_instances
-      let query = supabase.from('plan_instances').select('*').in('plan_id', validPlanIds);
+      // Get exception info from entry_instances
+      let query = supabase.from('entry_instances').select('*').in('entry_id', validPlanIds);
 
       // Date range filter
       if (startDate) {
@@ -100,7 +100,7 @@ export const instancesRouter = createTRPCRouter({
 
       // Verify plan ownership
       const { data: plan, error: planError } = await supabase
-        .from('plans')
+        .from('entries')
         .select('id')
         .eq('id', input.planId)
         .eq('user_id', userId)
@@ -115,10 +115,10 @@ export const instancesRouter = createTRPCRouter({
 
       // Upsert: update if exists for same date, insert if not
       const { data, error } = await supabase
-        .from('plan_instances')
+        .from('entry_instances')
         .upsert(
           {
-            plan_id: input.planId,
+            entry_id: input.planId,
             instance_date: input.instanceDate,
             exception_type: input.exceptionType,
             title: input.title ?? null,
@@ -128,7 +128,7 @@ export const instancesRouter = createTRPCRouter({
             original_date: input.originalDate ?? null,
           },
           {
-            onConflict: 'plan_id,instance_date',
+            onConflict: 'entry_id,instance_date',
           },
         )
         .select()
@@ -160,7 +160,7 @@ export const instancesRouter = createTRPCRouter({
 
       // Verify plan ownership
       const { data: plan, error: planError } = await supabase
-        .from('plans')
+        .from('entries')
         .select('id')
         .eq('id', input.planId)
         .eq('user_id', userId)
@@ -174,9 +174,9 @@ export const instancesRouter = createTRPCRouter({
       }
 
       const { error } = await supabase
-        .from('plan_instances')
+        .from('entry_instances')
         .delete()
-        .eq('plan_id', input.planId)
+        .eq('entry_id', input.planId)
         .eq('instance_date', input.instanceDate);
 
       if (error) {

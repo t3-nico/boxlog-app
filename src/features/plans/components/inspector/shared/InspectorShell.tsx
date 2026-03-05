@@ -12,8 +12,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
-import { DraggableInspector } from './DraggableInspector';
-
 // モバイルDrawerのスナップポイント
 // Apple HIG準拠: medium(50%) → large(97% - セーフエリア考慮)
 const SNAP_POINTS = [0.5, 0.97] as const;
@@ -122,10 +120,10 @@ export function InspectorShell({
     );
   }
 
-  // PC: Draggable Popover
+  // PC: フローティングパネル
   return (
-    <DraggableInspector onClose={onClose} title={title}>
+    <div role="dialog" aria-label={title} className="bg-card z-modal rounded-lg border shadow-lg">
       {children}
-    </DraggableInspector>
+    </div>
   );
 }

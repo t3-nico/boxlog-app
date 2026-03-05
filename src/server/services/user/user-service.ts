@@ -64,11 +64,9 @@ export interface ExportDataResult {
   userId: string;
   data: {
     profile: Row<'profiles'> | null;
-    plans: Row<'plans'>[];
+    entries: Row<'entries'>[];
     tags: Row<'tags'>[];
-    records: Row<'records'>[];
-    planTags: Row<'plan_tags'>[];
-    recordTags: Row<'record_tags'>[];
+    entryTags: Row<'entry_tags'>[];
     notificationPreferences: Row<'notification_preferences'> | null;
     userSettings: Row<'user_settings'> | null;
   };
@@ -83,7 +81,7 @@ export function createUserService(supabase: SupabaseClient<Database>) {
      * アカウント即時削除
      *
      * auth.users を削除すると CASCADE DELETE により
-     * plans, records, tags, notifications 等すべてのユーザーデータが自動削除される
+     * entries, tags, notifications 等すべてのユーザーデータが自動削除される
      */
     async deleteAccount(options: DeleteAccountOptions): Promise<DeleteAccountResult> {
       const { userId, userEmail, password, confirmText } = options;
@@ -159,20 +157,16 @@ export function createUserService(supabase: SupabaseClient<Database>) {
 
       const [
         profileResult,
-        plansResult,
+        entriesResult,
         tagsResult,
-        recordsResult,
-        planTagsResult,
-        recordTagsResult,
+        entryTagsResult,
         notificationPreferencesResult,
         userSettingsResult,
       ] = await Promise.all([
         supabase.from('profiles').select('*').eq('id', userId).single(),
-        supabase.from('plans').select('*').eq('user_id', userId),
+        supabase.from('entries').select('*').eq('user_id', userId),
         supabase.from('tags').select('*').eq('user_id', userId),
-        supabase.from('records').select('*').eq('user_id', userId),
-        supabase.from('plan_tags').select('*').eq('user_id', userId),
-        supabase.from('record_tags').select('*').eq('user_id', userId),
+        supabase.from('entry_tags').select('*').eq('user_id', userId),
         supabase.from('notification_preferences').select('*').eq('user_id', userId).single(),
         supabase.from('user_settings').select('*').eq('user_id', userId).single(),
       ]);
@@ -183,10 +177,10 @@ export function createUserService(supabase: SupabaseClient<Database>) {
           `Profile fetch error: ${profileResult.error.message}`,
         );
       }
-      if (plansResult.error) {
+      if (entriesResult.error) {
         throw new UserServiceError(
           'EXPORT_FAILED',
-          `Plans fetch error: ${plansResult.error.message}`,
+          `Entries fetch error: ${entriesResult.error.message}`,
         );
       }
       if (tagsResult.error) {
@@ -195,22 +189,10 @@ export function createUserService(supabase: SupabaseClient<Database>) {
           `Tags fetch error: ${tagsResult.error.message}`,
         );
       }
-      if (recordsResult.error) {
+      if (entryTagsResult.error) {
         throw new UserServiceError(
           'EXPORT_FAILED',
-          `Records fetch error: ${recordsResult.error.message}`,
-        );
-      }
-      if (planTagsResult.error) {
-        throw new UserServiceError(
-          'EXPORT_FAILED',
-          `Plan tags fetch error: ${planTagsResult.error.message}`,
-        );
-      }
-      if (recordTagsResult.error) {
-        throw new UserServiceError(
-          'EXPORT_FAILED',
-          `Record tags fetch error: ${recordTagsResult.error.message}`,
+          `Entry tags fetch error: ${entryTagsResult.error.message}`,
         );
       }
 
@@ -219,11 +201,9 @@ export function createUserService(supabase: SupabaseClient<Database>) {
         userId,
         data: {
           profile: profileResult.data || null,
-          plans: plansResult.data || [],
+          entries: entriesResult.data || [],
           tags: tagsResult.data || [],
-          records: recordsResult.data || [],
-          planTags: planTagsResult.data || [],
-          recordTags: recordTagsResult.data || [],
+          entryTags: entryTagsResult.data || [],
           notificationPreferences: notificationPreferencesResult.data || null,
           userSettings: userSettingsResult.data || null,
         },

@@ -273,32 +273,41 @@ export function mockSupabaseError(
 }
 
 /**
- * テスト用のプランデータを生成
+ * テスト用のエントリデータを生成
  */
-export function createMockPlan(
-  overrides: Partial<Database['public']['Tables']['plans']['Row']> = {},
-): Database['public']['Tables']['plans']['Row'] {
+export function createMockEntry(
+  overrides: Partial<Database['public']['Tables']['entries']['Row']> = {},
+): Database['public']['Tables']['entries']['Row'] {
   const now = new Date().toISOString();
   return {
-    id: 'test-plan-id',
+    id: 'test-entry-id',
     user_id: 'test-user-id',
-    title: 'Test Plan',
+    title: 'Test Entry',
     description: null,
-    status: 'open',
+    origin: 'planned',
     start_time: null,
     end_time: null,
+    actual_start_time: null,
+    actual_end_time: null,
+    duration_minutes: null,
+    fulfillment_score: null,
     recurrence_type: 'none',
     recurrence_rule: null,
     recurrence_end_date: null,
     reminder_minutes: null,
     reminder_at: null,
     reminder_sent: false,
-    completed_at: null,
+    reviewed_at: null,
     created_at: now,
     updated_at: now,
     ...overrides,
   };
 }
+
+/**
+ * テスト用のプランデータを生成（後方互換エイリアス）
+ */
+export const createMockPlan = createMockEntry;
 
 /**
  * テスト用のタグデータを生成
@@ -311,6 +320,7 @@ export function createMockTag(
     id: 'test-tag-id',
     user_id: 'test-user-id',
     name: 'Test Tag',
+    description: null,
     color: 'blue',
     is_active: true,
     sort_order: 0,

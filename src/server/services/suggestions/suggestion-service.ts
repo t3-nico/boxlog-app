@@ -41,54 +41,38 @@ export class SuggestionService {
   /**
    * 最近のユニークなタイトル+タグ組み合わせを取得
    *
-   * Plans と Records の両方から取得し、タイトルでグループ化して
-   * 使用頻度と最新日時でソートする
+   * entries テーブルから origin で plan/record を区別して取得し、
+   * タイトルでグループ化して使用頻度と最新日時でソートする
    */
   async recentTitles(options: RecentTitlesOptions): Promise<RecentEntry[]> {
     const { userId, search, limit = 20, type } = options;
 
-    // Plans からタイトル+タグを取得（type='record' の場合はスキップ）
-    const plansPromise =
-      type === 'record'
-        ? Promise.resolve({ data: [], error: null })
-        : (() => {
-            let q = this.supabase
-              .from('plans')
-              .select('title, created_at, plan_tags(tag_id)')
-              .eq('user_id', userId)
-              .not('title', 'eq', '')
-              .order('created_at', { ascending: false })
-              .limit(50);
-            if (search) q = q.ilike('title', `%${search}%`);
-            return q;
-          })();
+    let query = this.supabase
+      .from('entries')
+      .select('title, created_at, origin, entry_tags(tag_id)')
+      .eq('user_id', userId)
+      .not('title', 'eq', '')
+      .order('created_at', { ascending: false })
+      .limit(100);
 
-    // Records からタイトル+タグを取得（type='plan' の場合はスキップ）
-    const recordsPromise =
-      type === 'plan'
-        ? Promise.resolve({ data: [], error: null })
-        : (() => {
-            let q = this.supabase
-              .from('records')
-              .select('title, created_at, record_tags(tag_id)')
-              .eq('user_id', userId)
-              .not('title', 'eq', '')
-              .order('created_at', { ascending: false })
-              .limit(50);
-            if (search) q = q.ilike('title', `%${search}%`);
-            return q;
-          })();
-
-    const [plansResult, recordsResult] = await Promise.all([plansPromise, recordsPromise]);
-
-    if (plansResult.error) {
-      throw new SuggestionServiceError('FETCH_FAILED', plansResult.error.message);
-    }
-    if (recordsResult.error) {
-      throw new SuggestionServiceError('FETCH_FAILED', recordsResult.error.message);
+    // type フィルター: origin で絞り込み
+    if (type === 'plan') {
+      query = query.eq('origin', 'planned');
+    } else if (type === 'record') {
+      query = query.eq('origin', 'unplanned');
     }
 
-    // 統合してタイトルでグループ化
+    if (search) {
+      query = query.ilike('title', `%${search}%`);
+    }
+
+    const { data: entriesData, error } = await query;
+
+    if (error) {
+      throw new SuggestionServiceError('FETCH_FAILED', error.message);
+    }
+
+    // タイトルでグループ化
     const titleMap = new Map<
       string,
       {
@@ -99,48 +83,26 @@ export class SuggestionService {
       }
     >();
 
-    // Plans を処理
-    for (const plan of plansResult.data) {
-      if (!plan.title || !plan.created_at) continue;
-      const existing = titleMap.get(plan.title);
-      const tagIds = (plan.plan_tags ?? []).map((t) => t.tag_id);
-      const createdAt = plan.created_at;
+    for (const entry of entriesData ?? []) {
+      if (!entry.title || !entry.created_at) continue;
+      const existing = titleMap.get(entry.title);
+      const tagIds = ((entry.entry_tags as unknown as { tag_id: string }[]) ?? []).map(
+        (t) => t.tag_id,
+      );
+      const createdAt = entry.created_at;
+      const source: 'plan' | 'record' = entry.origin === 'planned' ? 'plan' : 'record';
 
       if (existing) {
         existing.count += 1;
         if (createdAt > existing.lastUsedAt) {
           existing.lastUsedAt = createdAt;
           existing.tagIds = tagIds;
-          existing.source = 'plan';
+          existing.source = source;
         }
       } else {
-        titleMap.set(plan.title, {
+        titleMap.set(entry.title, {
           tagIds,
-          source: 'plan',
-          lastUsedAt: createdAt,
-          count: 1,
-        });
-      }
-    }
-
-    // Records を処理
-    for (const record of recordsResult.data) {
-      if (!record.title || !record.created_at) continue;
-      const existing = titleMap.get(record.title);
-      const tagIds = (record.record_tags ?? []).map((t) => t.tag_id);
-      const createdAt = record.created_at;
-
-      if (existing) {
-        existing.count += 1;
-        if (createdAt > existing.lastUsedAt) {
-          existing.lastUsedAt = createdAt;
-          existing.tagIds = tagIds;
-          existing.source = 'record';
-        }
-      } else {
-        titleMap.set(record.title, {
-          tagIds,
-          source: 'record',
+          source,
           lastUsedAt: createdAt,
           count: 1,
         });

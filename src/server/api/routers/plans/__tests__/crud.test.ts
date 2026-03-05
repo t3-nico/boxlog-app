@@ -97,7 +97,7 @@ describe('plansCrudRouter', () => {
     });
 
     it('should apply status filter', async () => {
-      const mockPlans = [createMockPlan({ id: 'plan-1', status: 'open' })];
+      const mockPlans = [createMockPlan({ id: 'plan-1' })];
 
       const mockSupabase = createMockSupabase();
       const mockQuery = setupMockQuery(mockSupabase.from, 'plans', mockPlans);

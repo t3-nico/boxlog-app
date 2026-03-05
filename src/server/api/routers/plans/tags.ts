@@ -35,7 +35,7 @@ export const tagsRouter = createTRPCRouter({
 
     // プランの所有権チェック
     const { data: plan, error: planError } = await supabase
-      .from('plans')
+      .from('entries')
       .select('id')
       .eq('id', planId)
       .eq('user_id', userId)
@@ -65,22 +65,22 @@ export const tagsRouter = createTRPCRouter({
 
     // 既存の関連をチェック（重複の場合はアクティビティ記録しない）
     const { data: existingRelation } = await supabase
-      .from('plan_tags')
-      .select('plan_id')
-      .eq('plan_id', planId)
+      .from('entry_tags')
+      .select('entry_id')
+      .eq('entry_id', planId)
       .eq('tag_id', tagId)
       .eq('user_id', userId)
       .maybeSingle();
 
-    // plan_tagsに追加（upsertで重複を無視）
-    const { error } = await supabase.from('plan_tags').upsert(
+    // entry_tagsに追加（upsertで重複を無視）
+    const { error } = await supabase.from('entry_tags').upsert(
       {
         user_id: userId,
-        plan_id: planId,
+        entry_id: planId,
         tag_id: tagId,
       },
       {
-        onConflict: 'user_id,plan_id,tag_id',
+        onConflict: 'user_id,entry_id,tag_id',
         ignoreDuplicates: true,
       },
     );
@@ -94,8 +94,8 @@ export const tagsRouter = createTRPCRouter({
 
     // 新規追加の場合のみアクティビティを記録
     if (!existingRelation) {
-      await supabase.from('plan_activities').insert({
-        plan_id: planId,
+      await supabase.from('entry_activities').insert({
+        entry_id: planId,
         user_id: userId,
         action_type: 'tag_added',
         field_name: 'tag',
@@ -115,7 +115,7 @@ export const tagsRouter = createTRPCRouter({
 
     // プランの所有権チェック
     const { data: plan, error: planError } = await supabase
-      .from('plans')
+      .from('entries')
       .select('id')
       .eq('id', planId)
       .eq('user_id', userId)
@@ -136,11 +136,11 @@ export const tagsRouter = createTRPCRouter({
       .eq('user_id', userId)
       .single();
 
-    // plan_tagsから削除
+    // entry_tagsから削除
     const { error, count } = await supabase
-      .from('plan_tags')
+      .from('entry_tags')
       .delete()
-      .eq('plan_id', planId)
+      .eq('entry_id', planId)
       .eq('tag_id', tagId)
       .eq('user_id', userId);
 
@@ -153,8 +153,8 @@ export const tagsRouter = createTRPCRouter({
 
     // 削除が成功した場合のみアクティビティを記録
     if ((count ?? 0) > 0 && tag) {
-      await supabase.from('plan_activities').insert({
-        plan_id: planId,
+      await supabase.from('entry_activities').insert({
+        entry_id: planId,
         user_id: userId,
         action_type: 'tag_removed',
         field_name: 'tag',
@@ -174,7 +174,7 @@ export const tagsRouter = createTRPCRouter({
 
     // プランの所有権チェック
     const { data: plan, error: planError } = await supabase
-      .from('plans')
+      .from('entries')
       .select('id')
       .eq('id', planId)
       .eq('user_id', userId)
@@ -189,9 +189,9 @@ export const tagsRouter = createTRPCRouter({
 
     // 既存のタグIDを取得（アクティビティ記録用）
     const { data: existingRelations } = await supabase
-      .from('plan_tags')
+      .from('entry_tags')
       .select('tag_id')
-      .eq('plan_id', planId)
+      .eq('entry_id', planId)
       .eq('user_id', userId);
 
     const existingTagIds = new Set(existingRelations?.map((r) => r.tag_id) ?? []);
@@ -246,9 +246,9 @@ export const tagsRouter = createTRPCRouter({
 
     // 既存の関連をすべて削除
     const { error: deleteError } = await supabase
-      .from('plan_tags')
+      .from('entry_tags')
       .delete()
-      .eq('plan_id', planId)
+      .eq('entry_id', planId)
       .eq('user_id', userId);
 
     if (deleteError) {
@@ -260,13 +260,13 @@ export const tagsRouter = createTRPCRouter({
 
     // 新しい関連を追加
     if (tagIds.length > 0) {
-      const planTagsToInsert = tagIds.map((tagId) => ({
+      const entryTagsToInsert = tagIds.map((tagId) => ({
         user_id: userId,
-        plan_id: planId,
+        entry_id: planId,
         tag_id: tagId,
       }));
 
-      const { error: insertError } = await supabase.from('plan_tags').insert(planTagsToInsert);
+      const { error: insertError } = await supabase.from('entry_tags').insert(entryTagsToInsert);
 
       if (insertError) {
         throw new TRPCError({
@@ -279,27 +279,27 @@ export const tagsRouter = createTRPCRouter({
     // 追加されたタグのアクティビティを記録
     if (addedTagIds.length > 0) {
       const activityRecords = addedTagIds.map((tagId) => ({
-        plan_id: planId,
+        entry_id: planId,
         user_id: userId,
         action_type: 'tag_added' as const,
         field_name: 'tag',
         new_value: validTagsMap.get(tagId) ?? tagId,
       }));
 
-      await supabase.from('plan_activities').insert(activityRecords);
+      await supabase.from('entry_activities').insert(activityRecords);
     }
 
     // 削除されたタグのアクティビティを記録
     if (removedTagIds.length > 0) {
       const removedActivityRecords = removedTagIds.map((tagId) => ({
-        plan_id: planId,
+        entry_id: planId,
         user_id: userId,
         action_type: 'tag_removed' as const,
         field_name: 'tag',
         old_value: removedTagsMap.get(tagId) ?? tagId,
       }));
 
-      await supabase.from('plan_activities').insert(removedActivityRecords);
+      await supabase.from('entry_activities').insert(removedActivityRecords);
     }
 
     return { success: true, count: tagIds.length };

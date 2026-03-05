@@ -425,7 +425,7 @@ export class TagService {
       throw new TagServiceError('UNGROUP_CONFLICTS', conflicts.map((c) => c.suffix).join(', '));
     }
 
-    // 衝突タグをマージ（既存の merge RPC で plan_tags 移行 + ソース削除）
+    // 衝突タグをマージ（既存の merge RPC で entry_tags 移行 + ソース削除）
     // NOTE: 複数マージのうち途中で失敗した場合、処理済み分はロールバックされない。
     // merge() は RPC ベースのトランザクションのため個別は安全だが、全体は非トランザクション。
     let mergedCount = 0;
@@ -502,7 +502,7 @@ export class TagService {
    *
    * 例: prefix="開発" の場合
    *   "開発:api", "開発:frontend" を全削除
-   *   関連する plan_tags も先に削除
+   *   関連する entry_tags も先に削除
    *
    * @param options - userId, prefix
    * @returns 削除されたタグ数
@@ -533,16 +533,16 @@ export class TagService {
 
     const tagIds = matchingTags.map((t) => t.id);
 
-    // plan_tags の関連付けを先に削除（FK制約のため）
+    // entry_tags の関連付けを先に削除（FK制約のため）
     const { error: planTagsError } = await this.supabase
-      .from('plan_tags')
+      .from('entry_tags')
       .delete()
       .in('tag_id', tagIds);
 
     if (planTagsError) {
       throw new TagServiceError(
         'DELETE_FAILED',
-        `Failed to delete plan_tags associations: ${planTagsError.message}`,
+        `Failed to delete entry_tags associations: ${planTagsError.message}`,
       );
     }
 
@@ -619,8 +619,8 @@ export class TagService {
     // 所有権チェック
     const tag = await this.getById({ userId, tagId });
 
-    // plan_tagsの関連付けを先に削除
-    await this.supabase.from('plan_tags').delete().eq('tag_id', tagId);
+    // entry_tagsの関連付けを先に削除
+    await this.supabase.from('entry_tags').delete().eq('tag_id', tagId);
 
     // タグ削除
     const { error } = await this.supabase.from('tags').delete().eq('id', tagId);
