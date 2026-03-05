@@ -104,6 +104,9 @@ describe('mutationUtils', () => {
           getById: { invalidate: vi.fn() },
           getCumulativeTime: { invalidate: vi.fn() },
         },
+        entries: {
+          getCumulativeTime: { invalidate: vi.fn() },
+        },
       };
 
       await invalidateEntityCaches(mockUtils as unknown as TRPCUtils, 'plans');
@@ -111,7 +114,7 @@ describe('mutationUtils', () => {
       expect(mockUtils.plans.list.invalidate).toHaveBeenCalledWith(undefined, {
         refetchType: 'active',
       });
-      expect(mockUtils.plans.getCumulativeTime.invalidate).toHaveBeenCalled();
+      expect(mockUtils.entries.getCumulativeTime.invalidate).toHaveBeenCalled();
     });
 
     it('entityId 指定時に個別キャッシュも無効化する', async () => {
@@ -119,6 +122,9 @@ describe('mutationUtils', () => {
         plans: {
           list: { invalidate: vi.fn() },
           getById: { invalidate: vi.fn() },
+          getCumulativeTime: { invalidate: vi.fn() },
+        },
+        entries: {
           getCumulativeTime: { invalidate: vi.fn() },
         },
       };
@@ -152,6 +158,9 @@ describe('mutationUtils', () => {
       const mockUtils = {
         plans: {
           list: { invalidate: vi.fn() },
+          getCumulativeTime: { invalidate: vi.fn() },
+        },
+        entries: {
           getCumulativeTime: { invalidate: vi.fn() },
         },
       };

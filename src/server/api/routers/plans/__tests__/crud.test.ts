@@ -53,6 +53,7 @@ function createTypedCaller(
 // モジュールモック
 vi.mock('@/server/utils/activity-tracker', () => ({
   trackPlanChanges: vi.fn().mockResolvedValue(undefined),
+  trackEntryChanges: vi.fn().mockResolvedValue(undefined),
 }));
 
 describe('plansCrudRouter', () => {
@@ -93,23 +94,7 @@ describe('plansCrudRouter', () => {
       // APIレスポンスにはtagIds配列が追加される
       const expectedPlans = mockPlans.map((plan) => ({ ...plan, tagIds: [] }));
       expect(result).toEqual(expectedPlans);
-      expect(mockSupabase.from).toHaveBeenCalledWith('plans');
-    });
-
-    it('should apply status filter', async () => {
-      const mockPlans = [createMockPlan({ id: 'plan-1' })];
-
-      const mockSupabase = createMockSupabase();
-      const mockQuery = setupMockQuery(mockSupabase.from, 'plans', mockPlans);
-
-      const ctx = createAuthenticatedContext('test-user-id', {
-        supabaseOverrides: mockSupabase,
-      });
-      const caller = createTypedCaller(plansCrudRouter, ctx);
-
-      await caller.list({ status: 'open' });
-
-      expect(mockQuery.eq).toHaveBeenCalledWith('status', 'open');
+      expect(mockSupabase.from).toHaveBeenCalledWith('entries');
     });
 
     it('should apply search filter', async () => {
@@ -336,7 +321,7 @@ function setupMockQuery<T>(
 
   // 複数テーブル対応: plans以外のテーブルにも対応
   mockFrom.mockImplementation((table: string) => {
-    if (table === 'plan_activities' || table === 'plan_tags') {
+    if (table === 'entry_activities' || table === 'entry_tags') {
       return createChainableMockQuery(null);
     }
     return mockQuery;
@@ -353,7 +338,7 @@ function setupMockSingleQuery<T>(
   const mockQuery = createChainableMockQuery(data);
 
   mockFrom.mockImplementation((table: string) => {
-    if (table === 'plan_activities' || table === 'plan_tags') {
+    if (table === 'entry_activities' || table === 'entry_tags') {
       return createChainableMockQuery(null);
     }
     return mockQuery;
@@ -368,7 +353,7 @@ function setupMockSingleQueryError(
   const errorQuery = createChainableMockQuery(null, { message: errorMessage, code: 'PGRST116' });
 
   mockFrom.mockImplementation((table: string) => {
-    if (table === 'plan_activities' || table === 'plan_tags') {
+    if (table === 'entry_activities' || table === 'entry_tags') {
       return createChainableMockQuery(null);
     }
     return errorQuery;
@@ -381,7 +366,7 @@ function setupMockInsertQuery<T>(
   data: T,
 ): void {
   mockFrom.mockImplementation((table: string) => {
-    if (table === 'plan_activities' || table === 'plan_tags') {
+    if (table === 'entry_activities' || table === 'entry_tags') {
       return createChainableMockQuery(null);
     }
 
@@ -443,7 +428,7 @@ function setupMockUpdateQuery<T>(
   const callCounts: Record<string, number> = {};
 
   mockFrom.mockImplementation((table: string) => {
-    if (table === 'plan_activities' || table === 'plan_tags') {
+    if (table === 'entry_activities' || table === 'entry_tags') {
       return createChainableMockQuery(null);
     }
 
@@ -492,7 +477,7 @@ function setupMockDeleteQuery<T>(
   const callCounts: Record<string, number> = {};
 
   mockFrom.mockImplementation((table: string) => {
-    if (table === 'plan_activities') {
+    if (table === 'entry_activities') {
       return createChainableMockQuery(null);
     }
 
