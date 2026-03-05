@@ -177,6 +177,13 @@
       "deleting": "削除中...",
       "permanentDelete": "完全に削除"
     },
+    "deleteStrategy": {
+      "usedByEntries": "このタグは{count}件のエントリに使用されています",
+      "deleteEntries": "タグと一緒にエントリも削除する",
+      "reassign": "エントリを別のタグに付け替える",
+      "selectTarget": "付け替え先のタグを選択",
+      "searchTags": "タグを検索..."
+    },
     "validation": {
       "nameRequired": "タグ名は必須です",
       "nameEmpty": "タグ名を入力してください",

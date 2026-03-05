@@ -1,0 +1,188 @@
+import { useState } from 'react';
+
+import type { Meta, StoryObj } from '@storybook/react-vite';
+
+import type { Tag } from '@/core/types/tag';
+
+import { TagDeleteStrategyDialog } from '@/components/common/TagDeleteStrategyDialog';
+import { Button } from '@/components/ui/button';
+
+const mockTags: Tag[] = [
+  {
+    id: '1',
+    name: 'Work',
+    color: 'blue',
+    user_id: 'u',
+    is_active: true,
+    sort_order: 0,
+    created_at: null,
+    updated_at: null,
+  },
+  {
+    id: '2',
+    name: 'Personal',
+    color: 'green',
+    user_id: 'u',
+    is_active: true,
+    sort_order: 1,
+    created_at: null,
+    updated_at: null,
+  },
+  {
+    id: '3',
+    name: 'Meeting',
+    color: 'violet',
+    user_id: 'u',
+    is_active: true,
+    sort_order: 2,
+    created_at: null,
+    updated_at: null,
+  },
+  {
+    id: '4',
+    name: 'Exercise',
+    color: 'orange',
+    user_id: 'u',
+    is_active: true,
+    sort_order: 3,
+    created_at: null,
+    updated_at: null,
+  },
+  {
+    id: '5',
+    name: 'Study',
+    color: 'indigo',
+    user_id: 'u',
+    is_active: true,
+    sort_order: 4,
+    created_at: null,
+    updated_at: null,
+  },
+  {
+    id: '6',
+    name: 'Hobby',
+    color: 'pink',
+    user_id: 'u',
+    is_active: true,
+    sort_order: 5,
+    created_at: null,
+    updated_at: null,
+  },
+  {
+    id: '7',
+    name: 'Commute',
+    color: 'teal',
+    user_id: 'u',
+    is_active: true,
+    sort_order: 6,
+    created_at: null,
+    updated_at: null,
+  },
+];
+
+const meta = {
+  title: 'Features/Tags/TagDeleteStrategyDialog',
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
+} satisfies Meta;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+/**
+ * エントリ数件のタグ削除。
+ * RadioGroup で「エントリも削除」or「別タグに付け替え」を選択。
+ */
+export const FewEntries: Story = {
+  render: () => {
+    function Demo() {
+      const [open, setOpen] = useState(false);
+
+      return (
+        <>
+          <Button variant="outline" onClick={() => setOpen(true)}>
+            Delete &quot;Work&quot; tag
+          </Button>
+          <TagDeleteStrategyDialog
+            open={open}
+            onClose={() => setOpen(false)}
+            onConfirm={async (_strategy, _targetTagId) => {
+              await new Promise((r) => setTimeout(r, 1000));
+              setOpen(false);
+            }}
+            tagName="Work"
+            entryCount={3}
+            availableTags={mockTags.filter((t) => t.id !== '1')}
+          />
+        </>
+      );
+    }
+    return <Demo />;
+  },
+};
+
+/**
+ * タグが多い場合（検索バー表示）。
+ * availableTags が6件以上で検索UIが出現する。
+ */
+export const ManyTags: Story = {
+  render: () => {
+    function Demo() {
+      const [open, setOpen] = useState(false);
+
+      return (
+        <>
+          <Button variant="outline" onClick={() => setOpen(true)}>
+            Delete &quot;Meeting&quot; tag (many reassign targets)
+          </Button>
+          <TagDeleteStrategyDialog
+            open={open}
+            onClose={() => setOpen(false)}
+            onConfirm={async () => {
+              await new Promise((r) => setTimeout(r, 1000));
+              setOpen(false);
+            }}
+            tagName="Meeting"
+            entryCount={12}
+            availableTags={mockTags.filter((t) => t.id !== '3')}
+          />
+        </>
+      );
+    }
+    return <Demo />;
+  },
+};
+
+/**
+ * 付け替え先タグが1件のみ。
+ * 検索バーは非表示、選択肢が限られる状態。
+ */
+export const SingleReassignTarget: Story = {
+  render: () => {
+    function Demo() {
+      const [open, setOpen] = useState(false);
+
+      return (
+        <>
+          <Button variant="outline" onClick={() => setOpen(true)}>
+            Delete tag (1 reassign target)
+          </Button>
+          <TagDeleteStrategyDialog
+            open={open}
+            onClose={() => setOpen(false)}
+            onConfirm={async () => {
+              await new Promise((r) => setTimeout(r, 1000));
+              setOpen(false);
+            }}
+            tagName="Personal"
+            entryCount={5}
+            availableTags={[mockTags[0]!]}
+          />
+        </>
+      );
+    }
+    return <Demo />;
+  },
+};

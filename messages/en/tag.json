@@ -177,6 +177,13 @@
       "deleting": "Deleting...",
       "permanentDelete": "Permanently Delete"
     },
+    "deleteStrategy": {
+      "usedByEntries": "This tag is used by {count, plural, one {1 entry} other {# entries}}",
+      "deleteEntries": "Delete entries along with the tag",
+      "reassign": "Reassign entries to another tag",
+      "selectTarget": "Select target tag",
+      "searchTags": "Search tags..."
+    },
     "validation": {
       "nameRequired": "Tag name is required",
       "nameEmpty": "Please enter a tag name",

@@ -36,6 +36,8 @@ interface ConfirmDialogProps {
   loadingLabel?: string;
   /** ダイアログの最大幅（px単位、省略時は448px） */
   maxWidth?: number;
+  /** 確認ボタンを無効化（外部の条件が満たされていない場合） */
+  confirmDisabled?: boolean;
 }
 
 /**
@@ -87,6 +89,7 @@ export function ConfirmDialog({
   icon: Icon = AlertTriangle,
   loadingLabel,
   maxWidth = 448,
+  confirmDisabled = false,
 }: ConfirmDialogProps) {
   const t = useTranslations();
   const [isLoading, setIsLoading] = useState(false);
@@ -200,7 +203,7 @@ export function ConfirmDialog({
           <Button
             variant={confirmButtonVariant}
             onClick={handleConfirm}
-            disabled={isLoading}
+            disabled={isLoading || confirmDisabled}
             className={confirmButtonClass}
           >
             {isLoading ? resolvedLoadingLabel : resolvedConfirmLabel}

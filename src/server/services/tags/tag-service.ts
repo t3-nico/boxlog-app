@@ -502,16 +502,18 @@ export class TagService {
    *
    * 例: prefix="開発" の場合
    *   "開発:api", "開発:frontend" を全削除
-   *   関連する entry_tags も先に削除
+   *   関連する entry_tags + entries も処理
    *
-   * @param options - userId, prefix
+   * @param options - userId, prefix, strategy（任意）, targetTagId（reassign時必須）
    * @returns 削除されたタグ数
    */
   async deleteGroup(options: {
     userId: string;
     prefix: string;
+    strategy?: TagDeleteStrategy;
+    targetTagId?: string;
   }): Promise<{ deletedCount: number }> {
-    const { userId, prefix } = options;
+    const { userId, prefix, strategy, targetTagId } = options;
 
     // prefix: で始まるタグを全取得
     const { data: matchingTags, error: fetchError } = await this.supabase
@@ -533,17 +535,48 @@ export class TagService {
 
     const tagIds = matchingTags.map((t) => t.id);
 
-    // entry_tags の関連付けを先に削除（FK制約のため）
-    const { error: planTagsError } = await this.supabase
-      .from('entry_tags')
-      .delete()
-      .in('tag_id', tagIds);
+    if (strategy === 'reassign') {
+      if (!targetTagId) {
+        throw new TagServiceError('INVALID_INPUT', 'targetTagId is required for reassign strategy');
+      }
+      await this.getById({ userId, tagId: targetTagId });
 
-    if (planTagsError) {
-      throw new TagServiceError(
-        'DELETE_FAILED',
-        `Failed to delete entry_tags associations: ${planTagsError.message}`,
-      );
+      // entry_tags を targetTagId に付け替え
+      const { error: reassignError } = await this.supabase
+        .from('entry_tags')
+        .update({ tag_id: targetTagId })
+        .in('tag_id', tagIds);
+
+      if (reassignError) {
+        throw new TagServiceError(
+          'UPDATE_FAILED',
+          `Failed to reassign entry_tags: ${reassignError.message}`,
+        );
+      }
+    } else {
+      // delete_entries または strategy なし — entry_tags + entries を削除
+      const { data: entryTagRows } = await this.supabase
+        .from('entry_tags')
+        .select('entry_id')
+        .in('tag_id', tagIds);
+
+      const entryIds = (entryTagRows ?? []).map((r) => r.entry_id);
+
+      const { error: planTagsError } = await this.supabase
+        .from('entry_tags')
+        .delete()
+        .in('tag_id', tagIds);
+
+      if (planTagsError) {
+        throw new TagServiceError(
+          'DELETE_FAILED',
+          `Failed to delete entry_tags associations: ${planTagsError.message}`,
+        );
+      }
+
+      if (entryIds.length > 0) {
+        await this.supabase.from('entries').delete().in('id', entryIds);
+      }
     }
 
     // タグを一括削除
@@ -610,17 +643,57 @@ export class TagService {
   /**
    * タグ削除
    *
-   * @param options - userId と tagId
+   * @param options - userId, tagId, strategy（任意）, targetTagId（reassign時必須）
    * @returns 削除されたタグ
    */
-  async delete(options: { userId: string; tagId: string }): Promise<Tag> {
-    const { userId, tagId } = options;
+  async delete(options: {
+    userId: string;
+    tagId: string;
+    strategy?: TagDeleteStrategy;
+    targetTagId?: string;
+  }): Promise<Tag> {
+    const { userId, tagId, strategy, targetTagId } = options;
 
     // 所有権チェック
     const tag = await this.getById({ userId, tagId });
 
-    // entry_tagsの関連付けを先に削除
-    await this.supabase.from('entry_tags').delete().eq('tag_id', tagId);
+    if (strategy === 'reassign') {
+      if (!targetTagId) {
+        throw new TagServiceError('INVALID_INPUT', 'targetTagId is required for reassign strategy');
+      }
+      // 付け替え先の所有権チェック
+      await this.getById({ userId, tagId: targetTagId });
+
+      // entry_tags を targetTagId に付け替え
+      const { error: reassignError } = await this.supabase
+        .from('entry_tags')
+        .update({ tag_id: targetTagId })
+        .eq('tag_id', tagId);
+
+      if (reassignError) {
+        throw new TagServiceError(
+          'UPDATE_FAILED',
+          `Failed to reassign entry_tags: ${reassignError.message}`,
+        );
+      }
+    } else {
+      // delete_entries または strategy なし（0件タグ）
+      // entry_tags から entry_id を取得してエントリごと削除
+      const { data: entryTagRows } = await this.supabase
+        .from('entry_tags')
+        .select('entry_id')
+        .eq('tag_id', tagId);
+
+      const entryIds = (entryTagRows ?? []).map((r) => r.entry_id);
+
+      // entry_tags 削除（FK制約のため先に）
+      await this.supabase.from('entry_tags').delete().eq('tag_id', tagId);
+
+      // 関連エントリも削除
+      if (entryIds.length > 0) {
+        await this.supabase.from('entries').delete().in('id', entryIds);
+      }
+    }
 
     // タグ削除
     const { error } = await this.supabase.from('tags').delete().eq('id', tagId);
@@ -756,6 +829,9 @@ export class TagService {
     return statsData;
   }
 }
+
+/** タグ削除ストラテジー */
+export type TagDeleteStrategy = 'delete_entries' | 'reassign';
 
 /** タグ統計の型 */
 export interface TagStatsRow {
