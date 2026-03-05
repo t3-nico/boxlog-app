@@ -94,12 +94,13 @@
    * Hue配置（最小25°間隔）:
    *   red(25) orange(55) amber(80) green(145) teal(185)
    *   blue(250) indigo(280) violet(310) pink(350) gray(achromatic)
+   * 例外: teal(H=185) と gray は sRGB色域が狭いため C を個別調整
    * ============================================ */
   --tag-red:    oklch(0.65 0.18 25);
   --tag-orange: oklch(0.65 0.18 55);
   --tag-amber:  oklch(0.65 0.18 80);
   --tag-green:  oklch(0.65 0.18 145);
-  --tag-teal:   oklch(0.65 0.18 185);
+  --tag-teal:   oklch(0.65 0.13 185);  /* C=0.13: H=185はsRGB色域が狭い */
   --tag-blue:   oklch(0.65 0.18 250);
   --tag-indigo: oklch(0.65 0.18 280);
   --tag-violet: oklch(0.65 0.18 310);
@@ -187,7 +188,7 @@
   --tag-orange: oklch(0.78 0.15 55);
   --tag-amber:  oklch(0.78 0.15 80);
   --tag-green:  oklch(0.78 0.15 145);
-  --tag-teal:   oklch(0.78 0.15 185);
+  --tag-teal:   oklch(0.78 0.11 185);  /* C=0.11: sRGB色域制限 */
   --tag-blue:   oklch(0.78 0.15 250);
   --tag-indigo: oklch(0.78 0.15 280);
   --tag-violet: oklch(0.78 0.15 310);

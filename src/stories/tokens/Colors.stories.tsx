@@ -139,7 +139,7 @@ export const AllColors: Story = {
         <ColorSwatch tailwindClass="bg-tag-amber" description="Amber" />
         <ColorSwatch tailwindClass="bg-tag-violet" description="Violet" />
         <ColorSwatch tailwindClass="bg-tag-pink" description="Pink" />
-        <ColorSwatch tailwindClass="bg-tag-cyan" description="Cyan" />
+        <ColorSwatch tailwindClass="bg-tag-teal" description="Teal" />
         <ColorSwatch tailwindClass="bg-tag-orange" description="Orange" />
         <ColorSwatch tailwindClass="bg-tag-gray" description="Gray" />
         <ColorSwatch tailwindClass="bg-tag-indigo" description="Indigo" />
@@ -648,7 +648,7 @@ export const Tags: Story = {
           { token: 'tag-amber', name: 'Amber', description: '' },
           { token: 'tag-violet', name: 'Violet', description: '' },
           { token: 'tag-pink', name: 'Pink', description: '' },
-          { token: 'tag-cyan', name: 'Cyan', description: '' },
+          { token: 'tag-teal', name: 'Teal', description: '' },
           { token: 'tag-orange', name: 'Orange', description: '' },
           { token: 'tag-gray', name: 'Gray', description: 'グループのデフォルト' },
           { token: 'tag-indigo', name: 'Indigo', description: '' },
