@@ -52,18 +52,14 @@ export { ViewSwitcherList } from './components/sidebar/ViewSwitcherList';
 // =============================================================================
 export { getMultiDayCount, isMultiDayView } from './types/calendar.types';
 export type {
-  Calendar,
   CalendarEvent,
   CalendarFilter,
   CalendarHeaderProps,
   CalendarPlan,
-  CalendarShare,
-  CalendarShareInput,
   CalendarTicket,
   CalendarViewProps,
   CalendarViewState,
   CalendarViewType,
-  CreateCalendarInput,
   CreateEventInput,
   CreatePlanInput,
   CreateTicketInput,
@@ -73,7 +69,6 @@ export type {
   PlanInstance,
   RecurrencePattern,
   TicketInstance,
-  UpdateCalendarInput,
   UpdateEventInput,
   UpdatePlanInput,
   UpdateTicketInput,

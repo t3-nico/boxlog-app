@@ -45,24 +45,6 @@ export type CalendarTicket = CalendarPlan;
 // 新しいDB設計に対応した型定義
 // ========================================
 
-// カレンダー管理
-export interface Calendar {
-  id: string;
-  userId: string;
-  name: string;
-  description?: string;
-  color: string;
-  isDefault: boolean;
-  isVisible: boolean;
-  provider?: 'local' | 'google' | 'outlook' | 'ical';
-  externalId?: string;
-  syncToken?: string;
-  lastSyncedAt?: Date;
-  isShared: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
 // 繰り返しパターン
 export interface RecurrencePattern {
   id: string;
@@ -100,20 +82,6 @@ export interface PlanInstance {
 export type TicketInstance = PlanInstance;
 export type EventInstance = PlanInstance;
 
-// カレンダー共有
-export interface CalendarShare {
-  id: string;
-  calendarId: string;
-  sharedWithUserId?: string;
-  sharedWithEmail?: string;
-  permission: 'view' | 'edit' | 'admin';
-  shareToken?: string;
-  isPublicLink: boolean;
-  expiresAt?: Date;
-  createdAt: Date;
-  createdBy: string;
-}
-
 /**
  * カレンダービュー状態
  * ユーザーごとのカレンダー表示設定を保持
@@ -141,21 +109,6 @@ export interface CalendarViewState {
   timeFormat: '12h' | '24h';
   createdAt: Date;
   updatedAt: Date;
-}
-
-// APIリクエスト用の型
-export interface CreateCalendarInput {
-  name: string;
-  description?: string;
-  color?: string;
-  isDefault?: boolean;
-}
-
-export interface UpdateCalendarInput {
-  name?: string;
-  description?: string;
-  color?: string;
-  isVisible?: boolean;
 }
 
 export interface CreatePlanInput {
@@ -196,14 +149,6 @@ export interface UpdatePlanInput extends Partial<CreatePlanInput> {
 // 後方互換性のためのエイリアス
 export type UpdateTicketInput = UpdatePlanInput;
 export type UpdateEventInput = UpdatePlanInput;
-
-export interface CalendarShareInput {
-  calendarId: string;
-  sharedWithEmail?: string;
-  sharedWithUserId?: string;
-  permission: 'view' | 'edit' | 'admin';
-  expiresAt?: Date;
-}
 
 // フィルター条件
 export interface CalendarFilter {
