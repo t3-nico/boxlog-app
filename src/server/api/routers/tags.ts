@@ -86,8 +86,18 @@ export const tagsRouter = createTRPCRouter({
       z.object({
         name: z.string().min(1).max(50),
         color: z
-          .string()
-          .regex(/^#[0-9A-Fa-f]{6}$/)
+          .enum([
+            'red',
+            'orange',
+            'amber',
+            'green',
+            'teal',
+            'blue',
+            'indigo',
+            'violet',
+            'pink',
+            'gray',
+          ])
           .optional(),
       }),
     )
@@ -120,8 +130,18 @@ export const tagsRouter = createTRPCRouter({
         id: z.string().uuid(),
         name: z.string().min(1).max(50).optional(),
         color: z
-          .string()
-          .regex(/^#[0-9A-Fa-f]{6}$/)
+          .enum([
+            'red',
+            'orange',
+            'amber',
+            'green',
+            'teal',
+            'blue',
+            'indigo',
+            'violet',
+            'pink',
+            'gray',
+          ])
           .optional(),
       }),
     )

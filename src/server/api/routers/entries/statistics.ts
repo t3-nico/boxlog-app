@@ -390,7 +390,7 @@ export const entriesStatisticsRouter = createTRPCRouter({
         .map((tag) => ({
           tagId: tag.id,
           name: tag.name,
-          color: tag.color || '#6366f1',
+          color: tag.color || 'indigo',
           hours: tagHours[tag.id] || 0,
         }))
         .filter((t) => t.hours > 0)
@@ -783,7 +783,7 @@ export const entriesStatisticsRouter = createTRPCRouter({
         tagBreakdown.push({
           tagId: '__untagged__',
           tagName: 'No Tag',
-          tagColor: '#94a3b8',
+          tagColor: 'gray',
           plannedMinutes: Math.round(plannedMins),
           actualMinutes: Math.round(actualMins),
           previousActualMinutes: Math.round(prevActualMins),
@@ -794,7 +794,7 @@ export const entriesStatisticsRouter = createTRPCRouter({
           tagBreakdown.push({
             tagId: tag.id,
             tagName: tag.name,
-            tagColor: tag.color ?? '#6366f1',
+            tagColor: tag.color ?? 'indigo',
             plannedMinutes: Math.round(plannedMins),
             actualMinutes: Math.round(actualMins),
             previousActualMinutes: Math.round(prevActualMins),

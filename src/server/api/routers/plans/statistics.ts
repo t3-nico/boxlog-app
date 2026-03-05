@@ -255,7 +255,7 @@ export const statisticsRouter = createTRPCRouter({
         .map((tag) => ({
           tagId: tag.id,
           name: tag.name,
-          color: tag.color || '#6366f1',
+          color: tag.color || 'indigo',
           hours: tagHours[tag.id] || 0,
         }))
         .filter((t) => t.hours > 0)

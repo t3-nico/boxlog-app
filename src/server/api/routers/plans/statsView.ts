@@ -255,7 +255,7 @@ export const statsViewRouter = createTRPCRouter({
         tagBreakdown.push({
           tagId: '__untagged__',
           tagName: 'No Tag',
-          tagColor: '#94a3b8', // slate-400
+          tagColor: 'gray',
           plannedMinutes: Math.round(planned),
           actualMinutes: Math.round(actual),
           previousActualMinutes: Math.round(prevActual),
@@ -266,7 +266,7 @@ export const statsViewRouter = createTRPCRouter({
           tagBreakdown.push({
             tagId: tag.id,
             tagName: tag.name,
-            tagColor: tag.color ?? '#6366f1',
+            tagColor: tag.color ?? 'indigo',
             plannedMinutes: Math.round(planned),
             actualMinutes: Math.round(actual),
             previousActualMinutes: Math.round(prevActual),
