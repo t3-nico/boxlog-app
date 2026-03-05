@@ -231,11 +231,11 @@
       "showOnTimeline": "Show on timeline",
       "showOnTimelineDesc": "Color the time grid background by productivity zone",
       "levels": {
+        "warmup": "Warm-up",
         "peak": "Peak",
-        "good": "Focus",
-        "moderate": "Moderate",
-        "low": "Low",
-        "sleep": "Sleep"
+        "dip": "Dip",
+        "recovery": "Recovery",
+        "winddown": "Wind-down"
       }
     },
     "sleepSchedule": {

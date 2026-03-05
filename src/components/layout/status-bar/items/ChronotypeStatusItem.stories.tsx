@@ -20,13 +20,13 @@ const meta = {
           '- アイコン色・バー色がゾーンレベルに応じて変化\n' +
           '- ツールチップに残り時間テキストを表示\n' +
           '- クリック → 設定モーダル（personalization）\n\n' +
-          '| レベル | トークン | 色 |\n' +
-          '|--------|----------|----|\n' +
-          '| peak | `--chronotype-peak` | 緑 |\n' +
-          '| good | `--chronotype-good` | 薄緑 |\n' +
-          '| moderate | `--chronotype-moderate` | 青 |\n' +
-          '| low | `--chronotype-low` | ウォームベージュ |\n' +
-          '| sleep | `--chronotype-sleep` | 微紫 |',
+          '| フェーズ | トークン | 色 |\n' +
+          '|----------|----------|----|\n' +
+          '| warmup | `--chronotype-warmup` | green（朝の新鮮さ） |\n' +
+          '| peak | `--chronotype-peak` | amber（最大エネルギー） |\n' +
+          '| dip | `--chronotype-dip` | blue（エネルギー低下） |\n' +
+          '| recovery | `--chronotype-recovery` | cyan（回復） |\n' +
+          '| winddown | `--chronotype-winddown` | indigo（就寝準備） |',
       },
     },
   },
@@ -83,62 +83,62 @@ export const Default: Story = {
   ),
 };
 
-/** peak: ピーク時間帯（最も生産性が高い）。 */
+/** warmup: ウォームアップ（起床後、エネルギー上昇中）。 */
+export const Warmup: Story = {
+  render: () => (
+    <DrainBarItem
+      label="ウォームアップ"
+      color="var(--chronotype-warmup)"
+      percent={56}
+      tooltip="ウォームアップ — 残り2h 15m"
+    />
+  ),
+};
+
+/** peak: ピーク（最も集中力が高い）。 */
 export const Peak: Story = {
   render: () => (
     <DrainBarItem
-      label="ピーク時間帯"
+      label="ピーク"
       color="var(--chronotype-peak)"
       percent={75}
-      tooltip="ピーク時間帯 — 残り1h 30m"
+      tooltip="ピーク — 残り1h 30m"
     />
   ),
 };
 
-/** good: 集中時間帯（高い生産性）。 */
-export const Good: Story = {
+/** dip: ディップ（エネルギー低下）。 */
+export const Dip: Story = {
   render: () => (
     <DrainBarItem
-      label="集中時間帯"
-      color="var(--chronotype-good)"
-      percent={56}
-      tooltip="集中時間帯 — 残り2h 15m"
-    />
-  ),
-};
-
-/** moderate: 通常時間帯。 */
-export const Moderate: Story = {
-  render: () => (
-    <DrainBarItem
-      label="通常時間帯"
-      color="var(--chronotype-moderate)"
-      percent={100}
-      tooltip="通常時間帯 — 残り3h 0m"
-    />
-  ),
-};
-
-/** low: 低調時間帯。 */
-export const Low: Story = {
-  render: () => (
-    <DrainBarItem
-      label="低調時間帯"
-      color="var(--chronotype-low)"
+      label="ディップ"
+      color="var(--chronotype-dip)"
       percent={33}
-      tooltip="低調時間帯 — 残り1h 0m"
+      tooltip="ディップ — 残り1h 0m"
     />
   ),
 };
 
-/** sleep: 睡眠時間帯。 */
-export const Sleep: Story = {
+/** recovery: リカバリー（ディップから回復）。 */
+export const Recovery: Story = {
   render: () => (
     <DrainBarItem
-      label="睡眠時間帯"
-      color="var(--chronotype-sleep)"
+      label="リカバリー"
+      color="var(--chronotype-recovery)"
+      percent={100}
+      tooltip="リカバリー — 残り3h 0m"
+    />
+  ),
+};
+
+/** winddown: ウインドダウン（就寝準備）。 */
+export const Winddown: Story = {
+  render: () => (
+    <DrainBarItem
+      label="ウインドダウン"
+      color="var(--chronotype-winddown)"
       percent={69}
-      tooltip="睡眠時間帯 — 残り5h 30m"
+      tooltip="ウインドダウン — 残り5h 30m"
     />
   ),
 };
@@ -154,34 +154,34 @@ export const AllPatterns: Story = {
         onClick={() => {}}
       />
       <DrainBarItem
-        label="ピーク時間帯"
+        label="ウォームアップ"
+        color="var(--chronotype-warmup)"
+        percent={56}
+        tooltip="ウォームアップ — 残り2h 15m"
+      />
+      <DrainBarItem
+        label="ピーク"
         color="var(--chronotype-peak)"
         percent={75}
-        tooltip="ピーク時間帯 — 残り1h 30m"
+        tooltip="ピーク — 残り1h 30m"
       />
       <DrainBarItem
-        label="集中時間帯"
-        color="var(--chronotype-good)"
-        percent={56}
-        tooltip="集中時間帯 — 残り2h 15m"
-      />
-      <DrainBarItem
-        label="通常時間帯"
-        color="var(--chronotype-moderate)"
-        percent={100}
-        tooltip="通常時間帯 — 残り3h 0m"
-      />
-      <DrainBarItem
-        label="低調時間帯"
-        color="var(--chronotype-low)"
+        label="ディップ"
+        color="var(--chronotype-dip)"
         percent={33}
-        tooltip="低調時間帯 — 残り1h 0m"
+        tooltip="ディップ — 残り1h 0m"
       />
       <DrainBarItem
-        label="睡眠時間帯"
-        color="var(--chronotype-sleep)"
+        label="リカバリー"
+        color="var(--chronotype-recovery)"
+        percent={100}
+        tooltip="リカバリー — 残り3h 0m"
+      />
+      <DrainBarItem
+        label="ウインドダウン"
+        color="var(--chronotype-winddown)"
         percent={69}
-        tooltip="睡眠時間帯 — 残り5h 30m"
+        tooltip="ウインドダウン — 残り5h 30m"
       />
     </div>
   ),

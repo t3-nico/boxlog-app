@@ -13,11 +13,11 @@ import { CHRONOTYPE_PRESETS, type ProductivityZone } from '@/types/chronotype';
  * 背景 tint 専用トークンで彩度高め + alpha 込みの色を定義。
  */
 const LEVEL_TINT: Record<ProductivityZone['level'], string> = {
-  peak: 'bg-[var(--chronotype-tint-peak)]',
-  good: 'bg-[var(--chronotype-tint-good)]',
-  moderate: 'bg-[var(--chronotype-tint-moderate)]',
-  low: 'bg-[var(--chronotype-tint-low)]',
-  sleep: 'bg-[var(--chronotype-tint-sleep)]',
+  warmup: 'bg-chronotype-tint-warmup',
+  peak: 'bg-chronotype-tint-peak',
+  dip: 'bg-chronotype-tint-dip',
+  recovery: 'bg-chronotype-tint-recovery',
+  winddown: 'bg-chronotype-tint-winddown',
 };
 
 interface ChronotypeBackgroundProps {

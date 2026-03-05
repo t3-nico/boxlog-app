@@ -64,7 +64,7 @@ function TimelineBar({ zones }: { zones: ProductivityZone[] }) {
 
       result.push({
         hour,
-        level: zone?.level || 'moderate',
+        level: zone?.level || 'warmup',
         label: zone?.label || '',
       });
     }
@@ -96,7 +96,7 @@ function TimelineBar({ zones }: { zones: ProductivityZone[] }) {
 
       {/* 凡例 */}
       <div className="flex flex-wrap gap-4 text-xs">
-        {(['peak', 'good', 'moderate', 'low', 'sleep'] as const).map((level) => (
+        {(['warmup', 'peak', 'dip', 'recovery', 'winddown'] as const).map((level) => (
           <div key={level} className="flex items-center gap-1">
             <div className={cn(LEVEL_COLORS[level], 'h-3 w-3 rounded')} />
             <span className="text-muted-foreground">

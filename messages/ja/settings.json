@@ -231,11 +231,11 @@
       "showOnTimeline": "タイムラインに表示",
       "showOnTimelineDesc": "生産性ゾーンでタイムグリッドの背景を色分けする",
       "levels": {
+        "warmup": "ウォームアップ",
         "peak": "ピーク",
-        "good": "集中",
-        "moderate": "ふつう",
-        "low": "低調",
-        "sleep": "睡眠"
+        "dip": "ディップ",
+        "recovery": "リカバリー",
+        "winddown": "ウインドダウン"
       }
     },
     "sleepSchedule": {
