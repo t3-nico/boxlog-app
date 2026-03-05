@@ -58,7 +58,7 @@ export function useInspectorTagState({ planId, planData }: UseInspectorTagStateP
     selectedTagIdRef.current = selectedTagId;
   }, [selectedTagId]);
 
-  // Handler（単一タグ変更）
+  // Handler（単一タグ変更 → 即座にDB保存）
   const handleTagChange = useCallback(
     (newTagId: string | null) => {
       const oldTagId = selectedTagIdRef.current;
@@ -76,9 +76,11 @@ export function useInspectorTagState({ planId, planData }: UseInspectorTagStateP
       // キャッシュも更新（CalendarCard等での即時表示用）
       if (planId) {
         updateTagsInCache(planId, newTagId ? [newTagId] : []);
+        // 即座にDB保存（title/descriptionと同じパターン）
+        setPlanTags(planId, newTagId ? [newTagId] : []);
       }
     },
-    [planId, updateTagsInCache],
+    [planId, updateTagsInCache, setPlanTags],
   );
 
   return {
