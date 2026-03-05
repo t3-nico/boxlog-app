@@ -10,6 +10,7 @@ import React, { memo, useCallback, useEffect, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
+import { getTagColorClasses } from '@/config/ui/colors';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useTagsMap } from '@/hooks/useTagsMap';
 import { cn } from '@/lib/utils';
@@ -42,7 +43,10 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
 
   // タグ情報を取得（未設定時はデフォルト色）
   const tag = plan.tagId ? getTagById(plan.tagId) : undefined;
-  const accentColor = tag?.color || 'var(--entry-default)';
+  const colorClasses = tag ? getTagColorClasses(tag.color) : null;
+  const accentColor = colorClasses?.cssVar ?? 'var(--entry-default)';
+  const accentTint =
+    colorClasses?.cssVarTint ?? 'color-mix(in oklch, var(--entry-default) 12%, var(--background))';
 
   // ドラフト（未保存プレビュー）かどうか判定
   const isDraft = plan.isDraft === true;
@@ -71,10 +75,10 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       cursor: isDragging ? 'grabbing' : 'pointer',
       // タグカラーを左ボーダーと背景に反映
       borderLeftColor: accentColor,
-      backgroundColor: `color-mix(in oklch, ${accentColor} 12%, var(--background))`,
+      backgroundColor: accentTint,
       ...style,
     }),
-    [safePosition, isSelected, isDragging, accentColor, style],
+    [safePosition, isSelected, isDragging, accentColor, accentTint, style],
   );
 
   // アンカー位置の設定（Inspector 配置用）

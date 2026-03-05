@@ -26,6 +26,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import type { TagColorName } from '@/lib/tag-colors';
 import { cn } from '@/lib/utils';
 
 interface GroupHeaderProps {
@@ -38,7 +39,7 @@ interface GroupHeaderProps {
   onCheckedChange: () => void;
   onToggleCollapse: () => void;
   onShowOnlyGroup: () => void;
-  onColorChange: (color: string) => void;
+  onColorChange: (color: TagColorName) => void;
   onAddTagToGroup?: (() => void) | undefined;
   onRenameGroup?: (() => void) | undefined;
   onUngroupTags?: (() => void) | undefined;

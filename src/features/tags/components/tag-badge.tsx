@@ -4,6 +4,7 @@ import { X } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { HoverTooltip } from '@/components/ui/tooltip';
+import { getTagColorClasses } from '@/config/ui/colors';
 import { cn } from '@/lib/utils';
 import { Tag } from '../types';
 
@@ -28,16 +29,18 @@ interface TagBadgeProps {
  * ```
  */
 export function TagBadge({ tag, onClick, onRemove, disableTooltip }: TagBadgeProps) {
+  const colorClasses = getTagColorClasses(tag.color);
+
   return (
     <HoverTooltip content={tag.name} side="top" disabled={disableTooltip ?? true}>
       <Badge
         variant="outline"
         className={cn(
           'relative h-7 text-xs font-normal transition-colors',
+          colorClasses.border,
           onClick && 'hover:bg-state-hover cursor-pointer',
           onRemove && 'pr-6',
         )}
-        style={{ borderColor: tag.color || undefined }}
         onClick={onClick}
       >
         {tag.name}

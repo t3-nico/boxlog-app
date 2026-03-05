@@ -10,7 +10,9 @@
 
 import { memo, useEffect, useRef, useState } from 'react';
 
+import { getTagColorClasses } from '@/config/ui/colors';
 import { useTagsMap } from '@/hooks/useTagsMap';
+import { cn } from '@/lib/utils';
 
 interface TagsContainerProps {
   tagIds: string[];
@@ -96,8 +98,10 @@ export const TagsContainer = memo<TagsContainerProps>(function TagsContainer({ t
         <span
           key={tag.id}
           data-tag
-          className="inline-flex items-center rounded border px-2 py-1 text-xs leading-tight"
-          style={{ borderColor: tag.color || undefined }}
+          className={cn(
+            'inline-flex items-center rounded border px-2 py-1 text-xs leading-tight',
+            getTagColorClasses(tag.color).border,
+          )}
           title={tag.name}
         >
           {tag.name}

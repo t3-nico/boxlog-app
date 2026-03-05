@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
+import type { TagColorName } from '@/lib/tag-colors';
 import { DEFAULT_TAG_COLOR } from '@/lib/tag-colors';
 import {
   generateTempId,
@@ -20,7 +21,7 @@ import type { Tag } from '@/core/types/tag';
 interface TrpcTagUpdateInput {
   id: string;
   name?: string | undefined;
-  color?: string | undefined;
+  color?: TagColorName | undefined;
 }
 
 export type UpdateTagInput = TrpcTagUpdateInput;

@@ -31,6 +31,8 @@ import {
 import { useMergeTag, useUpdateTag } from '@/hooks/mutations/useTagMutations';
 import { useTagModalNavigation } from '@/hooks/useTagModalNavigation';
 import { buildColonTagName, getTagDisplayLabel, parseColonTag } from '@/lib/tag-colon';
+import type { TagColorName } from '@/lib/tag-colors';
+import { resolveTagColor } from '@/lib/tag-colors';
 import { cn } from '@/lib/utils';
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 
@@ -120,13 +122,14 @@ export function TagFlatList({
 
   // プレフィックスでグルーピング（sort_order は触らず、UI表示時にまとめる）
   // 同プレフィックスのコロンタグは位置に関係なくグループ化
+  // フラットタグがグループprefixと一致する場合はグループに吸収（重複表示防止）
   const { sortedTags, tagDisplayInfos } = useMemo(() => {
     const parsed = tags.map((tag) => ({
       tag,
       ...parseColonTag(tag.name),
     }));
 
-    // グループ収集: prefix → メンバー一覧
+    // グループ収集: prefix → メンバー一覧（コロン付きタグのみ）
     const groups = new Map<string, typeof parsed>();
     for (const item of parsed) {
       if (item.suffix !== null) {
@@ -136,15 +139,32 @@ export function TagFlatList({
       }
     }
 
+    // 親タグ吸収: フラットタグ名がグループprefixと一致 → グループに統合
+    // 例: フラットタグ "開発" + グループ "開発:API" → "開発" をGroupHeaderに吸収
+    const absorbedParents = new Map<string, string>(); // prefix → absorbed tag ID
+    for (const item of parsed) {
+      if (item.suffix === null && groups.has(item.tag.name)) {
+        absorbedParents.set(item.tag.name, item.tag.id);
+      }
+    }
+    const absorbedIds = new Set(absorbedParents.values());
+
     // コロン記法のタグは1つでもグループとして表示する
     const groupPrefixes = new Set<string>(groups.keys());
 
     // 表示順を構築: 独立タグは元の位置を維持、グループは最初のメンバーの位置にまとめる
+    // 吸収された親タグは個別行としてスキップ（GroupHeaderに統合されるため）
     const sorted: typeof parsed = [];
     const placed = new Set<string>(); // 配置済みタグID
 
     for (const item of parsed) {
       if (placed.has(item.tag.id)) continue;
+
+      // 吸収された親タグは個別行としてスキップ
+      if (absorbedIds.has(item.tag.id)) {
+        placed.add(item.tag.id);
+        continue;
+      }
 
       if (item.suffix !== null && groupPrefixes.has(item.prefix)) {
         // グループの最初の出現位置にメンバーをまとめて配置
@@ -170,7 +190,10 @@ export function TagFlatList({
       let groupTagIds: string[] = [];
       let groupCount = 0;
       if (isGrouped) {
-        groupTagIds = (groups.get(item.prefix) ?? []).map((m) => m.tag.id);
+        const memberIds = (groups.get(item.prefix) ?? []).map((m) => m.tag.id);
+        // 吸収された親タグのIDも含める（フィルター操作で一括制御するため）
+        const parentId = absorbedParents.get(item.prefix);
+        groupTagIds = parentId ? [parentId, ...memberIds] : memberIds;
         groupCount = groupTagIds.reduce((sum, id) => sum + (tagCounts[id] ?? 0), 0);
       }
 
@@ -352,7 +375,7 @@ function SortableTagItem({
 
       // 衝突なし → 通常のリネーム
       const groupColor = newGroup
-        ? groupOptions.find((g) => g.name === newGroup)?.color
+        ? resolveTagColor(groupOptions.find((g) => g.name === newGroup)?.color)
         : undefined;
       updateTagMutation.mutate({
         id: tag.id,
@@ -414,7 +437,7 @@ function SortableTagItem({
 
   // グループ色変更ハンドラー（グループ内全タグの色を一括更新）
   const handleGroupColorChange = useCallback(
-    (color: string) => {
+    (color: TagColorName) => {
       for (const id of groupTagIds) {
         updateTagMutation.mutate({ id, color });
       }

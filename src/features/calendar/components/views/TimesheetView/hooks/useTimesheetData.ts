@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import { eachDayOfInterval, endOfWeek, format, startOfDay, startOfWeek } from 'date-fns';
 
+import { getTagColorClasses } from '@/config/ui/colors';
 import { useTagsMap } from '@/hooks/useTagsMap';
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 import type { CalendarPlan } from '../../../../types/calendar.types';
@@ -69,7 +70,7 @@ export function useTimesheetData(plans: CalendarPlan[], currentDate: Date): Time
       tagGroups.push({
         tagId,
         tagName: tagInfo?.name ?? '',
-        tagColor: tagInfo?.color ?? '#6b7280',
+        tagColor: tagInfo ? getTagColorClasses(tagInfo.color).cssVar : 'var(--tag-gray)',
         plans: groupPlans,
         dailyTotals,
         weekTotal,

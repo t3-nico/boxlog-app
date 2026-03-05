@@ -12,7 +12,7 @@
  * openTagCreateModal();
  *
  * // タグマージモーダルを開く
- * openTagMergeModal({ id: 'tag-id', name: 'Tag Name', color: '#3B82F6' });
+ * openTagMergeModal({ id: 'tag-id', name: 'Tag Name', color: 'blue' });
  */
 
 import { useCallback } from 'react';

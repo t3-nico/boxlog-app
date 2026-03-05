@@ -18,12 +18,13 @@ import { useCreateTag } from '@/hooks/mutations/useTagCrudMutations';
 import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { convertFromTimezone } from '@/lib/date/timezone';
 import { logger } from '@/lib/logger';
-import { DEFAULT_TAG_COLOR } from '@/lib/tag-colors';
+import { resolveTagColor } from '@/lib/tag-colors';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 import { useInlineCreateStore } from '@/stores/useInlineCreateStore';
 
+import { TagQuickSelector } from '@/components/tags/TagQuickSelector';
+
 import { Z_INDEX } from '../../constants/grid.constants';
-import { TagQuickSelector } from './TagQuickSelector';
 
 interface InlineTagPaletteProps {
   /** 1時間あたりの高さ（px） */
@@ -106,14 +107,14 @@ export function InlineTagPalette({ hourHeight, date }: InlineTagPaletteProps) {
 
   // 新規タグ作成 → エントリ作成
   const handleCreateAndSelect = useCallback(
-    async (name: string) => {
+    async (name: string, color?: string | null) => {
       if (!pendingSelection || isCreating) return;
 
       setIsCreating(true);
       try {
         const newTag = await createTagMutation.mutateAsync({
           name,
-          color: DEFAULT_TAG_COLOR,
+          color: resolveTagColor(color),
         });
         // mutateAsync resolved → handleCreate で続行
         handleCreate(newTag.id, name);

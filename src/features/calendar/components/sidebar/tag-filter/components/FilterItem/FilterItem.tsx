@@ -5,6 +5,7 @@ import { useCallback, useState } from 'react';
 import { MoreHorizontal } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
+import { getTagColorClasses } from '@/config/ui/colors';
 import { cn } from '@/lib/utils';
 
 import { TagRenameDialog } from '@/components/tags/TagRenameDialog';
@@ -93,9 +94,10 @@ export function FilterItem({
   );
 
   // Checkbox style
+  const colorClasses = getTagColorClasses(displayColor);
   const checkboxStyle = {
-    borderColor: displayColor,
-    backgroundColor: checked ? displayColor : 'transparent',
+    borderColor: colorClasses.cssVar,
+    backgroundColor: checked ? colorClasses.cssVar : 'transparent',
   } as React.CSSProperties;
 
   // 行クリックでチェック切り替え

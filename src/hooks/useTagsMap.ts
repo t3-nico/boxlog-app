@@ -31,7 +31,7 @@ export function useTagsMap() {
       map.set(tag.id, {
         id: tag.id,
         name: tag.name,
-        color: tag.color ?? '#6b7280', // デフォルトはグレー
+        color: tag.color ?? 'gray',
       });
     });
     return map;

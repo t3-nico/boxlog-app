@@ -1,6 +1,6 @@
 'use client';
 
-import { Circle, Eye, FolderUp, Merge, Palette, Pencil, Trash2 } from 'lucide-react';
+import { Eye, FolderUp, Merge, Palette, Pencil, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { ColorPaletteMenuItems } from '@/components/ui/color-palette-picker';
@@ -12,7 +12,9 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from '@/components/ui/dropdown-menu';
-import { DEFAULT_TAG_COLOR } from '@/lib/tag-colors';
+import type { TagColorName } from '@/config/ui/colors';
+import { getTagColorClasses } from '@/config/ui/colors';
+import { cn } from '@/lib/utils';
 
 export interface GroupOption {
   name: string;
@@ -30,7 +32,7 @@ interface FilterItemMenuProps {
 
   // Handlers
   onOpenRenameDialog: () => void;
-  onColorChange: (color: string) => void;
+  onColorChange: (color: TagColorName) => void;
   onChangeGroup?: ((newGroup: string | null) => void) | undefined;
   onOpenMergeModal: () => void;
   onShowOnlyTag: () => void;
@@ -92,10 +94,9 @@ export function FilterItemMenu({
                 onClick={() => onChangeGroup(group.name)}
                 className={currentGroup === group.name ? 'bg-state-selected' : undefined}
               >
-                <Circle
-                  className="mr-1 size-3"
-                  fill={group.color ?? DEFAULT_TAG_COLOR}
-                  strokeWidth={0}
+                <span
+                  className={cn('mr-1 size-3 rounded-full', getTagColorClasses(group.color).dot)}
+                  aria-hidden
                 />
                 {group.name}
               </DropdownMenuItem>

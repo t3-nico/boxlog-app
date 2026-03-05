@@ -2,6 +2,7 @@
 
 import { Check } from 'lucide-react';
 
+import { getTagColorClasses } from '@/config/ui/colors';
 import { cn } from '@/lib/utils';
 
 interface TagRadioItemProps {
@@ -26,7 +27,7 @@ export function TagRadioItem({
   indented,
   disabled,
 }: TagRadioItemProps) {
-  const tagColor = tag.color || '#6B7280';
+  const colorClasses = getTagColorClasses(tag.color);
 
   return (
     <button
@@ -50,8 +51,8 @@ export function TagRadioItem({
           isSelected ? 'border-transparent' : 'opacity-50',
         )}
         style={{
-          backgroundColor: isSelected ? tagColor : 'transparent',
-          borderColor: isSelected ? tagColor : tagColor,
+          backgroundColor: isSelected ? colorClasses.cssVar : 'transparent',
+          borderColor: colorClasses.cssVar,
         }}
       >
         {isSelected && <Check className="size-3 text-white" />}

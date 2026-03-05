@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { Button } from '@/components/ui/button';
-import { COLOR_NAMES, ColorPaletteMenuItems } from '@/components/ui/color-palette-picker';
+import { COLOR_DISPLAY_NAMES, ColorPaletteMenuItems } from '@/components/ui/color-palette-picker';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,9 +16,19 @@ import { useHasMounted } from '@/hooks/useHasMounted';
 import { useSubmitShortcut } from '@/hooks/useSubmitShortcut';
 import { logger } from '@/lib/logger';
 import { buildColonTagName, parseColonTag } from '@/lib/tag-colon';
-import { ChevronDown, Circle } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { ChevronDown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { DEFAULT_TAG_COLOR, TAG_NAME_MAX_LENGTH } from '../constants/colors';
+
+import {
+  DEFAULT_TAG_COLOR,
+  TAG_COLOR_MAP,
+  TAG_NAME_MAX_LENGTH,
+  getTagColorClasses,
+  resolveTagColor,
+} from '../constants/colors';
+
+import type { TagColorName } from '../constants/colors';
 
 import type { CreateTagInput, Tag } from '../types';
 
@@ -47,7 +57,7 @@ export function TagCreateModal({
 }: TagCreateModalProps) {
   const t = useTranslations();
   const [name, setName] = useState('');
-  const [color, setColor] = useState<string>(DEFAULT_TAG_COLOR);
+  const [color, setColor] = useState<TagColorName>(DEFAULT_TAG_COLOR);
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -84,7 +94,7 @@ export function TagCreateModal({
   }, [selectedGroup, groupOptions]);
 
   // 実際に使用する色（グループの色 or 手動選択）
-  const effectiveColor = inheritedColor ?? color;
+  const effectiveColor = inheritedColor ? resolveTagColor(inheritedColor) : color;
 
   // モーダルが開いたらリセット（defaultGroupがあればプリセット）
   useEffect(() => {
@@ -265,12 +275,18 @@ export function TagCreateModal({
                     type="button"
                     className="border-border bg-container hover:bg-state-hover flex h-9 w-full items-center gap-2 rounded-lg border px-4 text-sm"
                   >
-                    <Circle className="size-4" fill={color} strokeWidth={0} />
-                    <span>{COLOR_NAMES[color] || color}</span>
+                    <span
+                      className={cn('size-4 rounded-full', TAG_COLOR_MAP[color].dot)}
+                      aria-hidden
+                    />
+                    <span>{COLOR_DISPLAY_NAMES[color] || color}</span>
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
-                  <ColorPaletteMenuItems selectedColor={color} onColorSelect={setColor} />
+                  <ColorPaletteMenuItems
+                    selectedColor={color}
+                    onColorSelect={(c) => setColor(c as TagColorName)}
+                  />
                 </DropdownMenuContent>
               </DropdownMenu>
             </Field>
@@ -320,10 +336,12 @@ export function TagCreateModal({
                         }}
                         className="hover:bg-state-hover flex w-full items-center gap-2 px-4 py-2 text-left text-sm"
                       >
-                        <Circle
-                          className="size-3 shrink-0"
-                          fill={group.color ?? DEFAULT_TAG_COLOR}
-                          strokeWidth={0}
+                        <span
+                          className={cn(
+                            'size-3 shrink-0 rounded-full',
+                            getTagColorClasses(group.color).dot,
+                          )}
+                          aria-hidden
                         />
                         {group.name}
                       </button>

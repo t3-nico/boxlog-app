@@ -3,69 +3,94 @@
 /**
  * Inspector タグ表示行
  *
- * カラードット + タグ名を表示し、タップで TagSelectCombobox を開く。
- * タグ未設定時は「+ タグを追加」を表示。
- * 右側に origin バッジ + ⋯ メニューを配置。
+ * カラードット + タグ名を表示し、クリックで TagQuickSelector を開く。
+ * タグ未設定時は「タグを追加」を表示。
+ * 右側に ⋯ メニューを配置。
  */
 
 import type { ReactNode } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import { ChevronDown, MoreHorizontal, Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
-import { TagSelectCombobox } from '@/components/tags/TagSelectCombobox';
+import { TagQuickSelector } from '@/components/tags/TagQuickSelector';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import type { Tag } from '@/core/types/tag';
+import { getTagColorClasses } from '@/config/ui/colors';
+import { useCreateTag } from '@/hooks/mutations/useTagCrudMutations';
 import { useTagsMap } from '@/hooks/useTagsMap';
+import { resolveTagColor } from '@/lib/tag-colors';
+import { cn } from '@/lib/utils';
 
 interface InspectorTagRowProps {
   tagId: string | null;
   onTagChange: (tagId: string | null) => void;
-  availableTags?: Tag[];
-  /** origin バッジ（past エントリの「予定」「記録のみ」表示用） */
-  originBadge?: ReactNode;
   /** ⋯ ドロップダウンメニューの内容 */
   menuContent?: ReactNode;
 }
 
-export function InspectorTagRow({
-  tagId,
-  onTagChange,
-  availableTags,
-  originBadge,
-  menuContent,
-}: InspectorTagRowProps) {
+export function InspectorTagRow({ tagId, onTagChange, menuContent }: InspectorTagRowProps) {
   const t = useTranslations();
   const { getTagById } = useTagsMap();
+  const [selectorOpen, setSelectorOpen] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const createTagMutation = useCreateTag();
 
   const tag = tagId ? getTagById(tagId) : undefined;
-  const tagColor = tag?.color || 'var(--muted-foreground)';
+  const colorClasses = tag ? getTagColorClasses(tag.color) : null;
+
+  const handleSelect = useCallback(
+    (selectedTagId: string) => {
+      onTagChange(selectedTagId);
+      setSelectorOpen(false);
+    },
+    [onTagChange],
+  );
+
+  const handleCreateAndSelect = useCallback(
+    async (name: string, color?: string | null) => {
+      try {
+        const newTag = await createTagMutation.mutateAsync({
+          name,
+          color: resolveTagColor(color),
+        });
+        onTagChange(newTag.id);
+        setSelectorOpen(false);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        if (message.includes('duplicate') || message.includes('already exists')) {
+          toast.error(t('tags.form.duplicateName'));
+        } else {
+          toast.error(t('tags.errors.createFailed'));
+        }
+      }
+    },
+    [createTagMutation, onTagChange, t],
+  );
 
   return (
-    <div className="flex items-start justify-between gap-2 px-4 pt-4 pb-2">
-      <TagSelectCombobox
-        selectedTagId={tagId}
-        onTagChange={onTagChange}
-        side="bottom"
-        align="start"
-        isOverlay
-        {...(availableTags ? { availableTags } : {})}
-      >
+    <>
+      <div className="flex items-center justify-between gap-2 px-6 pt-6 pb-2">
         <button
+          ref={buttonRef}
           type="button"
-          className="text-muted-foreground hover:text-foreground flex items-center gap-2.5 text-xl font-bold transition-colors"
+          onClick={() => setSelectorOpen(true)}
+          className="hover:bg-state-hover -ml-2 flex items-center gap-2.5 rounded-lg py-1 pr-2 pl-2 text-xl font-bold transition-colors"
           aria-label={tag ? `${t('common.tags.change')}: ${tag.name}` : t('common.tags.add')}
         >
           {tag ? (
             <>
               <span
-                className="inline-block size-4 flex-shrink-0 rounded-full"
-                style={{ backgroundColor: tagColor }}
+                className={cn(
+                  'inline-block size-4 flex-shrink-0 rounded-full',
+                  colorClasses?.dot ?? 'bg-muted-foreground',
+                )}
                 aria-hidden
               />
               <span className="text-foreground">{tag.name}</span>
@@ -73,17 +98,14 @@ export function InspectorTagRow({
             </>
           ) : (
             <>
-              <Plus className="size-4 flex-shrink-0" aria-hidden />
-              <span>{t('common.tags.add')}</span>
-              <ChevronDown className="size-5 flex-shrink-0" aria-hidden />
+              <Plus className="text-muted-foreground size-4 flex-shrink-0" aria-hidden />
+              <span className="text-muted-foreground">{t('common.tags.add')}</span>
+              <ChevronDown className="text-muted-foreground size-5 flex-shrink-0" aria-hidden />
             </>
           )}
         </button>
-      </TagSelectCombobox>
 
-      {/* 右側: badge + メニュー */}
-      <div className="flex items-center gap-1">
-        {originBadge}
+        {/* 右側: メニュー */}
         {menuContent && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -91,7 +113,7 @@ export function InspectorTagRow({
                 variant="ghost"
                 size="sm"
                 icon
-                className="focus-visible:ring-0"
+                className="-mr-2 focus-visible:ring-0"
                 aria-label={t('common.actions.options')}
               >
                 <MoreHorizontal className="size-5" />
@@ -103,6 +125,14 @@ export function InspectorTagRow({
           </DropdownMenu>
         )}
       </div>
-    </div>
+
+      <TagQuickSelector
+        open={selectorOpen}
+        onOpenChange={setSelectorOpen}
+        onSelect={handleSelect}
+        onCreateAndSelect={handleCreateAndSelect}
+        anchorRef={buttonRef}
+      />
+    </>
   );
 }

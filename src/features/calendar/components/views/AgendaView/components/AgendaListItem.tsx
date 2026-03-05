@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 
 import { useTranslations } from 'next-intl';
 
+import { getTagColorClasses } from '@/config/ui/colors';
 import { useDateFormat } from '@/hooks/useDateFormat';
 import { useTagsMap } from '@/hooks/useTagsMap';
 import { cn } from '@/lib/utils';
@@ -74,7 +75,9 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
       {/* 左端の縦線（タグカラー反映） */}
       <div
         className="h-6 w-0.5 shrink-0 rounded-full"
-        style={{ backgroundColor: tag?.color || 'var(--entry-default)' }}
+        style={{
+          backgroundColor: tag ? getTagColorClasses(tag.color).cssVar : 'var(--entry-default)',
+        }}
       />
 
       {/* クリック可能エリア */}

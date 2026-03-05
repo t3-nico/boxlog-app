@@ -5,6 +5,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { Check } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
+import { getTagColorClasses } from '@/config/ui/colors';
 import { useTags } from '@/hooks/useTagsQuery';
 import { cn } from '@/lib/utils';
 
@@ -49,7 +50,7 @@ function TagItem({
   isSelected: boolean;
   onSelect: () => void;
 }) {
-  const tagColor = tag.color || '#6B7280';
+  const colorClasses = getTagColorClasses(tag.color);
 
   return (
     <CommandItem value={tag.id} onSelect={onSelect} className="cursor-pointer">
@@ -59,9 +60,9 @@ function TagItem({
           isSelected ? 'border-transparent' : 'border-current opacity-50',
         )}
         style={{
-          backgroundColor: isSelected ? tagColor : 'transparent',
-          borderColor: isSelected ? tagColor : undefined,
-          color: tagColor,
+          backgroundColor: isSelected ? colorClasses.cssVar : 'transparent',
+          borderColor: isSelected ? colorClasses.cssVar : undefined,
+          color: colorClasses.cssVar,
         }}
       >
         {isSelected && <Check className="size-3 text-white" />}
