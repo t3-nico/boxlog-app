@@ -311,7 +311,7 @@ export function createMockTag(
     id: 'test-tag-id',
     user_id: 'test-user-id',
     name: 'Test Tag',
-    color: '#3B82F6',
+    color: 'blue',
     is_active: true,
     sort_order: 0,
     created_at: now,

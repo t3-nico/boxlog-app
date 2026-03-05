@@ -11,7 +11,7 @@ function createMockPlan(overrides: Partial<CalendarPlan> = {}): CalendarPlan {
     status: 'open',
     startDate: new Date('2026-02-20T09:00:00'),
     endDate: new Date('2026-02-20T10:00:00'),
-    color: '#3b82f6',
+    color: 'blue',
     tagIds: [],
     ...overrides,
   } as CalendarPlan;

@@ -98,7 +98,7 @@ describe.skipIf(SKIP_INTEGRATION)('GDPR Router Integration', () => {
     await adminSupabase.from('tags').insert({
       user_id: TEST_USER_ID,
       name: 'GDPR Test Tag',
-      color: '#FF0000',
+      color: 'red',
     });
 
     await adminSupabase.from('plans').insert({

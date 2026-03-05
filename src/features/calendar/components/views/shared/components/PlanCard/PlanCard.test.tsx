@@ -22,7 +22,7 @@ describe('PlanCard', () => {
     startDate: new Date('2025-01-15T10:00:00'),
     endDate: new Date('2025-01-15T11:00:00'),
     status: 'open',
-    color: '#3b82f6',
+    color: 'blue',
     tagId: null,
     createdAt: new Date(),
     updatedAt: new Date(),

@@ -13,7 +13,7 @@ const mockTags: Tag[] = [
   {
     id: 'tag-1',
     name: '仕事',
-    color: '#3b82f6',
+    color: 'blue',
     user_id: null,
     is_active: true,
     created_at: null,
@@ -22,7 +22,7 @@ const mockTags: Tag[] = [
   {
     id: 'tag-1-1',
     name: '仕事:ミーティング',
-    color: '#3b82f6',
+    color: 'blue',
     user_id: null,
     is_active: true,
     created_at: null,
@@ -31,7 +31,7 @@ const mockTags: Tag[] = [
   {
     id: 'tag-1-2',
     name: '仕事:コーディング',
-    color: '#3b82f6',
+    color: 'blue',
     user_id: null,
     is_active: true,
     created_at: null,
@@ -40,7 +40,7 @@ const mockTags: Tag[] = [
   {
     id: 'tag-2',
     name: '勉強',
-    color: '#10b981',
+    color: 'green',
     user_id: null,
     is_active: true,
     created_at: null,
@@ -49,7 +49,7 @@ const mockTags: Tag[] = [
   {
     id: 'tag-3',
     name: '運動',
-    color: '#f59e0b',
+    color: 'amber',
     user_id: null,
     is_active: true,
     created_at: null,
@@ -58,7 +58,7 @@ const mockTags: Tag[] = [
   {
     id: 'tag-4',
     name: 'プライベート',
-    color: '#ec4899',
+    color: 'pink',
     user_id: null,
     is_active: true,
     created_at: null,

@@ -19,7 +19,7 @@ const meta = {
     layout: 'padded',
   },
   args: {
-    displayColor: '#4CAF50',
+    displayColor: 'green',
     onOpenRenameDialog: fn(),
     onColorChange: fn(),
     onOpenMergeModal: fn(),
@@ -48,9 +48,9 @@ export const GroupedTag: Story = {
     isGrouped: true,
     currentGroup: '開発',
     groupOptions: [
-      { name: '開発', color: '#4CAF50' },
-      { name: 'デザイン', color: '#FF9800' },
-      { name: 'マーケティング', color: '#2196F3' },
+      { name: '開発', color: 'green' },
+      { name: 'デザイン', color: 'orange' },
+      { name: 'マーケティング', color: 'blue' },
     ],
     onChangeGroup: fn(),
   },

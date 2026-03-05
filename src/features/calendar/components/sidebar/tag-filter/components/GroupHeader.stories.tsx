@@ -22,7 +22,7 @@ const meta = {
     indeterminate: false,
     count: 12,
     collapsed: false,
-    displayColor: '#4CAF50',
+    displayColor: 'green',
     onCheckedChange: fn(),
     onToggleCollapse: fn(),
     onShowOnlyGroup: fn(),
@@ -94,7 +94,7 @@ export const AllPatterns: Story = {
         indeterminate={false}
         count={12}
         collapsed={false}
-        displayColor="#4CAF50"
+        displayColor="green"
         onCheckedChange={fn()}
         onToggleCollapse={fn()}
         onShowOnlyGroup={fn()}
@@ -110,7 +110,7 @@ export const AllPatterns: Story = {
         indeterminate={true}
         count={5}
         collapsed={false}
-        displayColor="#FF9800"
+        displayColor="orange"
         onCheckedChange={fn()}
         onToggleCollapse={fn()}
         onShowOnlyGroup={fn()}
@@ -126,7 +126,7 @@ export const AllPatterns: Story = {
         indeterminate={false}
         count={3}
         collapsed={true}
-        displayColor="#2196F3"
+        displayColor="blue"
         onCheckedChange={fn()}
         onToggleCollapse={fn()}
         onShowOnlyGroup={fn()}

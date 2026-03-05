@@ -47,11 +47,11 @@ interface MockTag {
 }
 
 const mockTags: MockTag[] = [
-  { id: 'tag-1', name: '仕事', color: '#3B82F6' },
-  { id: 'tag-2', name: '重要', color: '#EF4444' },
-  { id: 'tag-3', name: '個人', color: '#10B981' },
-  { id: 'tag-4', name: '定例', color: '#8B5CF6' },
-  { id: 'tag-5', name: '勉強', color: '#F59E0B' },
+  { id: 'tag-1', name: '仕事', color: 'blue' },
+  { id: 'tag-2', name: '重要', color: 'red' },
+  { id: 'tag-3', name: '個人', color: 'green' },
+  { id: 'tag-4', name: '定例', color: 'violet' },
+  { id: 'tag-5', name: '勉強', color: 'amber' },
 ];
 
 const mockSuggestions: MockSuggestion[] = [

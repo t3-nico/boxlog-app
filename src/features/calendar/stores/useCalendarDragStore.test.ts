@@ -11,7 +11,7 @@ const mockCalendarPlan: CalendarPlan = {
   startDate: new Date('2026-02-21T10:00:00'),
   endDate: new Date('2026-02-21T11:00:00'),
   status: 'open',
-  color: '#3b82f6',
+  color: 'blue',
   createdAt: new Date(),
   updatedAt: new Date(),
   displayStartDate: new Date('2026-02-21T10:00:00'),

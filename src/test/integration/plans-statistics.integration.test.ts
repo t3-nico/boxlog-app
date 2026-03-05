@@ -210,7 +210,7 @@ describe.skipIf(SKIP_INTEGRATION)('Plans Statistics Router Integration', () => {
         .insert({
           user_id: TEST_USER_ID,
           name: 'Test Tag for Stats',
-          color: '#FF0000',
+          color: 'red',
         })
         .select()
         .single();

@@ -28,7 +28,7 @@ const mockTags: Tag[] = [
   {
     id: 'parent-1',
     name: '仕事',
-    color: '#3b82f6',
+    color: 'blue',
     user_id: 'user-1',
     is_active: true,
     sort_order: 0,
@@ -38,7 +38,7 @@ const mockTags: Tag[] = [
   {
     id: 'child-1',
     name: 'ミーティング',
-    color: '#60a5fa',
+    color: 'blue',
     user_id: 'user-1',
     is_active: true,
     sort_order: 0,
@@ -48,7 +48,7 @@ const mockTags: Tag[] = [
   {
     id: 'child-2',
     name: 'コーディング',
-    color: '#2563eb',
+    color: 'blue',
     user_id: 'user-1',
     is_active: true,
     sort_order: 1,
@@ -58,7 +58,7 @@ const mockTags: Tag[] = [
   {
     id: 'tag-private',
     name: 'プライベート',
-    color: '#22c55e',
+    color: 'green',
     user_id: 'user-1',
     is_active: true,
     sort_order: 1,
@@ -68,7 +68,7 @@ const mockTags: Tag[] = [
   {
     id: 'tag-study',
     name: '勉強',
-    color: '#a855f7',
+    color: 'violet',
     user_id: 'user-1',
     is_active: true,
     sort_order: 2,
@@ -78,7 +78,7 @@ const mockTags: Tag[] = [
   {
     id: 'tag-exercise',
     name: '運動',
-    color: '#f97316',
+    color: 'orange',
     user_id: 'user-1',
     is_active: true,
     sort_order: 3,

@@ -104,7 +104,7 @@ describe('TagService', () => {
       const mockTag = {
         id: 'new-tag-id',
         name: 'New Tag',
-        color: '#3B82F6',
+        color: 'blue',
         user_id: userId,
       };
 
@@ -122,7 +122,7 @@ describe('TagService', () => {
       const mockTag = {
         id: 'new-tag-id',
         name: 'New Tag',
-        color: '#FF0000',
+        color: 'red',
         user_id: userId,
       };
 
@@ -130,10 +130,10 @@ describe('TagService', () => {
 
       const result = await service.create({
         userId,
-        input: { name: 'New Tag', color: '#FF0000' },
+        input: { name: 'New Tag', color: 'red' },
       });
 
-      expect(result.color).toBe('#FF0000');
+      expect(result.color).toBe('red');
     });
 
     it('should trim tag name', async () => {
@@ -219,7 +219,7 @@ describe('TagService', () => {
     const existingTag = {
       id: 'tag-1',
       name: 'Original',
-      color: '#000000',
+      color: 'blue',
       user_id: userId,
     };
 
@@ -238,17 +238,17 @@ describe('TagService', () => {
     });
 
     it('should update tag color', async () => {
-      const updatedTag = { ...existingTag, color: '#FF0000' };
+      const updatedTag = { ...existingTag, color: 'red' };
 
       setupMockUpdateQuery(mockSupabase.from, existingTag, updatedTag);
 
       const result = await service.update({
         userId,
         tagId: 'tag-1',
-        updates: { color: '#FF0000' },
+        updates: { color: 'red' },
       });
 
-      expect(result.color).toBe('#FF0000');
+      expect(result.color).toBe('red');
     });
 
     it('should throw INVALID_INPUT for empty name update', async () => {

@@ -20,7 +20,7 @@ describe('planPositioning', () => {
     endDate: new Date(2025, 0, 15, endHour, endMinute),
     type: 'plan',
     status: 'open',
-    color: '#3b82f6',
+    color: 'blue',
     isRecurring: false,
     tagId: null,
     createdAt: new Date(),

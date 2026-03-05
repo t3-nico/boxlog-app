@@ -14,7 +14,7 @@ function makeTag(overrides: Partial<Tag> & { name: string }): Tag {
   return {
     id: `tag-${overrides.name}`,
     user_id: 'user-1',
-    color: '#3b82f6',
+    color: 'blue',
     is_active: true,
     created_at: null,
     updated_at: null,

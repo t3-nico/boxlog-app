@@ -29,9 +29,9 @@ export const AllPatterns: Story = {
     ];
 
     const tagOptions = [
-      { value: 'tag-1', label: '仕事', color: '#3B82F6' },
-      { value: 'tag-2', label: 'プライベート', color: '#22C55E' },
-      { value: 'tag-3', label: '学習', color: '#F59E0B' },
+      { value: 'tag-1', label: '仕事', color: 'blue' },
+      { value: 'tag-2', label: 'プライベート', color: 'green' },
+      { value: 'tag-3', label: '学習', color: 'amber' },
     ];
 
     return (

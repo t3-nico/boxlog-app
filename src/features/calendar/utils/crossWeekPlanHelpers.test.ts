@@ -18,7 +18,7 @@ describe('crossWeekPlanHelpers', () => {
           startDate: new Date('2024-06-15T10:00:00'),
           endDate: new Date('2024-06-15T11:00:00'),
           status: 'open',
-          color: '#3b82f6',
+          color: 'blue',
           displayStartDate: new Date('2024-06-15T10:00:00'),
           displayEndDate: new Date('2024-06-15T11:00:00'),
           duration: 60,
@@ -46,7 +46,7 @@ describe('crossWeekPlanHelpers', () => {
           startDate: new Date('2024-06-15T10:00:00'),
           endDate: new Date('2024-06-17T18:00:00'),
           status: 'open',
-          color: '#3b82f6',
+          color: 'blue',
           displayStartDate: new Date('2024-06-15T10:00:00'),
           displayEndDate: new Date('2024-06-17T18:00:00'),
           duration: 60,
@@ -74,7 +74,7 @@ describe('crossWeekPlanHelpers', () => {
           startDate: new Date('2024-06-14T10:00:00'), // 金曜
           endDate: new Date('2024-06-17T18:00:00'), // 月曜
           status: 'open',
-          color: '#3b82f6',
+          color: 'blue',
           displayStartDate: new Date('2024-06-14T10:00:00'),
           displayEndDate: new Date('2024-06-17T18:00:00'),
           duration: 60,
@@ -103,7 +103,7 @@ describe('crossWeekPlanHelpers', () => {
           startDate: null,
           endDate: null,
           status: 'open',
-          color: '#3b82f6',
+          color: 'blue',
           displayStartDate: new Date(),
           displayEndDate: new Date(),
           duration: 60,
@@ -132,7 +132,7 @@ describe('crossWeekPlanHelpers', () => {
           startDate: new Date('2024-06-14T10:00:00'), // 金曜
           endDate: new Date('2024-06-14T11:00:00'),
           status: 'open',
-          color: '#3b82f6',
+          color: 'blue',
           displayStartDate: new Date('2024-06-14T10:00:00'),
           displayEndDate: new Date('2024-06-14T11:00:00'),
           duration: 60,
@@ -148,7 +148,7 @@ describe('crossWeekPlanHelpers', () => {
           startDate: new Date('2024-06-15T10:00:00'), // 土曜（2024-06-15は土曜日）
           endDate: new Date('2024-06-15T11:00:00'),
           status: 'open',
-          color: '#3b82f6',
+          color: 'blue',
           displayStartDate: new Date('2024-06-15T10:00:00'),
           displayEndDate: new Date('2024-06-15T11:00:00'),
           duration: 60,
@@ -164,7 +164,7 @@ describe('crossWeekPlanHelpers', () => {
           startDate: new Date('2024-06-16T10:00:00'), // 日曜
           endDate: new Date('2024-06-16T11:00:00'),
           status: 'open',
-          color: '#3b82f6',
+          color: 'blue',
           displayStartDate: new Date('2024-06-16T10:00:00'),
           displayEndDate: new Date('2024-06-16T11:00:00'),
           duration: 60,
@@ -197,7 +197,7 @@ describe('crossWeekPlanHelpers', () => {
           startDate: null,
           endDate: null,
           status: 'open',
-          color: '#3b82f6',
+          color: 'blue',
           displayStartDate: new Date(),
           displayEndDate: new Date(),
           duration: 60,
@@ -229,7 +229,7 @@ describe('crossWeekPlanHelpers', () => {
           startDate: new Date('2024-06-14T10:00:00'), // 金曜（day=5）
           endDate: new Date('2024-06-17T18:00:00'), // 月曜（day=1）
           status: 'open',
-          color: '#3b82f6',
+          color: 'blue',
           displayStartDate: new Date('2024-06-14T10:00:00'),
           displayEndDate: new Date('2024-06-17T18:00:00'),
           duration: 60,
@@ -245,7 +245,7 @@ describe('crossWeekPlanHelpers', () => {
           startDate: new Date('2024-06-15T10:00:00'), // 土曜（day=6）
           endDate: new Date('2024-06-16T18:00:00'), // 日曜（day=0）
           status: 'open',
-          color: '#3b82f6',
+          color: 'blue',
           displayStartDate: new Date('2024-06-15T10:00:00'),
           displayEndDate: new Date('2024-06-16T18:00:00'),
           duration: 60,
@@ -271,7 +271,7 @@ describe('crossWeekPlanHelpers', () => {
           startDate: null,
           endDate: null,
           status: 'open',
-          color: '#3b82f6',
+          color: 'blue',
           displayStartDate: new Date(),
           displayEndDate: new Date(),
           duration: 60,

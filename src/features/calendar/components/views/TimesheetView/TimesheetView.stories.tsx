@@ -120,7 +120,7 @@ const planMisc = makePlan({ id: 'p6', title: '雑務', dayOffset: 0, duration: 3
 const workGroup: TimesheetTagGroup = {
   tagId: 'tag-1',
   tagName: 'Work',
-  tagColor: '#3B82F6',
+  tagColor: 'blue',
   plans: [planApiDesign, planCodeReview, planBugFix, recordMeeting],
   dailyTotals: {
     [dateKey(0)]: 150, // 120 + 30(record)
@@ -133,7 +133,7 @@ const workGroup: TimesheetTagGroup = {
 const designGroup: TimesheetTagGroup = {
   tagId: 'tag-2',
   tagName: 'Design',
-  tagColor: '#10B981',
+  tagColor: 'green',
   plans: [planMockup, planDesignReview, recordDocs],
   dailyTotals: {
     [dateKey(1)]: 120,
@@ -146,7 +146,7 @@ const designGroup: TimesheetTagGroup = {
 const untaggedGroup: TimesheetTagGroup = {
   tagId: null,
   tagName: '',
-  tagColor: '#6b7280',
+  tagColor: 'gray',
   plans: [planMisc],
   dailyTotals: {
     [dateKey(0)]: 30,
