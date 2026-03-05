@@ -3,10 +3,10 @@
 /**
  * TagQuickSelector
  *
- * ドラッグ後に表示されるタグ選択UI。
+ * タグ選択用フローティングパネル。
  * ラジオボタン型の単一選択 + 検索 + 新規作成。
- * overlayなし — カレンダーの時間選択プレビューが見える状態を維持。
- * モバイル: BottomSheet風パネル、PC: 中央フローティングパネル。
+ * overlayなし — 背景コンテンツが見える状態を維持。
+ * モバイル: BottomSheet風パネル、PC: アンカー横フローティング。
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -15,7 +15,6 @@ import { createPortal } from 'react-dom';
 import { Plus, Search, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { TagRadioItem } from '@/components/tags/TagRadioItem';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useHasMounted } from '@/hooks/useHasMounted';
@@ -26,13 +25,15 @@ import { cn } from '@/lib/utils';
 
 import type { Tag } from '@/core/types/tag';
 
+import { TagRadioItem } from './TagRadioItem';
+
 interface TagQuickSelectorProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSelect: (tagId: string, tagName: string) => void;
-  onCreateAndSelect: (name: string) => void;
+  onCreateAndSelect: (name: string, color?: string | null) => void;
   /** PC: アンカー要素の横にパネルを配置する */
-  anchorRef?: React.RefObject<HTMLDivElement | null>;
+  anchorRef?: React.RefObject<HTMLDivElement | HTMLButtonElement | null>;
 }
 
 /**
@@ -43,7 +44,7 @@ function TagQuickSelectorContent({
   onCreateAndSelect,
 }: {
   onSelect: (tagId: string, tagName: string) => void;
-  onCreateAndSelect: (name: string) => void;
+  onCreateAndSelect: (name: string, color?: string | null) => void;
 }) {
   const t = useTranslations('calendar');
   const { data: tags } = useTags();
@@ -64,38 +65,42 @@ function TagQuickSelectorContent({
     return sortedTags.filter((tag) => tag.name.toLowerCase().includes(q));
   }, [sortedTags, searchQuery]);
 
-  // コロン記法でグルーピング（1つでもグループ表示）
+  // コロン記法でグルーピング
+  // prefix と完全一致するタグがあれば親タグとして使用
   const { groups, ungrouped } = useMemo(() => {
-    const prefixMap = new Map<string, Tag[]>();
+    const prefixMap = new Map<string, { parent: Tag | null; children: Tag[] }>();
     const noColon: Tag[] = [];
 
+    // 1パス: コロン付きを子としてグルーピング、コロンなしは候補として保持
     for (const tag of filteredTags) {
       const { prefix, suffix } = parseColonTag(tag.name);
       if (suffix !== null) {
-        const existing = prefixMap.get(prefix) ?? [];
-        existing.push(tag);
+        const existing = prefixMap.get(prefix) ?? { parent: null, children: [] };
+        existing.children.push(tag);
         prefixMap.set(prefix, existing);
       } else {
         noColon.push(tag);
       }
     }
 
-    return { groups: prefixMap, ungrouped: noColon };
+    // 2パス: noColon の中で prefix と完全一致するタグを親に昇格
+    const ungroupedResult: Tag[] = [];
+    for (const tag of noColon) {
+      const group = prefixMap.get(tag.name);
+      if (group) {
+        group.parent = tag;
+      } else {
+        ungroupedResult.push(tag);
+      }
+    }
+
+    return { groups: prefixMap, ungrouped: ungroupedResult };
   }, [filteredTags]);
 
   const handleSelect = useCallback(
     (tagId: string, tagName: string) => {
       setSelectedId(tagId);
       onSelect(tagId, tagName);
-    },
-    [onSelect],
-  );
-
-  // グループ親選択: 先頭子タグのIDを使い、タイトルにはprefix名を設定
-  const handleSelectGroupParent = useCallback(
-    (prefix: string, firstTagId: string) => {
-      setSelectedId(`group:${prefix}`);
-      onSelect(firstTagId, prefix);
     },
     [onSelect],
   );
@@ -147,24 +152,32 @@ function TagQuickSelectorContent({
         )}
 
         {/* Grouped tags */}
-        {[...groups.entries()].map(([prefix, groupTags]) => {
-          const firstTag = groupTags[0];
-          if (!firstTag) return null;
+        {[...groups.entries()].map(([prefix, { parent, children }]) => {
+          if (children.length === 0) return null;
 
-          const parentSelected = selectedId === `group:${prefix}`;
+          // 表示用タグ: 親タグがあればそれ、なければ先頭子タグの色を使用
+          const displayTag = parent ?? children[0];
+          if (!displayTag) return null;
 
           return (
             <div key={prefix} className="mb-1">
-              {/* Group parent */}
+              {/* Group parent — 常にクリック可能 */}
               <TagRadioItem
-                tag={firstTag}
+                tag={displayTag}
                 label={prefix}
-                isSelected={parentSelected}
-                onSelect={() => handleSelectGroupParent(prefix, firstTag.id)}
+                isSelected={parent ? selectedId === parent.id : false}
+                onSelect={() => {
+                  if (parent) {
+                    handleSelect(parent.id, parent.name);
+                  } else {
+                    // 子タグの色を引き継いで親タグを作成
+                    onCreateAndSelect(prefix, displayTag.color);
+                  }
+                }}
               />
 
               {/* Children */}
-              {groupTags.map((tag) => {
+              {children.map((tag) => {
                 const { suffix } = parseColonTag(tag.name);
                 return (
                   <TagRadioItem
@@ -312,8 +325,8 @@ export function TagQuickSelector({
   if (!mounted || !open) return null;
 
   const panel = (
-    <div className="fixed inset-0 z-50" onClick={handleBackdropClick}>
-      {/* Floating panel — overlayなし、カレンダーが見える */}
+    <div className="z-overlay-popover fixed inset-0" onClick={handleBackdropClick}>
+      {/* Floating panel — overlayなし、背景が見える */}
       <div
         ref={panelRef}
         role="dialog"
