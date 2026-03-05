@@ -1,6 +1,8 @@
 // Core Tag type definitions
 // Extracted from features/tags/types for cross-feature usage
 
+import type { TagColorName } from '@/config/ui/colors';
+
 export interface Tag {
   id: string;
   /** タグ名。コロン記法で2階層を表現（例: "開発:api"） */
@@ -16,13 +18,13 @@ export interface Tag {
 // タグ作成用入力型
 export interface CreateTagInput {
   name: string;
-  color: string;
+  color: TagColorName;
 }
 
 // タグ更新用入力型
 export interface UpdateTagInput {
   name?: string | undefined;
-  color?: string | undefined;
+  color?: TagColorName | undefined;
   is_active?: boolean | undefined;
   sort_order?: number | undefined;
 }

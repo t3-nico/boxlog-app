@@ -19,4 +19,13 @@ export const TAG_GROUP_NAME_MAX_LENGTH = 50;
 // カラー定数（config/ui/colors.ts から再エクスポート）
 // ========================================
 
-export { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR, TAG_COLOR_PALETTE } from '@/config/ui/colors';
+export {
+  DEFAULT_GROUP_COLOR,
+  DEFAULT_TAG_COLOR,
+  TAG_COLOR_MAP,
+  TAG_COLOR_NAMES,
+  TAG_COLOR_PALETTE,
+  getTagColorClasses,
+  resolveTagColor,
+} from '@/config/ui/colors';
+export type { TagColorName } from '@/config/ui/colors';
