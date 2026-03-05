@@ -20,7 +20,6 @@ import { computeDuration, formatDurationDisplay } from '@/lib/time-utils';
 
 import { DateNavigatorRow } from './DateNavigatorRow';
 import { TimeConflictAlert } from './TimeConflictAlert';
-import { TimeProgressBar } from './TimeProgressBar';
 import { TimeRow, TimeRowPlaceholder } from './TimeRow';
 
 /**
@@ -204,13 +203,6 @@ export function InspectorTimeSection({
           >
             {t('plan.inspector.time.sameAsPlanned')}
           </button>
-        </div>
-      )}
-
-      {/* プログレスバー */}
-      {!isUnplanned && !showActualPlaceholder && hasActualTime && (
-        <div className="px-8">
-          <TimeProgressBar plannedMinutes={plannedDuration} actualMinutes={actualDuration} />
         </div>
       )}
 
