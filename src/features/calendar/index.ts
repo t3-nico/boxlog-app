@@ -40,7 +40,6 @@ export { WeekView } from './components/views/WeekView';
 // Aside (Panel) Components
 // =============================================================================
 export { PlanListPanel } from './components/aside/PlanListPanel';
-export { RecordListPanel } from './components/aside/RecordListPanel';
 
 // =============================================================================
 // Sidebar Components
@@ -53,18 +52,14 @@ export { ViewSwitcherList } from './components/sidebar/ViewSwitcherList';
 // =============================================================================
 export { getMultiDayCount, isMultiDayView } from './types/calendar.types';
 export type {
-  Calendar,
   CalendarEvent,
   CalendarFilter,
   CalendarHeaderProps,
   CalendarPlan,
-  CalendarShare,
-  CalendarShareInput,
   CalendarTicket,
   CalendarViewProps,
   CalendarViewState,
   CalendarViewType,
-  CreateCalendarInput,
   CreateEventInput,
   CreatePlanInput,
   CreateTicketInput,
@@ -74,7 +69,6 @@ export type {
   PlanInstance,
   RecurrencePattern,
   TicketInstance,
-  UpdateCalendarInput,
   UpdateEventInput,
   UpdatePlanInput,
   UpdateTicketInput,
@@ -91,6 +85,8 @@ export type { ItemType } from '@/stores/useCalendarFilterStore';
 // =============================================================================
 // Contexts
 // =============================================================================
+export { CalendarProvider, useCalendar } from './contexts/CalendarContext';
+export type { CalendarContextValue } from './contexts/CalendarContext';
 export {
   CalendarNavigationProvider,
   useCalendarNavigation,
@@ -102,7 +98,6 @@ export {
 export { useResizeHandle } from '@/hooks/useResizeHandle';
 export { useCalendarLayout } from './hooks/ui/useCalendarLayout';
 export { useCalendarProviderProps } from './hooks/useCalendarProviderProps';
-export { useCalendarRealtime } from './hooks/useCalendarRealtime';
 export { useWeekendNavigation } from './hooks/useWeekendNavigation';
 
 // Hooks: Cross-feature (used by composition layer in app/)

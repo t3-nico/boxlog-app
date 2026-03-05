@@ -8,11 +8,9 @@ import { TagBadge } from './tag-badge';
 const workTag: Tag = {
   id: '1',
   name: '仕事',
-  color: '#3b82f6',
+  color: 'blue',
   user_id: 'user-1',
-  description: '業務関連のタスク',
   is_active: true,
-  parent_id: null,
   sort_order: 0,
   created_at: null,
   updated_at: null,
@@ -21,11 +19,9 @@ const workTag: Tag = {
 const privateTag: Tag = {
   id: '2',
   name: 'プライベート',
-  color: '#22c55e',
+  color: 'green',
   user_id: 'user-1',
-  description: null,
   is_active: true,
-  parent_id: null,
   sort_order: 1,
   created_at: null,
   updated_at: null,
@@ -34,11 +30,9 @@ const privateTag: Tag = {
 const studyTag: Tag = {
   id: '3',
   name: '勉強',
-  color: '#a855f7',
+  color: 'violet',
   user_id: 'user-1',
-  description: null,
   is_active: true,
-  parent_id: null,
   sort_order: 2,
   created_at: null,
   updated_at: null,
@@ -47,11 +41,9 @@ const studyTag: Tag = {
 const exerciseTag: Tag = {
   id: '4',
   name: '運動',
-  color: '#f97316',
+  color: 'orange',
   user_id: 'user-1',
-  description: null,
   is_active: true,
-  parent_id: null,
   sort_order: 3,
   created_at: null,
   updated_at: null,
@@ -131,7 +123,7 @@ export const AllPatterns: Story = {
         <p className="text-muted-foreground mb-4 text-sm">descriptionがあればホバーでtooltip表示</p>
         <div className="flex flex-wrap items-center gap-2">
           <TagBadge tag={workTag} />
-          <TagBadge tag={{ ...privateTag, description: 'プライベートな予定' }} />
+          <TagBadge tag={privateTag} />
           <TagBadge tag={studyTag} />
         </div>
       </section>
@@ -153,13 +145,13 @@ export const AllPatterns: Story = {
         <p className="text-muted-foreground mb-4 text-sm">tag.colorで動的に色が変わる</p>
         <div className="flex flex-wrap items-center gap-2">
           {[
-            { ...workTag, color: '#ef4444', name: '赤' },
-            { ...workTag, color: '#f97316', name: 'オレンジ' },
-            { ...workTag, color: '#eab308', name: '黄' },
-            { ...workTag, color: '#22c55e', name: '緑' },
-            { ...workTag, color: '#3b82f6', name: '青' },
-            { ...workTag, color: '#a855f7', name: '紫' },
-            { ...workTag, color: '#ec4899', name: 'ピンク' },
+            { ...workTag, color: 'red', name: '赤' },
+            { ...workTag, color: 'orange', name: 'オレンジ' },
+            { ...workTag, color: 'amber', name: '黄' },
+            { ...workTag, color: 'green', name: '緑' },
+            { ...workTag, color: 'blue', name: '青' },
+            { ...workTag, color: 'violet', name: '紫' },
+            { ...workTag, color: 'pink', name: 'ピンク' },
           ].map((tag, i) => (
             <TagBadge key={i} tag={tag} />
           ))}

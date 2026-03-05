@@ -3,7 +3,7 @@
 import React, { useCallback } from 'react';
 
 import { cn } from '@/lib/utils';
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { useCalendarDragStore } from '../../../../stores/useCalendarDragStore';
 import type { CalendarPlan } from '../../../../types/calendar.types';
 
@@ -15,6 +15,7 @@ import {
   PlanCard,
   useGlobalDragCursor,
 } from '../../shared';
+import { InlineTagPalette } from '../../shared/components/InlineTagPalette';
 import { PanelDragPreview } from '../../shared/components/PanelDragPreview';
 import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop';
 import { useResponsiveHourHeight } from '../../shared/hooks/useResponsiveHourHeight';
@@ -26,7 +27,6 @@ interface MultiDayContentProps {
   planStyles: Record<string, React.CSSProperties>;
   onPlanClick?: ((plan: CalendarPlan) => void) | undefined;
   onPlanContextMenu?: ((plan: CalendarPlan, e: React.MouseEvent) => void) | undefined;
-  onEmptyClick?: ((date: Date, timeString: string) => void) | undefined;
   onPlanUpdate?: ((planId: string, updates: Partial<CalendarPlan>) => void) | undefined;
   onTimeRangeSelect?: ((selection: DateTimeSelection) => void) | undefined;
   onEmptyAreaContextMenu?:
@@ -55,8 +55,8 @@ export function MultiDayContent({
   disabledPlanId,
   viewMode,
 }: MultiDayContentProps) {
-  const inspectorPlanId = usePlanInspectorStore((state) => state.planId);
-  const isInspectorOpen = usePlanInspectorStore((state) => state.isOpen);
+  const inspectorPlanId = useEntryInspectorStore((state) => state.entryId);
+  const isInspectorOpen = useEntryInspectorStore((state) => state.isOpen);
 
   // レスポンシブな高さ
   const HOUR_HEIGHT = useResponsiveHourHeight();
@@ -231,6 +231,9 @@ export function MultiDayContent({
             </div>
           );
         })}
+
+        {/* インラインタグパレット（ドラッグ/タップ後のタグ選択UI） */}
+        <InlineTagPalette hourHeight={HOUR_HEIGHT} date={date} />
       </div>
     </div>
   );

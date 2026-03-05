@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowUpDown, Calendar, CircleDot, Group, RotateCcw, Settings2 } from 'lucide-react';
+import { ArrowUpDown, Calendar, Group, RotateCcw, Settings2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
@@ -31,19 +31,14 @@ export type PanelGroupByField = 'tags' | null;
 /** スケジュールフィルター */
 export type PanelScheduleFilter = 'all' | 'scheduled' | 'unscheduled';
 
-/** ステータスフィルター */
-export type PanelStatusFilter = 'all' | 'open' | 'closed';
-
 interface PlanListSortMenuProps {
   sortBy: PanelSortField;
   sortOrder: PanelSortOrder;
   groupBy: PanelGroupByField;
   scheduleFilter: PanelScheduleFilter;
-  statusFilter: PanelStatusFilter;
   onSortChange: (field: PanelSortField, order: PanelSortOrder) => void;
   onGroupByChange: (field: PanelGroupByField) => void;
   onScheduleFilterChange: (filter: PanelScheduleFilter) => void;
-  onStatusFilterChange: (filter: PanelStatusFilter) => void;
 }
 
 /**
@@ -58,11 +53,9 @@ export function PlanListSortMenu({
   sortOrder,
   groupBy,
   scheduleFilter,
-  statusFilter,
   onSortChange,
   onGroupByChange,
   onScheduleFilterChange,
-  onStatusFilterChange,
 }: PlanListSortMenuProps) {
   const t = useTranslations('calendar');
 
@@ -83,29 +76,20 @@ export function PlanListSortMenu({
     { value: 'unscheduled', label: t('aside.schedule.unscheduled') },
   ];
 
-  const statusOptions: Array<{ value: PanelStatusFilter; label: string }> = [
-    { value: 'all', label: t('aside.status.all') },
-    { value: 'open', label: t('aside.status.open') },
-    { value: 'closed', label: t('aside.status.closed') },
-  ];
-
   const currentSortLabel = sortOptions.find((o) => o.value === sortBy)?.label ?? '';
   const currentGroupLabel = groupOptions.find((o) => o.value === groupBy)?.label ?? '';
   const currentScheduleLabel = scheduleOptions.find((o) => o.value === scheduleFilter)?.label ?? '';
-  const currentStatusLabel = statusOptions.find((o) => o.value === statusFilter)?.label ?? '';
 
   const isActive =
     sortBy !== 'created_at' ||
     sortOrder !== 'desc' ||
     groupBy !== null ||
-    scheduleFilter !== 'unscheduled' ||
-    statusFilter !== 'open';
+    scheduleFilter !== 'unscheduled';
 
   const handleReset = () => {
     onSortChange('created_at', 'desc');
     onGroupByChange(null);
     onScheduleFilterChange('unscheduled');
-    onStatusFilterChange('open');
   };
 
   return (
@@ -167,27 +151,6 @@ export function PlanListSortMenu({
                     key={option.value ?? 'none'}
                     value={option.value ?? 'none'}
                   >
-                    {option.label}
-                  </DropdownMenuRadioItem>
-                ))}
-              </DropdownMenuRadioGroup>
-            </DropdownMenuSubContent>
-          </DropdownMenuSub>
-
-          {/* ステータス */}
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>
-              <CircleDot />
-              <span className="flex-1">{t('aside.status.label')}</span>
-              <span className="text-muted-foreground text-xs">{currentStatusLabel}</span>
-            </DropdownMenuSubTrigger>
-            <DropdownMenuSubContent className="border-input">
-              <DropdownMenuRadioGroup
-                value={statusFilter}
-                onValueChange={(value) => onStatusFilterChange(value as PanelStatusFilter)}
-              >
-                {statusOptions.map((option) => (
-                  <DropdownMenuRadioItem key={option.value} value={option.value}>
                     {option.label}
                   </DropdownMenuRadioItem>
                 ))}

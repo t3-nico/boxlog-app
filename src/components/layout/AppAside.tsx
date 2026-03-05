@@ -6,11 +6,10 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { SegmentedControl } from '@/components/ui/segmented-control';
 
-export type AsideType = 'none' | 'plan' | 'record' | 'chat' | 'reflection';
+export type AsideType = 'none' | 'entries' | 'chat' | 'reflection';
 
 const asideOptions = [
-  { value: 'plan' as const, label: 'Plan' },
-  { value: 'record' as const, label: 'Record' },
+  { value: 'entries' as const, label: 'Entries' },
   { value: 'chat' as const, label: 'Chat' },
 ];
 
@@ -39,7 +38,7 @@ export function AppAside({ asideType, onAsideChange, renderContent }: AppAsidePr
         <div className="flex h-8 items-center justify-between">
           <SegmentedControl
             options={asideOptions}
-            value={asideType as 'plan' | 'record' | 'chat'}
+            value={asideType as 'entries' | 'chat'}
             onChange={onAsideChange}
           />
           <Button

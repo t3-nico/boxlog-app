@@ -123,18 +123,19 @@ export const commandRegistry = new CommandRegistry();
 // Command actions interface
 interface CommandActions {
   router: { push: (path: string) => void };
-  openPlanInspector: (planId: string | null) => void;
+  openPlanInspector: (planId: string) => void;
+  createAndOpenEntry: () => Promise<void>;
   openTagCreateModal: () => void;
   navigateToSettings: () => void;
   toggleTheme: () => void;
-  openAside: (aside: 'plan' | 'record' | 'chat') => void;
+  openAside: (aside: 'entries' | 'chat' | 'reflection') => void;
 }
 
 // Default commands that are always available
 export const registerDefaultCommands = (actions: CommandActions) => {
   const {
     router,
-    openPlanInspector,
+    createAndOpenEntry,
     openTagCreateModal,
     navigateToSettings,
     toggleTheme,
@@ -151,7 +152,7 @@ export const registerDefaultCommands = (actions: CommandActions) => {
       icon: 'calendar',
       shortcut: ['G', 'C'],
       keywords: ['calendar', 'schedule', 'カレンダー', '予定'],
-      action: () => router.push('/day'),
+      action: () => router.push('/calendar/day'),
     },
     {
       id: 'nav:plan',
@@ -160,10 +161,10 @@ export const registerDefaultCommands = (actions: CommandActions) => {
       category: 'navigation',
       icon: 'check-square',
       shortcut: ['G', 'P'],
-      keywords: ['plan', 'board', 'kanban', 'タスク', '一覧', 'プラン'],
+      keywords: ['plan', 'board', 'kanban', 'タスク', '一覧', 'プラン', 'entries'],
       action: () => {
-        router.push('/day');
-        openAside('plan');
+        router.push('/calendar/day');
+        openAside('entries');
       },
     },
     {
@@ -186,7 +187,7 @@ export const registerDefaultCommands = (actions: CommandActions) => {
       icon: 'plus',
       shortcut: ['N'],
       keywords: ['new', 'add', 'create', '新規', '作成', 'プラン'],
-      action: () => openPlanInspector(null),
+      action: () => void createAndOpenEntry(),
     },
     {
       id: 'create:tag',

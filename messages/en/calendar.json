@@ -184,25 +184,20 @@
       "noTags": "No tags available",
       "comingSoon": "Coming soon",
       "createTag": "Create tag",
-      "addChildTag": "Add child tag",
+      "addTagToGroup": "Add tag to group",
       "rename": "Rename",
       "changeColor": "Change color",
       "editNote": "Edit note",
       "noteLabel": "Note",
       "noteHint": "Displayed in tooltip",
       "notePlaceholder": "Add a note...",
-      "deleteParentTag": {
-        "title": "Delete \"{name}\"",
-        "description": "Delete this tag? Child tags will remain as root tags."
-      },
-      "changeParent": "Change parent",
-      "moveToGroup": "Move to group",
+      "changeGroup": "Change group",
       "merge": "Merge into another tag",
       "showOnlyThis": "Show only this",
-      "noParent": "No parent",
+      "noGroup": "No group",
       "deleteTag": {
-        "title": "Delete Tag",
-        "description": "Delete this tag?"
+        "title": "Delete \"{name}\"",
+        "description": "This tag will be permanently deleted. This action cannot be undone."
       },
       "mergeTag": {
         "title": "Merge Tag",
@@ -216,7 +211,27 @@
       },
       "tagMenu": "Tag menu",
       "expand": "Expand",
-      "collapse": "Collapse"
+      "collapse": "Collapse",
+      "ungroupTags": "Ungroup",
+      "ungroupTagsFailed": "Failed to ungroup tags",
+      "ungroupTagsSuccess": "Ungrouped \"{name}\" ({count} tags)",
+      "ungroupConflict": {
+        "title": "Tags with the same name already exist",
+        "description": "\"{names}\" already exists. It will be merged with the existing tag."
+      },
+      "deleteGroup": {
+        "label": "Delete group",
+        "title": "Delete group \"{name}\"",
+        "description": "{count} tags will be deleted. Plans themselves will not be deleted.",
+        "success": "Deleted group \"{name}\" ({count} tags)",
+        "failed": "Failed to delete group"
+      }
+    },
+    "tagSelector": {
+      "title": "Select a tag",
+      "searchPlaceholder": "Search tags...",
+      "noResults": "No tags found",
+      "createPlaceholder": "New tag name"
     },
     "statusBar": {
       "noSchedule": "No schedule",

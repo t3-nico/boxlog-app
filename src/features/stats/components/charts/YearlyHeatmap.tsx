@@ -29,7 +29,7 @@ export function YearlyHeatmap() {
   const currentYear = new Date().getFullYear();
   const [year, setYear] = useState(currentYear);
 
-  const { data, isPending } = api.plans.getDailyHours.useQuery({ year });
+  const { data, isPending } = api.entries.getDailyHours.useQuery({ year });
 
   const startDate = new Date(year, 0, 1);
   const endDate = new Date(year, 11, 31);

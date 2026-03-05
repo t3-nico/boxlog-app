@@ -1,51 +1,51 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+/**
+ * タグマージモーダル
+ *
+ * TagQuickSelector と同じデザインパターン。
+ * overlayなし、モバイル: BottomSheet / PC: 中央フローティング。
+ * コロン記法グルーピング対応。
+ */
+
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { Search, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { useHasMounted } from '@/hooks/useHasMounted';
-import { logger } from '@/lib/logger';
-import { cn } from '@/lib/utils';
-import { DEFAULT_TAG_COLOR } from '../constants/colors';
-import { useMergeTag, useTags } from '../hooks';
-
+import { TagRadioItem } from '@/components/tags/TagRadioItem';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { useHasMounted } from '@/hooks/useHasMounted';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import { logger } from '@/lib/logger';
+import { parseColonTag } from '@/lib/tag-colon';
+import { cn } from '@/lib/utils';
+
+import { useMergeTag, useTags } from '../hooks';
+
+import type { Tag } from '@/core/types/tag';
 
 interface TagMergeModalProps {
   open: boolean;
   onClose: () => void;
   sourceTag: { id: string; name: string; color?: string | null };
-  /** 子タグがあるか（確認メッセージ用） */
-  hasChildren: boolean;
   /** マージ成功時のコールバック */
   onMergeSuccess?: () => void;
 }
 
-/**
- * タグマージモーダル
- *
- * ReactのcreatePortalを使用してdocument.bodyに直接レンダリング
- * TagCreateModalと同じパターンで統一
- */
-export function TagMergeModal({
-  open,
-  onClose,
-  sourceTag,
-  hasChildren,
-  onMergeSuccess,
-}: TagMergeModalProps) {
+export function TagMergeModal({ open, onClose, sourceTag, onMergeSuccess }: TagMergeModalProps) {
   const t = useTranslations();
+  const isMobile = useIsMobile();
+  const mounted = useHasMounted();
+  const panelRef = useRef<HTMLDivElement>(null);
+
   const { data: tags, refetch: refetchTags } = useTags();
   const mergeTagMutation = useMergeTag();
 
   const [selectedTargetId, setSelectedTargetId] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
-  const mounted = useHasMounted();
   const [error, setError] = useState('');
 
   // モーダルが開いたらリセット（React推奨: レンダー中のstate調整）
@@ -59,7 +59,7 @@ export function TagMergeModal({
     setPrevOpen(open);
   }
 
-  // 最新のタグリストを取得（外部システム同期なのでeffect内が適切）
+  // 最新のタグリストを取得
   useEffect(() => {
     if (open) {
       void refetchTags();
@@ -80,57 +80,51 @@ export function TagMergeModal({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [open, mergeTagMutation.isPending, onClose]);
 
-  // マージ対象のタグ一覧（自分を除外、アクティブなもののみ）
-  const mergeTargetTags = useMemo(
-    () => tags?.filter((tag) => tag.id !== sourceTag.id && tag.is_active !== false) ?? [],
-    [tags, sourceTag.id],
-  );
+  // マージ対象のタグ一覧（自分を除外、アクティブなもののみ、ソート済み）
+  const mergeTargetTags = useMemo(() => {
+    const active = (tags ?? []).filter((tag) => tag.id !== sourceTag.id && tag.is_active !== false);
+    return [...active].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+  }, [tags, sourceTag.id]);
 
-  // 検索でフィルタリング
+  // 検索フィルタリング
   const filteredTags = useMemo(() => {
     if (!searchQuery.trim()) return mergeTargetTags;
-    const query = searchQuery.toLowerCase();
-    return mergeTargetTags.filter((tag) => tag.name.toLowerCase().includes(query));
+    const q = searchQuery.toLowerCase();
+    return mergeTargetTags.filter((tag) => tag.name.toLowerCase().includes(q));
   }, [mergeTargetTags, searchQuery]);
 
-  // 階層構造でグループ化（親タグ → 子タグの順）
-  const groupedTags = useMemo(() => {
-    // 親タグ（parent_id が null、またはソースタグが親の場合はルートに昇格）
-    const parentTags = filteredTags
-      .filter((tag) => tag.parent_id === null || tag.parent_id === sourceTag.id)
-      .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+  // コロン記法でグルーピング
+  const { groups, ungrouped } = useMemo(() => {
+    const prefixMap = new Map<string, Tag[]>();
+    const noColon: Tag[] = [];
 
-    // 親タグごとに子タグをグループ化
-    const result: Array<{
-      parent: (typeof filteredTags)[0] | null;
-      children: typeof filteredTags;
-    }> = [];
-
-    for (const parent of parentTags) {
-      const children = filteredTags
-        .filter((tag) => tag.parent_id === parent.id)
-        .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
-      result.push({ parent, children });
-    }
-
-    // 検索時は親が見つからない子タグも表示（フラットに）
-    if (searchQuery.trim()) {
-      const includedIds = new Set(
-        result.flatMap((g) => [g.parent?.id, ...g.children.map((c) => c.id)]),
-      );
-      const orphanTags = filteredTags.filter((tag) => !includedIds.has(tag.id));
-      if (orphanTags.length > 0) {
-        for (const orphan of orphanTags) {
-          result.push({ parent: orphan, children: [] });
-        }
+    for (const tag of filteredTags) {
+      const { prefix, suffix } = parseColonTag(tag.name);
+      if (suffix !== null) {
+        const existing = prefixMap.get(prefix) ?? [];
+        existing.push(tag);
+        prefixMap.set(prefix, existing);
+      } else {
+        noColon.push(tag);
       }
     }
 
-    return result;
-  }, [filteredTags, sourceTag.id, searchQuery]);
+    return { groups: prefixMap, ungrouped: noColon };
+  }, [filteredTags]);
 
-  // 選択されたタグを取得
+  // 選択されたタグを取得（確認メッセージ用）
   const selectedTarget = mergeTargetTags.find((tag) => tag.id === selectedTargetId);
+
+  const handleSelectTag = useCallback((tagId: string) => {
+    setSelectedTargetId(tagId);
+    setError('');
+  }, []);
+
+  // グループ親選択: 先頭子タグのIDを使用
+  const handleSelectGroupParent = useCallback((firstTagId: string) => {
+    setSelectedTargetId(firstTagId);
+    setError('');
+  }, []);
 
   const handleMerge = useCallback(async () => {
     if (!selectedTargetId) {
@@ -155,7 +149,8 @@ export function TagMergeModal({
 
   const handleBackdropClick = useCallback(
     (e: React.MouseEvent) => {
-      if (e.target === e.currentTarget && !mergeTagMutation.isPending) {
+      if (panelRef.current?.contains(e.target as Node)) return;
+      if (!mergeTagMutation.isPending) {
         onClose();
       }
     },
@@ -164,140 +159,158 @@ export function TagMergeModal({
 
   // 確認メッセージ（選択後に表示）
   const confirmationMessage = selectedTarget
-    ? hasChildren
-      ? t('calendar.filter.mergeTag.descriptionWithChildren', {
-          sourceName: sourceTag.name,
-          targetName: selectedTarget.name,
-        })
-      : t('calendar.filter.mergeTag.description', {
-          sourceName: sourceTag.name,
-          targetName: selectedTarget.name,
-        })
+    ? t('calendar.filter.mergeTag.description', {
+        sourceName: sourceTag.name,
+        targetName: selectedTarget.name,
+      })
     : null;
 
   if (!mounted || !open) return null;
 
-  const dialog = (
-    <div
-      className="fixed inset-0 z-[250] flex items-center justify-center"
-      onClick={handleBackdropClick}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="tag-merge-dialog-title"
-    >
-      {/* ダイアログコンテンツ: bg-card, rounded-2xl, p-6 */}
+  const hasResults = filteredTags.length > 0;
+
+  const panel = (
+    <div className="fixed inset-0 z-50" onClick={handleBackdropClick}>
       <div
-        className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-2xl border p-6 shadow-lg duration-150"
-        style={{ width: 'min(calc(100vw - 32px), 400px)' }}
-        onClick={(e) => e.stopPropagation()}
+        ref={panelRef}
+        role="dialog"
+        aria-modal="false"
+        aria-label={t('calendar.filter.mergeTag.title')}
+        className={cn(
+          'bg-card border-border absolute flex flex-col border shadow-xl',
+          'animate-in fade-in duration-150',
+          isMobile
+            ? 'slide-in-from-bottom-4 inset-x-0 bottom-0 max-h-[70vh] rounded-t-2xl border-t'
+            : 'top-1/2 left-1/2 max-h-[70vh] w-full max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-2xl',
+        )}
       >
-        {/* Header */}
-        <h2 id="tag-merge-dialog-title" className="mb-2 text-lg font-bold">
-          {t('calendar.filter.mergeTag.title')}
-        </h2>
-        <p className="text-muted-foreground mb-4 text-sm">
-          {selectedTarget ? confirmationMessage : t('calendar.filter.mergeTag.selectTarget')}
-        </p>
-
-        {/* 検索ボックス */}
-        <Input
-          type="text"
-          placeholder={t('calendar.filter.mergeTag.searchPlaceholder')}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="mb-2"
-        />
-
-        {/* タグ選択（階層表示のラジオボタンリスト） */}
-        <div className="border-border max-h-[200px] overflow-y-auto rounded-lg border">
-          {filteredTags.length === 0 ? (
-            <p className="text-muted-foreground p-4 text-center text-sm">
-              {t('calendar.filter.mergeTag.noResults')}
-            </p>
-          ) : (
-            <RadioGroup
-              value={selectedTargetId}
-              onValueChange={(value) => {
-                setSelectedTargetId(value);
-                setError('');
-              }}
-              className="p-1"
+        {/* Drag handle (mobile) / Header */}
+        {isMobile ? (
+          <>
+            <div
+              className="flex h-10 w-full shrink-0 items-center justify-center"
+              aria-hidden="true"
             >
-              {groupedTags.map(({ parent, children }) => (
-                <div key={parent?.id ?? 'orphan'}>
-                  {/* 親タグ */}
-                  {parent && (
-                    <Label
-                      htmlFor={`merge-target-${parent.id}`}
-                      className={cn(
-                        'flex cursor-pointer items-center gap-4 rounded-lg px-4 py-2 transition-colors',
-                        'hover:bg-state-hover',
-                        selectedTargetId === parent.id && 'bg-state-selected',
-                      )}
-                    >
-                      <RadioGroupItem
-                        value={parent.id}
-                        id={`merge-target-${parent.id}`}
-                        className="shrink-0"
-                      />
-                      <span
-                        className="shrink-0 font-normal"
-                        style={{ color: parent.color || DEFAULT_TAG_COLOR }}
-                      >
-                        #
-                      </span>
-                      <span className="flex-1 truncate text-sm">{parent.name}</span>
-                    </Label>
-                  )}
-                  {/* 子タグ（インデント表示） */}
-                  {children.map((child) => (
-                    <Label
-                      key={child.id}
-                      htmlFor={`merge-target-${child.id}`}
-                      className={cn(
-                        'flex cursor-pointer items-center gap-4 rounded-lg py-2 pr-4 pl-8 transition-colors',
-                        'hover:bg-state-hover',
-                        selectedTargetId === child.id && 'bg-state-selected',
-                      )}
-                    >
-                      <RadioGroupItem
-                        value={child.id}
-                        id={`merge-target-${child.id}`}
-                        className="shrink-0"
-                      />
-                      <span
-                        className="shrink-0 font-normal"
-                        style={{ color: child.color || parent?.color || DEFAULT_TAG_COLOR }}
-                      >
-                        #
-                      </span>
-                      <span className="flex-1 truncate text-sm">{child.name}</span>
-                    </Label>
-                  ))}
-                </div>
-              ))}
-            </RadioGroup>
-          )}
+              <div className="bg-border h-1.5 w-12 rounded-full" />
+            </div>
+            <div className="px-4 pb-2">
+              <h2 className="text-lg font-bold">{t('calendar.filter.mergeTag.title')}</h2>
+              <p className="text-muted-foreground mt-1 text-sm">
+                {selectedTarget ? confirmationMessage : t('calendar.filter.mergeTag.selectTarget')}
+              </p>
+            </div>
+          </>
+        ) : (
+          <div className="px-4 pt-4 pb-2">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-bold">{t('calendar.filter.mergeTag.title')}</h2>
+              <button
+                type="button"
+                onClick={onClose}
+                disabled={mergeTagMutation.isPending}
+                className={cn(
+                  'text-foreground flex size-8 items-center justify-center rounded-lg transition-colors',
+                  'hover:bg-state-hover',
+                )}
+                aria-label="Close"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+            <p className="text-muted-foreground mt-1 text-sm">
+              {selectedTarget ? confirmationMessage : t('calendar.filter.mergeTag.selectTarget')}
+            </p>
+          </div>
+        )}
+
+        {/* Search */}
+        <div className="border-border border-b px-4 py-3">
+          <div className="relative">
+            <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+            <Input
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t('calendar.filter.mergeTag.searchPlaceholder')}
+              className="pl-9"
+            />
+          </div>
         </div>
 
-        {/* エラーメッセージ */}
+        {/* Tag list */}
+        <div
+          className="overflow-y-auto px-1 py-2"
+          style={{ maxHeight: '50vh' }}
+          role="radiogroup"
+          aria-label={t('calendar.filter.mergeTag.title')}
+        >
+          {!hasResults && (
+            <p className="text-muted-foreground px-3 py-6 text-center text-sm">
+              {t('calendar.filter.mergeTag.noResults')}
+            </p>
+          )}
+
+          {/* Grouped tags */}
+          {[...groups.entries()].map(([prefix, groupTags]) => {
+            const firstTag = groupTags[0];
+            if (!firstTag) return null;
+
+            return (
+              <div key={prefix} className="mb-1">
+                {/* Group parent */}
+                <TagRadioItem
+                  tag={firstTag}
+                  label={prefix}
+                  isSelected={selectedTargetId === firstTag.id}
+                  onSelect={() => handleSelectGroupParent(firstTag.id)}
+                />
+
+                {/* Children */}
+                {groupTags.map((tag) => {
+                  const { suffix } = parseColonTag(tag.name);
+                  return (
+                    <TagRadioItem
+                      key={tag.id}
+                      tag={tag}
+                      label={suffix ?? tag.name}
+                      isSelected={selectedTargetId === tag.id}
+                      onSelect={() => handleSelectTag(tag.id)}
+                      indented
+                    />
+                  );
+                })}
+              </div>
+            );
+          })}
+
+          {/* Ungrouped tags */}
+          {ungrouped.map((tag) => (
+            <TagRadioItem
+              key={tag.id}
+              tag={tag}
+              label={tag.name}
+              isSelected={selectedTargetId === tag.id}
+              onSelect={() => handleSelectTag(tag.id)}
+            />
+          ))}
+        </div>
+
+        {/* Error */}
         {error && (
-          <p className="text-destructive mt-2 text-sm" role="alert">
+          <p className="text-destructive px-4 text-sm" role="alert">
             {error}
           </p>
         )}
 
         {/* Footer */}
-        <div className="mt-6 flex justify-end gap-2">
-          <Button
-            variant="outline"
-            onClick={onClose}
-            disabled={mergeTagMutation.isPending}
-            className="hover:bg-state-hover"
-          >
+        <div className="border-border flex justify-end gap-2 border-t px-4 py-3">
+          <Button variant="outline" onClick={onClose} disabled={mergeTagMutation.isPending}>
             {t('common.actions.cancel')}
           </Button>
-          <Button variant="destructive" onClick={handleMerge} disabled={mergeTagMutation.isPending}>
+          <Button
+            variant="destructive"
+            onClick={handleMerge}
+            disabled={!selectedTargetId || mergeTagMutation.isPending}
+          >
             {mergeTagMutation.isPending
               ? t('calendar.toast.saving')
               : t('calendar.filter.mergeTag.confirm')}
@@ -307,5 +320,5 @@ export function TagMergeModal({
     </div>
   );
 
-  return createPortal(dialog, document.body);
+  return createPortal(panel, document.body);
 }

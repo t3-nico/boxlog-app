@@ -101,7 +101,7 @@ if (isTyping) return;
 ### 5. フォーカス管理
 
 ```typescript
-// ✅ フォーカスリング（globals.cssで定義済み）
+// ✅ フォーカスリング（base.cssで定義済み）
 className =
   'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring';
 

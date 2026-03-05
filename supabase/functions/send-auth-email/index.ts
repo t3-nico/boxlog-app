@@ -31,7 +31,7 @@ interface WebhookPayload {
 
 /**
  * カラートークン（src/emails/styles.ts と統一）
- * globals.css セマンティックトークンの hex 変換値
+ * tokens/colors.css セマンティックトークンの hex 変換値
  */
 const colors = {
   background: '#fafafa',

@@ -2,10 +2,11 @@
 
 import { useEffect, useRef } from 'react';
 
-import { useDeleteConfirmStore } from '@/stores/useDeleteConfirmStore';
+import { useEntryMutations } from '@/hooks/useEntryMutations';
+import { logger } from '@/lib/logger';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
+import { openDeleteConfirm } from '@/stores/useModalStore';
 import { usePlanClipboardStore } from '@/stores/usePlanClipboardStore';
-import type { PlanInitialData } from '@/stores/usePlanInspectorStore';
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
 import { toast } from 'sonner';
 
 interface UseCalendarPlanKeyboardOptions {
@@ -16,7 +17,7 @@ interface UseCalendarPlanKeyboardOptions {
   /** 現在選択中のプランのタイトルを取得する関数 */
   getSelectedPlanTitle?: () => string | null;
   /** 新規プラン作成時の初期データ取得関数（現在の日時など） */
-  getInitialPlanData?: () => PlanInitialData | undefined;
+  getInitialPlanData?: () => { start_time?: string; end_time?: string } | undefined;
   /** 現在選択中のプランのコピー情報を取得する関数 */
   getSelectedPlanForCopy?: () => {
     title: string;
@@ -24,7 +25,7 @@ interface UseCalendarPlanKeyboardOptions {
     startHour: number;
     startMinute: number;
     duration: number;
-    tagIds: string[] | undefined;
+    tagId: string | null | undefined;
   } | null;
   /** ペースト先の日付を取得する関数（デフォルトは現在表示中の日付） */
   getPasteDateForKeyboard?: () => Date;
@@ -63,8 +64,8 @@ export function useCalendarPlanKeyboard({
   getSelectedPlanForCopy,
   getPasteDateForKeyboard,
 }: UseCalendarPlanKeyboardOptions) {
-  const { isOpen, planId, openInspector, closeInspector } = usePlanInspectorStore();
-  const { openDialog } = useDeleteConfirmStore();
+  const { isOpen, entryId, openInspector, closeInspector } = useEntryInspectorStore();
+  const { createEntry } = useEntryMutations();
 
   // コールバックの最新値を参照
   const onDeletePlanRef = useRef(onDeletePlan);
@@ -72,18 +73,21 @@ export function useCalendarPlanKeyboard({
   const getInitialPlanDataRef = useRef(getInitialPlanData);
   const getSelectedPlanForCopyRef = useRef(getSelectedPlanForCopy);
   const getPasteDateForKeyboardRef = useRef(getPasteDateForKeyboard);
+  const createEntryRef = useRef(createEntry);
   useEffect(() => {
     onDeletePlanRef.current = onDeletePlan;
     getSelectedPlanTitleRef.current = getSelectedPlanTitle;
     getInitialPlanDataRef.current = getInitialPlanData;
     getSelectedPlanForCopyRef.current = getSelectedPlanForCopy;
     getPasteDateForKeyboardRef.current = getPasteDateForKeyboard;
+    createEntryRef.current = createEntry;
   }, [
     onDeletePlan,
     getSelectedPlanTitle,
     getInitialPlanData,
     getSelectedPlanForCopy,
     getPasteDateForKeyboard,
+    createEntry,
   ]);
 
   useEffect(() => {
@@ -112,13 +116,13 @@ export function useCalendarPlanKeyboard({
       if (isInputFocused) return;
 
       // Delete / Backspace: 選択中のプランの削除確認ダイアログを表示
-      if ((e.key === 'Delete' || e.key === 'Backspace') && isOpen && planId) {
+      if ((e.key === 'Delete' || e.key === 'Backspace') && isOpen && entryId) {
         e.preventDefault();
         const title = getSelectedPlanTitleRef.current?.() ?? null;
         const deleteCallback = onDeletePlanRef.current;
         if (deleteCallback) {
-          openDialog(planId, title, async () => {
-            await deleteCallback(planId);
+          openDeleteConfirm(entryId, title, async () => {
+            await deleteCallback(entryId);
             closeInspector();
           });
         }
@@ -128,7 +132,7 @@ export function useCalendarPlanKeyboard({
       // Cmd/Ctrl + C: コピー
       if ((e.key === 'c' || e.key === 'C') && (e.metaKey || e.ctrlKey)) {
         // Inspectorで選択中のプランがある場合のみコピー
-        if (isOpen && planId) {
+        if (isOpen && entryId) {
           const planData = getSelectedPlanForCopyRef.current?.();
           if (planData) {
             e.preventDefault();
@@ -158,13 +162,22 @@ export function useCalendarPlanKeyboard({
           const endTime = new Date(startTime);
           endTime.setMinutes(endTime.getMinutes() + copiedPlan.duration);
 
-          const { openInspectorWithDraft } = usePlanInspectorStore.getState();
-          openInspectorWithDraft({
-            title: copiedPlan.title,
-            description: copiedPlan.description,
-            start_time: startTime.toISOString(),
-            end_time: endTime.toISOString(),
-          });
+          // 即DB作成 → Inspector edit mode で開く
+          createEntryRef.current
+            .mutateAsync({
+              title: copiedPlan.title,
+              description: copiedPlan.description ?? undefined,
+              start_time: startTime.toISOString(),
+              end_time: endTime.toISOString(),
+            })
+            .then((result) => {
+              if (result?.id) {
+                openInspector(result.id);
+              }
+            })
+            .catch(() => {
+              logger.error('Failed to paste entry');
+            });
         }
         return;
       }
@@ -173,19 +186,22 @@ export function useCalendarPlanKeyboard({
       if (e.key === 'c' || e.key === 'C') {
         e.preventDefault();
 
-        if (e.shiftKey) {
-          // Shift + C: 時刻指定なしで新規作成
-          openInspector(null);
-        } else {
-          // C: 現在時刻ベースで新規作成
-          const initialData = getInitialPlanDataRef.current?.();
-          // exactOptionalPropertyTypes対応: undefinedの場合はオプションを渡さない
-          if (initialData) {
-            openInspector(null, { initialData });
-          } else {
-            openInspector(null);
-          }
-        }
+        // 即DB作成 → Inspector edit mode で開く
+        const initialData = e.shiftKey ? undefined : getInitialPlanDataRef.current?.();
+        createEntryRef.current
+          .mutateAsync({
+            title: '',
+            start_time: initialData?.start_time,
+            end_time: initialData?.end_time,
+          })
+          .then((result) => {
+            if (result?.id) {
+              openInspector(result.id);
+            }
+          })
+          .catch(() => {
+            logger.error('Failed to create entry');
+          });
         return;
       }
     };
@@ -194,5 +210,5 @@ export function useCalendarPlanKeyboard({
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [enabled, isOpen, planId, openInspector, closeInspector, openDialog]);
+  }, [enabled, isOpen, entryId, openInspector, closeInspector]);
 }

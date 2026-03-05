@@ -4,9 +4,11 @@ import { cloneElement, isValidElement, useCallback, type ReactNode } from 'react
 
 import { useTranslations } from 'next-intl';
 
+import { useEntryMutations } from '@/hooks/useEntryMutations';
+import { logger } from '@/lib/logger';
 import { api } from '@/lib/trpc';
 
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 
 interface PlanCreateTriggerProps {
   triggerElement: ReactNode;
@@ -21,7 +23,8 @@ export function PlanCreateTrigger({
   initialDate,
 }: PlanCreateTriggerProps) {
   const t = useTranslations();
-  const { openInspectorWithDraft } = usePlanInspectorStore();
+  const openInspector = useEntryInspectorStore((s) => s.openInspector);
+  const { createEntry } = useEntryMutations();
   const utils = api.useUtils();
 
   // 次の15分単位の時刻を取得
@@ -41,7 +44,7 @@ export function PlanCreateTrigger({
   // バックエンド（PlanService.checkTimeOverlap）と同じロジック
   const checkOverlap = useCallback(
     (start: Date, end: Date): boolean => {
-      const plans = utils.plans.list.getData();
+      const plans = utils.entries.list.getData();
       if (!plans || plans.length === 0) return false;
 
       return plans.some((p) => {
@@ -52,7 +55,7 @@ export function PlanCreateTrigger({
         return pStart < end && pEnd > start;
       });
     },
-    [utils.plans.list],
+    [utils.entries.list],
   );
 
   // 空き時間を探す（最大2時間先まで）
@@ -80,7 +83,7 @@ export function PlanCreateTrigger({
     [getNextQuarterHour, checkOverlap],
   );
 
-  const handleClick = useCallback(() => {
+  const handleClick = useCallback(async () => {
     // 日付が指定されている場合は空き時間を探す
     const baseDate = initialDate || new Date();
     const { start, end } = findAvailableSlot(baseDate);
@@ -98,14 +101,21 @@ export function PlanCreateTrigger({
       }),
     );
 
-    // ドラフトモードでInspectorを開く（DB未保存）
-    openInspectorWithDraft({
-      title: '',
-      start_time: start.toISOString(),
-      end_time: end.toISOString(),
-    });
+    // 即DB作成 → Inspector edit mode で開く
+    try {
+      const result = await createEntry.mutateAsync({
+        title: '',
+        start_time: start.toISOString(),
+        end_time: end.toISOString(),
+      });
+      if (result?.id) {
+        openInspector(result.id);
+      }
+    } catch {
+      logger.error('Failed to create entry');
+    }
     onSuccess?.();
-  }, [initialDate, findAvailableSlot, openInspectorWithDraft, onSuccess]);
+  }, [initialDate, findAvailableSlot, createEntry, openInspector, onSuccess]);
 
   // triggerElementにonClickを追加
   if (isValidElement(triggerElement)) {

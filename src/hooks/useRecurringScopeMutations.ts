@@ -13,10 +13,10 @@
 
 import { useCallback } from 'react';
 
+import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { usePlanInstanceMutations } from '@/hooks/usePlanInstances';
-import { usePlanMutations } from '@/hooks/usePlanMutations';
 import { api } from '@/lib/trpc';
-import type { RecurringEditScope } from '@/stores/useRecurringEditConfirmStore';
+import type { RecurringEditScope } from '@/stores/useModalStore';
 
 interface ApplyEditParams {
   scope: RecurringEditScope;
@@ -40,26 +40,26 @@ interface ApplyDeleteParams {
 
 export function useRecurringScopeMutations() {
   const utils = api.useUtils();
-  const { updatePlan, deletePlan } = usePlanMutations();
+  const { updateEntry, deleteEntry } = useEntryMutations();
   const { createInstance } = usePlanInstanceMutations();
 
   // splitRecurrence mutation（楽観的更新付き）- 1箇所で定義
-  const splitRecurrence = api.plans.splitRecurrence.useMutation({
+  const splitRecurrence = api.entries.splitRecurrence.useMutation({
     onMutate: async (input) => {
-      await utils.plans.list.cancel();
-      await utils.plans.getInstances.cancel();
+      await utils.entries.list.cancel();
+      await utils.entries.getInstances.cancel();
 
-      const previousPlans = utils.plans.list.getData();
+      const previousPlans = utils.entries.list.getData();
 
       // 親プランの recurrence_end_date を楽観的に更新（splitDate の前日）
       const splitDate = new Date(input.splitDate);
       splitDate.setDate(splitDate.getDate() - 1);
       const endDateString = splitDate.toISOString().slice(0, 10);
 
-      utils.plans.list.setData(undefined, (oldData) => {
+      utils.entries.list.setData(undefined, (oldData) => {
         if (!oldData) return oldData;
         return oldData.map((p) => {
-          if (p.id === input.planId) {
+          if (p.id === input.entryId) {
             return { ...p, recurrence_end_date: endDateString };
           }
           return p;
@@ -69,14 +69,14 @@ export function useRecurringScopeMutations() {
       return { previousPlans };
     },
     onSuccess: () => {
-      void utils.plans.list.invalidate();
-      void utils.plans.getInstances.invalidate();
+      void utils.entries.list.invalidate();
+      void utils.entries.getInstances.invalidate();
     },
     onError: (_err, _input, context) => {
       if (context?.previousPlans) {
-        utils.plans.list.setData(undefined, context.previousPlans);
+        utils.entries.list.setData(undefined, context.previousPlans);
       }
-      void utils.plans.getInstances.invalidate();
+      void utils.entries.getInstances.invalidate();
     },
   });
 
@@ -93,7 +93,7 @@ export function useRecurringScopeMutations() {
         case 'this': {
           const isSameDate = !targetDate || targetDate === instanceDate;
           await createInstance.mutateAsync({
-            planId,
+            entryId: planId,
             instanceDate,
             exceptionType: isSameDate ? 'modified' : 'moved',
             title: changes.title,
@@ -107,7 +107,7 @@ export function useRecurringScopeMutations() {
 
         case 'thisAndFuture': {
           await splitRecurrence.mutateAsync({
-            planId,
+            entryId: planId,
             splitDate: instanceDate,
             overrides: changes,
           });
@@ -115,7 +115,7 @@ export function useRecurringScopeMutations() {
         }
 
         case 'all': {
-          await updatePlan.mutateAsync({
+          await updateEntry.mutateAsync({
             id: planId,
             data: changes,
           });
@@ -123,7 +123,7 @@ export function useRecurringScopeMutations() {
         }
       }
     },
-    [createInstance, splitRecurrence, updatePlan],
+    [createInstance, splitRecurrence, updateEntry],
   );
 
   /**
@@ -138,7 +138,7 @@ export function useRecurringScopeMutations() {
       switch (scope) {
         case 'this': {
           await createInstance.mutateAsync({
-            planId,
+            entryId: planId,
             instanceDate,
             exceptionType: 'cancelled',
           });
@@ -148,7 +148,7 @@ export function useRecurringScopeMutations() {
         case 'thisAndFuture': {
           const endDate = new Date(instanceDate);
           endDate.setDate(endDate.getDate() - 1);
-          await updatePlan.mutateAsync({
+          await updateEntry.mutateAsync({
             id: planId,
             data: {
               recurrence_end_date: endDate.toISOString().slice(0, 10),
@@ -158,12 +158,12 @@ export function useRecurringScopeMutations() {
         }
 
         case 'all': {
-          await deletePlan.mutateAsync({ id: planId });
+          await deleteEntry.mutateAsync({ id: planId });
           break;
         }
       }
     },
-    [createInstance, updatePlan, deletePlan],
+    [createInstance, updateEntry, deleteEntry],
   );
 
   return {

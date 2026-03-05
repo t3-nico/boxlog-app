@@ -6,8 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { CACHE_5_MINUTES } from '@/constants/time';
 import { api } from '@/lib/trpc';
 
-import { useSettingsModalStore } from '@/stores/useSettingsModalStore';
-import type { SettingsCategory } from '../../types';
+import { useModalStore, type SettingsCategory } from '@/stores/useModalStore';
 
 // 各設定コンポーネントを遅延読み込み
 // memo()でラップされたコンポーネントも含むため、ComponentType<object>を使用
@@ -47,7 +46,9 @@ const categoryComponents: Record<
  * 選択されたカテゴリに応じてコンポーネントを遅延読み込み
  */
 export function SettingsModalContent() {
-  const selectedCategory = useSettingsModalStore((state) => state.selectedCategory);
+  const modal = useModalStore((state) => state.modal);
+  const selectedCategory: SettingsCategory =
+    modal?.type === 'settings' ? modal.category : 'general';
   const CategoryComponent = categoryComponents[selectedCategory];
   const utils = api.useUtils();
 

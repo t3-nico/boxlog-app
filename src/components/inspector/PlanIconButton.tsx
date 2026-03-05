@@ -23,10 +23,11 @@ import {
 } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { usePlans } from '@/hooks/usePlans';
+import { useEntries } from '@/hooks/useEntries';
+import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { useTags } from '@/hooks/useTagsQuery';
 import { cn } from '@/lib/utils';
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 
 /** コールバックに渡す Plan の最小型（タイトル・タグの自動プリセット用） */
 interface PlanForCallback {
@@ -47,17 +48,17 @@ interface PlanIconButtonProps {
 export function PlanIconButton({
   planId,
   onPlanChange,
-  recordId,
   onBeforeCreatePlan,
   disabled = false,
 }: PlanIconButtonProps) {
   const t = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const openInspectorWithDraft = usePlanInspectorStore((state) => state.openInspectorWithDraft);
+  const openInspector = useEntryInspectorStore((state) => state.openInspector);
+  const { createEntry } = useEntryMutations();
 
   // Plan一覧（キャッシュ済み）
-  const { data: plans } = usePlans({});
+  const { data: plans } = useEntries({});
 
   // タグデータ取得
   const { data: allTags = [] } = useTags();
@@ -104,12 +105,15 @@ export function PlanIconButton({
     [onPlanChange],
   );
 
-  // 新しいPlanを作成（RecordsIconButton の handleCreateRecord と同じパターン）
-  const handleCreatePlan = useCallback(() => {
+  // 新しいPlanを作成（即DB保存 + Inspector edit mode）
+  const handleCreatePlan = useCallback(async () => {
     setIsOpen(false);
     onBeforeCreatePlan?.();
-    openInspectorWithDraft({ _linkRecordId: recordId ?? null, reminder_minutes: null }, 'plan');
-  }, [onBeforeCreatePlan, openInspectorWithDraft, recordId]);
+    const result = await createEntry.mutateAsync({ title: '' });
+    if (result?.id) {
+      openInspector(result.id);
+    }
+  }, [onBeforeCreatePlan, createEntry, openInspector]);
 
   const handleOpenChange = useCallback((open: boolean) => {
     setIsOpen(open);
@@ -172,9 +176,7 @@ export function PlanIconButton({
             <CommandGroup>
               {sortedPlans.map((plan) => {
                 const isSelected = plan.id === planId;
-                const planTags = plan.tagIds
-                  ?.map((id) => allTags.find((tag) => tag.id === id))
-                  .filter(Boolean);
+                const planTag = plan.tagId ? allTags.find((tag) => tag.id === plan.tagId) : null;
                 return (
                   <CommandItem
                     key={plan.id}
@@ -196,25 +198,17 @@ export function PlanIconButton({
                         <span className="text-muted-foreground">{t('plan.inspector.noTitle')}</span>
                       )}
                     </span>
-                    {planTags && planTags.length > 0 && (
+                    {planTag && (
                       <div className="flex shrink-0 gap-1 pl-2">
-                        {planTags.slice(0, 2).map((tag) => (
-                          <span
-                            key={tag!.id}
-                            className="rounded px-1 py-1 text-xs"
-                            style={{
-                              backgroundColor: tag!.color ? `${tag!.color}20` : undefined,
-                              color: tag!.color || undefined,
-                            }}
-                          >
-                            {tag!.name}
-                          </span>
-                        ))}
-                        {planTags.length > 2 && (
-                          <span className="text-muted-foreground text-xs">
-                            +{planTags.length - 2}
-                          </span>
-                        )}
+                        <span
+                          className="rounded px-1 py-1 text-xs"
+                          style={{
+                            backgroundColor: planTag.color ? `${planTag.color}20` : undefined,
+                            color: planTag.color || undefined,
+                          }}
+                        >
+                          {planTag.name}
+                        </span>
                       </div>
                     )}
                   </CommandItem>

@@ -11,22 +11,9 @@ import type { Tag } from '@/core/types/tag';
 import { cn } from '@/lib/utils';
 
 /** Inspector風コンテナ（400px幅） */
-export function InspectorFrame({
-  children,
-  variant,
-}: {
-  children: React.ReactNode;
-  /** variant を指定すると左ボーダーでタイプを視覚的に区別 */
-  variant?: 'plan' | 'record' | undefined;
-}) {
+export function InspectorFrame({ children }: { children: React.ReactNode }) {
   return (
-    <div
-      className={cn(
-        'bg-card border-border w-[400px] overflow-hidden rounded-xl border shadow-lg',
-        variant === 'plan' && 'border-l-plan-border border-l-[3px]',
-        variant === 'record' && 'border-l-record-border border-l-[3px]',
-      )}
-    >
+    <div className="bg-card border-border w-[400px] overflow-hidden rounded-xl border shadow-lg">
       {children}
     </div>
   );
@@ -72,10 +59,8 @@ export const mockTags: Tag[] = [
     id: 'tag-1',
     name: '仕事',
     user_id: 'user-1',
-    color: '#3B82F6',
-    description: '仕事関連のタスク',
+    color: 'blue',
     is_active: true,
-    parent_id: null,
     sort_order: 0,
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
@@ -84,10 +69,8 @@ export const mockTags: Tag[] = [
     id: 'tag-2',
     name: '重要',
     user_id: 'user-1',
-    color: '#EF4444',
-    description: '重要なタスク',
+    color: 'red',
     is_active: true,
-    parent_id: null,
     sort_order: 1,
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
@@ -96,10 +79,8 @@ export const mockTags: Tag[] = [
     id: 'tag-3',
     name: '個人',
     user_id: 'user-1',
-    color: '#10B981',
-    description: null,
+    color: 'green',
     is_active: true,
-    parent_id: null,
     sort_order: 2,
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',

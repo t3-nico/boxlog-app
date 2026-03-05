@@ -38,26 +38,18 @@ const meta = {
       options: ['all', 'scheduled', 'unscheduled'],
       description: 'スケジュールフィルター',
     },
-    statusFilter: {
-      control: 'select',
-      options: ['all', 'open', 'closed'],
-      description: 'ステータスフィルター',
-    },
     onSortChange: { action: 'onSortChange' },
     onGroupByChange: { action: 'onGroupByChange' },
     onScheduleFilterChange: { action: 'onScheduleFilterChange' },
-    onStatusFilterChange: { action: 'onStatusFilterChange' },
   },
   args: {
     sortBy: 'created_at',
     sortOrder: 'desc',
     groupBy: null,
     scheduleFilter: 'unscheduled',
-    statusFilter: 'open',
     onSortChange: () => {},
     onGroupByChange: () => {},
     onScheduleFilterChange: () => {},
-    onStatusFilterChange: () => {},
   },
 } satisfies Meta<typeof PlanListSortMenu>;
 
@@ -85,13 +77,6 @@ export const ActiveGroup: Story = {
   },
 };
 
-/** ステータスを「完了」に変更済み。 */
-export const ActiveStatusClosed: Story = {
-  args: {
-    statusFilter: 'closed',
-  },
-};
-
 /** 日付フィルターを「すべて」に変更済み。デフォルトから変更あり。 */
 export const ActiveScheduleAll: Story = {
   args: {
@@ -99,13 +84,12 @@ export const ActiveScheduleAll: Story = {
   },
 };
 
-/** ソート・グループ・ステータス・日付すべて変更済み。リセット行が表示される。 */
+/** ソート・グループ・日付すべて変更済み。リセット行が表示される。 */
 export const ActiveAll: Story = {
   args: {
     sortBy: 'title',
     sortOrder: 'asc',
     groupBy: 'tags',
     scheduleFilter: 'all',
-    statusFilter: 'closed',
   },
 };

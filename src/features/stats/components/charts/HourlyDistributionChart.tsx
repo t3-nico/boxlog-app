@@ -33,7 +33,7 @@ export function HourlyDistributionChart() {
   const period = useStatsFilterStore((s) => s.period);
   const dateRange = useMemo(() => computeDateRange(period), [period]);
   const queryInput = dateRange.startDate ? dateRange : undefined;
-  const { data, isPending } = api.plans.getHourlyDistribution.useQuery(queryInput);
+  const { data, isPending } = api.entries.getHourlyDistribution.useQuery(queryInput);
 
   if (isPending) {
     return (

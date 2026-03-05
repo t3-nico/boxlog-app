@@ -79,7 +79,7 @@ export function ScheduleRow({
   const durationDisplay = useMemo(() => formatDurationDisplay(durationMinutes), [durationMinutes]);
 
   return (
-    <div className="flex items-start gap-2 px-4 py-2">
+    <div className="flex items-start gap-2 px-6 py-2">
       {/* 日付 */}
       <DatePickerPopover
         selectedDate={selectedDate}

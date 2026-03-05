@@ -9,6 +9,9 @@
 
 import * as Sentry from '@sentry/nextjs';
 
+// ナビゲーション計測用フック（Sentry SDK が要求）
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
+
 const SENTRY_DSN = process.env.NEXT_PUBLIC_SENTRY_DSN;
 const VERCEL_ENV = process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.NODE_ENV || 'development';
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';

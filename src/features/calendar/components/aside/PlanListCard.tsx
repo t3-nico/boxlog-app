@@ -6,21 +6,27 @@ import { CheckCircle2, Circle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Card } from '@/components/ui/card';
-import type { PlanStatus } from '@/core/types/plan';
 import { useDateFormat } from '@/hooks/useDateFormat';
-import { usePlanMutations } from '@/hooks/usePlanMutations';
-import { normalizeStatus } from '@/lib/plan-status';
+import { getEntryState } from '@/lib/entry-status';
 import { cn } from '@/lib/utils';
-import type { PlanWithTags } from '@/server/services/plans/types';
 
 import { TagsContainer } from '../views/shared/components/PlanCard/TagsContainer';
 
+/** PlanListCardで表示するエントリの最小型 */
+interface PlanListEntry {
+  id: string;
+  title: string;
+  start_time: string | null;
+  end_time: string | null;
+  tagIds?: string[];
+}
+
 interface PlanListCardProps {
-  plan: PlanWithTags;
+  plan: PlanListEntry;
   /** 期限切れ状態（時間・日時を赤文字で表示） */
   isOverdue?: boolean;
-  onClick?: (plan: PlanWithTags) => void;
-  onDragStart?: (plan: PlanWithTags, e: React.MouseEvent, sourceElement: HTMLElement) => void;
+  onClick?: (plan: PlanListEntry) => void;
+  onDragStart?: (plan: PlanListEntry, e: React.MouseEvent, sourceElement: HTMLElement) => void;
 }
 
 /**
@@ -39,10 +45,8 @@ export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
 }) {
   const t = useTranslations('calendar');
   const { formatTime } = useDateFormat();
-  const { updatePlan } = usePlanMutations();
-
-  const status = normalizeStatus(plan.status as PlanStatus);
-  const isCompleted = status === 'closed';
+  const entryState = getEntryState({ start_time: plan.start_time, end_time: plan.end_time });
+  const isCompleted = entryState === 'past';
 
   // 時間表示（未スケジュールの場合は非表示）
   const startTime = plan.start_time ? formatTime(new Date(plan.start_time)) : '';
@@ -77,17 +81,10 @@ export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
     [onDragStart, plan],
   );
 
-  const handleCheckboxClick = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
-      const newStatus = isCompleted ? 'open' : 'closed';
-      updatePlan.mutate({
-        id: plan.id,
-        data: { status: newStatus },
-      });
-    },
-    [isCompleted, plan.id, updatePlan],
-  );
+  const handleCheckboxClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    // entries モデルでは status がないため、時間位置で自動判定
+  }, []);
 
   return (
     <Card
@@ -98,7 +95,7 @@ export const PlanListCard = memo<PlanListCardProps>(function PlanListCard({
         'bg-transparent',
         // Card デフォルト打ち消し
         'rounded-none border-0 shadow-none',
-        // ホバー（オーバーレイ方式: bg-plan-box を保ちつつ暗くする）
+        // ホバーオーバーレイ
         'after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:transition-colors',
         'hover:after:bg-state-hover',
         // トランジション

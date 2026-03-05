@@ -10,7 +10,6 @@ export interface TimesheetTagGroup {
   tagId: string | null;
   tagName: string;
   tagColor: string;
-  parentId: string | null;
   plans: CalendarPlan[];
   /** 日別duration合計（分）。key: 'YYYY-MM-DD' */
   dailyTotals: Record<string, number>;

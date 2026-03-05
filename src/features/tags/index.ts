@@ -6,10 +6,10 @@
  *
  * @example
  * ```tsx
- * // ✅ 推奨: バレルファイル経由
+ * // 推奨: バレルファイル経由
  * import { TagBadge, useTags } from '@/features/tags'
  *
- * // ❌ 非推奨: 深いパス指定
+ * // 非推奨: 深いパス指定
  * import { TagBadge } from '@/features/tags/components/tag-badge'
  * import { useTags } from '@/features/tags/hooks'
  * ```
@@ -28,7 +28,6 @@ export {
   tagKeys,
   useCreateTag,
   useDeleteTag,
-  useMoveTag,
   useOptimisticTagUpdate,
   useRenameTag,
   useTag,
@@ -54,6 +53,5 @@ export type {
   TagSortField,
   TagSortOptions,
   TagSortOrder,
-  TagWithChildren,
   UpdateTagInput,
 } from './types';

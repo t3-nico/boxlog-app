@@ -3,9 +3,13 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useRef } from 'react';
 
-import { useSettingsModalStore } from '@/stores/useSettingsModalStore';
+import {
+  closeModal as closeModalAction,
+  openSettingsModal,
+  useModalStore,
+  type SettingsCategory,
+} from '@/stores/useModalStore';
 import { SETTINGS_CATEGORIES } from '../constants';
-import type { SettingsCategory } from '../types';
 
 /**
  * 設定モーダルとURLクエリパラメータを同期するフック
@@ -21,10 +25,9 @@ export function useSettingsModalURLSync() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const isOpen = useSettingsModalStore((state) => state.isOpen);
-  const selectedCategory = useSettingsModalStore((state) => state.selectedCategory);
-  const openModal = useSettingsModalStore((state) => state.openModal);
-  const closeModal = useSettingsModalStore((state) => state.closeModal);
+  const modal = useModalStore((state) => state.modal);
+  const isOpen = modal?.type === 'settings';
+  const selectedCategory: SettingsCategory = isOpen ? modal.category : 'general';
 
   // 前回の状態を追跡（無限ループ防止）
   const prevIsOpenRef = useRef(isOpen);
@@ -45,7 +48,7 @@ export function useSettingsModalURLSync() {
 
     if (settingsParam && isValidCategory(settingsParam)) {
       isUpdatingFromURLRef.current = true;
-      openModal(settingsParam);
+      openSettingsModal(settingsParam);
       // 次のレンダーで状態を更新
       setTimeout(() => {
         isUpdatingFromURLRef.current = false;
@@ -92,7 +95,7 @@ export function useSettingsModalURLSync() {
   }, [isOpen, selectedCategory, pathname, searchParams, router]);
 
   return {
-    openModalWithURL: openModal,
-    closeModalWithURL: closeModal,
+    openModalWithURL: openSettingsModal,
+    closeModalWithURL: closeModalAction,
   };
 }

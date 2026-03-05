@@ -46,7 +46,6 @@ export class PlanService {
     const {
       userId,
       tagId,
-      status,
       search,
       startDate,
       endDate,
@@ -57,11 +56,11 @@ export class PlanService {
     } = options;
 
     let query = this.supabase
-      .from('plans')
+      .from('entries')
       .select(
         `
         *,
-        plan_tags (
+        entry_tags (
           tag_id
         )
       `,
@@ -75,11 +74,6 @@ export class PlanService {
         return [];
       }
       query = query.in('id', planIds);
-    }
-
-    // ステータスフィルター
-    if (status) {
-      query = query.eq('status', status);
     }
 
     // 検索フィルター
@@ -113,7 +107,7 @@ export class PlanService {
       throw new PlanServiceError('FETCH_FAILED', `Failed to fetch plans: ${error.message}`);
     }
 
-    // plan_tags のネスト構造を tags 配列にフォーマット
+    // entry_tags のネスト構造を tags 配列にフォーマット
     return (data as unknown as PlanWithTags[]).map((plan) => this.formatPlanWithTags(plan));
   }
 
@@ -125,8 +119,8 @@ export class PlanService {
 
     if (includeTags) {
       const { data, error } = await this.supabase
-        .from('plans')
-        .select('*, plan_tags(tag_id)')
+        .from('entries')
+        .select('*, entry_tags(tag_id)')
         .eq('id', planId)
         .eq('user_id', userId)
         .single();
@@ -139,7 +133,7 @@ export class PlanService {
     }
 
     const { data, error } = await this.supabase
-      .from('plans')
+      .from('entries')
       .select('*')
       .eq('id', planId)
       .eq('user_id', userId)
@@ -166,7 +160,7 @@ export class PlanService {
 
     // 時間重複条件: 既存の開始時刻 < 新規の終了時刻 AND 既存の終了時刻 > 新規の開始時刻
     let query = this.supabase
-      .from('plans')
+      .from('entries')
       .select('id')
       .eq('user_id', userId)
       .not('start_time', 'is', null)
@@ -220,7 +214,7 @@ export class PlanService {
     };
 
     const { data, error } = await this.supabase
-      .from('plans')
+      .from('entries')
       .insert(insertData as never)
       .select()
       .single();
@@ -270,18 +264,8 @@ export class PlanService {
 
     const updateData = removeUndefinedFields(normalizedInput) as Record<string, unknown>;
 
-    // completed_at の自動設定（status 変更時）
-    const inputWithStatus = input as { status?: string };
-    if (inputWithStatus.status === 'closed' && oldData?.status !== 'closed') {
-      // open → done: 完了時刻を記録
-      updateData.completed_at = new Date().toISOString();
-    } else if (inputWithStatus.status === 'open' && oldData?.status === 'closed') {
-      // done → open: 完了時刻をクリア
-      updateData.completed_at = null;
-    }
-
     const { data, error } = await this.supabase
-      .from('plans')
+      .from('entries')
       .update(updateData)
       .eq('id', planId)
       .eq('user_id', userId)
@@ -308,15 +292,15 @@ export class PlanService {
 
     // プラン情報を取得（アクティビティ記録用）
     const { data: plan } = await this.supabase
-      .from('plans')
+      .from('entries')
       .select('title')
       .eq('id', planId)
       .eq('user_id', userId)
       .single();
 
     // アクティビティ記録（削除前）
-    await this.supabase.from('plan_activities').insert({
-      plan_id: planId,
+    await this.supabase.from('entry_activities').insert({
+      entry_id: planId,
       user_id: userId,
       action_type: 'deleted',
       field_name: 'title',
@@ -324,7 +308,7 @@ export class PlanService {
     });
 
     const { error } = await this.supabase
-      .from('plans')
+      .from('entries')
       .delete()
       .eq('id', planId)
       .eq('user_id', userId);
@@ -345,8 +329,8 @@ export class PlanService {
    */
   private async getPlanIdsByTagId(tagId: string): Promise<string[]> {
     const { data, error } = await this.supabase
-      .from('plan_tags')
-      .select('plan_id')
+      .from('entry_tags')
+      .select('entry_id')
       .eq('tag_id', tagId);
 
     if (error) {
@@ -356,18 +340,18 @@ export class PlanService {
       );
     }
 
-    return data.map((row) => row.plan_id);
+    return data.map((row) => row.entry_id);
   }
 
   /**
    * プランとタグデータをフォーマット
    *
-   * plan_tagsのネスト構造からtagIds配列を抽出する。
+   * entry_tagsのネスト構造からtagIds配列を抽出する。
    * タグの詳細情報はクライアント側でtags.listキャッシュから取得する。
    */
   private formatPlanWithTags(plan: PlanWithTags): PlanWithTags {
-    const tagIds = plan.plan_tags?.map((pt) => pt.tag_id) ?? [];
-    const { plan_tags: _, ...planData } = plan;
+    const tagIds = plan.entry_tags?.map((pt) => pt.tag_id) ?? [];
+    const { entry_tags: _, ...planData } = plan;
     return { ...planData, tagIds };
   }
 
@@ -438,7 +422,7 @@ export class PlanService {
    */
   private async getExistingPlan(planId: string, userId: string): Promise<PlanRow | null> {
     const { data } = await this.supabase
-      .from('plans')
+      .from('entries')
       .select('*')
       .eq('id', planId)
       .eq('user_id', userId)
@@ -451,8 +435,8 @@ export class PlanService {
    * アクティビティを記録
    */
   private async recordActivity(planId: string, userId: string, actionType: string): Promise<void> {
-    await this.supabase.from('plan_activities').insert({
-      plan_id: planId,
+    await this.supabase.from('entry_activities').insert({
+      entry_id: planId,
       user_id: userId,
       action_type: actionType,
     });
@@ -467,8 +451,8 @@ export class PlanService {
     oldData: PlanRow,
     newData: PlanRow,
   ): Promise<void> {
-    const { trackPlanChanges } = await import('@/server/utils/activity-tracker');
-    await trackPlanChanges(this.supabase, planId, userId, oldData, newData);
+    const { trackEntryChanges } = await import('@/server/utils/activity-tracker');
+    await trackEntryChanges(this.supabase, planId, userId, oldData, newData);
   }
 }
 

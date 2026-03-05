@@ -14,8 +14,8 @@ export function usePlanTags() {
 
   const { isLoading, error, addTag, removeTag, setTags } = useEntityTagsHook(
     {
-      entityName: 'plans',
-      entityIdField: 'planId',
+      entityName: 'entries',
+      entityIdField: 'entryId',
       enableTagStats: true,
     },
     utils,

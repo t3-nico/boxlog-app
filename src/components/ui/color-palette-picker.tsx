@@ -1,22 +1,25 @@
 'use client';
 
-import { Check, Circle } from 'lucide-react';
+import { Check } from 'lucide-react';
 
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
-import { TAG_COLOR_PALETTE } from '@/config/ui/colors';
+import { TAG_COLOR_MAP, TAG_COLOR_NAMES, resolveTagColor } from '@/config/ui/colors';
+import { cn } from '@/lib/utils';
 
-// カラー名マッピング
-export const COLOR_NAMES: Record<string, string> = {
-  '#3B82F6': 'Blue',
-  '#10B981': 'Green',
-  '#EF4444': 'Red',
-  '#F59E0B': 'Amber',
-  '#8B5CF6': 'Violet',
-  '#EC4899': 'Pink',
-  '#06B6D4': 'Cyan',
-  '#F97316': 'Orange',
-  '#6B7280': 'Gray',
-  '#6366F1': 'Indigo',
+import type { TagColorName } from '@/config/ui/colors';
+
+// カラー表示名マッピング
+export const COLOR_DISPLAY_NAMES: Record<TagColorName, string> = {
+  red: 'Red',
+  orange: 'Orange',
+  amber: 'Amber',
+  green: 'Green',
+  teal: 'Teal',
+  blue: 'Blue',
+  indigo: 'Indigo',
+  violet: 'Violet',
+  pink: 'Pink',
+  gray: 'Gray',
 };
 
 /**
@@ -25,27 +28,32 @@ export const COLOR_NAMES: Record<string, string> = {
  */
 interface ColorPaletteMenuItemsProps {
   selectedColor: string;
-  onColorSelect: (color: string) => void;
+  onColorSelect: (color: TagColorName) => void;
 }
 
 export function ColorPaletteMenuItems({
   selectedColor,
   onColorSelect,
 }: ColorPaletteMenuItemsProps) {
+  const resolvedSelected = resolveTagColor(selectedColor);
+
   return (
     <>
-      {TAG_COLOR_PALETTE.map((color) => {
-        const isSelected = selectedColor === color;
-        const colorName = COLOR_NAMES[color] || color;
+      {TAG_COLOR_NAMES.map((colorName) => {
+        const isSelected = resolvedSelected === colorName;
+        const displayName = COLOR_DISPLAY_NAMES[colorName];
 
         return (
           <DropdownMenuItem
-            key={color}
-            onClick={() => onColorSelect(color)}
+            key={colorName}
+            onClick={() => onColorSelect(colorName)}
             className="hover:bg-state-hover"
           >
-            <Circle className="mr-2 h-4 w-4" fill={color} strokeWidth={0} />
-            <span className="flex-1">{colorName}</span>
+            <span
+              className={cn('mr-2 h-4 w-4 rounded-full', TAG_COLOR_MAP[colorName].dot)}
+              aria-hidden
+            />
+            <span className="flex-1">{displayName}</span>
             {isSelected && <Check className="text-primary ml-2 h-4 w-4" />}
           </DropdownMenuItem>
         );

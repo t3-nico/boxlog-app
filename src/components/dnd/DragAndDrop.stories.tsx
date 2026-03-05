@@ -1,16 +1,12 @@
-import { useEffect, useState } from 'react';
-
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import { fn } from 'storybook/test';
+import { useEffect } from 'react';
 
 import type { CalendarPlan } from '@/core/types/calendar-event';
-import type { Tag } from '@/core/types/tag';
 import { useCalendarDragStore } from '@/features/calendar/stores/useCalendarDragStore';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { DragSelectionPreview } from '@/features/calendar/components/views/shared/components/CalendarDragSelection/DragSelectionPreview';
 import { PanelDragPreview } from '@/features/calendar/components/views/shared/components/PanelDragPreview';
 import { PlanCard } from '@/features/calendar/components/views/shared/components/PlanCard/PlanCard';
-import { TagSortableTree } from '@/features/tags/components/sortable-tree/TagSortableTree';
 
 /**
  * DnD（Drag & Drop）に関わる全ビジュアル状態のカタログ。
@@ -303,21 +299,6 @@ function PanelDragPreviewStory() {
       draggedPlanData: {
         id: 'panel-plan-1',
         title: 'Panel Drag Preview',
-        status: 'open',
-        user_id: 'user-1',
-        description: null,
-        start_time: start.toISOString(),
-        end_time: end.toISOString(),
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        completed_at: null,
-        reminder_minutes: null,
-        reminder_at: null,
-        reminder_sent: false,
-        recurrence_rule: null,
-        recurrence_type: null,
-        recurrence_end_date: null,
-        tagIds: [],
       },
     });
 
@@ -419,228 +400,6 @@ export const TimeSelectionOverlap: Story = {
           isOverlapping
         />
       </Slot>
-    </div>
-  ),
-};
-
-// ---------------------------------------------------------------------------
-// タグ並び替え（インタラクティブデモ）
-// ---------------------------------------------------------------------------
-
-/**
- * ### タグ並び替え — インタラクティブデモ
- *
- * `TagSortableTree` は @dnd-kit で自己完結したコンポーネント。
- * 外部の Context やグリッドレイアウトに依存しないため、
- * Story 上でそのままドラッグ操作が可能。
- *
- * #### 制約
- * - **2階層制限**: 親タグ → 子タグの1階層のみ
- * - **子持ち親タグ**: 常に depth 0 を維持（子ごとルート移動不可）
- * - **8px 距離**: マウス8px移動でドラッグ開始（クリックと区別）
- *
- * #### データフロー
- * ```
- * ドラッグ開始 → DndContext.onDragStart → activeId セット
- * ドラッグ中   → DndContext.onDragMove  → offsetLeft → getProjection（深度計算）
- * ドロップ     → DndContext.onDragEnd   → arrayMove → buildTree → onReorder コールバック
- * ```
- */
-
-const now = new Date().toISOString();
-
-/** フラットタグ3個（シンプルな並び替えデモ用） */
-const flatMockTags: Tag[] = [
-  {
-    id: 'tag-1',
-    name: 'Work',
-    color: '#3B82F6',
-    parent_id: null,
-    sort_order: 0,
-    user_id: 'demo-user',
-    description: null,
-    is_active: true,
-    created_at: now,
-    updated_at: now,
-  },
-  {
-    id: 'tag-4',
-    name: 'Personal',
-    color: '#F59E0B',
-    parent_id: null,
-    sort_order: 1,
-    user_id: 'demo-user',
-    description: null,
-    is_active: true,
-    created_at: now,
-    updated_at: now,
-  },
-  {
-    id: 'tag-6',
-    name: 'Learning',
-    color: '#06B6D4',
-    parent_id: null,
-    sort_order: 2,
-    user_id: 'demo-user',
-    description: null,
-    is_active: true,
-    created_at: now,
-    updated_at: now,
-  },
-];
-
-/** 親3個+子3個の2階層構造（階層ドラッグデモ用） */
-const nestedMockTags: Tag[] = [
-  {
-    id: 'tag-1',
-    name: 'Work',
-    color: '#3B82F6',
-    parent_id: null,
-    sort_order: 0,
-    user_id: 'demo-user',
-    description: null,
-    is_active: true,
-    created_at: now,
-    updated_at: now,
-  },
-  {
-    id: 'tag-2',
-    name: 'Meetings',
-    color: '#10B981',
-    parent_id: 'tag-1',
-    sort_order: 0,
-    user_id: 'demo-user',
-    description: null,
-    is_active: true,
-    created_at: now,
-    updated_at: now,
-  },
-  {
-    id: 'tag-3',
-    name: 'Deep Work',
-    color: '#8B5CF6',
-    parent_id: 'tag-1',
-    sort_order: 1,
-    user_id: 'demo-user',
-    description: null,
-    is_active: true,
-    created_at: now,
-    updated_at: now,
-  },
-  {
-    id: 'tag-4',
-    name: 'Personal',
-    color: '#F59E0B',
-    parent_id: null,
-    sort_order: 1,
-    user_id: 'demo-user',
-    description: null,
-    is_active: true,
-    created_at: now,
-    updated_at: now,
-  },
-  {
-    id: 'tag-5',
-    name: 'Exercise',
-    color: '#EF4444',
-    parent_id: 'tag-4',
-    sort_order: 0,
-    user_id: 'demo-user',
-    description: null,
-    is_active: true,
-    created_at: now,
-    updated_at: now,
-  },
-  {
-    id: 'tag-6',
-    name: 'Learning',
-    color: '#06B6D4',
-    parent_id: null,
-    sort_order: 2,
-    user_id: 'demo-user',
-    description: null,
-    is_active: true,
-    created_at: now,
-    updated_at: now,
-  },
-];
-
-interface TagReorderDemoProps {
-  initialTags: Tag[];
-  tagCounts: Record<string, number>;
-  parentTagCounts: Record<string, number>;
-}
-
-function TagReorderDemo({ initialTags, tagCounts, parentTagCounts }: TagReorderDemoProps) {
-  const [tags, setTags] = useState<Tag[]>(initialTags);
-
-  const handleReorder = (
-    updates: Array<{ id: string; sort_order: number; parent_id: string | null }>,
-  ) => {
-    setTags((prev) => {
-      const next = prev.map((tag) => {
-        const update = updates.find((u) => u.id === tag.id);
-        if (update) {
-          return { ...tag, sort_order: update.sort_order, parent_id: update.parent_id };
-        }
-        return tag;
-      });
-      return next.sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
-    });
-  };
-
-  return (
-    <div className="w-64">
-      <TagSortableTree
-        tags={tags}
-        visibleTagIds={new Set(tags.map((t) => t.id))}
-        tagCounts={tagCounts}
-        parentTagCounts={parentTagCounts}
-        onToggleTag={fn()}
-        onToggleGroupTags={fn()}
-        onUpdateTag={fn()}
-        onDeleteTag={fn()}
-        onAddChildTag={fn()}
-        onShowOnlyTag={fn()}
-        onShowOnlyGroupTags={fn()}
-        onOpenMergeModal={fn()}
-        onReorder={handleReorder}
-      />
-    </div>
-  );
-}
-
-/** フラットなタグ3個をドラッグで並び替え。実際にドラッグ操作が可能。 */
-export const TagReorder: Story = {
-  render: () => (
-    <div className="flex flex-col gap-2">
-      <Label>タグをドラッグで並び替え（フラット3個）</Label>
-      <TagReorderDemo
-        initialTags={flatMockTags}
-        tagCounts={{ 'tag-1': 5, 'tag-4': 4, 'tag-6': 6 }}
-        parentTagCounts={{}}
-      />
-    </div>
-  ),
-};
-
-/** 親3個+子3個の階層構造をドラッグで並び替え。子タグの親変更も可能。 */
-export const TagReorderNested: Story = {
-  render: () => (
-    <div className="flex flex-col gap-2">
-      <Label>階層タグをドラッグで並び替え（親3個+子3個）— 子→ルートへの移動も可</Label>
-      <TagReorderDemo
-        initialTags={nestedMockTags}
-        tagCounts={{
-          'tag-1': 5,
-          'tag-2': 3,
-          'tag-3': 2,
-          'tag-4': 4,
-          'tag-5': 1,
-          'tag-6': 6,
-        }}
-        parentTagCounts={{ 'tag-1': 10, 'tag-4': 5 }}
-      />
     </div>
   ),
 };

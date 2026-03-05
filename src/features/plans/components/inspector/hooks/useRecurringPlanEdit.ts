@@ -13,11 +13,10 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 
 import { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
 import { logger } from '@/lib/logger';
-import { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmStore';
-import { isRecurringPlan } from '../../../utils/recurrence';
-import type { RecurringEditScope } from '../../RecurringEditConfirmDialog';
+import { isRecurringPlan } from '@/lib/plan-recurrence';
+import { openRecurringEditConfirm, type RecurringEditScope } from '@/stores/useModalStore';
 
-import type { Plan } from '../../../types/plan';
+import type { EntryWithTags } from '@/core/types/entry';
 
 // オーバーライド可能なフィールド
 type OverrideableField = 'title' | 'description' | 'start_time' | 'end_time';
@@ -30,16 +29,13 @@ interface PendingChanges {
 }
 
 interface UseRecurringPlanEditOptions {
-  plan: Plan | null;
+  plan: EntryWithTags | null;
   planId: string | null;
   instanceDate: string | null;
 }
 
 export function useRecurringPlanEdit({ plan, planId, instanceDate }: UseRecurringPlanEditOptions) {
   const { applyEdit } = useRecurringScopeMutations();
-
-  // グローバルダイアログストア
-  const openDialog = useRecurringEditConfirmStore((state) => state.openDialog);
 
   // 繰り返しインスタンスかどうか
   const isRecurringInstance = useMemo(() => {
@@ -130,9 +126,9 @@ export function useRecurringPlanEdit({ plan, planId, instanceDate }: UseRecurrin
       if (field !== undefined) {
         pendingFieldRef.current = { field, value };
       }
-      openDialog(plan?.title ?? '', 'edit', handleScopeConfirm);
+      openRecurringEditConfirm(plan?.title ?? '', 'edit', handleScopeConfirm);
     },
-    [plan?.title, openDialog, handleScopeConfirm],
+    [plan?.title, handleScopeConfirm],
   );
 
   /**

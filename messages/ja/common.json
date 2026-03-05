@@ -66,7 +66,8 @@
       "updating": "更新中...",
       "archiving": "アーカイブ中...",
       "restoring": "復元中...",
-      "clear": "クリア"
+      "clear": "クリア",
+      "options": "オプション"
     },
     "confirm": {
       "delete": {
@@ -223,6 +224,17 @@
       "comingSoon": "プロフィールページは近日公開予定です",
       "notFound": "ユーザーが見つかりません"
     },
+    "entry": {
+      "origin": {
+        "planned": "予定",
+        "unplanned": "記録のみ"
+      }
+    },
+    "tags": {
+      "add": "タグを追加",
+      "change": "タグを変更",
+      "noTag": "タグなし"
+    },
     "theme": {
       "light": "ライトモード",
       "dark": "ダークモード"
@@ -236,6 +248,8 @@
     "createSheet": {
       "title": "何を追加しますか？",
       "description": "追加するアイテムの種類を選択してください",
+      "entry": "エントリ",
+      "entryDescription": "新しいエントリを作成します",
       "plan": "予定",
       "planDescription": "新しい予定を作成します",
       "record": "記録",

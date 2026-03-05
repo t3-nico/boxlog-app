@@ -1,54 +1,130 @@
 /**
  * タグカラー定義
  *
- * HEX値とCSS変数名のマッピング
- * globals.css の --tag-* トークンと対応
+ * DBにはカラー名（"blue" 等）を保存。
+ * レンダリングはCSS変数 + Tailwindクラス経由。HEXは使わない。
+ *
+ * @see src/styles/tokens/colors.css — OKLCH値の定義
+ * @see src/styles/tailwind-theme.css — Tailwindマッピング
  */
-export const TAG_COLORS = {
-  blue: { hex: '#3B82F6', cssVar: 'var(--tag-blue)', tailwind: 'bg-tag-blue' },
-  green: { hex: '#10B981', cssVar: 'var(--tag-green)', tailwind: 'bg-tag-green' },
-  red: { hex: '#EF4444', cssVar: 'var(--tag-red)', tailwind: 'bg-tag-red' },
-  amber: { hex: '#F59E0B', cssVar: 'var(--tag-amber)', tailwind: 'bg-tag-amber' },
-  violet: { hex: '#8B5CF6', cssVar: 'var(--tag-violet)', tailwind: 'bg-tag-violet' },
-  pink: { hex: '#EC4899', cssVar: 'var(--tag-pink)', tailwind: 'bg-tag-pink' },
-  cyan: { hex: '#06B6D4', cssVar: 'var(--tag-cyan)', tailwind: 'bg-tag-cyan' },
-  orange: { hex: '#F97316', cssVar: 'var(--tag-orange)', tailwind: 'bg-tag-orange' },
-  gray: { hex: '#6B7280', cssVar: 'var(--tag-gray)', tailwind: 'bg-tag-gray' },
-  indigo: { hex: '#6366F1', cssVar: 'var(--tag-indigo)', tailwind: 'bg-tag-indigo' },
+
+// ========================================
+// カラー名一覧
+// ========================================
+
+export const TAG_COLOR_NAMES = [
+  'red',
+  'orange',
+  'amber',
+  'green',
+  'teal',
+  'blue',
+  'indigo',
+  'violet',
+  'pink',
+  'gray',
+] as const;
+
+export type TagColorName = (typeof TAG_COLOR_NAMES)[number];
+
+// ========================================
+// カラー名 → クラス/CSS変数 マッピング
+// ========================================
+
+interface TagColorEntry {
+  /** border用 Tailwindクラス (e.g. 'border-tag-blue') */
+  border: string;
+  /** dot/icon背景用 Tailwindクラス (e.g. 'bg-tag-blue') */
+  dot: string;
+  /** card背景tint用 Tailwindクラス (e.g. 'bg-tag-blue-tint') */
+  tint: string;
+  /** inline style用 CSS変数 (e.g. 'var(--tag-blue)') */
+  cssVar: string;
+  /** inline style用 tint CSS変数 (e.g. 'var(--tag-blue-tint)') */
+  cssVarTint: string;
+}
+
+function entry(name: TagColorName): TagColorEntry {
+  return {
+    border: `border-tag-${name}`,
+    dot: `bg-tag-${name}`,
+    tint: `bg-tag-${name}-tint`,
+    cssVar: `var(--tag-${name})`,
+    cssVarTint: `var(--tag-${name}-tint)`,
+  };
+}
+
+export const TAG_COLOR_MAP: Record<TagColorName, TagColorEntry> = {
+  red: entry('red'),
+  orange: entry('orange'),
+  amber: entry('amber'),
+  green: entry('green'),
+  teal: entry('teal'),
+  blue: entry('blue'),
+  indigo: entry('indigo'),
+  violet: entry('violet'),
+  pink: entry('pink'),
+  gray: entry('gray'),
 } as const;
 
-export type TagColorName = keyof typeof TAG_COLORS;
+// ========================================
+// デフォルト値
+// ========================================
+
+export const DEFAULT_TAG_COLOR: TagColorName = 'blue';
+export const DEFAULT_GROUP_COLOR: TagColorName = 'gray';
+
+// ========================================
+// ブリッジ関数（HEX / 名前 / null → TagColorName）
+// ========================================
+
+/** 旧HEX→名前マッピング（DB移行期間用） */
+const LEGACY_HEX_MAP: Record<string, TagColorName> = {
+  '#3b82f6': 'blue',
+  '#10b981': 'green',
+  '#ef4444': 'red',
+  '#f59e0b': 'amber',
+  '#8b5cf6': 'violet',
+  '#ec4899': 'pink',
+  '#06b6d4': 'teal', // 旧 cyan
+  '#f97316': 'orange',
+  '#6b7280': 'gray',
+  '#6366f1': 'indigo',
+};
+
+const TAG_COLOR_SET = new Set<string>(TAG_COLOR_NAMES);
 
 /**
- * タグ・グループ用カラーパレット（HEX値配列）
+ * カラー値を安全にTagColorNameへ解決
  *
- * 後方互換性のため維持
- * 新規実装では TAG_COLORS を推奨
+ * - 有効な名前 → そのまま返す
+ * - 旧HEX値 → 対応する名前に変換
+ * - null / undefined / 不明 → デフォルト（blue）
  */
-export const TAG_COLOR_PALETTE = Object.values(TAG_COLORS).map((c) => c.hex);
-
-/**
- * HEX値からCSS変数を取得
- */
-export function getTagCssVar(hex: string): string | undefined {
-  const color = Object.values(TAG_COLORS).find((c) => c.hex.toLowerCase() === hex.toLowerCase());
-  return color?.cssVar;
+export function resolveTagColor(color: string | null | undefined): TagColorName {
+  if (!color) return DEFAULT_TAG_COLOR;
+  if (TAG_COLOR_SET.has(color)) return color as TagColorName;
+  return LEGACY_HEX_MAP[color.toLowerCase()] ?? DEFAULT_TAG_COLOR;
 }
 
 /**
- * HEX値からTailwindクラスを取得
+ * カラー値からクラス群を取得
+ *
+ * HEX / 名前 / null を受け付ける。
+ * コンポーネントはこの関数経由でクラスを決定する。
  */
-export function getTagTailwindClass(hex: string): string | undefined {
-  const color = Object.values(TAG_COLORS).find((c) => c.hex.toLowerCase() === hex.toLowerCase());
-  return color?.tailwind;
+export function getTagColorClasses(color: string | null | undefined): TagColorEntry {
+  return TAG_COLOR_MAP[resolveTagColor(color)];
 }
 
-/**
- * デフォルトタグカラー
- */
-export const DEFAULT_TAG_COLOR = TAG_COLORS.blue.hex;
+// ========================================
+// 後方互換（TAG_COLOR_PALETTE）
+// ========================================
 
 /**
- * デフォルトグループカラー
+ * カラー名配列
+ *
+ * 旧 TAG_COLOR_PALETTE（HEX配列）の代替。
+ * color-palette-picker 等で使用。
  */
-export const DEFAULT_GROUP_COLOR = TAG_COLORS.gray.hex;
+export const TAG_COLOR_PALETTE = TAG_COLOR_NAMES;

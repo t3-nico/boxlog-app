@@ -4,7 +4,7 @@ import type { RealtimePostgresInsertPayload } from '@supabase/supabase-js';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
-type ActivityTable = 'plan_activities' | 'record_activities';
+type ActivityTable = 'entry_activities';
 type ActivityRow<T extends ActivityTable> = Database['public']['Tables'][T]['Row'];
 
 interface UseActivityRealtimeSyncOptions<T extends ActivityTable> {

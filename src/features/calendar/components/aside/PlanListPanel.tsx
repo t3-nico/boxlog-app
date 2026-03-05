@@ -4,11 +4,11 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import { usePlans } from '@/hooks/usePlans';
+import { useEntries } from '@/hooks/useEntries';
 import { useTagsMap } from '@/hooks/useTagsMap';
 import { groupItems } from '@/lib/plan-grouping';
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { usePanelDrag } from '../../hooks/usePanelDrag';
 
 import { PlanListCard } from './PlanListCard';
@@ -18,15 +18,14 @@ import type {
   PanelScheduleFilter,
   PanelSortField,
   PanelSortOrder,
-  PanelStatusFilter,
 } from './PlanListSortMenu';
 import { PlanListToolbar } from './PlanListToolbar';
 
 /**
- * アサイド用のPlanリストパネル
+ * アサイド用のエントリリストパネル
  *
  * 「まだ時間を決めていない、やるべきこと」のリスト
- * - start_time === null && status === 'open' のPlanのみ表示
+ * - デフォルト: start_time === null のエントリのみ表示
  * - ソート/グルーピング
  * - 検索
  * - タグフィルター（CalendarSidebarと連動）
@@ -44,7 +43,6 @@ export function PlanListPanel() {
   const [sortOrder, setSortOrder] = useState<PanelSortOrder>('desc');
   const [groupBy, setGroupBy] = useState<PanelGroupByField>(null);
   const [scheduleFilter, setScheduleFilter] = useState<PanelScheduleFilter>('unscheduled');
-  const [statusFilter, setStatusFilter] = useState<PanelStatusFilter>('open');
 
   // グループ折りたたみ状態
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
@@ -53,7 +51,7 @@ export function PlanListPanel() {
   const isPlanVisible = useCalendarFilterStore((s) => s.isPlanVisible);
 
   // Inspector
-  const openInspector = usePlanInspectorStore((s) => s.openInspector);
+  const openInspector = useEntryInspectorStore((s) => s.openInspector);
 
   // D&D
   const { handleDragStart } = usePanelDrag();
@@ -61,14 +59,13 @@ export function PlanListPanel() {
   // タグ名解決（グルーピング用）
   const { getTagById } = useTagsMap();
 
-  // プラン一覧取得（サーバー側ソート + ステータスフィルター）
-  const baseFilters =
-    statusFilter === 'all' ? { sortBy, sortOrder } : { status: statusFilter, sortBy, sortOrder };
+  // エントリ一覧取得（サーバー側ソート）
+  const baseFilters = { sortBy, sortOrder };
   const {
     data: plans,
     isLoading,
     error,
-  } = usePlans(search ? { ...baseFilters, search } : baseFilters);
+  } = useEntries(search ? { ...baseFilters, search } : baseFilters);
 
   // フィルタリング: スケジュールフィルター + タグフィルター
   const filteredPlans = useMemo(() => {
@@ -84,8 +81,7 @@ export function PlanListPanel() {
       }
 
       // タグフィルター
-      const tagIds = plan.tagIds ?? [];
-      if (!isPlanVisible(tagIds)) {
+      if (!isPlanVisible(plan.tagId ?? null)) {
         return false;
       }
 
@@ -149,11 +145,9 @@ export function PlanListPanel() {
     sortOrder,
     groupBy,
     scheduleFilter,
-    statusFilter,
     onSortChange: handleSortChange,
     onGroupByChange: handleGroupByChange,
     onScheduleFilterChange: setScheduleFilter,
-    onStatusFilterChange: setStatusFilter,
   };
 
   // ローディング状態

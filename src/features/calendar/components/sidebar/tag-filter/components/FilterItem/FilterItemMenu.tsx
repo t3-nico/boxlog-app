@@ -1,9 +1,7 @@
 'use client';
 
-import { Eye, FileText, FolderUp, Merge, Palette, Pencil, Trash2 } from 'lucide-react';
+import { Eye, FolderUp, Merge, Palette, Pencil, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-
-import { cn } from '@/lib/utils';
 
 import { ColorPaletteMenuItems } from '@/components/ui/color-palette-picker';
 import {
@@ -14,18 +12,28 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from '@/components/ui/dropdown-menu';
-import { DEFAULT_TAG_COLOR } from '@/lib/tag-colors';
+import type { TagColorName } from '@/config/ui/colors';
+import { getTagColorClasses } from '@/config/ui/colors';
+import { cn } from '@/lib/utils';
+
+export interface GroupOption {
+  name: string;
+  color: string | null;
+}
 
 interface FilterItemMenuProps {
   displayColor: string;
-  parentId: string | null | undefined;
-  parentTags: Array<{ id: string; name: string; color?: string | null }> | undefined;
+  /** 現在のグループ名（null = 独立タグ） */
+  currentGroup?: string | null | undefined;
+  /** グループ候補一覧 */
+  groupOptions?: GroupOption[] | undefined;
+  /** グループに属するタグか（色変更はグループ単位のため個別無効） */
+  isGrouped?: boolean | undefined;
 
   // Handlers
   onOpenRenameDialog: () => void;
-  onColorChange: (color: string) => void;
-  onOpenNoteDialog: () => void;
-  onChangeParent: ((newParentId: string | null) => void) | undefined;
+  onColorChange: (color: TagColorName) => void;
+  onChangeGroup?: ((newGroup: string | null) => void) | undefined;
   onOpenMergeModal: () => void;
   onShowOnlyTag: () => void;
   onDeleteTag: (() => void) | undefined;
@@ -33,12 +41,12 @@ interface FilterItemMenuProps {
 
 export function FilterItemMenu({
   displayColor,
-  parentId,
-  parentTags,
+  currentGroup,
+  groupOptions,
+  isGrouped,
   onOpenRenameDialog,
   onColorChange,
-  onOpenNoteDialog,
-  onChangeParent,
+  onChangeGroup,
   onOpenMergeModal,
   onShowOnlyTag,
   onDeleteTag,
@@ -53,50 +61,44 @@ export function FilterItemMenu({
         {t('calendar.filter.rename')}
       </DropdownMenuItem>
 
-      {/* カラーを変更 */}
-      <DropdownMenuSub>
-        <DropdownMenuSubTrigger>
-          <Palette className="mr-2 size-4" />
-          {t('calendar.filter.changeColor')}
-        </DropdownMenuSubTrigger>
-        <DropdownMenuSubContent onClick={(e) => e.stopPropagation()}>
-          <ColorPaletteMenuItems selectedColor={displayColor} onColorSelect={onColorChange} />
-        </DropdownMenuSubContent>
-      </DropdownMenuSub>
+      {/* カラーを変更（グループ内タグは色がグループ統一のため非表示） */}
+      {!isGrouped && (
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <Palette className="mr-2 size-4" />
+            {t('calendar.filter.changeColor')}
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent onClick={(e) => e.stopPropagation()}>
+            <ColorPaletteMenuItems selectedColor={displayColor} onColorSelect={onColorChange} />
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+      )}
 
-      {/* ノートを編集 */}
-      <DropdownMenuItem onClick={onOpenNoteDialog}>
-        <FileText className="mr-2 size-4" />
-        {t('calendar.filter.editNote')}
-      </DropdownMenuItem>
-
-      {/* 親タグを変更 */}
-      {parentTags && parentTags.length > 0 && onChangeParent && (
+      {/* グループを変更 */}
+      {groupOptions && groupOptions.length > 0 && onChangeGroup && (
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
             <FolderUp className="mr-2 size-4" />
-            {t('calendar.filter.changeParent')}
+            {t('calendar.filter.changeGroup')}
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
             <DropdownMenuItem
-              onClick={() => onChangeParent(null)}
-              className={cn(!parentId && 'bg-state-selected')}
+              onClick={() => onChangeGroup(null)}
+              className={!currentGroup ? 'bg-state-selected' : undefined}
             >
-              {t('calendar.filter.noParent')}
+              {t('calendar.filter.noGroup')}
             </DropdownMenuItem>
-            {parentTags.map((parent) => (
+            {groupOptions.map((group) => (
               <DropdownMenuItem
-                key={parent.id}
-                onClick={() => onChangeParent(parent.id)}
-                className={cn(parentId === parent.id && 'bg-state-selected')}
+                key={group.name}
+                onClick={() => onChangeGroup(group.name)}
+                className={currentGroup === group.name ? 'bg-state-selected' : undefined}
               >
                 <span
-                  className="mr-1 font-normal"
-                  style={{ color: parent.color || DEFAULT_TAG_COLOR }}
-                >
-                  #
-                </span>
-                {parent.name}
+                  className={cn('mr-1 size-3 rounded-full', getTagColorClasses(group.color).dot)}
+                  aria-hidden
+                />
+                {group.name}
               </DropdownMenuItem>
             ))}
           </DropdownMenuSubContent>

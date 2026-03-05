@@ -2,32 +2,36 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { planToPlanItem, type PlanWithTagIds } from './usePlanData';
 
-// テスト用のモックプラン
-const createMockPlan = (overrides: Partial<PlanWithTagIds> = {}): PlanWithTagIds => ({
+// テスト用のモックエントリ
+const createMockEntry = (overrides: Partial<PlanWithTagIds> = {}): PlanWithTagIds => ({
   id: 'test-id',
   user_id: 'user-1',
   title: 'テストプラン',
   description: null,
-  status: 'open',
-  completed_at: null,
+  origin: 'planned',
   start_time: null,
   end_time: null,
+  actual_start_time: null,
+  actual_end_time: null,
+  duration_minutes: null,
+  fulfillment_score: null,
   recurrence_type: null,
   recurrence_end_date: null,
   recurrence_rule: null,
   reminder_minutes: null,
+  reviewed_at: null,
   created_at: '2025-01-15T10:00:00Z',
   updated_at: '2025-01-15T10:00:00Z',
+  tagId: null,
   ...overrides,
 });
 
 describe('usePlanData', () => {
   describe('planToPlanItem', () => {
-    it('基本的なプランを変換できる', () => {
-      const plan = createMockPlan({
+    it('基本的なエントリを変換できる', () => {
+      const plan = createMockEntry({
         id: 'plan-1',
         title: 'タスク1',
-        status: 'open',
         description: '説明文',
       });
 
@@ -36,31 +40,28 @@ describe('usePlanData', () => {
       expect(result.id).toBe('plan-1');
       expect(result.type).toBe('plan');
       expect(result.title).toBe('タスク1');
-      expect(result.status).toBe('open');
       expect(result.description).toBe('説明文');
     });
 
-    it('start_timeがあるプランでもopenのまま（doingは廃止）', () => {
-      const plan = createMockPlan({
+    it('未来のstart_timeがあるエントリはopen', () => {
+      const plan = createMockEntry({
         id: 'plan-2',
         title: 'スケジュール済みタスク',
-        status: 'open',
-        start_time: '2025-01-20T09:00:00Z',
-        end_time: '2025-01-20T10:00:00Z',
+        start_time: '2099-01-20T09:00:00Z',
+        end_time: '2099-01-20T10:00:00Z',
       });
 
       const result = planToPlanItem(plan);
 
-      expect(result.status).toBe('open'); // doing廃止によりopenのまま
+      expect(result.status).toBe('open');
     });
 
-    it('doneのプランはstart_timeに関係なくdoneのまま', () => {
-      const plan = createMockPlan({
+    it('過去のend_timeがあるエントリはclosed', () => {
+      const plan = createMockEntry({
         id: 'plan-3',
         title: '完了済みタスク',
-        status: 'closed',
-        start_time: '2025-01-20T09:00:00Z',
-        end_time: '2025-01-20T10:00:00Z',
+        start_time: '2020-01-20T09:00:00Z',
+        end_time: '2020-01-20T10:00:00Z',
       });
 
       const result = planToPlanItem(plan);
@@ -68,43 +69,30 @@ describe('usePlanData', () => {
       expect(result.status).toBe('closed');
     });
 
-    it('tagIdsが正しくパススルーされる', () => {
-      const plan = createMockPlan({
+    it('tagIdが正しくパススルーされる', () => {
+      const plan = createMockEntry({
         id: 'plan-1',
-        tagIds: ['tag-1', 'tag-2'],
+        tagId: 'tag-1',
       });
 
       const result = planToPlanItem(plan);
 
-      expect(result.tagIds).toHaveLength(2);
-      expect(result.tagIds?.[0]).toBe('tag-1');
-      expect(result.tagIds?.[1]).toBe('tag-2');
+      expect(result.tagId).toBe('tag-1');
     });
 
-    it('tagIdsがない場合はundefinedになる', () => {
-      const plan = createMockPlan({
+    it('tagIdがnullの場合はnullがパススルーされる', () => {
+      const plan = createMockEntry({
         id: 'plan-1',
-        // tagIdsを省略
+        tagId: null,
       });
 
       const result = planToPlanItem(plan);
 
-      expect(result.tagIds).toBeUndefined();
-    });
-
-    it('tagIdsが空配列の場合は空配列がパススルーされる', () => {
-      const plan = createMockPlan({
-        id: 'plan-1',
-        tagIds: [],
-      });
-
-      const result = planToPlanItem(plan);
-
-      expect(result.tagIds).toEqual([]);
+      expect(result.tagId).toBeNull();
     });
 
     it('時間・繰り返し関連のフィールドを正しく変換する', () => {
-      const plan = createMockPlan({
+      const plan = createMockEntry({
         id: 'plan-1',
         start_time: '2025-01-20T09:00:00Z',
         end_time: '2025-01-20T10:00:00Z',
@@ -127,7 +115,7 @@ describe('usePlanData', () => {
       const now = new Date('2025-01-15T12:00:00Z');
       vi.setSystemTime(now);
 
-      const plan = createMockPlan({
+      const plan = createMockEntry({
         id: 'plan-1',
         created_at: null,
         updated_at: null,
@@ -142,7 +130,7 @@ describe('usePlanData', () => {
     });
 
     it('descriptionがnullの場合はundefinedになる', () => {
-      const plan = createMockPlan({
+      const plan = createMockEntry({
         id: 'plan-1',
         description: null,
       });

@@ -76,7 +76,7 @@ export function createAITools(supabase: AISupabaseClient, userId: string): ToolS
             startTime: e.start_time ?? null,
             endTime: e.end_time ?? null,
             origin: e.origin,
-            tags: (e.tagIds ?? []).map((id) => tagMap.get(id) ?? '').filter(Boolean),
+            tags: e.tagId ? [tagMap.get(e.tagId) ?? ''].filter(Boolean) : [],
           }));
 
           return { count: simplified.length, plans: simplified };
@@ -277,9 +277,7 @@ export function createAITools(supabase: AISupabaseClient, userId: string): ToolS
           return {
             tags: stats.map((s) => ({
               name: s.name,
-              planCount: s.plan_count,
-              recordCount: s.record_count,
-              totalCount: s.total_count,
+              entryCount: s.entry_count,
               lastUsedAt: s.last_used_at,
             })),
           };

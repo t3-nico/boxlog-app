@@ -2,13 +2,13 @@
 
 import { useCallback, useMemo } from 'react';
 
-import { usePlans } from '@/hooks/usePlans';
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useEntries } from '@/hooks/useEntries';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 
 export function useInspectorNavigation(planId: string | null) {
-  const openInspector = usePlanInspectorStore((state) => state.openInspector);
+  const openInspector = useEntryInspectorStore((state) => state.openInspector);
 
-  const { data: allPlans = [] } = usePlans();
+  const { data: allPlans = [] } = useEntries();
 
   const currentIndex = useMemo(() => {
     return allPlans.findIndex((t) => t.id === planId);

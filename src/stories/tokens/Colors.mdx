@@ -4,7 +4,10 @@ import { Meta } from '@storybook/blocks';
 
 # カラートークン
 
-globals.css のセマンティックトークン一覧。Tailwind クラス名でそのままコピペ可能。
+tokens/colors.css のセマンティックトークン一覧。Tailwind クラス名でそのままコピペ可能。
+
+> **2層構造**: Primitives（原液） → Semantic（役割）。
+> Hue定数やNeutralスケールは [Tokens/Primitives](?path=/docs/tokens-primitives--docs) を参照。
 
 ---
 
@@ -72,15 +75,31 @@ WCAG 2.1 AA 準拠。全ペアが card 背景上で 4.5:1+ のコントラスト
 
 ---
 
-## Chronotype（生産性ゾーン）
+## Chronotype（エネルギーフェーズ）
+
+> **温度グラデーション設計**: 高エネルギー=暖色(amber)→低エネルギー=寒色(indigo)。
+> 覚醒時のエネルギー周期を 5 フェーズ（warmup→peak→dip→recovery→winddown）で表現。
+
+| トークン | Hue | 用途 |
+|----------|-----|------|
+| `bg-chronotype-warmup` | 145 (green) | ウォームアップ（起床後） |
+| `bg-chronotype-peak` | 85 (amber) | ピーク（最集中） |
+| `bg-chronotype-dip` | 250 (blue) | ディップ（エネルギー低下） |
+| `bg-chronotype-recovery` | 200 (cyan) | リカバリー（回復） |
+| `bg-chronotype-winddown` | 280 (indigo) | ウインドダウン（就寝準備） |
+
+### Tints（タイムライン背景用）
+
+> 不透明度ルールの例外: base 色の H を共有しつつ L/C/alpha を導出。
+> Light: L=0.50, α=0.10-0.18 / Dark: L=0.70, α=0.05-0.13
 
 | トークン | 用途 |
 |----------|------|
-| `bg-chronotype-peak` | ピーク（最集中） |
-| `bg-chronotype-good` | 集中 |
-| `bg-chronotype-moderate` | 通常 |
-| `bg-chronotype-low` | 低調（軽作業向き） |
-| `bg-chronotype-sleep` | 睡眠 |
+| `bg-chronotype-tint-warmup` | ウォームアップ背景 |
+| `bg-chronotype-tint-peak` | ピーク背景 |
+| `bg-chronotype-tint-dip` | ディップ背景 |
+| `bg-chronotype-tint-recovery` | リカバリー背景 |
+| `bg-chronotype-tint-winddown` | ウインドダウン背景 |
 
 ---
 
@@ -121,7 +140,7 @@ WCAG 2.1 AA 準拠。全ペアが card 背景上で 4.5:1+ のコントラスト
 | `bg-tag-amber` | Amber | |
 | `bg-tag-violet` | Violet | |
 | `bg-tag-pink` | Pink | |
-| `bg-tag-cyan` | Cyan | |
+| `bg-tag-teal` | Teal | |
 | `bg-tag-orange` | Orange | |
 | `bg-tag-gray` | Gray | グループのデフォルト |
 | `bg-tag-indigo` | Indigo | |

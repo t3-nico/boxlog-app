@@ -29,10 +29,6 @@ const meta = {
       control: 'text',
       description: 'セクションタイトル',
     },
-    isSaving: {
-      control: 'boolean',
-      description: '保存中状態',
-    },
     actions: {
       table: { disable: true },
     },
@@ -125,45 +121,6 @@ export const WithActions: Story = {
   ),
 };
 
-/** 保存中状態 */
-export const SavingState: Story = {
-  args: {
-    title: 'カレンダー設定',
-    isSaving: true,
-  },
-  render: (args) => (
-    <div className="max-w-2xl">
-      <SettingsCard {...args}>
-        <SettingRow label="週の開始日">
-          <Select defaultValue="monday">
-            <SelectTrigger variant="ghost">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="monday">月曜日</SelectItem>
-              <SelectItem value="sunday">日曜日</SelectItem>
-            </SelectContent>
-          </Select>
-        </SettingRow>
-        <SettingRow label="タイムゾーン">
-          <Select defaultValue="Asia/Tokyo">
-            <SelectTrigger variant="ghost">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="America/Los_Angeles">ロサンゼルス (GMT-8)</SelectItem>
-              <SelectItem value="America/New_York">ニューヨーク (GMT-5)</SelectItem>
-              <SelectItem value="Europe/London">ロンドン (GMT+0)</SelectItem>
-              <SelectItem value="Asia/Tokyo">東京 (GMT+9)</SelectItem>
-              <SelectItem value="Australia/Sydney">シドニー (GMT+10)</SelectItem>
-            </SelectContent>
-          </Select>
-        </SettingRow>
-      </SettingsCard>
-    </div>
-  ),
-};
-
 /** 全パターン一覧 */
 export const AllPatterns: Story = {
   args: {},
@@ -213,19 +170,6 @@ export const AllPatterns: Story = {
       >
         <SettingRow label="メールアドレス" description="john@example.com">
           <Button variant="outline">変更</Button>
-        </SettingRow>
-      </SettingsCard>
-
-      <SettingsCard title="カレンダー設定" isSaving>
-        <SettingRow label="週の開始日">
-          <Select defaultValue="monday">
-            <SelectTrigger variant="ghost">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="monday">月曜日</SelectItem>
-            </SelectContent>
-          </Select>
         </SettingRow>
       </SettingsCard>
 

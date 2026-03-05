@@ -28,14 +28,8 @@ interface CalendarSettings {
   weekStartsOn: 0 | 1 | 6; // 日曜、月曜、土曜
   defaultDuration: number; // デフォルトのタスク時間（分）
   snapInterval: 5 | 10 | 15 | 30; // ドラッグ&ドロップのスナップ間隔（分）
-  businessHours: {
-    start: number; // 営業開始時間（0-23）
-    end: number; // 営業終了時間（0-23）
-  };
-
   // 表示設定
   showWeekNumbers: boolean;
-  showDeclinedEvents: boolean;
   showWeekends: boolean;
 
   // クロノタイプ設定
@@ -75,12 +69,7 @@ const defaultSettings: CalendarSettings = {
   weekStartsOn: 1, // 月曜始まり
   defaultDuration: 60,
   snapInterval: 15, // デフォルトは15分間隔
-  businessHours: {
-    start: 9,
-    end: 18,
-  },
   showWeekNumbers: false,
-  showDeclinedEvents: false,
   showWeekends: true, // デフォルトは週末も表示
   chronotype: {
     enabled: false,

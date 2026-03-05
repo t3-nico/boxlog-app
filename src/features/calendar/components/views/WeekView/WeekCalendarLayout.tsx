@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 
 import { useAddPopup } from '@/hooks/useAddPopup';
 import { useDateFormat } from '@/hooks/useDateFormat';
+import { getTagColorClasses } from '@/lib/tag-colors';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 import { useTranslations } from 'next-intl';
 import type { CalendarPlan } from '../../../types/calendar.types';
@@ -303,7 +304,7 @@ export const WeekCalendarLayout = ({
                     if (!plan.startDate) return null;
 
                     const { top, height } = calculatePlanPosition(plan);
-                    const planColor = plan.color || '#3b82f6';
+                    const planColor = getTagColorClasses(plan.color).cssVar;
 
                     // bothモードでは左半分、planモードでは全幅
                     const leftPosition = planRecordMode === 'both' ? '2px' : '4px';

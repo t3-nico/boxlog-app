@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { Button } from '@/components/ui/button';
 
-import { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmStore';
+import { openRecurringEditConfirm } from '@/stores/useModalStore';
 
 import { RecurringEditConfirmDialog } from './RecurringEditConfirmDialog';
 
@@ -25,10 +25,8 @@ type Story = StoryObj<typeof meta>;
 // ─────────────────────────────────────────────────────────
 
 function ConfirmDialogStory({ mode }: { mode: 'edit' | 'delete' }) {
-  const openDialog = useRecurringEditConfirmStore((s) => s.openDialog);
-
   const handleOpen = () => {
-    openDialog('テストプラン', mode, async (scope) => {
+    openRecurringEditConfirm('テストプラン', mode, async (scope) => {
       window.alert(`選択: ${scope}`);
     });
   };

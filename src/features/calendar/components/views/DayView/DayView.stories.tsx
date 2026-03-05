@@ -54,7 +54,7 @@ const mockPlans: CalendarPlan[] = [
     ...basePlan,
     id: 'plan-2',
     title: 'ランチ',
-    color: '#10B981',
+    color: 'green',
     startDate: makeDate(today, 12, 0),
     endDate: makeDate(today, 13, 0),
     displayStartDate: makeDate(today, 12, 0),
@@ -64,7 +64,7 @@ const mockPlans: CalendarPlan[] = [
     ...basePlan,
     id: 'plan-3',
     title: 'デザインレビュー',
-    color: '#F59E0B',
+    color: 'amber',
     startDate: makeDate(today, 14, 0),
     endDate: makeDate(today, 15, 30),
     displayStartDate: makeDate(today, 14, 0),
@@ -75,7 +75,7 @@ const mockPlans: CalendarPlan[] = [
     ...basePlan,
     id: 'plan-4',
     title: 'コーディング',
-    color: '#8B5CF6',
+    color: 'violet',
     startDate: makeDate(today, 16, 0),
     endDate: makeDate(today, 18, 0),
     displayStartDate: makeDate(today, 16, 0),
@@ -98,13 +98,7 @@ const todayRange: ViewDateRange = {
 export const Default: Story = {
   render: () => (
     <div className="h-[700px]">
-      <DayView
-        dateRange={todayRange}
-        plans={mockPlans}
-        currentDate={today}
-        onPlanClick={fn()}
-        onEmptyClick={fn()}
-      />
+      <DayView dateRange={todayRange} plans={mockPlans} currentDate={today} onPlanClick={fn()} />
     </div>
   ),
 };
@@ -123,13 +117,7 @@ export const AllPatterns: Story = {
   render: () => (
     <div className="flex flex-col items-start gap-6">
       <div className="h-[500px] w-full">
-        <DayView
-          dateRange={todayRange}
-          plans={mockPlans}
-          currentDate={today}
-          onPlanClick={fn()}
-          onEmptyClick={fn()}
-        />
+        <DayView dateRange={todayRange} plans={mockPlans} currentDate={today} onPlanClick={fn()} />
       </div>
 
       <div className="h-[500px] w-full">

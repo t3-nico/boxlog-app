@@ -8,8 +8,9 @@ import {
   useCreateActionSheet,
   type CreateActionType,
 } from '@/features/navigation';
+import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { usePathname, useSearchParams } from 'next/navigation';
@@ -54,18 +55,27 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
   // CreateActionSheet状態管理
   const createActionSheet = useCreateActionSheet();
 
-  // FABからのアクション選択ハンドラー
-  const handleCreateAction = useCallback((type: CreateActionType) => {
-    if (type === 'plan') {
-      usePlanInspectorStore.getState().openInspectorWithDraft(undefined, 'plan');
-    } else if (type === 'record') {
-      usePlanInspectorStore.getState().openInspectorWithDraft(undefined, 'record');
-    }
-  }, []);
+  // 即DB作成（ドラフトなし）
+  const { createEntry } = useEntryMutations();
 
-  // メモ化: コンテンツ部分（children, isMobile, localeに依存）
-  const content = useMemo(
-    () => (
+  // FABからのアクション選択ハンドラー
+  const handleCreateAction = useCallback(
+    async (_type: CreateActionType) => {
+      const result = await createEntry.mutateAsync({ title: '' });
+      if (result?.id) {
+        useEntryInspectorStore.getState().openInspector(result.id);
+      }
+    },
+    [createEntry],
+  );
+
+  return (
+    // CalendarNavigationProvider を常にレンダリングしてツリー構造を安定化。
+    // ルート切替時にProvider の付け外しによるリマウントを防ぎ、
+    // Sidebar が静止したままメインコンテンツだけが変わる体験を実現する。
+    // 非カレンダーページでは idle 状態（useCalendarNavigation() は null を返す設計ではなくなるが、
+    // 全消費者が contextAvailable チェック済みのため安全）。
+    <CalendarNavigationProvider {...(calendarProviderProps ?? {})}>
       <div className="flex h-screen flex-col">
         {/* アクセシビリティ: スキップリンク */}
         <a
@@ -107,21 +117,6 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
           />
         ) : null}
       </div>
-    ),
-    [children, isMobile, localeFromPath, t, createActionSheet, handleCreateAction],
+    </CalendarNavigationProvider>
   );
-
-  // カレンダーページの場合はCalendarNavigationProviderでラップ
-  if (calendarProviderProps) {
-    return (
-      <CalendarNavigationProvider
-        initialDate={calendarProviderProps.initialDate}
-        initialView={calendarProviderProps.initialView}
-      >
-        {content}
-      </CalendarNavigationProvider>
-    );
-  }
-
-  return content;
 }

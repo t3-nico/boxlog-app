@@ -94,9 +94,11 @@ export function ReminderSelect({
           type="button"
           disabled={disabled}
           className={cn(
-            'flex h-8 items-center gap-1 rounded-lg px-2 transition-colors',
+            'flex h-7 items-center gap-1 rounded-md border px-2 transition-colors',
             'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
-            hasReminder ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
+            hasReminder
+              ? 'border-border text-foreground'
+              : 'text-muted-foreground hover:text-foreground border-transparent',
           )}
           aria-label={label}
         >

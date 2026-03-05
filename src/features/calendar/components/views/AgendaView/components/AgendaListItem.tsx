@@ -1,15 +1,14 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 
-import { Tag } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { TagSelectCombobox } from '@/components/tags/TagSelectCombobox';
+import { getTagColorClasses } from '@/config/ui/colors';
 import { useDateFormat } from '@/hooks/useDateFormat';
-import { usePlanTags } from '@/hooks/usePlanTags';
 import { useTagsMap } from '@/hooks/useTagsMap';
 import { cn } from '@/lib/utils';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import type { CalendarPlan } from '../../../../types/calendar.types';
 
 interface AgendaListItemProps {
@@ -21,28 +20,29 @@ interface AgendaListItemProps {
 /**
  * AgendaListItem - 日別グループ内のアイテム表示
  *
- * レイアウト: 縦線 | 時間 | タイトル | タグ
- * - Plan: 左端の縦線（bg-plan-box）
- * - Record: 左端の縦線（bg-record-box）
+ * レイアウト: 縦線 | 時間 | タグ名
+ * - 左端の縦線はタグカラーを反映（タグ未設定時はentry-default）
  */
 export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemProps) {
   const t = useTranslations('calendar');
-  const { addPlanTag, removePlanTag } = usePlanTags();
   const { formatTime: formatTimeWithSettings } = useDateFormat();
   const { getTagsByIds } = useTagsMap();
 
-  // プランの実際のIDを取得（繰り返しプランの場合はcalendarIdを使用）
-  const planId = plan.calendarId ?? plan.id;
+  // 選択中のタグID（単一）
+  const selectedTagId = plan.tagId ?? null;
 
-  // 選択中のタグID
-  const selectedTagIds = useMemo(() => {
-    return plan.tagIds ?? [];
-  }, [plan.tagIds]);
+  const setAnchorRect = useEntryInspectorStore((s) => s.setAnchorRect);
 
-  // Record判定
-  const isRecord = plan.type === 'record';
-
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setAnchorRect({
+      top: rect.top,
+      right: rect.right,
+      bottom: rect.bottom,
+      left: rect.left,
+      width: rect.width,
+      height: rect.height,
+    });
     onClick?.(plan);
   };
 
@@ -51,33 +51,18 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
     onContextMenu?.(plan, e);
   };
 
-  // タグの変更ハンドラー
-  const handleTagsChange = useCallback(
-    async (newTagIds: string[]) => {
-      const currentTagIds = selectedTagIds;
-      const addedTagIds = newTagIds.filter((id) => !currentTagIds.includes(id));
-      const removedTagIds = currentTagIds.filter((id) => !newTagIds.includes(id));
-
-      for (const tagId of addedTagIds) {
-        await addPlanTag(planId, tagId);
-      }
-
-      for (const tagId of removedTagIds) {
-        await removePlanTag(planId, tagId);
-      }
-    },
-    [planId, selectedTagIds, addPlanTag, removePlanTag],
-  );
-
   // 時間表示（開始 - 終了）
   const startTime = plan.startDate ? formatTimeWithSettings(plan.startDate) : '';
   const endTime = plan.endDate ? formatTimeWithSettings(plan.endDate) : '';
   const displayTime =
     startTime && endTime ? `${startTime} - ${endTime}` : startTime || t('event.allDay');
 
-  // タグの表示
-  const tags = getTagsByIds(selectedTagIds);
-  const displayTags = tags.slice(0, 2);
+  // タグの表示（単一タグ）
+  const tag = useMemo(() => {
+    if (!selectedTagId) return null;
+    const tags = getTagsByIds([selectedTagId]);
+    return tags[0] ?? null;
+  }, [selectedTagId, getTagsByIds]);
 
   return (
     <div
@@ -87,12 +72,12 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
         'transition-colors duration-150',
       )}
     >
-      {/* 左端の縦線（Record: bg-record-box, Plan: bg-plan-box） */}
+      {/* 左端の縦線（タグカラー反映） */}
       <div
-        className={cn(
-          'h-6 w-0.5 shrink-0 rounded-full',
-          isRecord ? 'bg-record-box' : 'bg-plan-box',
-        )}
+        className="h-6 w-0.5 shrink-0 rounded-full"
+        style={{
+          backgroundColor: tag ? getTagColorClasses(tag.color).cssVar : 'var(--entry-default)',
+        }}
       />
 
       {/* クリック可能エリア */}
@@ -111,60 +96,13 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
           {displayTime}
         </div>
 
-        {/* タイトル */}
+        {/* タグ名 */}
         <div className="min-w-0 flex-1">
           <span className="text-foreground truncate font-normal">
-            {plan.title || t('event.noTitle')}
+            {tag?.name || t('event.noTitle')}
           </span>
-          {isRecord && plan.linkedPlanTitle && (
-            <span className="text-muted-foreground ml-2 text-xs">({plan.linkedPlanTitle})</span>
-          )}
         </div>
       </button>
-
-      {/* タグ */}
-      <div
-        className="flex shrink-0 items-center gap-1"
-        onClick={(e) => e.stopPropagation()}
-        onKeyDown={(e) => e.stopPropagation()}
-      >
-        {displayTags.length > 0 ? (
-          <>
-            {displayTags.map((tag) => (
-              <span
-                key={tag.id}
-                className="inline-flex max-w-16 items-center truncate rounded px-1.5 py-0.5 text-xs"
-                style={{
-                  backgroundColor: tag.color ? `${tag.color}20` : undefined,
-                  color: tag.color || undefined,
-                }}
-                title={tag.name}
-              >
-                {tag.name}
-              </span>
-            ))}
-            {tags.length > 2 && (
-              <span className="text-muted-foreground text-xs">+{tags.length - 2}</span>
-            )}
-          </>
-        ) : (
-          <TagSelectCombobox
-            selectedTagIds={selectedTagIds}
-            onTagsChange={handleTagsChange}
-            align="end"
-            side="bottom"
-          >
-            <div
-              className={cn(
-                'text-muted-foreground hover:text-foreground flex cursor-pointer items-center rounded p-1 transition-all',
-                'opacity-0 group-hover:opacity-100',
-              )}
-            >
-              <Tag className="size-3.5" />
-            </div>
-          </TagSelectCombobox>
-        )}
-      </div>
     </div>
   );
 }

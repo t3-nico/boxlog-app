@@ -200,9 +200,9 @@ export const WithList: Story = {
         time: '10:00',
         color: 'var(--primary)',
       },
-      { id: '2', date: '今日', title: 'デザインレビュー', time: '14:00', color: '#3B82F6' },
-      { id: '3', date: '昨日', title: 'コードレビュー', time: '16:00', color: '#EF4444' },
-      { id: '4', date: '2/7', title: '週次レポート作成', time: '時間は未指定', color: '#10B981' },
+      { id: '2', date: '今日', title: 'デザインレビュー', time: '14:00', color: 'blue' },
+      { id: '3', date: '昨日', title: 'コードレビュー', time: '16:00', color: 'red' },
+      { id: '4', date: '2/7', title: '週次レポート作成', time: '時間は未指定', color: 'green' },
     ];
 
     return (

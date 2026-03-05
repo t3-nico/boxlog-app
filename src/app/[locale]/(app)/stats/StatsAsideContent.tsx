@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 
-import { PlanListPanel, RecordListPanel } from '@/features/calendar';
+import { PlanListPanel } from '@/features/calendar';
 
 import type { AsideType } from '@/components/layout/AppAside';
 
@@ -19,10 +19,8 @@ const AIInspectorContent = dynamic(
  */
 export function renderStatsAsideContent(asideType: AsideType): React.ReactNode {
   switch (asideType) {
-    case 'plan':
+    case 'entries':
       return <PlanListPanel />;
-    case 'record':
-      return <RecordListPanel />;
     case 'chat':
       return <AIInspectorContent />;
     case 'reflection':

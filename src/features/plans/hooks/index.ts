@@ -1,6 +1,5 @@
 // Custom Hooks
-export { usePlanMutations } from '@/hooks/usePlanMutations';
-export { usePlans } from '@/hooks/usePlans';
+export { useEntries } from '@/hooks/useEntries';
+export { useEntryMutations } from '@/hooks/useEntryMutations';
 export { usePlanTags } from '@/hooks/usePlanTags';
 export { usePlan } from './usePlan';
-export { usePlanActivities } from './usePlanActivities';

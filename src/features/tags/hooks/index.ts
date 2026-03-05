@@ -18,7 +18,6 @@ export {
   useCreateTag,
   useDeleteTag,
   useMergeTag,
-  useMoveTag,
   useRenameTag,
   useReorderTags,
   useUpdateTag,

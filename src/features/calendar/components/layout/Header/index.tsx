@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { useGlobalSearch } from '@/hooks/use-global-search';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
-import { useSidebarStore } from '@/stores/useSidebarStore';
+import { useLayoutStore } from '@/stores/useLayoutStore';
 
 import type { CalendarViewType } from '../../../types/calendar.types';
 
@@ -31,6 +31,8 @@ interface CalendarHeaderProps {
   showActions?: boolean | undefined;
   // 左側のカスタムコンテンツ（モバイルメニューボタンなど）
   leftSlot?: React.ReactNode | undefined;
+  // 右側のカスタムコンテンツ（PageSwitcher など）
+  rightSlot?: React.ReactNode | undefined;
   // 日付選択機能
   onDateSelect?: ((date: Date) => void) | undefined;
   showMiniCalendar?: boolean | undefined;
@@ -74,6 +76,7 @@ export const CalendarHeader = ({
   onImport,
   showActions = false,
   leftSlot,
+  rightSlot,
   onDateSelect,
   showMiniCalendar = false,
   displayRange,
@@ -83,8 +86,8 @@ export const CalendarHeader = ({
   const t = useTranslations();
   const { open: openSearch } = useGlobalSearch();
   const showWeekNumbers = useCalendarSettingsStore((state) => state.showWeekNumbers);
-  const isSidebarOpen = useSidebarStore.use.isOpen();
-  const openSidebar = useSidebarStore.use.open();
+  const isSidebarOpen = useLayoutStore.use.sidebarOpen();
+  const openSidebar = useLayoutStore.use.openSidebar();
 
   return (
     <header className="bg-background relative h-12 px-4 py-2">
@@ -167,16 +170,17 @@ export const CalendarHeader = ({
             </Button>
           </div>
 
-          {/* PC: 通知 + 検索 + パネルトグル + アクション */}
+          {/* PC: 検索 + ページ切替 + パネルトグル + アクション */}
           <div className="hidden items-center gap-2 md:flex">
             <HeaderUtilities />
+            {rightSlot}
             {onAsideChange && currentAside === 'none' && (
               <HoverTooltip content={t('calendar.aside.open')} side="bottom">
                 <Button
                   variant="ghost"
                   icon
                   className="-mr-4 size-8"
-                  onClick={() => onAsideChange('plan')}
+                  onClick={() => onAsideChange('entries')}
                   aria-label="Open aside"
                 >
                   <PanelRight className="size-4" />

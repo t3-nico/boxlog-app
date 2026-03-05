@@ -23,14 +23,14 @@ export class NotificationService {
   constructor(private readonly supabase: ServiceSupabaseClient) {}
 
   /**
-   * 通知一覧を取得（plan titleをJOIN）
+   * 通知一覧を取得（entry titleをJOIN）
    */
   async list(options: ListNotificationsOptions) {
     const { userId, isRead, type, limit = 50, offset = 0 } = options;
 
     let query = this.supabase
       .from('notifications')
-      .select('*, plans(title)')
+      .select('*, entries(title)')
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);
@@ -110,7 +110,7 @@ export class NotificationService {
       .insert({
         user_id: userId,
         type,
-        plan_id: planId,
+        entry_id: planId,
       })
       .select()
       .single();

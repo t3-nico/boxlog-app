@@ -16,9 +16,9 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
 import { useDateFormat } from '@/hooks/useDateFormat';
+import { useEntries } from '@/hooks/useEntries';
+import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { useHapticFeedback } from '@/hooks/useHapticFeedback';
-import { usePlanMutations } from '@/hooks/usePlanMutations';
-import { useplans } from '@/hooks/usePlans';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
 interface DnDProviderProps {
@@ -45,7 +45,7 @@ interface DnDProviderProps {
  */
 export const DnDProvider = ({ children }: DnDProviderProps) => {
   const t = useTranslations();
-  const { updatePlan } = usePlanMutations();
+  const { updateEntry } = useEntryMutations();
   const { timezone } = useCalendarSettingsStore();
   const { formatDate: formatDateWithSettings } = useDateFormat();
   const { tap, success } = useHapticFeedback();
@@ -55,8 +55,8 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
   );
 
   // ドラッグ中のplan情報を取得（リアルタイム性最適化済み）
-  const { data: plans } = useplans();
-  const activeplan = plans?.find((t) => t.id === activeId);
+  const { data: entries } = useEntries();
+  const activeplan = entries?.find((t) => t.id === activeId);
 
   // ドラッグセンサー設定
   const sensors = useSensors(
@@ -202,7 +202,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
           end_time,
         };
 
-        updatePlan.mutate({
+        updateEntry.mutate({
           id: planId,
           data: updateData,
         });
@@ -216,7 +216,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
         setDragPreviewTime(null);
       }
     },
-    [updatePlan, timezone, t, success],
+    [updateEntry, timezone, t, success],
   );
 
   /**

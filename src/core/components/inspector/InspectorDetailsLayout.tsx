@@ -1,73 +1,48 @@
 'use client';
 
 /**
- * Inspector 詳細レイアウト（3行構造）
+ * Inspector 詳細レイアウト
  *
- * Plan/Record Inspector共通の3行レイアウトを提供
- * - Row 1: タイトル入力
- * - Row 2: スケジュール選択
- * - Row 3: オプションボタン群（タグ、ノート、その他）
+ * - Row 0: タグ表示（カラードット + タグ名）
+ * - Row 1: スケジュール選択
+ * - Row 2: メモ（インラインテキストエリア）
+ * - Row 3: オプションチップ群
  *
- * Slotベースで柔軟にコンテンツを挿入可能
+ * セクション間は余白で区切る（線なし）
  */
 
 import type { ReactNode } from 'react';
 
-import { cn } from '@/lib/utils';
-
 export interface InspectorDetailsLayoutProps {
-  /** Row 1: タイトル入力コンポーネント */
-  title: ReactNode;
-  /** Row 2: スケジュール選択コンポーネント */
+  /** Row 0: タグ表示（カラードット + タグ名） */
+  tagRow?: ReactNode;
+  /** Row 1: スケジュール選択コンポーネント */
   schedule: ReactNode;
+  /** Row 2: メモ（インラインテキストエリア） */
+  note?: ReactNode;
   /** Row 3: オプションボタン群 */
   options: ReactNode;
-  /** Row 1追加コンテンツ（タイトル横のアクセント線など） */
-  titlePrefix?: ReactNode;
-  /** Row 1のカスタムクラス */
-  titleClassName?: string;
 }
 
-/**
- * Inspector詳細レイアウト
- *
- * @example
- * ```tsx
- * <InspectorDetailsLayout
- *   title={<TitleInput value={title} onChange={setTitle} />}
- *   schedule={<ScheduleRow ... />}
- *   options={
- *     <>
- *       <TagsIconButton />
- *       <NoteIconButton />
- *       <FulfillmentButton />
- *     </>
- *   }
- * />
- * ```
- */
 export function InspectorDetailsLayout({
-  title,
+  tagRow,
   schedule,
+  note,
   options,
-  titlePrefix,
-  titleClassName,
 }: InspectorDetailsLayoutProps) {
   return (
     <div>
-      {/* Row 1: タイトル */}
-      <div
-        className={cn('px-4 pt-4 pb-2', titlePrefix && 'flex items-center gap-2', titleClassName)}
-      >
-        {titlePrefix}
-        {title}
-      </div>
+      {/* Row 0: タグ */}
+      {tagRow}
 
-      {/* Row 2: スケジュール */}
+      {/* Row 1: スケジュール */}
       {schedule}
 
+      {/* Row 2: メモ */}
+      {note && <div className="px-6 py-2">{note}</div>}
+
       {/* Row 3: オプション */}
-      <div className="flex flex-wrap items-center gap-1 px-4 pt-2 pb-4">{options}</div>
+      <div className="flex flex-wrap items-center gap-1 px-4 pt-3 pb-6">{options}</div>
     </div>
   );
 }

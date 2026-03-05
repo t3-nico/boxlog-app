@@ -10,7 +10,6 @@ import { TRPCError } from '@trpc/server';
 
 import { MS_PER_DAY, MS_PER_MINUTE } from '@/constants/time';
 import { endOfWeek, startOfWeek } from '@/lib/date/core';
-import { formatDateISO } from '@/lib/date/format';
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
 
 import { z } from 'zod';
@@ -172,9 +171,9 @@ export const statisticsRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const { supabase, userId } = ctx;
 
-      // Get all plans with time and their tags
+      // Get all entries with time and their tags
       let query = supabase
-        .from('plans')
+        .from('entries')
         .select('id, start_time, end_time')
         .eq('user_id', userId)
         .not('start_time', 'is', null)
@@ -200,12 +199,12 @@ export const statisticsRouter = createTRPCRouter({
         return [];
       }
 
-      // Get plan-tag relationships
+      // Get entry-tag relationships
       const planIds = plans.map((p) => p.id);
       const { data: planTags, error: tagsError } = await supabase
-        .from('plan_tags')
-        .select('plan_id, tag_id')
-        .in('plan_id', planIds);
+        .from('entry_tags')
+        .select('entry_id, tag_id')
+        .in('entry_id', planIds);
 
       if (tagsError) {
         throw new TRPCError({
@@ -241,7 +240,7 @@ export const statisticsRouter = createTRPCRouter({
             (new Date(plan.end_time).getTime() - new Date(plan.start_time).getTime()) / MS_PER_HOUR;
           if (hours > 0) {
             const tagIdsForPlan = planTags
-              .filter((pt) => pt.plan_id === plan.id)
+              .filter((pt) => pt.entry_id === plan.id)
               .map((pt) => pt.tag_id);
             for (const tagId of tagIdsForPlan) {
               tagHours[tagId] = (tagHours[tagId] || 0) + hours;
@@ -255,7 +254,7 @@ export const statisticsRouter = createTRPCRouter({
         .map((tag) => ({
           tagId: tag.id,
           name: tag.name,
-          color: tag.color || '#6366f1',
+          color: tag.color || 'indigo',
           hours: tagHours[tag.id] || 0,
         }))
         .filter((t) => t.hours > 0)
@@ -489,46 +488,47 @@ export const statisticsRouter = createTRPCRouter({
     const now = new Date();
     const weekStart = startOfWeek(now).toISOString();
     const weekEnd = endOfWeek(now).toISOString();
-    const weekStartStr = formatDateISO(startOfWeek(now));
-    const weekEndStr = formatDateISO(endOfWeek(now));
 
-    // Plans: 今週のPlanのみ（start_time が今週の範囲内）
-    const { data: plans, error: plansError } = await supabase
-      .from('plans')
+    // Planned entries: 今週のPlanのみ（start_time が今週の範囲内）
+    const { data: plannedEntries, error: plannedError } = await supabase
+      .from('entries')
       .select('start_time, end_time')
       .eq('user_id', userId)
+      .eq('origin', 'planned')
       .not('start_time', 'is', null)
       .not('end_time', 'is', null)
       .gte('start_time', weekStart)
       .lte('start_time', weekEnd);
 
-    if (plansError) {
+    if (plannedError) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: 'Failed to fetch plans',
+        message: 'Failed to fetch planned entries',
       });
     }
 
-    // Records: 今週のRecordのみ
-    const { data: records, error: recordsError } = await supabase
-      .from('records')
+    // Unplanned entries (records): 今週の実績のみ
+    const { data: unplannedEntries, error: unplannedError } = await supabase
+      .from('entries')
       .select('duration_minutes')
       .eq('user_id', userId)
-      .gte('worked_at', weekStartStr)
-      .lte('worked_at', weekEndStr);
+      .eq('origin', 'unplanned')
+      .not('start_time', 'is', null)
+      .gte('start_time', weekStart)
+      .lte('start_time', weekEnd);
 
-    if (recordsError) {
+    if (unplannedError) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: 'Failed to fetch records',
+        message: 'Failed to fetch unplanned entries',
       });
     }
 
     // Plan集計: (end_time - start_time) の合計
     let planTotalMinutes = 0;
-    for (const plan of plans) {
-      if (plan.start_time && plan.end_time) {
-        const diffMs = new Date(plan.end_time).getTime() - new Date(plan.start_time).getTime();
+    for (const entry of plannedEntries) {
+      if (entry.start_time && entry.end_time) {
+        const diffMs = new Date(entry.end_time).getTime() - new Date(entry.start_time).getTime();
         if (diffMs > 0) {
           planTotalMinutes += diffMs / MS_PER_MINUTE;
         }
@@ -536,7 +536,7 @@ export const statisticsRouter = createTRPCRouter({
     }
 
     // Record集計: duration_minutes の合計
-    const recordTotalMinutes = (records ?? []).reduce(
+    const recordTotalMinutes = (unplannedEntries ?? []).reduce(
       (sum, r) => sum + (r.duration_minutes ?? 0),
       0,
     );
@@ -548,15 +548,15 @@ export const statisticsRouter = createTRPCRouter({
   }),
 
   /**
-   * Get plan statistics
+   * Get entry statistics
    */
   getStats: protectedProcedure.query(async ({ ctx }) => {
     const { supabase, userId } = ctx;
 
-    // Get all plans (optimized: select only needed fields)
-    const { data: plans, error } = await supabase
-      .from('plans')
-      .select('id, status')
+    // Get all entries (optimized: select only needed fields)
+    const { data: entries, error } = await supabase
+      .from('entries')
+      .select('id, origin')
       .eq('user_id', userId);
 
     if (error) {
@@ -566,26 +566,25 @@ export const statisticsRouter = createTRPCRouter({
       });
     }
 
-    // Count by status
-    const byStatus = plans.reduce(
-      (acc, plan) => {
-        acc[plan.status] = (acc[plan.status] ?? 0) + 1;
+    // Count by origin
+    const byOrigin = entries.reduce(
+      (acc, entry) => {
+        acc[entry.origin] = (acc[entry.origin] ?? 0) + 1;
         return acc;
       },
       {} as Record<string, number>,
     );
 
     return {
-      total: plans.length,
-      byStatus,
+      total: entries.length,
+      byOrigin,
     };
   }),
 
   /**
-   * Get tag statistics (plan count, record count, and last used date)
+   * Get tag statistics (entry count and last used date)
    *
    * Uses PostgreSQL function `get_tag_stats` for efficient DB-side aggregation
-   * Includes both plan_tags and record_tags counts
    */
   getTagStats: protectedProcedure.query(async ({ ctx }) => {
     const { supabase, userId } = ctx;
@@ -604,30 +603,17 @@ export const statisticsRouter = createTRPCRouter({
 
     // Transform array result into lookup objects
     const counts: Record<string, number> = {};
-    const recordCounts: Record<string, number> = {};
     const lastUsed: Record<string, string> = {};
-    let untaggedCount = 0;
 
     if (data) {
-      for (const row of data as Array<{
-        tag_id: string | null;
-        plan_count: number;
-        record_count: number;
-        last_used: string | null;
-      }>) {
-        if (row.tag_id === null) {
-          // タグなしプランの件数
-          untaggedCount = row.plan_count;
-        } else {
-          counts[row.tag_id] = row.plan_count;
-          recordCounts[row.tag_id] = row.record_count;
-          if (row.last_used) {
-            lastUsed[row.tag_id] = row.last_used;
-          }
+      for (const row of data) {
+        counts[row.tag_id] = row.entry_count;
+        if (row.last_used) {
+          lastUsed[row.tag_id] = row.last_used;
         }
       }
     }
 
-    return { counts, recordCounts, lastUsed, untaggedCount };
+    return { counts, lastUsed };
   }),
 });

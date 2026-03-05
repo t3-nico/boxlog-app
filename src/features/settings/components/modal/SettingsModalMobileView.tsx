@@ -8,9 +8,12 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-import { useSettingsModalStore } from '@/stores/useSettingsModalStore';
+import {
+  closeModal as closeModalAction,
+  useModalStore,
+  type SettingsCategory,
+} from '@/stores/useModalStore';
 import { SETTINGS_CATEGORIES } from '../../constants';
-import type { SettingsCategory } from '../../types';
 import { SettingsModalContent } from './SettingsModalContent';
 
 /**
@@ -20,13 +23,14 @@ import { SettingsModalContent } from './SettingsModalContent';
  */
 export function SettingsModalMobileView() {
   const t = useTranslations();
-  const closeModal = useSettingsModalStore((state) => state.closeModal);
-  const selectedCategory = useSettingsModalStore((state) => state.selectedCategory);
-  const setCategory = useSettingsModalStore((state) => state.setCategory);
+  const modal = useModalStore((state) => state.modal);
+  const setSettingsCategory = useModalStore((state) => state.setSettingsCategory);
+  const selectedCategory = modal?.type === 'settings' ? modal.category : 'general';
+  const handleClose = closeModalAction;
   const [showContent, setShowContent] = useState(false);
 
   const handleCategorySelect = (category: SettingsCategory) => {
-    setCategory(category);
+    setSettingsCategory(category);
     setShowContent(true);
   };
 
@@ -49,7 +53,7 @@ export function SettingsModalMobileView() {
               {currentCategory ? t(currentCategory.labelKey) : ''}
             </h1>
           </div>
-          <Button variant="ghost" icon onClick={closeModal} aria-label={t('common.actions.close')}>
+          <Button variant="ghost" icon onClick={handleClose} aria-label={t('common.actions.close')}>
             <X className="size-5" />
           </Button>
         </header>
@@ -63,7 +67,7 @@ export function SettingsModalMobileView() {
     <div className="flex h-full flex-col">
       <header className="border-border flex h-14 shrink-0 items-center justify-between border-b px-4">
         <h1 className="text-lg font-bold">{t('settings.dialog.title')}</h1>
-        <Button variant="ghost" icon onClick={closeModal} aria-label={t('common.actions.close')}>
+        <Button variant="ghost" icon onClick={handleClose} aria-label={t('common.actions.close')}>
           <X className="size-5" />
         </Button>
       </header>

@@ -70,9 +70,9 @@ describe('mutationUtils', () => {
       ).toBe(true);
     });
 
-    it('records.list クエリキーにマッチする', () => {
-      const predicate = createListQueryPredicate('records');
-      expect(predicate({ queryKey: [['records', 'list']] })).toBe(true);
+    it('entries.list クエリキーにマッチする', () => {
+      const predicate = createListQueryPredicate('entries');
+      expect(predicate({ queryKey: [['entries', 'list']] })).toBe(true);
     });
 
     it('plans.getById にはマッチしない', () => {
@@ -82,7 +82,7 @@ describe('mutationUtils', () => {
 
     it('異なるエンティティにはマッチしない', () => {
       const predicate = createListQueryPredicate('plans');
-      expect(predicate({ queryKey: [['records', 'list']] })).toBe(false);
+      expect(predicate({ queryKey: [['entries', 'list']] })).toBe(false);
     });
 
     it('配列でないキーにはマッチしない', () => {
@@ -104,6 +104,9 @@ describe('mutationUtils', () => {
           getById: { invalidate: vi.fn() },
           getCumulativeTime: { invalidate: vi.fn() },
         },
+        entries: {
+          getCumulativeTime: { invalidate: vi.fn() },
+        },
       };
 
       await invalidateEntityCaches(mockUtils as unknown as TRPCUtils, 'plans');
@@ -111,7 +114,7 @@ describe('mutationUtils', () => {
       expect(mockUtils.plans.list.invalidate).toHaveBeenCalledWith(undefined, {
         refetchType: 'active',
       });
-      expect(mockUtils.plans.getCumulativeTime.invalidate).toHaveBeenCalled();
+      expect(mockUtils.entries.getCumulativeTime.invalidate).toHaveBeenCalled();
     });
 
     it('entityId 指定時に個別キャッシュも無効化する', async () => {
@@ -119,6 +122,9 @@ describe('mutationUtils', () => {
         plans: {
           list: { invalidate: vi.fn() },
           getById: { invalidate: vi.fn() },
+          getCumulativeTime: { invalidate: vi.fn() },
+        },
+        entries: {
           getCumulativeTime: { invalidate: vi.fn() },
         },
       };
@@ -133,30 +139,28 @@ describe('mutationUtils', () => {
       );
     });
 
-    it('records エンティティの固有キャッシュも無効化する', async () => {
+    it('entries エンティティのキャッシュを無効化する', async () => {
       const mockUtils = {
-        records: {
+        entries: {
           list: { invalidate: vi.fn() },
           getById: { invalidate: vi.fn() },
-          listByPlan: { invalidate: vi.fn() },
-          getRecent: { invalidate: vi.fn() },
-        },
-        plans: {
           getCumulativeTime: { invalidate: vi.fn() },
         },
       };
 
-      await invalidateEntityCaches(mockUtils as unknown as TRPCUtils, 'records');
+      await invalidateEntityCaches(mockUtils as unknown as TRPCUtils, 'entries');
 
-      expect(mockUtils.records.list.invalidate).toHaveBeenCalled();
-      expect(mockUtils.records.listByPlan.invalidate).toHaveBeenCalled();
-      expect(mockUtils.records.getRecent.invalidate).toHaveBeenCalled();
+      expect(mockUtils.entries.list.invalidate).toHaveBeenCalled();
+      expect(mockUtils.entries.getCumulativeTime.invalidate).toHaveBeenCalled();
     });
 
     it('カスタム refetchType を指定できる', async () => {
       const mockUtils = {
         plans: {
           list: { invalidate: vi.fn() },
+          getCumulativeTime: { invalidate: vi.fn() },
+        },
+        entries: {
           getCumulativeTime: { invalidate: vi.fn() },
         },
       };

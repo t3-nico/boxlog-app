@@ -14,6 +14,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
+import { ChronotypeBackground } from '../grid/ChronotypeBackground';
 import { TimeColumn } from '../grid/TimeColumn/TimeColumn';
 import { useCurrentTimeLine } from '../hooks/useCurrentTimeLine';
 import { useResponsiveHourHeight } from '../hooks/useResponsiveHourHeight';
@@ -198,10 +199,11 @@ export const ScrollableCalendarLayout = ({
         {/* 時間軸列 */}
         {showTimeColumn && (
           <div
-            className="border-border sticky left-0 z-10 shrink-0 border-r"
+            className="bg-background border-border sticky left-0 z-10 shrink-0 border-r"
             style={{ width: timeColumnWidth }}
           >
-            <div className="relative h-full">
+            <div className="relative h-full overflow-hidden">
+              <ChronotypeBackground startHour={0} endHour={24} hourHeight={HOUR_HEIGHT} />
               <TimeColumn
                 startHour={0}
                 endHour={24}

@@ -5,11 +5,20 @@ import { memo, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
-import {
-  CHRONOTYPE_PRESETS,
-  getProductivityLevelColor,
-  type ProductivityZone,
-} from '@/types/chronotype';
+import { CHRONOTYPE_PRESETS, type ProductivityZone } from '@/types/chronotype';
+
+/**
+ * タイムライン背景用の tint カラー（tokens/colors.css の --chronotype-tint-* を使用）
+ * 元のトークン（--chronotype-*）は solid fill 用で light mode だと薄すぎるため、
+ * 背景 tint 専用トークンで彩度高め + alpha 込みの色を定義。
+ */
+const LEVEL_TINT: Record<ProductivityZone['level'], string> = {
+  warmup: 'bg-chronotype-tint-warmup',
+  peak: 'bg-chronotype-tint-peak',
+  dip: 'bg-chronotype-tint-dip',
+  recovery: 'bg-chronotype-tint-recovery',
+  winddown: 'bg-chronotype-tint-winddown',
+};
 
 interface ChronotypeBackgroundProps {
   startHour: number;
@@ -18,10 +27,11 @@ interface ChronotypeBackgroundProps {
 }
 
 /**
- * クロノタイプに基づく集中時間帯の背景ハイライト
+ * クロノタイプに基づく生産性ゾーンの背景ハイライト
  *
- * - peak/good 時間帯を薄い背景色で表示
+ * - 全ゾーン（peak/good/moderate/low/sleep）をレベル別 opacity で表示
  * - 控えめな表示でタスクの邪魔にならない
+ * - displayMode が 'background' または 'both' の場合のみ描画
  */
 export const ChronotypeBackground = memo<ChronotypeBackgroundProps>(function ChronotypeBackground({
   startHour,
@@ -49,12 +59,6 @@ export const ChronotypeBackground = memo<ChronotypeBackgroundProps>(function Chr
     }> = [];
 
     for (const zone of profile.productivityZones) {
-      // sleep ゾーンは表示しない
-      if (zone.level === 'sleep') continue;
-
-      // moderate/low も表示しない（peakとgoodのみ強調）
-      if (zone.level === 'moderate' || zone.level === 'low') continue;
-
       // 表示範囲内のゾーンのみ処理
       const zoneStart = zone.startHour;
       const zoneEnd = zone.endHour;
@@ -102,7 +106,11 @@ export const ChronotypeBackground = memo<ChronotypeBackgroundProps>(function Chr
     return zones;
   }, [profile, startHour, endHour, hourHeight]);
 
-  if (!profile || visibleZones.length === 0) {
+  // displayMode が background または both でなければ描画しない
+  const showBackground =
+    chronotype?.displayMode === 'background' || chronotype?.displayMode === 'both';
+
+  if (!profile || !showBackground || visibleZones.length === 0) {
     return null;
   }
 
@@ -115,10 +123,7 @@ export const ChronotypeBackground = memo<ChronotypeBackgroundProps>(function Chr
       {visibleZones.map((item, index) => (
         <div
           key={`${item.zone.level}-${item.zone.startHour}-${index}`}
-          className={cn(
-            'absolute right-0 left-0 opacity-20',
-            getProductivityLevelColor(item.zone.level),
-          )}
+          className={cn('absolute right-0 left-0', LEVEL_TINT[item.zone.level])}
           style={{
             top: `${item.top}px`,
             height: `${item.height}px`,

@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
+import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { usePlanInstanceMutations } from '@/hooks/usePlanInstances';
-import { usePlanMutations } from '@/hooks/usePlanMutations';
 import { decodeInstanceId } from '@/lib/instance-id';
 import { logger } from '@/lib/logger';
 import { api } from '@/lib/trpc';
@@ -15,19 +15,19 @@ import type { CalendarPlan } from '../types/calendar.types';
  */
 export const usePlanOperations = () => {
   const utils = api.useUtils();
-  const { updatePlan, deletePlan } = usePlanMutations();
+  const { updateEntry, deleteEntry } = useEntryMutations();
   const { createInstance } = usePlanInstanceMutations();
 
   // プラン削除ハンドラー
   const handlePlanDelete = useCallback(
     async (planId: string) => {
       try {
-        deletePlan.mutate({ id: planId });
+        deleteEntry.mutate({ id: planId });
       } catch (error) {
         logger.error('プラン削除に失敗:', error);
       }
     },
-    [deletePlan],
+    [deleteEntry],
   );
 
   // プラン復元ハンドラー
@@ -58,7 +58,7 @@ export const usePlanOperations = () => {
             });
 
             await createInstance.mutateAsync({
-              planId: decoded.parentPlanId,
+              entryId: decoded.parentPlanId,
               instanceDate: decoded.instanceDate,
               exceptionType: isSameDate ? 'modified' : 'moved',
               instanceStart: updates.startTime.toISOString(),
@@ -68,11 +68,11 @@ export const usePlanOperations = () => {
             });
 
             // キャッシュを更新
-            utils.plans.list.invalidate();
-            utils.plans.getInstances.invalidate();
+            utils.entries.list.invalidate();
+            utils.entries.getInstances.invalidate();
           } else {
             // 通常プランの更新
-            updatePlan.mutate({
+            updateEntry.mutate({
               id: planId,
               data: {
                 start_time: updates.startTime.toISOString(),
@@ -107,7 +107,7 @@ export const usePlanOperations = () => {
             });
 
             await createInstance.mutateAsync({
-              planId: decoded.parentPlanId,
+              entryId: decoded.parentPlanId,
               instanceDate: decoded.instanceDate,
               exceptionType: isSameDate ? 'modified' : 'moved',
               instanceStart: updatedPlan.startDate.toISOString(),
@@ -115,8 +115,8 @@ export const usePlanOperations = () => {
               ...(isSameDate ? {} : { originalDate: newDate }),
             });
 
-            utils.plans.list.invalidate();
-            utils.plans.getInstances.invalidate();
+            utils.entries.list.invalidate();
+            utils.entries.getInstances.invalidate();
           } else {
             // 通常プランの更新
             logger.log('🔧 プラン更新 (CalendarPlan形式):', {
@@ -125,7 +125,7 @@ export const usePlanOperations = () => {
               newEndDate: updatedPlan.endDate?.toISOString(),
             });
 
-            updatePlan.mutate({
+            updateEntry.mutate({
               id: updatedPlan.id,
               data: {
                 start_time: updatedPlan.startDate.toISOString(),
@@ -138,7 +138,7 @@ export const usePlanOperations = () => {
         logger.error('プラン更新に失敗:', error);
       }
     },
-    [updatePlan, createInstance, utils],
+    [updateEntry, createInstance, utils],
   );
 
   return {

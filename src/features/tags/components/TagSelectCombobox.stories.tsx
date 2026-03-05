@@ -28,11 +28,9 @@ const mockTags: Tag[] = [
   {
     id: 'parent-1',
     name: '仕事',
-    color: '#3b82f6',
+    color: 'blue',
     user_id: 'user-1',
-    description: null,
     is_active: true,
-    parent_id: null,
     sort_order: 0,
     created_at: null,
     updated_at: null,
@@ -40,11 +38,9 @@ const mockTags: Tag[] = [
   {
     id: 'child-1',
     name: 'ミーティング',
-    color: '#60a5fa',
+    color: 'blue',
     user_id: 'user-1',
-    description: null,
     is_active: true,
-    parent_id: 'parent-1',
     sort_order: 0,
     created_at: null,
     updated_at: null,
@@ -52,11 +48,9 @@ const mockTags: Tag[] = [
   {
     id: 'child-2',
     name: 'コーディング',
-    color: '#2563eb',
+    color: 'blue',
     user_id: 'user-1',
-    description: null,
     is_active: true,
-    parent_id: 'parent-1',
     sort_order: 1,
     created_at: null,
     updated_at: null,
@@ -64,11 +58,9 @@ const mockTags: Tag[] = [
   {
     id: 'tag-private',
     name: 'プライベート',
-    color: '#22c55e',
+    color: 'green',
     user_id: 'user-1',
-    description: null,
     is_active: true,
-    parent_id: null,
     sort_order: 1,
     created_at: null,
     updated_at: null,
@@ -76,11 +68,9 @@ const mockTags: Tag[] = [
   {
     id: 'tag-study',
     name: '勉強',
-    color: '#a855f7',
+    color: 'violet',
     user_id: 'user-1',
-    description: null,
     is_active: true,
-    parent_id: null,
     sort_order: 2,
     created_at: null,
     updated_at: null,
@@ -88,11 +78,9 @@ const mockTags: Tag[] = [
   {
     id: 'tag-exercise',
     name: '運動',
-    color: '#f97316',
+    color: 'orange',
     user_id: 'user-1',
-    description: null,
     is_active: true,
-    parent_id: null,
     sort_order: 3,
     created_at: null,
     updated_at: null,
@@ -103,24 +91,26 @@ const mockTags: Tag[] = [
 // Interactive Wrapper
 // ─────────────────────────────────────────────────────────
 
-function TagSelectStory({ initialSelectedIds = [] }: { initialSelectedIds?: string[] }) {
-  const [selectedTagIds, setSelectedTagIds] = useState<string[]>(initialSelectedIds);
+function TagSelectStory({
+  initialSelectedId = null as string | null,
+}: {
+  initialSelectedId?: string | null;
+}) {
+  const [selectedTagId, setSelectedTagId] = useState<string | null>(initialSelectedId);
 
   return (
     <div className="space-y-2">
       <TagSelectCombobox
-        selectedTagIds={selectedTagIds}
-        onTagsChange={setSelectedTagIds}
+        selectedTagId={selectedTagId}
+        onTagChange={setSelectedTagId}
         availableTags={mockTags}
       >
         <Button variant="outline" size="sm" className="gap-2">
           <Tags className="size-4" />
-          タグを選択 ({selectedTagIds.length})
+          タグを選択 {selectedTagId ? '(1)' : '(0)'}
         </Button>
       </TagSelectCombobox>
-      <p className="text-muted-foreground text-xs">
-        選択中: {selectedTagIds.length > 0 ? selectedTagIds.join(', ') : 'なし'}
-      </p>
+      <p className="text-muted-foreground text-xs">選択中: {selectedTagId ?? 'なし'}</p>
     </div>
   );
 }
@@ -135,8 +125,8 @@ export const Default: Story = {
 };
 
 /** 選択済み状態 */
-export const WithSelectedTags: Story = {
-  render: () => <TagSelectStory initialSelectedIds={['parent-1', 'tag-study']} />,
+export const WithSelectedTag: Story = {
+  render: () => <TagSelectStory initialSelectedId="parent-1" />,
 };
 
 /** 全パターン一覧 */
@@ -144,8 +134,8 @@ export const AllPatterns: Story = {
   render: () => (
     <div className="flex flex-col items-start gap-6">
       <TagSelectStory />
-      <TagSelectStory initialSelectedIds={['parent-1', 'tag-study']} />
-      <TagSelectStory initialSelectedIds={['child-1', 'child-2']} />
+      <TagSelectStory initialSelectedId="parent-1" />
+      <TagSelectStory initialSelectedId="tag-study" />
     </div>
   ),
 };

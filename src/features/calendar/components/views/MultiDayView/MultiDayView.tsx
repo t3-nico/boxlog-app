@@ -37,11 +37,9 @@ export function MultiDayView({
   disabledPlanId,
   onPlanClick,
   onPlanContextMenu,
-  onCreatePlan: _onCreatePlan,
   onUpdatePlan,
   onDeletePlan: _onDeletePlan,
   onRestorePlan: _onRestorePlan,
-  onEmptyClick,
   onTimeRangeSelect,
   onViewChange: _onViewChange,
   onNavigatePrev: _onNavigatePrev,
@@ -129,7 +127,6 @@ export function MultiDayView({
                   planStyles={planStyles}
                   onPlanClick={onPlanClick}
                   onPlanContextMenu={onPlanContextMenu}
-                  onEmptyClick={onEmptyClick}
                   onPlanUpdate={
                     onUpdatePlan
                       ? (planId, updates) => {

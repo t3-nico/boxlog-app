@@ -5,7 +5,6 @@
 export {
   useCreateTag,
   useDeleteTag,
-  useMoveTag,
   useRenameTag,
   useReorderTags,
   useUpdateTag,

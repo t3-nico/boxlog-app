@@ -66,7 +66,8 @@
       "updating": "Updating...",
       "archiving": "Archiving...",
       "restoring": "Restoring...",
-      "clear": "Clear"
+      "clear": "Clear",
+      "options": "Options"
     },
     "confirm": {
       "delete": {
@@ -223,6 +224,17 @@
       "comingSoon": "Profile page coming soon",
       "notFound": "User not found"
     },
+    "entry": {
+      "origin": {
+        "planned": "Planned",
+        "unplanned": "Record only"
+      }
+    },
+    "tags": {
+      "add": "Add tag",
+      "change": "Change tag",
+      "noTag": "No tag"
+    },
     "theme": {
       "light": "Light Mode",
       "dark": "Dark Mode"
@@ -236,6 +248,8 @@
     "createSheet": {
       "title": "What would you like to add?",
       "description": "Choose the type of item to add",
+      "entry": "Entry",
+      "entryDescription": "Create a new time entry",
       "plan": "Plan",
       "planDescription": "Create a new plan",
       "record": "Record",

@@ -39,7 +39,7 @@ export function TagTimeChart() {
   const period = useStatsFilterStore((s) => s.period);
   const dateRange = useMemo(() => computeDateRange(period), [period]);
   const queryInput = dateRange.startDate ? dateRange : undefined;
-  const { data, isPending } = api.plans.getTimeByTag.useQuery(queryInput);
+  const { data, isPending } = api.entries.getTimeByTag.useQuery(queryInput);
 
   if (isPending) {
     return (

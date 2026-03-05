@@ -10,7 +10,7 @@ const meta = {
 export default meta;
 type Story = StoryObj;
 
-// z-index定義（globals.css @theme と同期）
+// z-index定義（tokens/z-index.css @theme と同期）
 const zIndexLayers = [
   {
     name: 'dropdown',

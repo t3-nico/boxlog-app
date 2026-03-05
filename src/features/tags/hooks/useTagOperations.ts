@@ -6,13 +6,7 @@ import { logger } from '@/lib/logger';
 import { useCallback, useState } from 'react';
 import { DEFAULT_TAG_COLOR } from '../constants/colors';
 import type { CreateTagInput, Tag, UpdateTagInput } from '../types';
-import {
-  useCreateTag,
-  useDeleteTag,
-  useMoveTag,
-  useRenameTag,
-  useUpdateTag,
-} from './useTagsMutations';
+import { useCreateTag, useDeleteTag, useRenameTag, useUpdateTag } from './useTagsMutations';
 import { useOptimisticTagUpdate } from './useTagsOptimistic';
 
 export function useTagOperations(tags: Tag[]) {
@@ -21,22 +15,19 @@ export function useTagOperations(tags: Tag[]) {
   const [showMergeModal, setShowMergeModal] = useState(false);
   const [selectedTag, setSelectedTag] = useState<Tag | null>(null);
   const [mergeSourceTag, setMergeSourceTag] = useState<Tag | null>(null);
-  const [createGroupId, setCreateGroupId] = useState<string | null>(null);
 
   // React Query mutations
   const createTagMutation = useCreateTag();
   const updateTagMutation = useUpdateTag();
   const deleteTagMutation = useDeleteTag();
-  const moveTagMutation = useMoveTag();
   const renameTagMutation = useRenameTag();
 
   // 楽観的更新
   const { updateTagOptimistically, addTagOptimistically, removeTagOptimistically } =
     useOptimisticTagUpdate();
 
-  // タグ作成（グループを指定して作成）
-  const handleCreateTag = useCallback((parentId?: string | null) => {
-    setCreateGroupId(parentId ?? null);
+  // タグ作成
+  const handleCreateTag = useCallback(() => {
     setShowCreateModal(true);
   }, []);
 
@@ -49,9 +40,7 @@ export function useTagOperations(tags: Tag[]) {
           name: data.name,
           user_id: 'current-user',
           color: data.color || DEFAULT_TAG_COLOR,
-          description: data.description || null,
           is_active: true,
-          parent_id: data.parentId ?? createGroupId,
           sort_order: tags.length,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
@@ -63,15 +52,13 @@ export function useTagOperations(tags: Tag[]) {
         await createTagMutation.mutateAsync({
           name: data.name,
           color: data.color,
-          description: data.description ?? undefined,
-          parentId: data.parentId ?? createGroupId ?? undefined,
         });
       } catch (error) {
         logger.error('Failed to create tag:', error);
         throw error;
       }
     },
-    [createTagMutation, addTagOptimistically, createGroupId, tags.length],
+    [createTagMutation, addTagOptimistically, tags.length],
   );
 
   // タグ編集
@@ -91,7 +78,7 @@ export function useTagOperations(tags: Tag[]) {
         // 実際の更新
         await updateTagMutation.mutateAsync({
           id: selectedTag.id,
-          data,
+          ...data,
         });
       } catch (error) {
         logger.error('Failed to update tag:', error);
@@ -116,26 +103,6 @@ export function useTagOperations(tags: Tag[]) {
       }
     },
     [deleteTagMutation, removeTagOptimistically],
-  );
-
-  // タグのグループ移動
-  const handleMoveTagToGroup = useCallback(
-    async (tag: Tag, newGroupId: string | null) => {
-      try {
-        // 楽観的更新
-        updateTagOptimistically(tag.id, { parent_id: newGroupId });
-
-        // 実際の移動
-        await moveTagMutation.mutateAsync({
-          id: tag.id,
-          parentId: newGroupId,
-        });
-      } catch (error) {
-        logger.error('Failed to move tag:', error);
-        throw error;
-      }
-    },
-    [moveTagMutation, updateTagOptimistically],
   );
 
   // タグリネーム
@@ -177,7 +144,6 @@ export function useTagOperations(tags: Tag[]) {
     setShowMergeModal(false);
     setSelectedTag(null);
     setMergeSourceTag(null);
-    setCreateGroupId(null);
   }, []);
 
   return {
@@ -187,7 +153,6 @@ export function useTagOperations(tags: Tag[]) {
     showMergeModal,
     selectedTag,
     mergeSourceTag,
-    createGroupId,
 
     // Handlers
     handleCreateTag,
@@ -195,7 +160,6 @@ export function useTagOperations(tags: Tag[]) {
     handleEditTag,
     handleSaveTag,
     handleDeleteTag,
-    handleMoveTagToGroup,
     handleRenameTag,
     handleMergeTag,
     handleCloseMergeModal,

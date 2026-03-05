@@ -2,9 +2,8 @@
 
 import React, { useCallback } from 'react';
 
-import { usePlanMutations } from '@/hooks/usePlanMutations';
 import { cn } from '@/lib/utils';
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { useCalendarDragStore } from '../../../../stores/useCalendarDragStore';
 import type { CalendarPlan } from '../../../../types/calendar.types';
 
@@ -16,7 +15,9 @@ import {
   useGlobalDragCursor,
   usePlanStyles,
 } from '../../shared';
+import { InlineTagPalette } from '../../shared/components/InlineTagPalette';
 import { PanelDragPreview } from '../../shared/components/PanelDragPreview';
+import { ChronotypeBackground } from '../../shared/grid/ChronotypeBackground';
 import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop';
 import { useResponsiveHourHeight } from '../../shared/hooks/useResponsiveHourHeight';
 import type { WeekPlanPosition } from '../WeekView.types';
@@ -29,7 +30,6 @@ interface WeekContentProps {
   planPositions: WeekPlanPosition[];
   onPlanClick?: ((plan: CalendarPlan) => void) | undefined;
   onPlanContextMenu?: ((plan: CalendarPlan, e: React.MouseEvent) => void) | undefined;
-  onEmptyClick?: ((date: Date, timeString: string) => void) | undefined;
   onPlanUpdate?: ((planId: string, updates: Partial<CalendarPlan>) => void) | undefined;
   onTimeRangeSelect?: ((selection: import('../../shared').DateTimeSelection) => void) | undefined;
   /** 空き領域の右クリックハンドラー */
@@ -59,17 +59,8 @@ export const WeekContent = React.memo(function WeekContent({
   disabledPlanId,
 }: WeekContentProps) {
   // Inspectorで開いているプランのIDを取得
-  const inspectorPlanId = usePlanInspectorStore((state) => state.planId);
-  const isInspectorOpen = usePlanInspectorStore((state) => state.isOpen);
-
-  // ステータス変更を1度だけ初期化し、全PlanCardに配布
-  const { updatePlan } = usePlanMutations();
-  const handleStatusChange = useCallback(
-    (planId: string, newStatus: 'open' | 'closed') => {
-      updatePlan.mutate({ id: planId, data: { status: newStatus } });
-    },
-    [updatePlan],
-  );
+  const inspectorPlanId = useEntryInspectorStore((state) => state.entryId);
+  const isInspectorOpen = useEntryInspectorStore((state) => state.isOpen);
 
   // レスポンシブな高さ
   const HOUR_HEIGHT = useResponsiveHourHeight();
@@ -182,6 +173,7 @@ export const WeekContent = React.memo(function WeekContent({
       >
         {/* 背景グリッド */}
         <div className="absolute inset-0" style={{ height: gridHeight }}>
+          <ChronotypeBackground startHour={0} endHour={24} hourHeight={HOUR_HEIGHT} />
           {timeGrid}
         </div>
       </CalendarDragSelection>
@@ -271,7 +263,6 @@ export const WeekContent = React.memo(function WeekContent({
                         ? (dragState.snappedPosition.height ?? currentHeight)
                         : currentHeight,
                   }}
-                  onStatusChange={handleStatusChange}
                   // クリックは useDragAndDrop で処理されるため削除
                   onContextMenu={(plan: CalendarPlan, e: React.MouseEvent) =>
                     handlePlanContextMenu(plan, e)
@@ -299,6 +290,9 @@ export const WeekContent = React.memo(function WeekContent({
             </div>
           );
         })}
+
+        {/* インラインタグパレット（ドラッグ/タップ後のタグ選択UI） */}
+        <InlineTagPalette hourHeight={HOUR_HEIGHT} date={date} />
       </div>
     </div>
   );

@@ -116,7 +116,9 @@ export async function buildAIContext(
     startTime: e.start_time ?? '',
     endTime: e.end_time ?? '',
     status: e.origin ?? 'planned',
-    tags: (e.entry_tags as { tag_id: string }[])?.map((et) => tagMap.get(et.tag_id) ?? '') ?? [],
+    tags:
+      (e.entry_tags as unknown as { tag_id: string }[])?.map((et) => tagMap.get(et.tag_id) ?? '') ??
+      [],
   }));
 
   // 最近のレコード整形（AIContextRecord 形式を維持して後方互換性を保つ）

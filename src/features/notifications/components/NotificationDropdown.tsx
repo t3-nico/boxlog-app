@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import type { NotificationType } from '@/schemas/notifications';
-import { useSettingsModalStore } from '@/stores/useSettingsModalStore';
+import { openSettingsModal } from '@/stores/useModalStore';
 import { useLocale, useTranslations } from 'next-intl';
 
 import {
@@ -28,10 +28,10 @@ import { NotificationItem } from './NotificationItem';
 interface NotificationData {
   id: string;
   type: NotificationType;
-  plan_id: string | null;
+  entry_id: string | null;
   is_read: boolean;
   created_at: string;
-  plans?: { title: string } | null;
+  entries?: { title: string } | null;
 }
 
 interface NotificationDropdownProps {
@@ -54,8 +54,6 @@ export function NotificationDropdown({
 }: NotificationDropdownProps) {
   const locale = useLocale();
   const t = useTranslations();
-  const openSettingsModal = useSettingsModalStore((state) => state.openModal);
-
   const [isOpen, setIsOpen] = useState(false);
 
   // データ取得
@@ -98,7 +96,7 @@ export function NotificationDropdown({
   const handleOpenSettings = useCallback(() => {
     setIsOpen(false);
     openSettingsModal('notifications');
-  }, [openSettingsModal]);
+  }, []);
 
   // 通知リストのレンダリング
   const renderNotificationList = () => {
@@ -163,7 +161,7 @@ export function NotificationDropdown({
                     key={notification.id}
                     id={notification.id}
                     type={notification.type}
-                    planTitle={notification.plans?.title ?? undefined}
+                    planTitle={notification.entries?.title ?? undefined}
                     isRead={notification.is_read}
                     createdAt={notification.created_at}
                     locale={locale as 'ja' | 'en'}
@@ -183,14 +181,13 @@ export function NotificationDropdown({
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          className={`hover:bg-state-hover data-[state=open]:bg-state-selected relative flex items-center justify-center rounded-2xl outline-hidden transition-colors ${
-            size === 'sm' ? 'h-8 w-8' : 'h-10 w-10'
-          }`}
+        <Button
+          variant="ghost"
+          icon
+          className={`relative ${size === 'sm' ? 'size-8' : 'size-10'}`}
           aria-label={t('notification.title')}
         >
-          <Bell className={size === 'sm' ? 'h-4 w-4' : 'h-5 w-5'} />
+          <Bell className={size === 'sm' ? 'size-4' : 'size-5'} />
           {unreadCount > 0 && (
             <span
               className={`bg-destructive text-destructive-foreground absolute flex items-center justify-center rounded-full font-bold ${
@@ -202,7 +199,7 @@ export function NotificationDropdown({
               {unreadCount > 9 ? '9+' : unreadCount}
             </span>
           )}
-        </button>
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         className="w-full max-w-sm overflow-visible rounded-2xl p-0 sm:w-96 sm:max-w-96"

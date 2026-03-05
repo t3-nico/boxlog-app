@@ -1,6 +1,6 @@
 'use client';
 
-import { useTagCreateModalStore } from '@/stores/useTagCreateModalStore';
+import { closeModal as closeModalAction, useModalStore } from '@/stores/useModalStore';
 import { useCreateTag, useTags } from '../hooks';
 import { TagCreateModal } from './tag-create-modal';
 
@@ -9,12 +9,13 @@ import type { CreateTagInput } from '../types';
 /**
  * グローバルに配置するタグ作成モーダル
  *
- * providers.tsxで配置し、どこからでもuseTagCreateModalStore.openModal()で開ける
+ * providers.tsxで配置し、どこからでもopenTagCreateModal()で開ける
  */
 export function GlobalTagCreateModal() {
-  const isOpen = useTagCreateModalStore((state) => state.isOpen);
-  const defaultParentId = useTagCreateModalStore((state) => state.defaultParentId);
-  const closeModal = useTagCreateModalStore((state) => state.closeModal);
+  const modal = useModalStore((state) => state.modal);
+  const isOpen = modal?.type === 'tagCreate';
+  const defaultGroup = isOpen ? modal.defaultGroup : undefined;
+  const handleClose = closeModalAction;
   const createTagMutation = useCreateTag();
   const { data: existingTags } = useTags();
 
@@ -26,7 +27,6 @@ export function GlobalTagCreateModal() {
       (tag) => tag.name.toLowerCase() === data.name.trim().toLowerCase(),
     );
     if (isDuplicate) {
-      // TagCreateModalのcatch句でエラーメッセージを表示
       throw new Error('duplicate');
     }
 
@@ -34,17 +34,16 @@ export function GlobalTagCreateModal() {
     createTagMutation.mutate({
       name: data.name,
       color: data.color,
-      description: data.description ?? undefined,
-      parentId: data.parentId ?? undefined,
     });
   };
 
   return (
     <TagCreateModal
       isOpen={isOpen}
-      onClose={closeModal}
+      onClose={handleClose}
       onSave={handleCreateTag}
-      defaultParentId={defaultParentId}
+      defaultGroup={defaultGroup}
+      existingTags={existingTags ?? []}
     />
   );
 }

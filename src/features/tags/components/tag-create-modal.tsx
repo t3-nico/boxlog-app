@@ -1,10 +1,10 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { Button } from '@/components/ui/button';
-import { COLOR_NAMES, ColorPaletteMenuItems } from '@/components/ui/color-palette-picker';
+import { COLOR_DISPLAY_NAMES, ColorPaletteMenuItems } from '@/components/ui/color-palette-picker';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,62 +15,97 @@ import { Input } from '@/components/ui/input';
 import { useHasMounted } from '@/hooks/useHasMounted';
 import { useSubmitShortcut } from '@/hooks/useSubmitShortcut';
 import { logger } from '@/lib/logger';
-import { ChevronDown, Circle } from 'lucide-react';
+import { buildColonTagName, parseColonTag } from '@/lib/tag-colon';
+import { cn } from '@/lib/utils';
+import { ChevronDown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { DEFAULT_TAG_COLOR, TAG_NAME_MAX_LENGTH } from '../constants/colors';
-import { useTags } from '../hooks';
-import type { CreateTagInput } from '../types';
-import { TagNoteField } from './tag-note-field';
+
+import {
+  DEFAULT_TAG_COLOR,
+  TAG_COLOR_MAP,
+  TAG_NAME_MAX_LENGTH,
+  getTagColorClasses,
+  resolveTagColor,
+} from '../constants/colors';
+
+import type { TagColorName } from '../constants/colors';
+
+import type { CreateTagInput, Tag } from '../types';
 
 interface TagCreateModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (data: CreateTagInput) => Promise<void>;
-  /** デフォルトの親タグID（子タグ作成時にプリセット） */
-  defaultParentId?: string | null;
+  /** デフォルトのグループ名（コロン記法のプレフィックス） */
+  defaultGroup?: string | undefined;
+  /** 既存タグ一覧（グループ候補算出 + 色継承用） */
+  existingTags?: Tag[] | undefined;
 }
 
 /**
  * タグ作成モーダル
  *
- * ReactのcreatePortalを使用してdocument.bodyに直接レンダリング
- *
- * スタイルガイド準拠:
- * - 8pxグリッドシステム（p-6, gap-4, mb-6等）
- * - 角丸: rounded-2xl（16px）for ダイアログ
- * - Card: bg-card（カード、ダイアログ用）
+ * グループ選択ドロップダウン付き。
+ * グループを選択すると色が自動継承され、保存時にコロン記法で名前が構築される。
  */
-export const TagCreateModal = ({
+export function TagCreateModal({
   isOpen,
   onClose,
   onSave,
-  defaultParentId,
-}: TagCreateModalProps) => {
+  defaultGroup,
+  existingTags = [],
+}: TagCreateModalProps) {
   const t = useTranslations();
   const [name, setName] = useState('');
-  const [color, setColor] = useState<string>(DEFAULT_TAG_COLOR);
-  const [parentId, setParentId] = useState<string | null>(null);
-  const [description, setDescription] = useState('');
+  const [color, setColor] = useState<TagColorName>(DEFAULT_TAG_COLOR);
+  const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isGroupDropdownOpen, setIsGroupDropdownOpen] = useState(false);
   const mounted = useHasMounted();
-  const [isParentDropdownOpen, setIsParentDropdownOpen] = useState(false);
 
-  // 親タグ取得 - useTags()から parent_id = null のタグを抽出
-  const { data: allTags = [] } = useTags();
-  const parentTags = allTags.filter((t) => !t.parent_id);
+  // 既存タグからグループ候補を算出
+  const groupOptions = useMemo(() => {
+    const prefixes = new Map<string, string | null>(); // prefix → color
+    for (const tag of existingTags) {
+      const { prefix, suffix } = parseColonTag(tag.name);
+      if (suffix !== null) {
+        // コロン付きタグのプレフィックス
+        if (!prefixes.has(prefix)) {
+          prefixes.set(prefix, tag.color);
+        }
+      } else {
+        // 独立タグも親候補に（ただし既にプレフィックスとして存在する場合はスキップ）
+        if (!prefixes.has(tag.name)) {
+          prefixes.set(tag.name, tag.color);
+        }
+      }
+    }
+    return Array.from(prefixes.entries())
+      .map(([name, groupColor]) => ({ name, color: groupColor }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }, [existingTags]);
 
-  // モーダルが開いたらリセット（defaultParentIdがあればプリセット）
+  // グループ選択時の色自動継承
+  const inheritedColor = useMemo(() => {
+    if (!selectedGroup) return null;
+    const group = groupOptions.find((g) => g.name === selectedGroup);
+    return group?.color ?? null;
+  }, [selectedGroup, groupOptions]);
+
+  // 実際に使用する色（グループの色 or 手動選択）
+  const effectiveColor = inheritedColor ? resolveTagColor(inheritedColor) : color;
+
+  // モーダルが開いたらリセット（defaultGroupがあればプリセット）
   useEffect(() => {
     if (isOpen) {
       setName('');
       setColor(DEFAULT_TAG_COLOR);
-      setDescription('');
-      setParentId(defaultParentId ?? null);
+      setSelectedGroup(defaultGroup ?? null);
       setError('');
-      setIsParentDropdownOpen(false);
+      setIsGroupDropdownOpen(false);
     }
-  }, [isOpen, defaultParentId]);
+  }, [isOpen, defaultGroup]);
 
   // ESCキーでダイアログを閉じる
   useEffect(() => {
@@ -86,12 +121,12 @@ export const TagCreateModal = ({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, isLoading, onClose]);
 
-  // ドロップダウン外クリックで閉じる
+  // グループドロップダウン外クリックで閉じる
   useEffect(() => {
-    if (!isParentDropdownOpen) return;
+    if (!isGroupDropdownOpen) return;
 
     const handleClickOutside = () => {
-      setIsParentDropdownOpen(false);
+      setIsGroupDropdownOpen(false);
     };
 
     const timeoutId = setTimeout(() => {
@@ -102,7 +137,7 @@ export const TagCreateModal = ({
       clearTimeout(timeoutId);
       document.removeEventListener('click', handleClickOutside);
     };
-  }, [isParentDropdownOpen]);
+  }, [isGroupDropdownOpen]);
 
   const handleSubmit = useCallback(async () => {
     setError('');
@@ -112,19 +147,22 @@ export const TagCreateModal = ({
       return;
     }
 
+    // コロン記法で名前を構築
+    const fullName = selectedGroup ? buildColonTagName(selectedGroup, name.trim()) : name.trim();
+
     setIsLoading(true);
     try {
       await onSave({
-        name: name.trim(),
-        color,
-        description: description.trim() || undefined,
-        parentId: parentId,
+        name: fullName,
+        color: effectiveColor,
       });
       onClose();
     } catch (err) {
       logger.error('Tag creation failed:', err);
       const errorMessage = err instanceof Error ? err.message : String(err);
-      if (
+      if (errorMessage.includes('group_conflict') || errorMessage.includes('GROUP_NAME_CONFLICT')) {
+        setError(t('tags.form.groupNameConflict'));
+      } else if (
         errorMessage.includes('duplicate') ||
         errorMessage.includes('unique') ||
         errorMessage.includes('already exists') ||
@@ -138,7 +176,7 @@ export const TagCreateModal = ({
     } finally {
       setIsLoading(false);
     }
-  }, [name, color, description, parentId, onSave, onClose, t]);
+  }, [name, selectedGroup, effectiveColor, onSave, onClose, t]);
 
   const handleBackdropClick = useCallback(
     (e: React.MouseEvent) => {
@@ -159,7 +197,7 @@ export const TagCreateModal = ({
     [handleSubmit, isLoading, name],
   );
 
-  // Cmd+Enter / Ctrl+Enter で作成（色や親タグ選択中でも動作）
+  // Cmd+Enter / Ctrl+Enter で作成
   useSubmitShortcut({
     enabled: isOpen,
     isLoading,
@@ -167,19 +205,18 @@ export const TagCreateModal = ({
     onSubmit: handleSubmit,
   });
 
-  const selectedParent = parentTags.find((p) => p.id === parentId);
+  const selectedGroupOption = groupOptions.find((g) => g.name === selectedGroup);
 
   if (!mounted || !isOpen) return null;
 
   const dialog = (
     <div
-      className="fixed inset-0 z-[250] flex items-center justify-center"
+      className="z-overlay-modal fixed inset-0 flex items-center justify-center"
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"
       aria-labelledby="tag-create-dialog-title"
     >
-      {/* ダイアログコンテンツ: bg-card, rounded-2xl, p-6 */}
       <div
         className="animate-in zoom-in-95 fade-in bg-card text-foreground border-border rounded-2xl border p-6 shadow-lg duration-150"
         style={{ width: 'min(calc(100vw - 32px), 400px)' }}
@@ -210,7 +247,6 @@ export const TagCreateModal = ({
               value={name}
               onChange={(e) => {
                 setName(e.target.value);
-                // 入力変更時にエラーをクリア
                 if (error) setError('');
               }}
               onKeyDown={handleKeyDown}
@@ -229,81 +265,92 @@ export const TagCreateModal = ({
             )}
           </Field>
 
-          {/* カラー */}
-          <Field>
-            <FieldLabel>{t('tags.form.color')}</FieldLabel>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button
-                  type="button"
-                  className="border-border bg-container hover:bg-state-hover flex h-9 w-full items-center gap-2 rounded-lg border px-4 text-sm"
-                >
-                  <Circle className="size-4" fill={color} strokeWidth={0} />
-                  <span>{COLOR_NAMES[color] || color}</span>
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
-                <ColorPaletteMenuItems selectedColor={color} onColorSelect={setColor} />
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </Field>
-
-          {/* ノート（説明） */}
-          <TagNoteField id="tag-note" value={description} onChange={setDescription} />
-
-          {/* 親タグ選択 */}
-          <Field>
-            <FieldLabel>{t('tags.form.group')}</FieldLabel>
-            <FieldSupportText>{t('tags.form.groupSupportText')}</FieldSupportText>
-            <div className="relative">
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsParentDropdownOpen(!isParentDropdownOpen);
-                }}
-                className="border-border bg-container hover:bg-state-hover flex h-9 w-full items-center justify-between rounded-lg border px-4 text-sm"
-              >
-                <span className={selectedParent ? 'text-foreground' : 'text-muted-foreground'}>
-                  {selectedParent ? selectedParent.name : t('tags.sidebar.uncategorized')}
-                </span>
-                <ChevronDown className="text-muted-foreground size-4" />
-              </button>
-
-              {/* Dropdown menu */}
-              {isParentDropdownOpen && (
-                <div className="bg-card border-border absolute top-full z-10 mt-1 w-full rounded-lg border py-1 shadow-lg">
+          {/* カラー（グループ選択時は非表示 — 色は自動継承） */}
+          {!inheritedColor && (
+            <Field>
+              <FieldLabel>{t('tags.form.color')}</FieldLabel>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
                   <button
                     type="button"
-                    onClick={() => {
-                      setParentId(null);
-                      setIsParentDropdownOpen(false);
-                    }}
-                    className="hover:bg-state-hover w-full px-4 py-2 text-left text-sm"
+                    className="border-border bg-container hover:bg-state-hover flex h-9 w-full items-center gap-2 rounded-lg border px-4 text-sm"
                   >
-                    {t('tags.sidebar.uncategorized')}
+                    <span
+                      className={cn('size-4 rounded-full', TAG_COLOR_MAP[color].dot)}
+                      aria-hidden
+                    />
+                    <span>{COLOR_DISPLAY_NAMES[color] || color}</span>
                   </button>
-                  {parentTags.map((parent) => (
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <ColorPaletteMenuItems
+                    selectedColor={color}
+                    onColorSelect={(c) => setColor(c as TagColorName)}
+                  />
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </Field>
+          )}
+
+          {/* グループ選択 */}
+          {groupOptions.length > 0 && (
+            <Field>
+              <FieldLabel>{t('tags.form.group')}</FieldLabel>
+              <FieldSupportText>{t('tags.form.groupSupportText')}</FieldSupportText>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsGroupDropdownOpen(!isGroupDropdownOpen);
+                  }}
+                  className="border-border bg-container hover:bg-state-hover flex h-9 w-full items-center justify-between rounded-lg border px-4 text-sm"
+                >
+                  <span
+                    className={selectedGroupOption ? 'text-foreground' : 'text-muted-foreground'}
+                  >
+                    {selectedGroupOption ? selectedGroupOption.name : t('tags.form.noGroup')}
+                  </span>
+                  <ChevronDown className="text-muted-foreground size-4" />
+                </button>
+
+                {isGroupDropdownOpen && (
+                  <div className="bg-card border-border absolute top-full z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-lg border py-1 shadow-lg">
                     <button
-                      key={parent.id}
                       type="button"
                       onClick={() => {
-                        setParentId(parent.id);
-                        setIsParentDropdownOpen(false);
+                        setSelectedGroup(null);
+                        setIsGroupDropdownOpen(false);
                       }}
-                      className="hover:bg-state-hover flex w-full items-center gap-2 px-4 py-2 text-left text-sm"
+                      className="hover:bg-state-hover w-full px-4 py-2 text-left text-sm"
                     >
-                      <span
-                        className="size-3 rounded-full"
-                        style={{ backgroundColor: parent.color ?? DEFAULT_TAG_COLOR }}
-                      />
-                      {parent.name}
+                      {t('tags.form.noGroup')}
                     </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          </Field>
+                    {groupOptions.map((group) => (
+                      <button
+                        key={group.name}
+                        type="button"
+                        onClick={() => {
+                          setSelectedGroup(group.name);
+                          setIsGroupDropdownOpen(false);
+                        }}
+                        className="hover:bg-state-hover flex w-full items-center gap-2 px-4 py-2 text-left text-sm"
+                      >
+                        <span
+                          className={cn(
+                            'size-3 shrink-0 rounded-full',
+                            getTagColorClasses(group.color).dot,
+                          )}
+                          aria-hidden
+                        />
+                        {group.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </Field>
+          )}
         </FieldGroup>
 
         {/* Footer */}
@@ -325,4 +372,4 @@ export const TagCreateModal = ({
   );
 
   return createPortal(dialog, document.body);
-};
+}

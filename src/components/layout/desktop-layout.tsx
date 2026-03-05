@@ -7,9 +7,10 @@ import { Suspense, useMemo } from 'react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { isCalendarViewPath } from '@/features/calendar';
 import { AppSidebar } from '@/features/navigation';
+import { NotificationDropdown } from '@/features/notifications';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/useAuthStore';
-import { useSidebarStore } from '@/stores/useSidebarStore';
+import { useLayoutStore } from '@/stores/useLayoutStore';
 
 import { MainContentWrapper } from './main-content-wrapper';
 import { SidebarContent } from './SidebarContent';
@@ -59,7 +60,7 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
   const pathname = usePathname();
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = !!user;
-  const isSidebarOpen = useSidebarStore.use.isOpen();
+  const isSidebarOpen = useLayoutStore.use.sidebarOpen();
 
   // ページ判定: 独自ヘッダーを持つページかどうか（PageHeader表示制御用）
   const hasOwnHeader = useMemo(() => {
@@ -79,7 +80,7 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
           )}
         >
           <div className="h-full w-64">
-            <AppSidebar>
+            <AppSidebar headerActions={<NotificationDropdown size="sm" />}>
               <SidebarContent />
             </AppSidebar>
           </div>

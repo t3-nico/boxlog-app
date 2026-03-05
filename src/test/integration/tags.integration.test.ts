@@ -132,13 +132,13 @@ describe.skipIf(SKIP_INTEGRATION)('Tags Router Integration', () => {
 
       const result = await caller.create({
         name: 'Integration Test Tag',
-        color: '#FF5733',
+        color: 'red',
         description: 'Created by integration test',
       });
 
       expect(result).toBeDefined();
       expect(result.name).toBe('Integration Test Tag');
-      expect(result.color).toBe('#FF5733');
+      expect(result.color).toBe('red');
       expect(result.user_id).toBe(TEST_USER_ID);
 
       // クリーンアップ用に記録
@@ -151,7 +151,7 @@ describe.skipIf(SKIP_INTEGRATION)('Tags Router Integration', () => {
       // まずタグを作成
       const created = await caller.create({
         name: 'List Test Tag',
-        color: '#00FF00',
+        color: 'green',
       });
       createdTagIds.push(created.id);
 
@@ -169,7 +169,7 @@ describe.skipIf(SKIP_INTEGRATION)('Tags Router Integration', () => {
       // タグを作成
       const created = await caller.create({
         name: 'GetById Test Tag',
-        color: '#0000FF',
+        color: 'blue',
       });
       createdTagIds.push(created.id);
 
@@ -187,7 +187,7 @@ describe.skipIf(SKIP_INTEGRATION)('Tags Router Integration', () => {
       // タグを作成
       const created = await caller.create({
         name: 'Update Test Tag',
-        color: '#FFFF00',
+        color: 'amber',
       });
       createdTagIds.push(created.id);
 
@@ -195,11 +195,11 @@ describe.skipIf(SKIP_INTEGRATION)('Tags Router Integration', () => {
       const updated = await caller.update({
         id: created.id,
         name: 'Updated Tag Name',
-        color: '#FF00FF',
+        color: 'pink',
       });
 
       expect(updated.name).toBe('Updated Tag Name');
-      expect(updated.color).toBe('#FF00FF');
+      expect(updated.color).toBe('pink');
     });
 
     it('should delete a tag', async () => {
@@ -208,7 +208,7 @@ describe.skipIf(SKIP_INTEGRATION)('Tags Router Integration', () => {
       // タグを作成
       const created = await caller.create({
         name: 'Delete Test Tag',
-        color: '#000000',
+        color: 'gray',
       });
 
       // 削除（削除されたタグが返される）
@@ -250,7 +250,7 @@ describe.skipIf(SKIP_INTEGRATION)('Tags Router Integration', () => {
         .insert({
           user_id: otherUserId,
           name: 'Other User Tag',
-          color: '#999999',
+          color: 'gray',
         })
         .select()
         .single();
@@ -288,7 +288,7 @@ describe.skipIf(SKIP_INTEGRATION)('Tags Router Integration', () => {
       await expect(
         caller.create({
           name: '', // 空の名前
-          color: '#FF0000',
+          color: 'red',
         }),
       ).rejects.toThrow();
     });
@@ -299,7 +299,7 @@ describe.skipIf(SKIP_INTEGRATION)('Tags Router Integration', () => {
       await expect(
         caller.create({
           name: 'a'.repeat(51), // 51文字（50文字制限を超過）
-          color: '#FF0000',
+          color: 'red',
         }),
       ).rejects.toThrow();
     });
@@ -312,13 +312,13 @@ describe.skipIf(SKIP_INTEGRATION)('Tags Router Integration', () => {
       // 1. ソースタグとターゲットタグを作成
       const sourceTag = await caller.create({
         name: 'Source Tag for Merge',
-        color: '#FF0000',
+        color: 'red',
       });
       createdTagIds.push(sourceTag.id);
 
       const targetTag = await caller.create({
         name: 'Target Tag for Merge',
-        color: '#00FF00',
+        color: 'green',
       });
       createdTagIds.push(targetTag.id);
 
@@ -371,60 +371,19 @@ describe.skipIf(SKIP_INTEGRATION)('Tags Router Integration', () => {
       createdTagIds = createdTagIds.filter((id) => id !== sourceTag.id);
     });
 
-    it('should promote child tags to root when merging parent', async () => {
-      const caller = createTestCaller(tagsRouter, ctx);
-
-      // 1. 親タグを作成
-      const parentTag = await caller.create({
-        name: 'Parent Tag for Merge',
-        color: '#0000FF',
-      });
-      createdTagIds.push(parentTag.id);
-
-      // 2. 子タグを作成（parentIdを指定）
-      const childTag = await caller.create({
-        name: 'Child Tag for Merge',
-        color: '#FFFF00',
-        parentId: parentTag.id,
-      });
-      createdTagIds.push(childTag.id);
-
-      // 3. ターゲットタグを作成
-      const targetTag = await caller.create({
-        name: 'Target for Parent Merge',
-        color: '#FF00FF',
-      });
-      createdTagIds.push(targetTag.id);
-
-      // 4. 親タグをターゲットタグにマージ
-      await caller.merge({
-        sourceTagId: parentTag.id,
-        targetTagId: targetTag.id,
-        mergeAssociations: true,
-        deleteSource: true,
-      });
-
-      // 5. 子タグがルートに昇格（parent_id = null）されていることを確認
-      const updatedChildTag = await caller.getById({ id: childTag.id });
-      expect(updatedChildTag.parent_id).toBeNull();
-
-      // createdTagIdsから親タグを削除（既に削除済み）
-      createdTagIds = createdTagIds.filter((id) => id !== parentTag.id);
-    });
-
     it('should handle duplicate plan associations during merge', async () => {
       const caller = createTestCaller(tagsRouter, ctx);
 
       // 1. ソースとターゲットタグを作成
       const sourceTag = await caller.create({
         name: 'Source for Duplicate Test',
-        color: '#111111',
+        color: 'gray',
       });
       createdTagIds.push(sourceTag.id);
 
       const targetTag = await caller.create({
         name: 'Target for Duplicate Test',
-        color: '#222222',
+        color: 'gray',
       });
       createdTagIds.push(targetTag.id);
 
@@ -478,20 +437,20 @@ describe.skipIf(SKIP_INTEGRATION)('Tags Router Integration', () => {
       // 1. 既存タグを2つ作成
       const tag1 = await caller.create({
         name: 'Sort Order Tag 1',
-        color: '#AA0000',
+        color: 'red',
       });
       createdTagIds.push(tag1.id);
 
       const tag2 = await caller.create({
         name: 'Sort Order Tag 2',
-        color: '#BB0000',
+        color: 'red',
       });
       createdTagIds.push(tag2.id);
 
       // 2. 新規タグを作成
       const tag3 = await caller.create({
         name: 'Sort Order Tag 3 (newest)',
-        color: '#CC0000',
+        color: 'red',
       });
       createdTagIds.push(tag3.id);
 
@@ -510,42 +469,6 @@ describe.skipIf(SKIP_INTEGRATION)('Tags Router Integration', () => {
       olderTags?.forEach((t) => {
         expect(t.sort_order).toBeGreaterThan(0);
       });
-    });
-
-    it('should maintain sort_order within parent group', async () => {
-      const caller = createTestCaller(tagsRouter, ctx);
-
-      // 1. 親タグを作成
-      const parentTag = await caller.create({
-        name: 'Parent for Sort Order',
-        color: '#DD0000',
-      });
-      createdTagIds.push(parentTag.id);
-
-      // 2. 親に属する子タグを2つ作成
-      const child1 = await caller.create({
-        name: 'Child Sort 1',
-        color: '#EE0000',
-        parentId: parentTag.id,
-      });
-      createdTagIds.push(child1.id);
-
-      const child2 = await caller.create({
-        name: 'Child Sort 2',
-        color: '#FF0000',
-        parentId: parentTag.id,
-      });
-      createdTagIds.push(child2.id);
-
-      // 3. 新しい子タグが先頭（sort_order = 0）であることを確認
-      const { data: childTags } = await adminSupabase
-        .from('tags')
-        .select('id, sort_order')
-        .eq('parent_id', parentTag.id)
-        .order('sort_order', { ascending: true });
-
-      expect(childTags?.[0].id).toBe(child2.id);
-      expect(childTags?.[0].sort_order).toBe(0);
     });
   });
 });

@@ -1,9 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Circle } from 'lucide-react';
 import { useState } from 'react';
 
+import { TAG_COLOR_MAP } from '@/config/ui/colors';
+import { cn } from '@/lib/utils';
+
+import type { TagColorName } from '@/config/ui/colors';
+
 import { Button } from './button';
-import { COLOR_NAMES, ColorPaletteMenuItems } from './color-palette-picker';
+import { COLOR_DISPLAY_NAMES, ColorPaletteMenuItems } from './color-palette-picker';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from './dropdown-menu';
 
 const meta = {
@@ -20,12 +24,12 @@ type Story = StoryObj<typeof meta>;
 
 export const AllPatterns: Story = {
   args: {
-    selectedColor: '#3B82F6',
+    selectedColor: 'blue',
     onColorSelect: () => {},
   },
   render: function ColorPaletteMenuItemsStory() {
-    const [color1, setColor1] = useState('#3B82F6');
-    const [color2, setColor2] = useState('#10B981');
+    const [color1, setColor1] = useState<TagColorName>('blue');
+    const [color2, setColor2] = useState<TagColorName>('green');
 
     return (
       <div className="flex flex-col items-start gap-6">
@@ -33,23 +37,35 @@ export const AllPatterns: Story = {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="gap-2">
-                <Circle className="size-4" fill={color1} strokeWidth={0} />
-                {COLOR_NAMES[color1]}
+                <span
+                  className={cn('size-4 rounded-full', TAG_COLOR_MAP[color1].dot)}
+                  aria-hidden
+                />
+                {COLOR_DISPLAY_NAMES[color1]}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <ColorPaletteMenuItems selectedColor={color1} onColorSelect={setColor1} />
+              <ColorPaletteMenuItems
+                selectedColor={color1}
+                onColorSelect={(c) => setColor1(c as TagColorName)}
+              />
             </DropdownMenuContent>
           </DropdownMenu>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" icon>
-                <Circle className="size-4" fill={color2} strokeWidth={0} />
+                <span
+                  className={cn('size-4 rounded-full', TAG_COLOR_MAP[color2].dot)}
+                  aria-hidden
+                />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <ColorPaletteMenuItems selectedColor={color2} onColorSelect={setColor2} />
+              <ColorPaletteMenuItems
+                selectedColor={color2}
+                onColorSelect={(c) => setColor2(c as TagColorName)}
+              />
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

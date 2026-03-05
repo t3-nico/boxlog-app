@@ -117,6 +117,19 @@
       "tags": {
         "add": "タグを追加"
       },
+      "time": {
+        "date": "日付",
+        "planned": "予定",
+        "actual": "記録",
+        "sameAsPlanned": "予定と同じ",
+        "noPlanned": "予定なし"
+      },
+      "note": {
+        "label": "メモ",
+        "placeholder": "メモを追加...",
+        "upcomingPlaceholder": "何をやる予定？",
+        "pastPlaceholder": "やったことをひとこと..."
+      },
       "records": {
         "link": "Recordを紐付け",
         "unlink": "Record紐付けを解除",

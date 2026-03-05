@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 
-import { useSettingsModalStore } from '@/stores/useSettingsModalStore';
+import { useModalStore } from '@/stores/useModalStore';
 import { SETTINGS_CATEGORIES } from '../../constants';
 
 interface SettingsModalSidebarProps {
@@ -19,8 +19,9 @@ interface SettingsModalSidebarProps {
  */
 export function SettingsModalSidebar({ className }: SettingsModalSidebarProps) {
   const t = useTranslations();
-  const selectedCategory = useSettingsModalStore((state) => state.selectedCategory);
-  const setCategory = useSettingsModalStore((state) => state.setCategory);
+  const modal = useModalStore((state) => state.modal);
+  const setSettingsCategory = useModalStore((state) => state.setSettingsCategory);
+  const selectedCategory = modal?.type === 'settings' ? modal.category : 'general';
 
   return (
     <aside className={cn('bg-surface-container flex flex-col', className)}>
@@ -37,7 +38,7 @@ export function SettingsModalSidebar({ className }: SettingsModalSidebarProps) {
               <button
                 key={category.id}
                 type="button"
-                onClick={() => setCategory(category.id)}
+                onClick={() => setSettingsCategory(category.id)}
                 className={cn(
                   'flex w-full items-center gap-4 rounded-lg px-4 py-2 text-left text-sm transition-colors',
                   isActive

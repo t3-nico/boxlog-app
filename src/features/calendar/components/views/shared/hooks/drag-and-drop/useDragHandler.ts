@@ -265,7 +265,7 @@ export function useDragHandler({
         status: plan.status,
         color: plan.color,
         reminder_minutes: plan.reminder_minutes,
-        tagIds: plan.tagIds,
+        tagId: plan.tagId,
         createdAt: plan.createdAt,
         updatedAt: new Date(),
         displayStartDate: newStartTime,

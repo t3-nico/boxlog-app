@@ -89,7 +89,7 @@ tech:tailwind:
   - changed-files:
       - any-glob-to-any-file:
           - 'tailwind.config.*'
-          - 'src/styles/globals.css'
+          - 'src/styles/**/*.css'
           - 'postcss.config.*'
 
 tech:supabase:

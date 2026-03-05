@@ -1,8 +1,9 @@
-// タグCRUD用ミューテーションフック（作成・更新・削除・移動・リネーム・色変更・並び替え）
+// タグCRUD用ミューテーションフック（作成・更新・削除・リネーム・色変更・並び替え）
 
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
+import type { TagColorName } from '@/lib/tag-colors';
 import { DEFAULT_TAG_COLOR } from '@/lib/tag-colors';
 import {
   generateTempId,
@@ -16,33 +17,14 @@ import { useTagCacheStore } from '@/stores/useTagCacheStore';
 
 import type { Tag } from '@/core/types/tag';
 
-// 後方互換性のための入力型
-interface LegacyTagUpdateInput {
-  id: string;
-  data: {
-    name?: string | undefined;
-    color?: string | undefined;
-    description?: string | null | undefined;
-    is_active?: boolean | undefined;
-    parentId?: string | null | undefined;
-    sort_order?: number | undefined;
-  };
-}
-
 // 新しい入力型（tRPC形式）
 interface TrpcTagUpdateInput {
   id: string;
   name?: string | undefined;
-  color?: string | undefined;
-  description?: string | null | undefined;
-  parentId?: string | null | undefined;
+  color?: TagColorName | undefined;
 }
 
-export type UpdateTagInput = LegacyTagUpdateInput | TrpcTagUpdateInput;
-
-function isLegacyTagInput(input: UpdateTagInput): input is LegacyTagUpdateInput {
-  return 'data' in input;
-}
+export type UpdateTagInput = TrpcTagUpdateInput;
 
 // タグ作成フック（楽観的更新付き）
 export function useCreateTag() {
@@ -56,15 +38,12 @@ export function useCreateTag() {
       incrementMutation();
 
       const listSnapshot = await snapshotQuery(utils.tags.list);
-      const parentTagsSnapshot = await snapshotQuery(utils.tags.listParentTags);
 
       const tempId = generateTempId('tag');
       const tempTag: Tag = {
         id: tempId,
         name: input.name,
         color: input.color || DEFAULT_TAG_COLOR,
-        description: input.description ?? null,
-        parent_id: input.parentId ?? null,
         sort_order: 0,
         is_active: true,
         user_id: '',
@@ -77,27 +56,13 @@ export function useCreateTag() {
         return { ...old, data: [tempTag, ...old.data], count: old.count + 1 };
       });
 
-      if (!input.parentId) {
-        utils.tags.listParentTags.setData(undefined, (old) => {
-          if (!old) return { data: [tempTag], count: 1 };
-          return {
-            ...old,
-            data: [tempTag, ...old.data],
-            count: (old.count ?? old.data.length) + 1,
-          };
-        });
-      }
-
       useCalendarFilterStore.getState().initializeWithTags([tempId]);
-      return { listSnapshot, parentTagsSnapshot, tempId, tagName: input.name };
+      return { listSnapshot, tempId, tagName: input.name };
     },
     onSuccess: (result, _input, context) => {
       if (!context?.tempId) return;
 
       utils.tags.list.setData(undefined, (old) =>
-        replaceInPaginatedList(old, 'id', context.tempId, result),
-      );
-      utils.tags.listParentTags.setData(undefined, (old) =>
         replaceInPaginatedList(old, 'id', context.tempId, result),
       );
       utils.tags.getById.setData({ id: result.id }, result);
@@ -110,7 +75,6 @@ export function useCreateTag() {
     },
     onError: (_err, _input, context) => {
       context?.listSnapshot?.restore();
-      context?.parentTagsSnapshot?.restore();
       if (context?.tempId) useCalendarFilterStore.getState().removeTag(context.tempId);
       toast.error(t('toast.createFailed'));
     },
@@ -132,7 +96,6 @@ export function useUpdateTag() {
       incrementMutation();
 
       const listSnapshot = await snapshotQuery(utils.tags.list);
-      const parentTagsSnapshot = await snapshotQuery(utils.tags.listParentTags);
       const detailSnapshot = await snapshotQuery(utils.tags.getById, { id: newData.id });
 
       const updateTag = (tag: Tag) => {
@@ -141,29 +104,22 @@ export function useUpdateTag() {
           ...tag,
           name: newData.name ?? tag.name,
           color: newData.color ?? tag.color,
-          description: newData.description !== undefined ? newData.description : tag.description,
-          parent_id: newData.parentId !== undefined ? newData.parentId : tag.parent_id,
         };
       };
 
       utils.tags.list.setData(undefined, (old) => updatePaginatedList(old, updateTag));
-      utils.tags.listParentTags.setData(undefined, (old) => updatePaginatedList(old, updateTag));
       utils.tags.getById.setData({ id: newData.id }, (old) => (old ? updateTag(old) : undefined));
 
-      return { listSnapshot, parentTagsSnapshot, detailSnapshot };
+      return { listSnapshot, detailSnapshot };
     },
     onSuccess: (result) => {
       utils.tags.list.setData(undefined, (old) =>
-        updatePaginatedList(old, (tag) => (tag.id === result.id ? result : tag)),
-      );
-      utils.tags.listParentTags.setData(undefined, (old) =>
         updatePaginatedList(old, (tag) => (tag.id === result.id ? result : tag)),
       );
       utils.tags.getById.setData({ id: result.id }, result);
     },
     onError: (err, _newData, context) => {
       context?.listSnapshot?.restore();
-      context?.parentTagsSnapshot?.restore();
       context?.detailSnapshot?.restore();
 
       const message = err.message;
@@ -175,9 +131,8 @@ export function useUpdateTag() {
     },
     onSettled: (_data, _err, input) => {
       decrementMutation();
-      void utils.plans.list.invalidate();
+      void utils.entries.list.invalidate();
       void utils.tags.list.invalidate();
-      void utils.tags.listParentTags.invalidate();
       void utils.tags.getById.invalidate({ id: input.id });
     },
   });
@@ -185,27 +140,9 @@ export function useUpdateTag() {
   return {
     ...mutation,
     mutate: (input: UpdateTagInput) => {
-      if (isLegacyTagInput(input)) {
-        return mutation.mutate({
-          id: input.id,
-          name: input.data.name,
-          color: input.data.color,
-          description: input.data.description,
-          parentId: input.data.parentId,
-        });
-      }
       return mutation.mutate(input);
     },
     mutateAsync: async (input: UpdateTagInput) => {
-      if (isLegacyTagInput(input)) {
-        return mutation.mutateAsync({
-          id: input.id,
-          name: input.data.name,
-          color: input.data.color,
-          description: input.data.description,
-          parentId: input.data.parentId,
-        });
-      }
       return mutation.mutateAsync(input);
     },
   };
@@ -214,6 +151,7 @@ export function useUpdateTag() {
 // タグ削除フック（楽観的更新付き）
 export function useDeleteTag() {
   const utils = trpc.useUtils();
+  const t = useTranslations('tags');
   const incrementMutation = useTagCacheStore((state) => state.incrementMutation);
   const decrementMutation = useTagCacheStore((state) => state.decrementMutation);
 
@@ -222,100 +160,39 @@ export function useDeleteTag() {
       incrementMutation();
 
       const listSnapshot = await snapshotQuery(utils.tags.list);
-      const parentTagsSnapshot = await snapshotQuery(utils.tags.listParentTags);
       const detailSnapshot = await snapshotQuery(utils.tags.getById, { id });
 
-      const childTags = listSnapshot.previous?.data.filter((tag) => tag.parent_id === id) ?? [];
+      // 削除対象のタグ名を保存（成功toast用）
+      const deletedTag = listSnapshot.previous?.data.find((tag: Tag) => tag.id === id);
 
       utils.tags.list.setData(undefined, (old) => {
         if (!old) return old;
         return {
           ...old,
-          data: old.data
-            .filter((tag) => tag.id !== id)
-            .map((tag) => (tag.parent_id === id ? { ...tag, parent_id: null } : tag)),
+          data: old.data.filter((tag) => tag.id !== id),
           count: old.count - 1,
         };
       });
 
-      utils.tags.listParentTags.setData(undefined, (old) => {
-        if (!old) return old;
-        const filteredData = old.data.filter((tag) => tag.id !== id);
-        const promotedChildren = childTags.map((tag) => ({ ...tag, parent_id: null }));
-        return { ...old, data: [...filteredData, ...promotedChildren] };
-      });
-
       utils.tags.getById.setData({ id }, undefined);
 
-      return { listSnapshot, parentTagsSnapshot, detailSnapshot };
+      return { listSnapshot, detailSnapshot, deletedTagName: deletedTag?.name };
+    },
+    onSuccess: (_data, _input, context) => {
+      if (context?.deletedTagName) {
+        toast.success(t('page.tagDeleted', { name: context.deletedTagName }));
+      }
     },
     onError: (_err, _input, context) => {
       context?.listSnapshot?.restore();
-      context?.parentTagsSnapshot?.restore();
       context?.detailSnapshot?.restore();
+      toast.error(t('errors.deleteFailed'));
     },
     onSettled: (_data, _err, input) => {
       decrementMutation();
       void utils.tags.list.invalidate();
-      void utils.tags.listParentTags.invalidate();
       void utils.tags.getById.invalidate({ id: input.id });
-      void utils.plans.list.invalidate();
-    },
-  });
-}
-
-// タググループ移動フック（楽観的更新付き）
-export function useMoveTag() {
-  const utils = trpc.useUtils();
-  const incrementMutation = useTagCacheStore((state) => state.incrementMutation);
-  const decrementMutation = useTagCacheStore((state) => state.decrementMutation);
-
-  return trpc.tags.update.useMutation({
-    onMutate: async (input) => {
-      incrementMutation();
-
-      const listSnapshot = await snapshotQuery(utils.tags.list);
-      const parentTagsSnapshot = await snapshotQuery(utils.tags.listParentTags);
-      const detailSnapshot = await snapshotQuery(utils.tags.getById, { id: input.id });
-
-      utils.tags.list.setData(undefined, (old) =>
-        updatePaginatedList(old, (tag) =>
-          tag.id === input.id ? { ...tag, parent_id: input.parentId ?? tag.parent_id } : tag,
-        ),
-      );
-
-      utils.tags.listParentTags.setData(undefined, (old) => {
-        if (!old) return old;
-        const movedTag = listSnapshot.previous?.data.find((t) => t.id === input.id);
-        if (!movedTag) return old;
-
-        if (input.parentId === null) {
-          const exists = old.data.some((t) => t.id === input.id);
-          if (!exists) {
-            return { ...old, data: [...old.data, { ...movedTag, parent_id: null }] };
-          }
-        } else {
-          return { ...old, data: old.data.filter((t) => t.id !== input.id) };
-        }
-        return old;
-      });
-
-      utils.tags.getById.setData({ id: input.id }, (old) =>
-        old ? { ...old, parent_id: input.parentId ?? old.parent_id } : undefined,
-      );
-
-      return { listSnapshot, parentTagsSnapshot, detailSnapshot };
-    },
-    onError: (_err, _input, context) => {
-      context?.listSnapshot?.restore();
-      context?.parentTagsSnapshot?.restore();
-      context?.detailSnapshot?.restore();
-    },
-    onSettled: (_data, _err, input) => {
-      decrementMutation();
-      void utils.tags.list.invalidate();
-      void utils.tags.listParentTags.invalidate();
-      void utils.tags.getById.invalidate({ id: input.id });
+      void utils.entries.list.invalidate();
     },
   });
 }
@@ -332,21 +209,18 @@ export function useRenameTag() {
       incrementMutation();
 
       const listSnapshot = await snapshotQuery(utils.tags.list);
-      const parentTagsSnapshot = await snapshotQuery(utils.tags.listParentTags);
       const detailSnapshot = await snapshotQuery(utils.tags.getById, { id: input.id });
 
       const updateName = (tag: Tag) =>
         tag.id === input.id ? { ...tag, name: input.name ?? tag.name } : tag;
 
       utils.tags.list.setData(undefined, (old) => updatePaginatedList(old, updateName));
-      utils.tags.listParentTags.setData(undefined, (old) => updatePaginatedList(old, updateName));
       utils.tags.getById.setData({ id: input.id }, (old) => (old ? updateName(old) : undefined));
 
-      return { listSnapshot, parentTagsSnapshot, detailSnapshot };
+      return { listSnapshot, detailSnapshot };
     },
     onError: (err, _input, context) => {
       context?.listSnapshot?.restore();
-      context?.parentTagsSnapshot?.restore();
       context?.detailSnapshot?.restore();
 
       const message = err.message;
@@ -359,9 +233,8 @@ export function useRenameTag() {
     onSettled: (_data, _err, input) => {
       decrementMutation();
       void utils.tags.list.invalidate();
-      void utils.tags.listParentTags.invalidate();
       void utils.tags.getById.invalidate({ id: input.id });
-      void utils.plans.list.invalidate();
+      void utils.entries.list.invalidate();
     },
   });
 }
@@ -377,29 +250,207 @@ export function useUpdateTagColor() {
       incrementMutation();
 
       const listSnapshot = await snapshotQuery(utils.tags.list);
-      const parentTagsSnapshot = await snapshotQuery(utils.tags.listParentTags);
       const detailSnapshot = await snapshotQuery(utils.tags.getById, { id: input.id });
 
       const updateColor = (tag: Tag) =>
         tag.id === input.id ? { ...tag, color: input.color ?? tag.color } : tag;
 
       utils.tags.list.setData(undefined, (old) => updatePaginatedList(old, updateColor));
-      utils.tags.listParentTags.setData(undefined, (old) => updatePaginatedList(old, updateColor));
       utils.tags.getById.setData({ id: input.id }, (old) => (old ? updateColor(old) : undefined));
 
-      return { listSnapshot, parentTagsSnapshot, detailSnapshot };
+      return { listSnapshot, detailSnapshot };
     },
     onError: (_err, _input, context) => {
       context?.listSnapshot?.restore();
-      context?.parentTagsSnapshot?.restore();
       context?.detailSnapshot?.restore();
     },
     onSettled: (_data, _err, input) => {
       decrementMutation();
       void utils.tags.list.invalidate();
-      void utils.tags.listParentTags.invalidate();
       void utils.tags.getById.invalidate({ id: input.id });
-      void utils.plans.list.invalidate();
+      void utils.entries.list.invalidate();
+    },
+  });
+}
+
+// グループリネームフック（楽観的更新付き）
+export function useRenameGroup() {
+  const utils = trpc.useUtils();
+  const t = useTranslations('tags');
+  const incrementMutation = useTagCacheStore((state) => state.incrementMutation);
+  const decrementMutation = useTagCacheStore((state) => state.decrementMutation);
+
+  return trpc.tags.renameGroup.useMutation({
+    onMutate: async ({ oldPrefix, newPrefix }) => {
+      incrementMutation();
+
+      const listSnapshot = await snapshotQuery(utils.tags.list);
+
+      // 楽観的更新: キャッシュ内の全該当タグの name を一括置換
+      utils.tags.list.setData(undefined, (old) => {
+        if (!old) return old;
+        const prefixPattern = `${oldPrefix}:`;
+        return {
+          ...old,
+          data: old.data.map((tag) => {
+            if (tag.name.startsWith(prefixPattern)) {
+              const suffix = tag.name.slice(prefixPattern.length);
+              return { ...tag, name: `${newPrefix}:${suffix}` };
+            }
+            return tag;
+          }),
+        };
+      });
+
+      return { listSnapshot };
+    },
+    onSuccess: (_data, input) => {
+      toast.success(t('toast.groupNameChanged', { name: input.newPrefix }));
+    },
+    onError: (err, _input, context) => {
+      context?.listSnapshot?.restore();
+
+      const message = err.message;
+      if (message.includes('already exists') || message.includes('DUPLICATE_NAME')) {
+        toast.error(t('errors.duplicateName'));
+      } else {
+        toast.error(t('errors.updateFailed'));
+      }
+    },
+    onSettled: () => {
+      decrementMutation();
+      void utils.tags.list.invalidate();
+      void utils.entries.list.invalidate();
+    },
+  });
+}
+
+// グループ解除フック（楽観的更新付き）
+export function useUngroupTags() {
+  const utils = trpc.useUtils();
+  const t = useTranslations('calendar');
+  const incrementMutation = useTagCacheStore((state) => state.incrementMutation);
+  const decrementMutation = useTagCacheStore((state) => state.decrementMutation);
+
+  return trpc.tags.ungroupTags.useMutation({
+    onMutate: async ({ prefix, mergeConflicts }) => {
+      incrementMutation();
+
+      const listSnapshot = await snapshotQuery(utils.tags.list);
+
+      const prefixPattern = `${prefix}:`;
+      utils.tags.list.setData(undefined, (old) => {
+        if (!old) return old;
+        const existingNames = new Set(old.data.map((tag) => tag.name));
+        const updated: Tag[] = [];
+        let needsParent = !existingNames.has(prefix);
+
+        for (const tag of old.data) {
+          if (tag.name.startsWith(prefixPattern)) {
+            const suffix = tag.name.slice(prefixPattern.length);
+            if (existingNames.has(suffix)) {
+              if (mergeConflicts) {
+                // 衝突タグ: マージされるためキャッシュから除去
+                continue;
+              }
+              // mergeConflicts なし: サーバーがエラーを返すのでリネームしない
+              updated.push(tag);
+              continue;
+            }
+            // 非衝突: suffix にリネーム
+            updated.push({ ...tag, name: suffix });
+            if (suffix === prefix) needsParent = false;
+          } else {
+            updated.push(tag);
+          }
+        }
+
+        // prefix 名の単体タグがどこにもなければ楽観的に追加
+        if (needsParent) {
+          const representative = old.data.find((tag) => tag.name.startsWith(prefixPattern));
+          updated.unshift({
+            id: generateTempId('tag'),
+            name: prefix,
+            color: representative?.color ?? DEFAULT_TAG_COLOR,
+            sort_order: 0,
+            is_active: true,
+            user_id: '',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          });
+        }
+
+        return { ...old, data: updated, count: updated.length };
+      });
+
+      return { listSnapshot, prefix };
+    },
+    onSuccess: (result, _input, context) => {
+      if (context?.prefix) {
+        toast.success(
+          t('filter.ungroupTagsSuccess', { name: context.prefix, count: result.count }),
+        );
+      }
+    },
+    onError: (err, _input, context) => {
+      context?.listSnapshot?.restore();
+
+      // UNGROUP_CONFLICTS エラーはUI側でハンドリングするのでtoastは出さない
+      if (err.message.includes('UNGROUP_CONFLICTS')) return;
+
+      toast.error(t('filter.ungroupTagsFailed'));
+    },
+    onSettled: () => {
+      decrementMutation();
+      void utils.tags.list.invalidate();
+      void utils.entries.list.invalidate();
+    },
+  });
+}
+
+// グループ削除フック（楽観的更新付き）
+export function useDeleteGroup() {
+  const utils = trpc.useUtils();
+  const t = useTranslations('calendar');
+  const incrementMutation = useTagCacheStore((state) => state.incrementMutation);
+  const decrementMutation = useTagCacheStore((state) => state.decrementMutation);
+
+  return trpc.tags.deleteGroup.useMutation({
+    onMutate: async ({ prefix }) => {
+      incrementMutation();
+
+      const listSnapshot = await snapshotQuery(utils.tags.list);
+
+      // 楽観的更新: prefix: で始まるタグをキャッシュから除去
+      const prefixPattern = `${prefix}:`;
+      utils.tags.list.setData(undefined, (old) => {
+        if (!old) return old;
+        const remaining = old.data.filter((tag) => !tag.name.startsWith(prefixPattern));
+        return {
+          ...old,
+          data: remaining,
+          count: remaining.length,
+        };
+      });
+
+      return { listSnapshot, prefix };
+    },
+    onSuccess: (result, _input, context) => {
+      if (context?.prefix) {
+        toast.success(
+          t('filter.deleteGroup.success', { name: context.prefix, count: result.deletedCount }),
+        );
+      }
+    },
+    onError: (_err, _input, context) => {
+      context?.listSnapshot?.restore();
+      toast.error(t('filter.deleteGroup.failed'));
+    },
+    onSettled: () => {
+      decrementMutation();
+      void utils.tags.list.invalidate();
+      void utils.entries.list.invalidate();
+      void utils.entries.getTagStats.invalidate();
     },
   });
 }
@@ -408,12 +459,12 @@ export function useUpdateTagColor() {
 export interface ReorderTagInput {
   id: string;
   sort_order: number;
-  parent_id: string | null;
 }
 
 // タグ並び替えフック（楽観的更新付き）
 export function useReorderTags() {
   const utils = trpc.useUtils();
+  const t = useTranslations('tags');
   const incrementMutation = useTagCacheStore((state) => state.incrementMutation);
   const decrementMutation = useTagCacheStore((state) => state.decrementMutation);
 
@@ -422,10 +473,8 @@ export function useReorderTags() {
       incrementMutation();
 
       await utils.tags.list.cancel();
-      await utils.tags.listParentTags.cancel();
 
       const previousData = utils.tags.list.getData();
-      const previousParentTags = utils.tags.listParentTags.getData();
 
       utils.tags.list.setData(undefined, (oldData) => {
         if (!oldData) return oldData;
@@ -433,53 +482,26 @@ export function useReorderTags() {
         const newData = oldData.data.map((tag) => {
           const update = updates.find((u) => u.id === tag.id);
           if (update) {
-            return { ...tag, sort_order: update.sort_order, parent_id: update.parent_id };
+            return { ...tag, sort_order: update.sort_order };
           }
           return tag;
         });
 
-        return { ...oldData, data: [...newData] };
-      });
-
-      const allTags = previousData?.data ?? [];
-      utils.tags.listParentTags.setData(undefined, (oldData) => {
-        if (!oldData) return oldData;
-
-        let newData = oldData.data.map((tag) => {
-          const update = updates.find((u) => u.id === tag.id);
-          if (update) {
-            return { ...tag, sort_order: update.sort_order, parent_id: update.parent_id };
-          }
-          return tag;
-        });
-
-        const promotedToRoot = updates.filter(
-          (u) => u.parent_id === null && !oldData.data.some((t) => t.id === u.id),
-        );
-        for (const promoted of promotedToRoot) {
-          const fullTag = allTags.find((t) => t.id === promoted.id);
-          if (fullTag) {
-            newData.push({ ...fullTag, sort_order: promoted.sort_order, parent_id: null });
-          }
-        }
-
-        const demotedFromRoot = updates.filter((u) => u.parent_id !== null);
-        newData = newData.filter((tag) => !demotedFromRoot.some((d) => d.id === tag.id));
-
+        // sort_order順にソートして配列の順番も反映
         newData.sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
-        return { ...oldData, data: [...newData] };
+        return { ...oldData, data: newData };
       });
 
-      return { previousData, previousParentTags };
+      return { previousData };
     },
     onError: (_err, _variables, context) => {
       if (context?.previousData) utils.tags.list.setData(undefined, context.previousData);
-      if (context?.previousParentTags)
-        utils.tags.listParentTags.setData(undefined, context.previousParentTags);
+      toast.error(t('errors.updateFailed'));
     },
     onSettled: () => {
       decrementMutation();
+      void utils.tags.list.invalidate();
     },
   });
 }

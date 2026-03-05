@@ -4,7 +4,7 @@
  * 充実度ボタン（共通コンポーネント）
  *
  * Plan/Record共通で使用する充実度スコア入力ボタン
- * - タップ: スコア加算（1→2→3→4→5）
+ * - タップ: スコアサイクル（null→1→2→3→null）
  * - 長押し（500ms）: リセット（null）
  */
 
@@ -15,7 +15,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
-import type { FulfillmentScore } from '@/core/types/record';
+import type { FulfillmentScore } from '@/core/types/entry';
 
 interface FulfillmentButtonProps {
   /** 現在のスコア（null = 未設定） */
@@ -58,7 +58,8 @@ export function FulfillmentButton({
     if (!isPressingRef.current) return;
     isPressingRef.current = false;
     if (!isLongPressRef.current) {
-      const newScore = Math.min((score ?? 0) + 1, 5) as FulfillmentScore;
+      // null → 1 → 2 → 3 → null（ラップアラウンド）
+      const newScore = score === null ? 1 : score >= 3 ? null : ((score + 1) as FulfillmentScore);
       onScoreChange(newScore);
     }
   }, [score, onScoreChange]);
@@ -90,10 +91,12 @@ export function FulfillmentButton({
         onTouchStart={handlePressStart}
         onTouchEnd={handlePressEnd}
         className={cn(
-          'flex h-8 items-center gap-1 rounded-lg px-2 transition-colors',
+          'flex h-7 items-center gap-1 rounded-md border px-2 transition-colors',
           'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
           'select-none',
-          hasScore ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
+          hasScore
+            ? 'border-border text-foreground'
+            : 'text-muted-foreground hover:text-foreground border-transparent',
         )}
         aria-label={t('plan.inspector.recordCreate.fulfillmentLabel', { score: score ?? 0 })}
       >

@@ -12,24 +12,15 @@ import { useTranslations } from 'next-intl';
 
 import { formatTimeRange } from '@/lib/date';
 import type { CalendarPlan } from '../../../../../types/calendar.types';
-import { TagsContainer } from './TagsContainer';
-
-/** プレビューモード設定（ドラッグ選択時の簡略表示） */
-interface PreviewMode {
-  /** 時間幅テキスト（例: "1時間30分"） */
-  durationText: string;
-}
 
 interface PlanCardContentProps {
   plan: CalendarPlan;
+  tagName: string | null;
   isCompact?: boolean;
   showTime?: boolean;
   timeFormat?: '12h' | '24h';
   previewTime?: { start: Date; end: Date } | null; // ドラッグ中のプレビュー時間
-  hasCheckbox?: boolean; // チェックボックスがある場合は左パディングを追加
   isMobile?: boolean; // モバイル表示（Googleカレンダー風シンプル表示）
-  /** プレビューモード（ドラッグ選択時の簡略表示、タグ・アイコン非表示） */
-  previewMode?: PreviewMode;
 }
 
 // Helper function: Parse plan start date
@@ -50,13 +41,12 @@ function parseplanEndDate(plan: CalendarPlan): Date | null {
 
 export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardContent({
   plan,
+  tagName,
   isCompact = false,
   showTime = true,
   timeFormat = '24h',
   previewTime = null,
-  hasCheckbox = false,
   isMobile = false,
-  previewMode,
 }) {
   const t = useTranslations();
 
@@ -64,37 +54,35 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
   const planStart = parseplanStartDate(plan);
   const planEnd = parseplanEndDate(plan);
 
+  // 表示テキスト: タグ名 or フォールバック
+  const displayLabel = tagName || t('common.tags.add');
+
   // モバイル表示: Googleカレンダー風のシンプルな表示
-  // チェックボックスの横にタイトルを1行で省略表示
   if (isMobile) {
     return (
-      <span className={`text-foreground min-w-0 flex-1 truncate text-xs leading-tight font-normal`}>
-        {plan.title || t('calendar.event.noTitle')}
+      <span className="text-foreground min-w-0 flex-1 truncate text-xs leading-tight font-normal">
+        {displayLabel}
       </span>
     );
   }
 
   if (isCompact) {
-    // コンパクト表示：タイトルのみ
+    // コンパクト表示：タグ名のみ
     return (
-      <div className={`flex h-full items-center gap-1 ${hasCheckbox ? 'pl-4' : ''}`}>
-        <span className={`text-foreground truncate text-sm leading-tight font-normal`}>
-          {plan.title || t('calendar.event.noTitle')}
+      <div className="flex h-full items-center gap-1">
+        <span className="text-foreground truncate text-sm leading-tight font-normal">
+          {displayLabel}
         </span>
       </div>
     );
   }
 
-  // 通常表示：タイトル #番号 + 時間 + アイコン + タグの順番（優先度順）
+  // 通常表示：タグ名 + 時間 + アイコンの順番（優先度順）
   return (
-    <div
-      className={`relative flex h-full flex-col gap-1 overflow-hidden ${hasCheckbox ? 'pl-6' : ''}`}
-    >
-      {/* タイトル（最優先） */}
+    <div className="relative flex h-full flex-col gap-1 overflow-hidden">
+      {/* タグ名（最優先） */}
       <div className="flex flex-shrink-0 items-baseline gap-1 text-sm leading-tight font-normal">
-        <span className={`${isCompact ? 'line-clamp-1' : 'line-clamp-2'} text-foreground`}>
-          {plan.title || t('calendar.event.noTitle')}
-        </span>
+        <span className="text-foreground line-clamp-2">{displayLabel}</span>
       </div>
 
       {/* 時間表示 + アイコン（第2優先） */}
@@ -107,33 +95,13 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
                 ? formatTimeRange(planStart, planEnd, timeFormat)
                 : t('calendar.event.noTimeSet')}
           </span>
-          {/* プレビューモード時はアイコン非表示 */}
-          {!previewMode && (
-            <>
-              {/* 繰り返しアイコン */}
-              <RecurringIndicatorFromFlag isRecurring={plan.isRecurring} size="xs" />
-              {/* 通知アイコン（reminder_minutesが設定されている場合） */}
-              {plan.reminder_minutes != null && (
-                <Bell
-                  className="h-3 w-3 flex-shrink-0"
-                  aria-label={t('calendar.event.reminderSet')}
-                />
-              )}
-            </>
+          {/* 繰り返しアイコン */}
+          <RecurringIndicatorFromFlag isRecurring={plan.isRecurring} size="xs" />
+          {/* 通知アイコン（reminder_minutesが設定されている場合） */}
+          {plan.reminder_minutes != null && (
+            <Bell className="h-3 w-3 flex-shrink-0" aria-label={t('calendar.event.reminderSet')} />
           )}
         </div>
-      )}
-
-      {/* 時間幅表示（プレビューモード時のみ） */}
-      {previewMode && (
-        <div className="text-muted-foreground mt-auto text-xs tabular-nums opacity-60">
-          {previewMode.durationText}
-        </div>
-      )}
-
-      {/* タグ表示（横幅いっぱいに表示、入りきらないものは+Nで表示、プレビューモード時は非表示） */}
-      {!previewMode && plan.tagIds && plan.tagIds.length > 0 && (
-        <TagsContainer tagIds={plan.tagIds} />
       )}
     </div>
   );

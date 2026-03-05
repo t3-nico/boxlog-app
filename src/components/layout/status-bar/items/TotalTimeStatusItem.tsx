@@ -21,7 +21,7 @@ import { api } from '@/lib/trpc';
 export function TotalTimeStatusItem() {
   const t = useTranslations('calendar');
 
-  const { data, isPending, isError } = api.plans.getCumulativeTime.useQuery(undefined, {
+  const { data, isPending, isError } = api.entries.getCumulativeTime.useQuery(undefined, {
     staleTime: CACHE_5_MINUTES,
     refetchInterval: CACHE_5_MINUTES,
   });

@@ -1,75 +1,76 @@
 'use client';
 
 /**
- * PlanInspector の詳細タブ（Toggl風3行レイアウト）
+ * Inspector の詳細タブ — 3パターン対応
  *
- * Row 1: Title
- * Row 2: Date + Time + Duration
- * Row 3: Tags + [Records] [Description] [Status*] [Recurrence] [Reminder]
+ * Row 0: タグ（カラードット + タグ名）+ ⋯ メニュー
+ * Row 1: 予定/記録 時間比較セクション
+ * Row 2: オプションボタン群
  */
 
-import { memo, useCallback } from 'react';
+import type { ReactNode } from 'react';
+import { memo } from 'react';
 
 import { useTranslations } from 'next-intl';
 import {
+  FulfillmentButton,
+  InlineNoteSection,
   InspectorDetailsLayout,
-  NoteIconButton,
-  ScheduleRow,
-  TagsIconButton,
-  TitleInput,
+  InspectorTagRow,
+  InspectorTimeSection,
 } from '../shared';
 
-import { SuggestInput } from '@/components/common/SuggestInput';
-import type { Tag } from '@/core/types/tag';
+import type {
+  EntryOrigin,
+  EntryWithTags,
+  FulfillmentScore,
+  RecurrenceType,
+} from '@/core/types/entry';
+import type { EntryState } from '@/lib/entry-status';
 
-import type { Plan } from '../../../types/plan';
-import { RecordsIconButton } from '../../shared/RecordsIconButton';
 import { RecurrenceIconButton } from '../../shared/RecurrenceIconButton';
 import { ReminderSelect } from '../../shared/ReminderSelect';
 
-type RecurrenceType = 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays' | null;
-
 interface PlanInspectorDetailsTabProps {
-  plan: Plan;
-  planId: string;
-  titleRef: React.RefObject<HTMLInputElement | null>;
-  scheduleDate: Date | undefined; // スケジュール日（カレンダー配置用）
+  plan: EntryWithTags;
+  /** ⋯ メニューの内容（InspectorTagRow に伝搬） */
+  menuContent?: ReactNode;
+  scheduleDate: Date | undefined;
   startTime: string;
   endTime: string;
   reminderMinutes: number | null;
-  selectedTagIds: string[];
+  selectedTagId: string | null;
+  onTagChange: (tagId: string | null) => void;
   recurrenceRule: string | null;
-  recurrenceType: RecurrenceType;
-  /** 時間重複エラー状態（視覚的フィードバック用） */
+  recurrenceType: RecurrenceType | null;
   timeConflictError?: boolean;
   onAutoSave: (field: string, value: string | undefined) => void;
   onScheduleDateChange: (date: Date | undefined) => void;
   onStartTimeChange: (time: string) => void;
   onEndTimeChange: (time: string) => void;
   onReminderChange: (minutes: number | null) => void;
-  onTagsChange: (tagIds: string[]) => void;
-  onRemoveTag: (tagId: string) => void;
   onRepeatTypeChange: (type: string) => void;
   onRecurrenceRuleChange: (rrule: string | null) => void;
-  /** ドラフトモード（新規作成時） */
-  isDraftMode?: boolean;
-  /** ドラフトモード用: 選択済み Record IDs */
-  draftRecordIds?: string[];
-  /** ドラフトモード用: Record IDs 変更コールバック */
-  onDraftRecordIdsChange?: (ids: string[]) => void;
-  /** 外部からタグデータを注入（Storybook等で使用） */
-  availableTags?: Tag[] | undefined;
+  entryState?: EntryState;
+  origin?: EntryOrigin;
+  fulfillmentScore?: FulfillmentScore | null;
+  onFulfillmentChange?: (score: FulfillmentScore | null) => void;
+  // 記録時間（actual）
+  actualStart?: string | null;
+  actualEnd?: string | null;
+  onActualStartChange?: (time: string | null) => void;
+  onActualEndChange?: (time: string | null) => void;
 }
 
 export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   plan,
-  planId,
-  titleRef,
+  menuContent,
   scheduleDate,
   startTime,
   endTime,
   reminderMinutes,
-  selectedTagIds,
+  selectedTagId,
+  onTagChange,
   recurrenceRule,
   recurrenceType,
   timeConflictError = false,
@@ -78,86 +79,77 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   onStartTimeChange,
   onEndTimeChange,
   onReminderChange,
-  onTagsChange,
   onRepeatTypeChange,
   onRecurrenceRuleChange,
-  isDraftMode = false,
-  draftRecordIds,
-  onDraftRecordIdsChange,
-  availableTags,
+  entryState = 'upcoming',
+  origin = 'planned',
+  fulfillmentScore,
+  onFulfillmentChange,
+  actualStart = null,
+  actualEnd = null,
+  onActualStartChange,
+  onActualEndChange,
 }: PlanInspectorDetailsTabProps) {
   const t = useTranslations();
 
-  const handleSuggestionSelect = useCallback(
-    (entry: { title: string; tagIds: string[] }) => {
-      onAutoSave('title', entry.title);
-      onTagsChange(entry.tagIds);
-    },
-    [onAutoSave, onTagsChange],
-  );
+  // upcoming のみ繰り返し・リマインダーを表示
+  const showRecurrence = entryState === 'upcoming';
+  // active/past で充実度を表示
+  const showFulfillment = entryState !== 'upcoming' && onFulfillmentChange;
 
   return (
     <InspectorDetailsLayout
-      title={
-        isDraftMode ? (
-          <SuggestInput
-            value={plan.title}
-            onChange={(value) => onAutoSave('title', value)}
-            onSuggestionSelect={handleSuggestionSelect}
-            type="plan"
-            placeholder={t('plan.inspector.addTitle')}
-            autoFocus
-          />
-        ) : (
-          <TitleInput
-            ref={titleRef}
-            value={plan.title}
-            onChange={(value) => onAutoSave('title', value)}
-            placeholder={t('calendar.event.noTitle')}
-          />
-        )
+      tagRow={
+        <InspectorTagRow
+          tagId={selectedTagId}
+          onTagChange={onTagChange}
+          menuContent={menuContent}
+        />
       }
       schedule={
-        <ScheduleRow
+        <InspectorTimeSection
           selectedDate={scheduleDate}
-          startTime={startTime}
-          endTime={endTime}
           onDateChange={onScheduleDateChange}
-          onStartTimeChange={onStartTimeChange}
-          onEndTimeChange={onEndTimeChange}
+          plannedStart={startTime}
+          plannedEnd={endTime}
+          onPlannedStartChange={onStartTimeChange}
+          onPlannedEndChange={onEndTimeChange}
+          actualStart={actualStart ?? null}
+          actualEnd={actualEnd ?? null}
+          onActualStartChange={onActualStartChange ?? (() => {})}
+          onActualEndChange={onActualEndChange ?? (() => {})}
+          entryState={entryState}
+          origin={origin}
           timeConflictError={timeConflictError}
+        />
+      }
+      note={
+        <InlineNoteSection
+          label={t('plan.inspector.note.label')}
+          note={plan.description || ''}
+          onNoteChange={(text) => onAutoSave('description', text)}
+          placeholder={t('plan.inspector.note.placeholder')}
         />
       }
       options={
         <>
-          <TagsIconButton
-            tagIds={selectedTagIds}
-            onTagsChange={onTagsChange}
-            popoverSide="bottom"
-            {...(availableTags ? { availableTags } : {})}
-          />
-          <RecordsIconButton
-            planId={planId ?? null}
-            draftRecordIds={draftRecordIds}
-            onDraftRecordIdsChange={onDraftRecordIdsChange}
-          />
-          <NoteIconButton
-            id={plan.id}
-            note={plan.description || ''}
-            onNoteChange={(html) => onAutoSave('description', html)}
-            labels={{
-              editTooltip: t('plan.inspector.editDescription'),
-              addTooltip: t('plan.inspector.addDescription'),
-              placeholder: t('plan.inspector.addDescriptionPlaceholder'),
-            }}
-          />
-          <RecurrenceIconButton
-            recurrenceRule={recurrenceRule}
-            recurrenceType={recurrenceType}
-            onRepeatTypeChange={onRepeatTypeChange}
-            onRecurrenceRuleChange={onRecurrenceRuleChange}
-          />
-          <ReminderSelect value={reminderMinutes} onChange={onReminderChange} variant="icon" />
+          {showFulfillment && (
+            <FulfillmentButton
+              score={fulfillmentScore ?? null}
+              onScoreChange={onFulfillmentChange}
+            />
+          )}
+          {showRecurrence && (
+            <>
+              <RecurrenceIconButton
+                recurrenceRule={recurrenceRule}
+                recurrenceType={recurrenceType}
+                onRepeatTypeChange={onRepeatTypeChange}
+                onRecurrenceRuleChange={onRecurrenceRuleChange}
+              />
+              <ReminderSelect value={reminderMinutes} onChange={onReminderChange} variant="icon" />
+            </>
+          )}
         </>
       }
     />

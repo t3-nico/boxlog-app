@@ -546,7 +546,7 @@ export const AIStyle: Story = {
 export const SavingState: Story = {
   render: () => (
     <div className="mx-auto max-w-2xl space-y-8">
-      <SettingsCard title="価値評定スケール" isSaving>
+      <SettingsCard title="価値評定スケール">
         <div className="border-border rounded-2xl border p-4">
           <div className="mb-2 flex items-center justify-between">
             <div>
@@ -566,7 +566,7 @@ export const SavingState: Story = {
         </div>
       </SettingsCard>
 
-      <SettingsCard title="価値観キーワードランキング" isSaving>
+      <SettingsCard title="価値観キーワードランキング">
         <div className="text-muted-foreground mb-2 text-xs">5 / 10 選択中</div>
         <div className="flex flex-wrap gap-2">
           {['誠実さ', '好奇心', '規律', '成長', 'バランス'].map((label) => (

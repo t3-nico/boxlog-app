@@ -90,12 +90,29 @@ export const AllColors: Story = {
         <ColorSwatch tailwindClass="bg-destructive" description="削除、エラー" />
       </ColorGroup>
 
-      <ColorGroup title="Chronotype（生産性ゾーン）">
+      <ColorGroup title="Chronotype（エネルギーフェーズ）">
+        <ColorSwatch tailwindClass="bg-chronotype-warmup" description="ウォームアップ（起床後）" />
         <ColorSwatch tailwindClass="bg-chronotype-peak" description="ピーク（最集中）" />
-        <ColorSwatch tailwindClass="bg-chronotype-good" description="集中" />
-        <ColorSwatch tailwindClass="bg-chronotype-moderate" description="通常" />
-        <ColorSwatch tailwindClass="bg-chronotype-low" description="低調（軽作業向き）" />
-        <ColorSwatch tailwindClass="bg-chronotype-sleep" description="睡眠" />
+        <ColorSwatch tailwindClass="bg-chronotype-dip" description="ディップ（エネルギー低下）" />
+        <ColorSwatch tailwindClass="bg-chronotype-recovery" description="リカバリー（回復）" />
+        <ColorSwatch
+          tailwindClass="bg-chronotype-winddown"
+          description="ウインドダウン（就寝準備）"
+        />
+      </ColorGroup>
+
+      <ColorGroup title="Chronotype Tints（タイムライン背景用）">
+        <ColorSwatch tailwindClass="bg-chronotype-tint-warmup" description="ウォームアップ tint" />
+        <ColorSwatch
+          tailwindClass="bg-chronotype-tint-peak"
+          description="ピーク tint（alpha込み）"
+        />
+        <ColorSwatch tailwindClass="bg-chronotype-tint-dip" description="ディップ tint" />
+        <ColorSwatch tailwindClass="bg-chronotype-tint-recovery" description="リカバリー tint" />
+        <ColorSwatch
+          tailwindClass="bg-chronotype-tint-winddown"
+          description="ウインドダウン tint"
+        />
       </ColorGroup>
 
       <ColorGroup title="Border & Input">
@@ -115,11 +132,6 @@ export const AllColors: Story = {
         <ColorSwatch tailwindClass="bg-chart-5" />
       </ColorGroup>
 
-      <ColorGroup title="Calendar（カレンダー専用）">
-        <ColorSwatch tailwindClass="bg-plan-box" description="Plan（予定）の背景：sky blue" />
-        <ColorSwatch tailwindClass="bg-record-box" description="Record（実績）の背景：green" />
-      </ColorGroup>
-
       <ColorGroup title="Tag Colors（ダークモードで明度調整）">
         <ColorSwatch tailwindClass="bg-tag-blue" description="Blue（デフォルト）" />
         <ColorSwatch tailwindClass="bg-tag-green" description="Green" />
@@ -127,7 +139,7 @@ export const AllColors: Story = {
         <ColorSwatch tailwindClass="bg-tag-amber" description="Amber" />
         <ColorSwatch tailwindClass="bg-tag-violet" description="Violet" />
         <ColorSwatch tailwindClass="bg-tag-pink" description="Pink" />
-        <ColorSwatch tailwindClass="bg-tag-cyan" description="Cyan" />
+        <ColorSwatch tailwindClass="bg-tag-teal" description="Teal" />
         <ColorSwatch tailwindClass="bg-tag-orange" description="Orange" />
         <ColorSwatch tailwindClass="bg-tag-gray" description="Gray" />
         <ColorSwatch tailwindClass="bg-tag-indigo" description="Indigo" />
@@ -636,7 +648,7 @@ export const Tags: Story = {
           { token: 'tag-amber', name: 'Amber', description: '' },
           { token: 'tag-violet', name: 'Violet', description: '' },
           { token: 'tag-pink', name: 'Pink', description: '' },
-          { token: 'tag-cyan', name: 'Cyan', description: '' },
+          { token: 'tag-teal', name: 'Teal', description: '' },
           { token: 'tag-orange', name: 'Orange', description: '' },
           { token: 'tag-gray', name: 'Gray', description: 'グループのデフォルト' },
           { token: 'tag-indigo', name: 'Indigo', description: '' },

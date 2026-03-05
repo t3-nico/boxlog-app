@@ -205,11 +205,11 @@ export const WithRadioGroup: Story = {
 };
 
 const sampleItems = [
-  { id: '1', name: '仕事', color: '#ef4444' },
-  { id: '2', name: 'プライベート', color: '#3b82f6' },
-  { id: '3', name: '運動', color: '#22c55e' },
-  { id: '4', name: '読書', color: '#a855f7' },
-  { id: '5', name: '学習', color: '#f59e0b' },
+  { id: '1', name: '仕事', color: 'red' },
+  { id: '2', name: 'プライベート', color: 'blue' },
+  { id: '3', name: '運動', color: 'green' },
+  { id: '4', name: '読書', color: 'violet' },
+  { id: '5', name: '学習', color: 'amber' },
 ];
 
 /** 検索付きメニュー（ラベルなし）。検索フィールドがコンテキストを示すためラベル不要。 */

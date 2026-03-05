@@ -91,7 +91,7 @@ export function AIStyleSettings() {
   }
 
   return (
-    <SettingsCard title={t('settings.aiStyle.title')} isSaving={autoSave.isSaving}>
+    <SettingsCard title={t('settings.aiStyle.title')}>
       <p className="text-muted-foreground mb-4 text-sm">{t('settings.aiStyle.description')}</p>
 
       <RadioGroup

@@ -29,16 +29,16 @@ import {
 } from '@/components/ui/command';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { useTheme } from '@/contexts/theme-context';
-import { usePlans } from '@/hooks/usePlans';
+import { useEntries } from '@/hooks/useEntries';
+import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { useTagModalNavigation } from '@/hooks/useTagModalNavigation';
 import { useTags } from '@/hooks/useTagsQuery';
-import { useAppAsideStore } from '@/stores/useAppAsideStore';
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
-import { useSettingsModalStore } from '@/stores/useSettingsModalStore';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
+import { useLayoutStore } from '@/stores/useLayoutStore';
+import { openSettingsModal } from '@/stores/useModalStore';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
-import type { PlanStatus } from '@/core/types/plan';
 import { useRecentPlans } from '../hooks/useRecentPlans';
 import { useSearchHistory } from '../hooks/useSearch';
 import { commandRegistry, registerDefaultCommands } from '../lib/command-registry';
@@ -51,7 +51,6 @@ type PlanFromAPI = {
   user_id: string;
   title: string;
   description: string | null;
-  status: PlanStatus;
   start_time: string | null;
   end_time: string | null;
   plan_number: string;
@@ -101,15 +100,15 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
   const filterHints = useMemo(() => getFilterHints(), []);
 
   // Get data from stores - only fetch when modal is open to prevent 401 errors on unauthenticated pages
-  const { data: plans = [] } = usePlans(undefined, { enabled: isOpen });
+  const { data: plans = [] } = useEntries(undefined, { enabled: isOpen });
   const { data: tags = [] } = useTags();
 
   // Get actions from stores
-  const openPlanInspector = usePlanInspectorStore((state) => state.openInspector);
+  const openPlanInspector = useEntryInspectorStore((state) => state.openInspector);
+  const { createEntry } = useEntryMutations();
   const { openTagCreateModal } = useTagModalNavigation();
   const { resolvedTheme, setTheme } = useTheme();
-  const openSettingsModal = useSettingsModalStore((state) => state.openModal);
-  const openAside = useAppAsideStore((state) => state.openAside);
+  const openAside = useLayoutStore((state) => state.openAside);
 
   const toggleTheme = useCallback(() => {
     setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
@@ -117,19 +116,36 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
 
   const navigateToSettings = useCallback(() => {
     openSettingsModal('general');
-  }, [openSettingsModal]);
+  }, []);
+
+  // 新規エントリ作成 → Inspector で開く
+  const createAndOpenEntry = useCallback(async () => {
+    const result = await createEntry.mutateAsync({ title: '' });
+    if (result?.id) {
+      openPlanInspector(result.id);
+    }
+  }, [createEntry, openPlanInspector]);
 
   // Register default commands on mount
   useEffect(() => {
     registerDefaultCommands({
       router,
       openPlanInspector,
+      createAndOpenEntry,
       openTagCreateModal,
       navigateToSettings,
       toggleTheme,
       openAside,
     });
-  }, [router, openPlanInspector, openTagCreateModal, navigateToSettings, toggleTheme, openAside]);
+  }, [
+    router,
+    openPlanInspector,
+    createAndOpenEntry,
+    openTagCreateModal,
+    navigateToSettings,
+    toggleTheme,
+    openAside,
+  ]);
 
   // Reset query when modal closes（React推奨: レンダー中のstate調整）
   const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
@@ -170,7 +186,6 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
         id: plan.id,
         title: plan.title,
         description: plan.description,
-        status: plan.status,
         plan_number: plan.plan_number,
         tags: resolvedTags,
       };
@@ -178,10 +193,6 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
 
     // Apply custom filters from parsed query
     let filtered = converted;
-
-    if (parsedQuery.filters.status && parsedQuery.filters.status.length > 0) {
-      filtered = filtered.filter((plan) => parsedQuery.filters.status!.includes(plan.status));
-    }
 
     if (parsedQuery.filters.tags && parsedQuery.filters.tags.length > 0) {
       filtered = filtered.filter((plan) =>
@@ -276,11 +287,6 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
               <div className="border-border flex items-center gap-2 border-b px-4 py-2">
                 <Filter className="text-muted-foreground h-4 w-4" />
                 <span className="text-muted-foreground text-xs">フィルター適用中:</span>
-                {parsedQuery.filters.status && (
-                  <span className="bg-state-active text-state-active-foreground rounded px-2 py-1 text-xs">
-                    status: {parsedQuery.filters.status.join(', ')}
-                  </span>
-                )}
                 {parsedQuery.filters.tags && (
                   <span className="bg-state-active text-state-active-foreground rounded px-2 py-1 text-xs">
                     #{parsedQuery.filters.tags.join(', #')}
@@ -419,7 +425,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                 {tags.slice(0, 10).map((tag) => (
                   <CommandItem
                     key={`tag-${tag.id}`}
-                    value={`${tag.name} ${tag.description || ''}`}
+                    value={tag.name}
                     onSelect={() => handleTagSelect(tag.id)}
                     className="flex items-center gap-2"
                   >
@@ -428,11 +434,6 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                       <span className="truncate">
                         <HighlightedText text={tag.name} query={parsedQuery.text} />
                       </span>
-                      {tag.description && (
-                        <span className="text-muted-foreground truncate text-xs">
-                          <HighlightedText text={tag.description} query={parsedQuery.text} />
-                        </span>
-                      )}
                     </div>
                   </CommandItem>
                 ))}

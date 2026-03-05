@@ -2,20 +2,29 @@
 
 import { Copy, ExternalLink, Link, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useCallback } from 'react';
+import { Suspense, useCallback } from 'react';
 
 import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { useInspectorKeyboard } from './hooks';
 import { InspectorContent, InspectorShell } from './shared';
 
-import { useDeleteConfirmStore } from '@/stores/useDeleteConfirmStore';
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
-import { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmStore';
+import type { EntryWithTags } from '@/core/types/entry';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
+import { openDeleteConfirm, useModalStore } from '@/stores/useModalStore';
 import { usePlan } from '../../hooks/usePlan';
-import type { Plan } from '../../types/plan';
 
+import { useInspectorURLSync } from '../../hooks/useInspectorURLSync';
 import { useInspectorAutoSave, useInspectorNavigation } from './hooks';
 import { PlanInspectorContent } from './PlanInspectorContent';
+
+/**
+ * URL同期を担当する内部コンポーネント
+ * useSearchParams()はSuspenseが必要なため分離
+ */
+function InspectorURLSyncHandler() {
+  useInspectorURLSync();
+  return null;
+}
 
 /**
  * Plan Inspector（全ページ共通）
@@ -25,46 +34,32 @@ import { PlanInspectorContent } from './PlanInspectorContent';
  */
 export function PlanInspector() {
   const t = useTranslations();
-  const isOpen = usePlanInspectorStore((state) => state.isOpen);
-  const planId = usePlanInspectorStore((state) => state.planId);
-  const closeInspector = usePlanInspectorStore((state) => state.closeInspector);
-  const draftPlan = usePlanInspectorStore((state) => state.draftPlan);
-  const clearDraft = usePlanInspectorStore((state) => state.clearDraft);
-  const clearPendingChanges = usePlanInspectorStore((state) => state.clearPendingChanges);
-
-  // ドラフトモード判定
-  const isDraftMode = draftPlan !== null && planId === null;
+  const isOpen = useEntryInspectorStore((state) => state.isOpen);
+  const planId = useEntryInspectorStore((state) => state.entryId);
+  const closeInspector = useEntryInspectorStore((state) => state.closeInspector);
+  const clearPendingChanges = useEntryInspectorStore((state) => state.clearPendingChanges);
 
   const { data: planData, isLoading } = usePlan(planId!, {
     includeTags: true,
-    enabled: !!planId && !isDraftMode,
+    enabled: !!planId,
   });
-  // ドラフトモードの場合はdraftPlanを使用
-  const plan = isDraftMode
-    ? (draftPlan as unknown as Plan | null)
-    : ((planData ?? null) as unknown as Plan | null);
+  const plan: EntryWithTags | null = (planData ?? null) as EntryWithTags | null;
 
   // 繰り返しダイアログが開いている間はInspectorを閉じない
   // ×ボタン/ESC/外側クリック = キャンセル（変更を破棄）
   const handleClose = useCallback(() => {
-    const isRecurringDialogOpen = useRecurringEditConfirmStore.getState().isOpen;
+    const modal = useModalStore.getState().modal;
+    const isRecurringDialogOpen = modal?.type === 'recurringEdit';
     if (!isRecurringDialogOpen) {
-      // ドラフトモードの場合はドラフトをクリア
-      if (isDraftMode) {
-        clearDraft();
-      }
-      // 未保存の変更を破棄
       clearPendingChanges();
-      // closeInspector内でcalendar-drag-cancelイベントを発行
       closeInspector();
     }
-  }, [closeInspector, isDraftMode, clearDraft, clearPendingChanges]);
+  }, [closeInspector, clearPendingChanges]);
 
   // ナビゲーション
   const { hasPrevious, hasNext, goToPrevious, goToNext } = useInspectorNavigation(planId);
 
   // 削除
-  const openDeleteDialog = useDeleteConfirmStore((state) => state.openDialog);
   const { deletePlan } = useInspectorAutoSave({ planId, plan });
 
   // キーボードショートカット
@@ -91,11 +86,11 @@ export function PlanInspector() {
 
   const handleDelete = useCallback(() => {
     if (!planId) return;
-    openDeleteDialog(planId, plan?.title ?? null, async () => {
+    openDeleteConfirm(planId, plan?.title ?? null, async () => {
       await deletePlan.mutateAsync({ id: planId });
       closeInspector();
     });
-  }, [planId, plan?.title, openDeleteDialog, deletePlan, closeInspector]);
+  }, [planId, plan?.title, deletePlan, closeInspector]);
 
   // モバイル用メニューコンテンツ（簡略版）
   const mobileMenuContent = (
@@ -125,19 +120,26 @@ export function PlanInspector() {
   );
 
   return (
-    <InspectorShell
-      isOpen={isOpen}
-      onClose={handleClose}
-      title={isDraftMode ? '' : plan?.title || t('plan.inspector.noTitle')}
-      mobileMenuContent={isDraftMode ? undefined : mobileMenuContent}
-    >
-      <InspectorContent
-        isLoading={isDraftMode ? false : isLoading}
-        hasData={isDraftMode ? true : !!plan}
-        emptyMessage={t('plan.inspector.notFound')}
+    <>
+      {/* URL同期（Suspenseでラップ） */}
+      <Suspense fallback={null}>
+        <InspectorURLSyncHandler />
+      </Suspense>
+
+      <InspectorShell
+        isOpen={isOpen}
+        onClose={handleClose}
+        title={plan?.title || t('plan.inspector.noTitle')}
+        mobileMenuContent={mobileMenuContent}
       >
-        <PlanInspectorContent />
-      </InspectorContent>
-    </InspectorShell>
+        <InspectorContent
+          isLoading={isLoading}
+          hasData={!!plan}
+          emptyMessage={t('plan.inspector.notFound')}
+        >
+          <PlanInspectorContent />
+        </InspectorContent>
+      </InspectorShell>
+    </>
   );
 }

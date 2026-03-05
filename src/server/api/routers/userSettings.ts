@@ -48,7 +48,7 @@ const userSettingsSchema = z.object({
       z.object({
         startHour: z.number().int().min(0).max(23),
         endHour: z.number().int().min(0).max(23),
-        level: z.enum(['peak', 'good', 'moderate', 'low', 'sleep']),
+        level: z.enum(['warmup', 'peak', 'dip', 'recovery', 'winddown']),
         label: z.string().max(100),
       }),
     )

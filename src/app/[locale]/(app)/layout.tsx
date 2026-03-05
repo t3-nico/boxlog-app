@@ -20,7 +20,8 @@ import {
   PlanInspector,
   RecurringEditConfirmDialog,
 } from '@/features/plans/components';
-import { RecordInspector } from '@/features/records/components';
+
+import { ClientPageRenderer } from './_composition/ClientPageRenderer';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -30,9 +31,8 @@ const AppLayout = async ({ children }: AppLayoutProps) => {
   return (
     <Providers>
       <BaseLayout>
-        {children}
+        <ClientPageRenderer>{children}</ClientPageRenderer>
         <PlanInspector />
-        <RecordInspector />
         <PlanDeleteConfirmDialog />
         <RecurringEditConfirmDialog />
         <Toaster />

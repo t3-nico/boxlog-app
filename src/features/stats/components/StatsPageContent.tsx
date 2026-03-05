@@ -13,14 +13,15 @@ import { HoverTooltip } from '@/components/ui/tooltip';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useResizeHandle } from '@/hooks/useResizeHandle';
 import { cn } from '@/lib/utils';
-import { useAppAsideStore } from '@/stores/useAppAsideStore';
-import { useSidebarStore } from '@/stores/useSidebarStore';
+import { useLayoutStore } from '@/stores/useLayoutStore';
 
 import { StatsView } from './StatsView';
 
 interface StatsPageContentProps {
   /** アサイドパネルのコンテンツレンダラー（page.tsxから注入） */
   renderAsideContent?: (asideType: AsideType) => React.ReactNode;
+  /** ヘッダー右側のカスタムスロット（PageSwitcher など） */
+  headerSlot?: React.ReactNode;
 }
 
 /**
@@ -29,23 +30,23 @@ interface StatsPageContentProps {
  * CalendarController を経由せず、Stats を直接レンダリングする。
  * CalendarLayout と同じヘッダー + Aside 構造を持つ。
  */
-export function StatsPageContent({ renderAsideContent }: StatsPageContentProps) {
+export function StatsPageContent({ renderAsideContent, headerSlot }: StatsPageContentProps) {
   const t = useTranslations();
   const isMobile = useMediaQuery('(max-width: 767px)');
 
   // サイドバー
-  const isSidebarOpen = useSidebarStore.use.isOpen();
-  const openSidebar = useSidebarStore.use.open();
+  const isSidebarOpen = useLayoutStore.use.sidebarOpen();
+  const openSidebar = useLayoutStore.use.openSidebar();
 
   // アサイド状態（Zustand永続化）
-  const currentAside = useAppAsideStore.use.asideType();
-  const setCurrentAside = useAppAsideStore.use.setAside();
+  const currentAside = useLayoutStore.use.asideType();
+  const setCurrentAside = useLayoutStore.use.setAside();
 
   const showAside = currentAside && currentAside !== 'none';
 
   // アサイドリサイズ
-  const asideSize = useAppAsideStore.use.asideSize();
-  const setAsideSize = useAppAsideStore.use.setAsideSize();
+  const asideSize = useLayoutStore.use.asideSize();
+  const setAsideSize = useLayoutStore.use.setAsideSize();
   const { percent, isResizing, handleMouseDown, containerRef } = useResizeHandle({
     initialPercent: asideSize,
     onResizeEnd: setAsideSize,
@@ -80,16 +81,17 @@ export function StatsPageContent({ renderAsideContent }: StatsPageContentProps) 
               <h1 className="text-lg leading-8 font-bold">{t('calendar.views.stats')}</h1>
             </div>
 
-            {/* 右側: 通知 + 検索 + アサイドトグル */}
+            {/* 右側: 検索 + ページ切替 + アサイドトグル */}
             <div className="hidden items-center gap-2 md:flex">
               <HeaderUtilities />
+              {headerSlot}
               {!showAside && (
                 <HoverTooltip content={t('calendar.aside.open')} side="bottom">
                   <Button
                     variant="ghost"
                     icon
                     className="size-8"
-                    onClick={() => setCurrentAside('plan')}
+                    onClick={() => setCurrentAside('entries')}
                     aria-label={t('calendar.aside.open')}
                   >
                     <PanelRight className="size-4" />

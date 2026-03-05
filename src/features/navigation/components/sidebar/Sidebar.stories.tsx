@@ -220,7 +220,7 @@ export const HideNavUser: Story = {
  * インタラクティブデモ。パネルアイコンをクリックでサイドバーが開閉する。
  *
  * 実装のポイント:
- * - 本番では `useSidebarStore.use.toggle()` で状態管理
+ * - 本番では `useLayoutStore.use.toggleSidebar()` で状態管理
  * - `transition-all duration-200` で幅アニメーション
  * - 閉じた時はヘッダーに開くボタンが出現
  */

@@ -24,8 +24,8 @@ describe('PlanService', () => {
   describe('list', () => {
     it('should return plans for user', async () => {
       const mockPlans = [
-        { id: 'plan-1', title: 'Plan 1', user_id: userId, plan_tags: [] },
-        { id: 'plan-2', title: 'Plan 2', user_id: userId, plan_tags: [] },
+        { id: 'plan-1', title: 'Plan 1', user_id: userId, entry_tags: [] },
+        { id: 'plan-2', title: 'Plan 2', user_id: userId, entry_tags: [] },
       ];
 
       setupMockQuery(mockSupabase.from, mockPlans);
@@ -35,15 +35,7 @@ describe('PlanService', () => {
       expect(result).toHaveLength(2);
       expect(result[0]).toMatchObject({ id: 'plan-1', title: 'Plan 1' });
       expect(result[1]).toMatchObject({ id: 'plan-2', title: 'Plan 2' });
-      expect(mockSupabase.from).toHaveBeenCalledWith('plans');
-    });
-
-    it('should apply status filter', async () => {
-      const mockQuery = setupMockQuery(mockSupabase.from, []);
-
-      await service.list({ userId, status: 'closed' });
-
-      expect(mockQuery.eq).toHaveBeenCalledWith('status', 'closed');
+      expect(mockSupabase.from).toHaveBeenCalledWith('entries');
     });
 
     it('should apply date range filters', async () => {
@@ -95,9 +87,9 @@ describe('PlanService', () => {
     });
 
     it('should return empty array when tag filter yields no plan ids', async () => {
-      // First call for plan_tags returns empty
+      // First call for entry_tags returns empty
       mockSupabase.from.mockImplementation((table: string) => {
-        if (table === 'plan_tags') {
+        if (table === 'entry_tags') {
           return createChainableMock([]);
         }
         return createChainableMock([]);
@@ -115,13 +107,13 @@ describe('PlanService', () => {
       await expect(service.list({ userId })).rejects.toThrow('Failed to fetch plans');
     });
 
-    it('should format plan_tags to tagIds array', async () => {
+    it('should format entry_tags to tagIds array', async () => {
       const mockPlans = [
         {
           id: 'plan-1',
           title: 'Plan 1',
           user_id: userId,
-          plan_tags: [{ tag_id: 'tag-1' }, { tag_id: 'tag-2' }],
+          entry_tags: [{ tag_id: 'tag-1' }, { tag_id: 'tag-2' }],
         },
       ];
 
@@ -130,7 +122,7 @@ describe('PlanService', () => {
       const result = await service.list({ userId });
 
       expect(result[0]?.tagIds).toEqual(['tag-1', 'tag-2']);
-      expect(result[0]).not.toHaveProperty('plan_tags');
+      expect(result[0]).not.toHaveProperty('entry_tags');
     });
   });
 
@@ -140,7 +132,7 @@ describe('PlanService', () => {
         id: 'plan-1',
         title: 'Plan 1',
         user_id: userId,
-        plan_tags: [{ tag_id: 'tag-1' }],
+        entry_tags: [{ tag_id: 'tag-1' }],
       };
 
       setupMockSingleQuery(mockSupabase.from, mockPlan);
@@ -325,47 +317,6 @@ describe('PlanService', () => {
       expect(result.title).toBe('Updated');
     });
 
-    it('should set completed_at when status changes to closed', async () => {
-      const updatedPlan = { ...existingPlan, status: 'closed', completed_at: expect.any(String) };
-
-      const mockQuery = setupMockUpdateQuery(mockSupabase.from, existingPlan, updatedPlan);
-
-      await service.update({
-        userId,
-        planId: 'plan-1',
-        input: { status: 'closed' },
-      });
-
-      expect(mockQuery.update).toHaveBeenCalledWith(
-        expect.objectContaining({
-          completed_at: expect.any(String),
-        }),
-      );
-    });
-
-    it('should clear completed_at when status changes back to open', async () => {
-      const closedPlan = {
-        ...existingPlan,
-        status: 'closed',
-        completed_at: '2024-01-01T00:00:00Z',
-      };
-      const reopenedPlan = { ...closedPlan, status: 'open', completed_at: null };
-
-      const mockQuery = setupMockUpdateQuery(mockSupabase.from, closedPlan, reopenedPlan);
-
-      await service.update({
-        userId,
-        planId: 'plan-1',
-        input: { status: 'open' },
-      });
-
-      expect(mockQuery.update).toHaveBeenCalledWith(
-        expect.objectContaining({
-          completed_at: null,
-        }),
-      );
-    });
-
     it('should throw UPDATE_FAILED on database error', async () => {
       setupMockUpdateError(mockSupabase.from, 'DB_ERROR', 'Database error');
 
@@ -516,7 +467,7 @@ function setupMockDeleteQuery(mockFrom: ReturnType<typeof vi.fn>, planData: unkn
   mockFrom.mockImplementation((table: string) => {
     callCount++;
 
-    if (table === 'plan_activities') {
+    if (table === 'entry_activities') {
       return createChainableMock(null);
     }
 
@@ -539,7 +490,7 @@ function setupMockDeleteError(mockFrom: ReturnType<typeof vi.fn>, code: string, 
   mockFrom.mockImplementation((table: string) => {
     callCount++;
 
-    if (table === 'plan_activities') {
+    if (table === 'entry_activities') {
       return createChainableMock(null);
     }
 

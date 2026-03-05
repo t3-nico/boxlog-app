@@ -118,7 +118,11 @@ export function TagRenameDialog({
         errorMessage.includes('重複') ||
         errorMessage.includes('既に存在');
 
-      setError(isDuplicate ? t('tags.form.duplicateName') : t('tags.errors.updateFailed'));
+      if (isDuplicate) {
+        setError(t('tags.form.duplicateName'));
+      } else {
+        setError(t('tags.errors.updateFailed'));
+      }
     } finally {
       setIsLoading(false);
     }
@@ -147,7 +151,7 @@ export function TagRenameDialog({
 
   const dialog = (
     <div
-      className="bg-card fixed inset-0 z-[250] flex items-center justify-center"
+      className="z-overlay-modal fixed inset-0 flex items-center justify-center"
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"

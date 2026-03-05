@@ -14,7 +14,7 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { usePlans } from '@/hooks/usePlans';
+import { useEntries } from '@/hooks/useEntries';
 import { useTags } from '@/hooks/useTagsQuery';
 import { cn } from '@/lib/utils';
 
@@ -48,7 +48,7 @@ export function SearchBar({
   const { addToHistory } = useSearchHistory();
 
   // Get data from stores
-  const { data: plans = [] } = usePlans();
+  const { data: plans = [] } = useEntries();
   const { data: tags = [] } = useTags();
 
   // Convert plans to displayable format
@@ -75,7 +75,6 @@ export function SearchBar({
     return tags.map((tag) => ({
       id: tag.id,
       name: tag.name,
-      description: tag.description || '',
     }));
   }, [tags, types]);
 
@@ -140,15 +139,12 @@ export function SearchBar({
                 {searchableTags.slice(0, 10).map((tag) => (
                   <CommandItem
                     key={tag.id}
-                    value={`${tag.name} ${tag.description}`}
+                    value={tag.name}
                     onSelect={() => handleSelect(tag.id, 'tag')}
                   >
                     <Tag className="mr-2 h-4 w-4" />
                     <div className="flex flex-1 flex-col">
                       <span>{tag.name}</span>
-                      {tag.description && (
-                        <span className="text-muted-foreground text-xs">{tag.description}</span>
-                      )}
                     </div>
                   </CommandItem>
                 ))}

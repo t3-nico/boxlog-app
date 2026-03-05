@@ -1,7 +1,5 @@
 import { MS_PER_DAY, MS_PER_HOUR, MS_PER_MINUTE } from '@/constants/time';
 
-import type { PlanStatus } from '../types/plan';
-
 /**
  * プラン番号のフォーマット
  * @example formatplanNumber("TKT-20241030-001") => "#TKT-001"
@@ -13,17 +11,6 @@ export function formatplanNumber(planNumber: string): string {
     return `#${parts[0]}-${parts[2]}`;
   }
   return `#${planNumber}`;
-}
-
-/**
- * プランステータスの表示名
- */
-export function formatplanStatus(status: PlanStatus): string {
-  const statusMap: Record<PlanStatus, string> = {
-    open: 'Open',
-    closed: 'Closed',
-  };
-  return statusMap[status];
 }
 
 /**

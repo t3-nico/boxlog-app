@@ -17,12 +17,12 @@ export type ServiceSupabaseClient = SupabaseClient<Database>;
 /**
  * プランのデータベース行型
  */
-export type PlanRow = Database['public']['Tables']['plans']['Row'];
+export type PlanRow = Database['public']['Tables']['entries']['Row'];
 
 /**
  * プランタグのデータベース行型
  */
-export type PlanTagRow = Database['public']['Tables']['plan_tags']['Row'];
+export type PlanTagRow = Database['public']['Tables']['entry_tags']['Row'];
 
 /**
  * タグのデータベース行型
@@ -36,7 +36,7 @@ export type TagRow = Database['public']['Tables']['tags']['Row'];
  * これにより、タグマスタの変更が全UIで即時反映される。
  */
 export interface PlanWithTags extends PlanRow {
-  plan_tags?: Array<{
+  entry_tags?: Array<{
     tag_id: string;
   }>;
   tagIds?: string[];

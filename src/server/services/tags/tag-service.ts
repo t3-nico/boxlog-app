@@ -6,16 +6,9 @@
  * 主な機能:
  * - タグ一覧取得（ソート対応）
  * - タグ作成
- * - タグ更新（リネーム、色変更、親タグ移動）
+ * - タグ更新（リネーム、色変更）
  * - タグマージ（関連付け移行 + ソース削除）
  * - タグ削除
- * - 階層構造取得（親タグと子タグ）
- *
- * ## 階層制限: 親子1階層のみ
- * タグは2階層以上のネストを禁止。理由:
- * - DBクエリの複雑性（多階層はWITH RECURSIVEが必要）
- * - UI/UXの簡潔性（選択UIがシンプルに保てる）
- * - 実用性（1階層で十分なケースがほとんど）
  *
  * キャッシュ戦略:
  * - [一時的に無効化] unstable_cache()によるサーバーサイドキャッシュ
@@ -23,7 +16,7 @@
  * - TanStack Queryのクライアントキャッシュ（5分）で対応
  */
 
-import type { Tag, TagWithChildren } from '@/core/types/tag';
+import type { Tag } from '@/core/types/tag';
 import type { Database } from '@/lib/database.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
@@ -39,9 +32,7 @@ function transformDbTag(dbTag: DbTagRow): Tag {
     name: dbTag.name,
     user_id: dbTag.user_id,
     color: dbTag.color,
-    description: dbTag.description,
     is_active: dbTag.is_active,
-    parent_id: dbTag.parent_id,
     sort_order: dbTag.sort_order,
     created_at: dbTag.created_at,
     updated_at: dbTag.updated_at,
@@ -53,7 +44,6 @@ interface MergeTagsRpcResult {
   success: boolean;
   merged_associations: number;
   deleted_tags: number;
-  promoted_children: number;
   target_tag: DbTagRow;
 }
 
@@ -75,18 +65,12 @@ async function callMergeTagsRpc(
 export interface CreateTagInput {
   name: string;
   color?: string | undefined;
-  description?: string | undefined;
-  /** 親タグのID */
-  parentId?: string | null | undefined;
 }
 
 /** タグ更新入力 */
 export interface UpdateTagInput {
   name?: string | undefined;
   color?: string | undefined;
-  description?: string | null | undefined;
-  /** 親タグのID */
-  parentId?: string | null | undefined;
 }
 
 /** タグ一覧取得オプション */
@@ -116,7 +100,6 @@ export interface MergeTagsResult {
 export interface ReorderTagUpdate {
   id: string;
   sort_order: number;
-  parent_id: string | null;
 }
 
 /**
@@ -135,7 +118,8 @@ export class TagServiceError extends Error {
       | 'MERGE_FAILED'
       | 'SAME_TAG_MERGE'
       | 'TARGET_NOT_FOUND'
-      | 'HIERARCHY_ERROR',
+      | 'UNGROUP_CONFLICTS'
+      | 'GROUP_NAME_CONFLICT',
     message: string,
   ) {
     super(message);
@@ -183,84 +167,6 @@ export class TagService {
   }
 
   /**
-   * 階層構造でタグ一覧取得
-   *
-   * @param options - userId
-   * @returns 親タグ（子タグを含む）とルートタグの配列
-   */
-  async listHierarchy(options: { userId: string }): Promise<{
-    parentTags: TagWithChildren[];
-    rootTags: Tag[];
-  }> {
-    const { userId } = options;
-
-    const { data, error } = await this.supabase
-      .from('tags')
-      .select('*')
-      .eq('user_id', userId)
-      .order('sort_order', { ascending: true })
-      .order('name', { ascending: true });
-
-    if (error) {
-      throw new TagServiceError('FETCH_FAILED', `Failed to fetch tags: ${error.message}`);
-    }
-
-    const tags = data.map(transformDbTag);
-
-    // 親タグ（子を持つタグ）を特定
-    const parentIds = new Set(tags.filter((t) => t.parent_id).map((t) => t.parent_id!));
-
-    // 親タグと子タグを分類
-    const parentTags: TagWithChildren[] = [];
-    const rootTags: Tag[] = [];
-
-    tags.forEach((tag) => {
-      if (parentIds.has(tag.id)) {
-        // このタグは子を持つ親タグ
-        const children = tags.filter((t) => t.parent_id === tag.id);
-        parentTags.push({
-          ...tag,
-          children,
-        });
-      } else if (!tag.parent_id) {
-        // 親を持たず、子も持たないルートタグ
-        rootTags.push(tag);
-      }
-      // parent_id を持つタグは parentTags の children に含まれる
-    });
-
-    return { parentTags, rootTags };
-  }
-
-  /**
-   * 親タグのみ取得（ドロップダウン用）
-   *
-   * Note: サーバーサイドキャッシュは一時的に無効化（list()と同じ理由）
-   *
-   * @param options - userId
-   * @returns 親タグの配列（子を持つタグ、または子を持つ可能性のあるルートタグ）
-   */
-  async listParentTags(options: { userId: string }): Promise<Tag[]> {
-    const { userId } = options;
-
-    // 直接DBクエリを実行（サーバーサイドキャッシュは一時的に無効化）
-    const { data, error } = await this.supabase
-      .from('tags')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('is_active', true)
-      .is('parent_id', null)
-      .order('sort_order', { ascending: true, nullsFirst: false })
-      .order('name', { ascending: true });
-
-    if (error) {
-      throw new TagServiceError('FETCH_FAILED', `Failed to fetch parent tags: ${error.message}`);
-    }
-
-    return data.map(transformDbTag);
-  }
-
-  /**
    * タグID指定で取得
    *
    * @param options - userId と tagId
@@ -301,31 +207,11 @@ export class TagService {
       throw new TagServiceError('INVALID_INPUT', 'Tag name must be 50 characters or less');
     }
 
-    const parentId = input.parentId ?? null;
-
-    // 親タグの階層チェック（1階層のみ許可）
-    if (parentId) {
-      const parentTag = await this.getById({ userId, tagId: parentId });
-      if (parentTag.parent_id) {
-        throw new TagServiceError(
-          'HIERARCHY_ERROR',
-          'Maximum nesting depth is 1 level. Parent tag cannot be a child of another tag.',
-        );
-      }
-    }
-
-    // 新規タグを先頭に表示するため、既存の兄弟タグのsort_orderをインクリメント
-    let siblingsUpdateQuery = this.supabase
+    // 新規タグを先頭に表示するため、既存タグのsort_orderをインクリメント
+    const { data: siblings } = await this.supabase
       .from('tags')
       .select('id, sort_order')
       .eq('user_id', userId);
-
-    // parent_idがnullの場合は.is()、それ以外は.eq()を使用
-    siblingsUpdateQuery = parentId
-      ? siblingsUpdateQuery.eq('parent_id', parentId)
-      : siblingsUpdateQuery.is('parent_id', null);
-
-    const { data: siblings } = await siblingsUpdateQuery;
 
     // 既存の兄弟タグのsort_orderを+1インクリメント
     if (siblings && siblings.length > 0) {
@@ -342,10 +228,8 @@ export class TagService {
     const tagData: Database['public']['Tables']['tags']['Insert'] = {
       user_id: userId,
       name: input.name.trim(),
-      color: input.color || '#3B82F6',
-      description: input.description?.trim() || null,
+      color: input.color || 'blue',
       is_active: true,
-      parent_id: parentId,
       sort_order: 0,
     };
 
@@ -383,40 +267,10 @@ export class TagService {
       }
     }
 
-    const parentId = updates.parentId;
-
-    // 親タグの階層チェック
-    if (parentId !== undefined && parentId !== null) {
-      const parentTag = await this.getById({ userId, tagId: parentId });
-      if (parentTag.parent_id) {
-        throw new TagServiceError(
-          'HIERARCHY_ERROR',
-          'Maximum nesting depth is 1 level. Parent tag cannot be a child of another tag.',
-        );
-      }
-
-      // このタグが子を持っているかチェック
-      const { data: children } = await this.supabase
-        .from('tags')
-        .select('id')
-        .eq('parent_id', tagId)
-        .limit(1);
-
-      if (children && children.length > 0) {
-        throw new TagServiceError(
-          'HIERARCHY_ERROR',
-          'Cannot move a tag with children to be a child of another tag.',
-        );
-      }
-    }
-
     // 更新データ準備
     const updateData: Database['public']['Tables']['tags']['Update'] = {};
     if (updates.name !== undefined) updateData.name = updates.name.trim();
     if (updates.color !== undefined) updateData.color = updates.color;
-    if (updates.description !== undefined)
-      updateData.description = updates.description?.trim() || null;
-    if (parentId !== undefined) updateData.parent_id = parentId;
 
     const { data, error } = await this.supabase
       .from('tags')
@@ -433,6 +287,277 @@ export class TagService {
     }
 
     return transformDbTag(data);
+  }
+
+  /**
+   * グループ（コロン記法プレフィックス）の一括リネーム
+   *
+   * 例: oldPrefix="開発" → newPrefix="仕事" の場合
+   *   "開発:api" → "仕事:api"
+   *   "開発:frontend" → "仕事:frontend"
+   *
+   * @param options - userId, oldPrefix, newPrefix
+   * @returns 更新されたタグ配列
+   */
+  async renameGroup(options: {
+    userId: string;
+    oldPrefix: string;
+    newPrefix: string;
+  }): Promise<Tag[]> {
+    const { userId, oldPrefix, newPrefix } = options;
+
+    if (oldPrefix === newPrefix) {
+      return [];
+    }
+
+    // oldPrefix: で始まるタグを全取得
+    const { data: matchingTags, error: fetchError } = await this.supabase
+      .from('tags')
+      .select('*')
+      .eq('user_id', userId)
+      .like('name', `${oldPrefix}:%`);
+
+    if (fetchError) {
+      throw new TagServiceError(
+        'FETCH_FAILED',
+        `Failed to fetch group tags: ${fetchError.message}`,
+      );
+    }
+
+    if (!matchingTags || matchingTags.length === 0) {
+      return [];
+    }
+
+    // 各タグの name を newPrefix:suffix に更新
+    const updatePromises = matchingTags.map((tag) => {
+      const colonIndex = tag.name.indexOf(':');
+      const suffix = colonIndex !== -1 ? tag.name.slice(colonIndex + 1) : '';
+      const newName = `${newPrefix}:${suffix}`;
+      return this.supabase
+        .from('tags')
+        .update({ name: newName })
+        .eq('id', tag.id)
+        .eq('user_id', userId)
+        .select()
+        .single();
+    });
+
+    const results = await Promise.all(updatePromises);
+
+    // エラーチェック
+    const errors = results.filter((r) => r.error);
+    if (errors.length > 0) {
+      const firstError = errors[0];
+      if (firstError?.error?.code === '23505') {
+        throw new TagServiceError('DUPLICATE_NAME', 'A tag with the new name already exists');
+      }
+      throw new TagServiceError(
+        'UPDATE_FAILED',
+        `Failed to rename group: ${firstError?.error?.message ?? 'Unknown error'}`,
+      );
+    }
+
+    return results.filter((r) => r.data !== null).map((r) => transformDbTag(r.data));
+  }
+
+  /**
+   * グループ解除（コロン記法プレフィックスを除去）
+   *
+   * 例: prefix="AA" の場合
+   *   "AA:api" → "api"（非衝突: リネーム）
+   *   "AA:BB"  → "BB" が既存 → BB に統合（mergeConflicts=true 時）
+   *
+   * prefix 名の単体タグが存在しなければ自動作成して残す。
+   *
+   * @param options - userId, prefix, mergeConflicts
+   * @returns 更新されたタグ数とマージされたタグ数
+   */
+  async ungroupTags(options: {
+    userId: string;
+    prefix: string;
+    mergeConflicts?: boolean;
+  }): Promise<{ count: number; mergedCount: number }> {
+    const { userId, prefix, mergeConflicts = false } = options;
+
+    // prefix: で始まるタグを全取得
+    const { data: matchingTags, error: fetchError } = await this.supabase
+      .from('tags')
+      .select('*')
+      .eq('user_id', userId)
+      .like('name', `${prefix}:%`);
+
+    if (fetchError) {
+      throw new TagServiceError(
+        'FETCH_FAILED',
+        `Failed to fetch group tags: ${fetchError.message}`,
+      );
+    }
+
+    if (!matchingTags || matchingTags.length === 0) {
+      return { count: 0, mergedCount: 0 };
+    }
+
+    // 各タグの suffix を算出
+    const tagSuffixes = matchingTags.map((tag) => {
+      const colonIndex = tag.name.indexOf(':');
+      return {
+        tag,
+        suffix: colonIndex !== -1 ? tag.name.slice(colonIndex + 1) : tag.name,
+      };
+    });
+
+    // 全 suffix 名で既存タグを一括検索（衝突チェック）
+    const suffixNames = [...new Set(tagSuffixes.map((t) => t.suffix))];
+    const { data: existingTags } = await this.supabase
+      .from('tags')
+      .select('*')
+      .eq('user_id', userId)
+      .in('name', suffixNames);
+
+    const existingByName = new Map((existingTags ?? []).map((t) => [t.name, t]));
+
+    // 衝突と非衝突を分類
+    const conflicts = tagSuffixes.filter((t) => existingByName.has(t.suffix));
+    const nonConflicts = tagSuffixes.filter((t) => !existingByName.has(t.suffix));
+
+    // 衝突があるが mergeConflicts が false → エラー（衝突リストを返す）
+    if (conflicts.length > 0 && !mergeConflicts) {
+      throw new TagServiceError('UNGROUP_CONFLICTS', conflicts.map((c) => c.suffix).join(', '));
+    }
+
+    // 衝突タグをマージ（既存の merge RPC で entry_tags 移行 + ソース削除）
+    // NOTE: 複数マージのうち途中で失敗した場合、処理済み分はロールバックされない。
+    // merge() は RPC ベースのトランザクションのため個別は安全だが、全体は非トランザクション。
+    let mergedCount = 0;
+    for (const conflict of conflicts) {
+      const targetTag = existingByName.get(conflict.suffix)!;
+      await this.merge({
+        userId,
+        sourceTagId: conflict.tag.id,
+        targetTagId: targetTag.id,
+      });
+      mergedCount++;
+    }
+
+    // 非衝突タグをリネーム（suffix 部分のみに）
+    const updatePromises = nonConflicts.map(({ tag, suffix }) =>
+      this.supabase
+        .from('tags')
+        .update({ name: suffix })
+        .eq('id', tag.id)
+        .eq('user_id', userId)
+        .select()
+        .single(),
+    );
+
+    const results = await Promise.all(updatePromises);
+
+    const errors = results.filter((r) => r.error);
+    if (errors.length > 0) {
+      const firstError = errors[0];
+      throw new TagServiceError(
+        'UPDATE_FAILED',
+        `Failed to ungroup tags: ${firstError?.error?.message ?? 'Unknown error'}`,
+      );
+    }
+
+    // prefix 名の単体タグが存在するか確認（リネーム後の状態で再チェック）
+    const willHavePrefix = nonConflicts.some((t) => t.suffix === prefix);
+    if (!willHavePrefix) {
+      const { data: existingParent } = await this.supabase
+        .from('tags')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('name', prefix)
+        .maybeSingle();
+
+      if (!existingParent) {
+        const representativeColor = matchingTags[0]?.color ?? 'blue';
+        const { error: createError } = await this.supabase
+          .from('tags')
+          .insert({
+            user_id: userId,
+            name: prefix,
+            color: representativeColor,
+            is_active: true,
+            sort_order: 0,
+          })
+          .select()
+          .single();
+
+        if (createError && createError.code !== '23505') {
+          throw new TagServiceError(
+            'CREATE_FAILED',
+            `Failed to create parent tag: ${createError.message}`,
+          );
+        }
+      }
+    }
+
+    return { count: nonConflicts.length + mergedCount, mergedCount };
+  }
+
+  /**
+   * グループ削除（コロン記法プレフィックスのタグを一括削除）
+   *
+   * 例: prefix="開発" の場合
+   *   "開発:api", "開発:frontend" を全削除
+   *   関連する entry_tags も先に削除
+   *
+   * @param options - userId, prefix
+   * @returns 削除されたタグ数
+   */
+  async deleteGroup(options: {
+    userId: string;
+    prefix: string;
+  }): Promise<{ deletedCount: number }> {
+    const { userId, prefix } = options;
+
+    // prefix: で始まるタグを全取得
+    const { data: matchingTags, error: fetchError } = await this.supabase
+      .from('tags')
+      .select('id')
+      .eq('user_id', userId)
+      .like('name', `${prefix}:%`);
+
+    if (fetchError) {
+      throw new TagServiceError(
+        'FETCH_FAILED',
+        `Failed to fetch group tags: ${fetchError.message}`,
+      );
+    }
+
+    if (!matchingTags || matchingTags.length === 0) {
+      return { deletedCount: 0 };
+    }
+
+    const tagIds = matchingTags.map((t) => t.id);
+
+    // entry_tags の関連付けを先に削除（FK制約のため）
+    const { error: planTagsError } = await this.supabase
+      .from('entry_tags')
+      .delete()
+      .in('tag_id', tagIds);
+
+    if (planTagsError) {
+      throw new TagServiceError(
+        'DELETE_FAILED',
+        `Failed to delete entry_tags associations: ${planTagsError.message}`,
+      );
+    }
+
+    // タグを一括削除
+    const { error: deleteError } = await this.supabase
+      .from('tags')
+      .delete()
+      .in('id', tagIds)
+      .eq('user_id', userId);
+
+    if (deleteError) {
+      throw new TagServiceError('DELETE_FAILED', `Failed to delete group: ${deleteError.message}`);
+    }
+
+    return { deletedCount: tagIds.length };
   }
 
   /**
@@ -454,7 +579,7 @@ export class TagService {
     try {
       const { data, error } = await callMergeTagsRpc(this.supabase, {
         p_user_id: userId,
-        p_source_tag_ids: [sourceTagId],
+        p_source_tag_id: sourceTagId,
         p_target_tag_id: targetTagId,
       });
 
@@ -494,11 +619,8 @@ export class TagService {
     // 所有権チェック
     const tag = await this.getById({ userId, tagId });
 
-    // 子タグの parent_id を null に更新
-    await this.supabase.from('tags').update({ parent_id: null }).eq('parent_id', tagId);
-
-    // plan_tagsの関連付けを先に削除
-    await this.supabase.from('plan_tags').delete().eq('tag_id', tagId);
+    // entry_tagsの関連付けを先に削除
+    await this.supabase.from('entry_tags').delete().eq('tag_id', tagId);
 
     // タグ削除
     const { error } = await this.supabase.from('tags').delete().eq('id', tagId);
@@ -513,7 +635,7 @@ export class TagService {
   /**
    * タグ並び替え（バッチ更新）
    *
-   * sort_orderとparent_idをバッチ更新します。
+   * sort_orderをバッチ更新します。
    * 楽観的更新との併用を想定。
    *
    * @param options - userId と更新配列
@@ -553,7 +675,6 @@ export class TagService {
         .from('tags')
         .update({
           sort_order: update.sort_order,
-          parent_id: update.parent_id,
         })
         .eq('id', update.id)
         .eq('user_id', userId),
@@ -610,41 +731,27 @@ export class TagService {
     }
 
     // RPC結果をMapに変換
-    const statsMap = new Map<
-      string,
-      { plan_count: number; record_count: number; last_used: string | null }
-    >();
-    for (const row of (statsRows ?? []) as Array<{
-      tag_id: string | null;
-      plan_count: number;
-      record_count: number;
-      last_used: string | null;
-    }>) {
-      if (row.tag_id) {
-        statsMap.set(row.tag_id, {
-          plan_count: row.plan_count,
-          record_count: row.record_count,
-          last_used: row.last_used,
-        });
-      }
+    const statsMap = new Map<string, { entry_count: number; last_used: string | null }>();
+    for (const row of statsRows ?? []) {
+      statsMap.set(row.tag_id, {
+        entry_count: row.entry_count,
+        last_used: row.last_used,
+      });
     }
 
     const statsData: TagStatsRow[] = tags.map((tag) => {
       const stats = statsMap.get(tag.id);
-      const planCount = stats?.plan_count ?? 0;
-      const recordCount = stats?.record_count ?? 0;
+      const entryCount = stats?.entry_count ?? 0;
       return {
         id: tag.id,
         name: tag.name,
         color: tag.color,
-        plan_count: planCount,
-        record_count: recordCount,
-        total_count: planCount + recordCount,
+        entry_count: entryCount,
         last_used_at: stats?.last_used ?? null,
       };
     });
 
-    statsData.sort((a, b) => b.total_count - a.total_count);
+    statsData.sort((a, b) => b.entry_count - a.entry_count);
 
     return statsData;
   }
@@ -655,9 +762,7 @@ export interface TagStatsRow {
   id: string;
   name: string;
   color: string | null;
-  plan_count: number;
-  record_count: number;
-  total_count: number;
+  entry_count: number;
   last_used_at: string | null;
 }
 

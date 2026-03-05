@@ -1,18 +1,18 @@
 // Re-export shared components from core
 export {
-  ActivityPopover,
   DraggableInspector,
   FulfillmentButton,
+  InlineNoteSection,
   InspectorContent,
   InspectorDetailsLayout,
   InspectorHeader,
   InspectorShell,
+  InspectorTagRow,
+  InspectorTimeSection,
   NoteIconButton,
   ScheduleRow,
   TitleInput,
-  useDragHandle,
 } from '@/core/components/inspector';
-export type { ActivityDisplayItem, ActivityIconColor } from '@/core/components/inspector';
 
 // Feature-dependent components (re-exported from shared)
 export { PlanIconButton } from './PlanIconButton';

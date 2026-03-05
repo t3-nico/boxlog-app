@@ -37,7 +37,7 @@ type Story = StoryObj<typeof meta>;
 
 interface MockSuggestion {
   title: string;
-  tagIds: string[];
+  tagId: string | null;
 }
 
 interface MockTag {
@@ -47,21 +47,21 @@ interface MockTag {
 }
 
 const mockTags: MockTag[] = [
-  { id: 'tag-1', name: '仕事', color: '#3B82F6' },
-  { id: 'tag-2', name: '重要', color: '#EF4444' },
-  { id: 'tag-3', name: '個人', color: '#10B981' },
-  { id: 'tag-4', name: '定例', color: '#8B5CF6' },
-  { id: 'tag-5', name: '勉強', color: '#F59E0B' },
+  { id: 'tag-1', name: '仕事', color: 'blue' },
+  { id: 'tag-2', name: '重要', color: 'red' },
+  { id: 'tag-3', name: '個人', color: 'green' },
+  { id: 'tag-4', name: '定例', color: 'violet' },
+  { id: 'tag-5', name: '勉強', color: 'amber' },
 ];
 
 const mockSuggestions: MockSuggestion[] = [
-  { title: 'チームミーティング', tagIds: ['tag-1', 'tag-4'] },
-  { title: '日報作成', tagIds: ['tag-1'] },
-  { title: '読書', tagIds: ['tag-3'] },
-  { title: '英語学習', tagIds: ['tag-3', 'tag-5'] },
-  { title: 'コードレビュー', tagIds: ['tag-1', 'tag-2'] },
-  { title: 'ランチ', tagIds: [] },
-  { title: '1on1ミーティング', tagIds: ['tag-1', 'tag-4', 'tag-2', 'tag-5'] },
+  { title: 'チームミーティング', tagId: 'tag-1' },
+  { title: '日報作成', tagId: 'tag-1' },
+  { title: '読書', tagId: 'tag-3' },
+  { title: '英語学習', tagId: 'tag-5' },
+  { title: 'コードレビュー', tagId: 'tag-2' },
+  { title: 'ランチ', tagId: null },
+  { title: '1on1ミーティング', tagId: 'tag-4' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -164,28 +164,19 @@ function MockSuggestInput({
                     className="flex items-center justify-between gap-2"
                   >
                     <span className="truncate font-medium">{entry.title}</span>
-                    {entry.tagIds.length > 0 && (
-                      <span className="flex shrink-0 items-center gap-1">
-                        {entry.tagIds.slice(0, 3).map((tagId) => {
-                          const tag = tagMap.get(tagId);
-                          if (!tag) return null;
-                          return (
-                            <span
-                              key={tagId}
-                              className="text-muted-foreground rounded border px-1.5 py-0.5 text-[10px]"
-                              style={{ borderColor: tag.color }}
-                            >
-                              {tag.name}
-                            </span>
-                          );
-                        })}
-                        {entry.tagIds.length > 3 && (
-                          <span className="text-muted-foreground text-[10px]">
-                            +{entry.tagIds.length - 3}
+                    {entry.tagId &&
+                      (() => {
+                        const tag = tagMap.get(entry.tagId);
+                        if (!tag) return null;
+                        return (
+                          <span
+                            className="text-muted-foreground shrink-0 rounded border px-1.5 py-0.5 text-[10px]"
+                            style={{ borderColor: tag.color }}
+                          >
+                            {tag.name}
                           </span>
-                        )}
-                      </span>
-                    )}
+                        );
+                      })()}
                   </CommandItem>
                 ))}
               </CommandGroup>
@@ -199,7 +190,7 @@ function MockSuggestInput({
         <div className="text-muted-foreground flex items-center gap-2 text-xs">
           <span>選択済み:</span>
           <span className="text-foreground font-medium">{selectedEntry.title}</span>
-          {selectedEntry.tagIds.length > 0 && <span>+ タグ {selectedEntry.tagIds.length}件</span>}
+          {selectedEntry.tagId && <span>+ タグ 1件</span>}
         </div>
       )}
     </div>
@@ -255,9 +246,9 @@ export const WithoutTags: Story = {
     <InspectorFrame>
       <MockSuggestInput
         suggestions={[
-          { title: 'ランチ', tagIds: [] },
-          { title: '散歩', tagIds: [] },
-          { title: '休憩', tagIds: [] },
+          { title: 'ランチ', tagId: null },
+          { title: '散歩', tagId: null },
+          { title: '休憩', tagId: null },
         ]}
         initialOpen
       />
@@ -265,14 +256,11 @@ export const WithoutTags: Story = {
   ),
 };
 
-/** タグが4つ以上のエントリ。+N 表記で省略される。 */
-export const ManyTags: Story = {
+/** タグ付きエントリ。タグバッジが表示される。 */
+export const WithTag: Story = {
   render: () => (
     <InspectorFrame>
-      <MockSuggestInput
-        suggestions={[{ title: '1on1ミーティング', tagIds: ['tag-1', 'tag-4', 'tag-2', 'tag-5'] }]}
-        initialOpen
-      />
+      <MockSuggestInput suggestions={[{ title: '1on1ミーティング', tagId: 'tag-4' }]} initialOpen />
     </InspectorFrame>
   ),
 };
@@ -305,18 +293,16 @@ export const AllPatterns: Story = {
       <InspectorFrame label="タグなしエントリ">
         <MockSuggestInput
           suggestions={[
-            { title: 'ランチ', tagIds: [] },
-            { title: '散歩', tagIds: [] },
+            { title: 'ランチ', tagId: null },
+            { title: '散歩', tagId: null },
           ]}
           initialOpen
         />
       </InspectorFrame>
 
-      <InspectorFrame label="タグ4つ以上（+N 省略表示）">
+      <InspectorFrame label="タグ付きエントリ">
         <MockSuggestInput
-          suggestions={[
-            { title: '1on1ミーティング', tagIds: ['tag-1', 'tag-4', 'tag-2', 'tag-5'] },
-          ]}
+          suggestions={[{ title: '1on1ミーティング', tagId: 'tag-4' }]}
           initialOpen
         />
       </InspectorFrame>

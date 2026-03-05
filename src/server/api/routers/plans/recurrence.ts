@@ -45,7 +45,7 @@ export const recurrenceRouter = createTRPCRouter({
 
       // 1. 親プランを取得して所有権確認
       const { data: parentPlan, error: fetchError } = await supabase
-        .from('plans')
+        .from('entries')
         .select('*')
         .eq('id', planId)
         .eq('user_id', userId)
@@ -72,7 +72,7 @@ export const recurrenceRouter = createTRPCRouter({
       const endDateString = endDateForParent.toISOString().slice(0, 10);
 
       const { error: updateError } = await supabase
-        .from('plans')
+        .from('entries')
         .update({
           recurrence_end_date: endDateString,
           updated_at: new Date().toISOString(),
@@ -129,7 +129,6 @@ export const recurrenceRouter = createTRPCRouter({
               overrides?.description !== undefined
                 ? (overrides.description ?? undefined)
                 : (parentPlan.description ?? undefined),
-            status: parentPlan.status as 'open' | 'closed',
             start_time: newStartTime,
             end_time: newEndTime,
             recurrence_type: parentPlan.recurrence_type as
@@ -149,7 +148,7 @@ export const recurrenceRouter = createTRPCRouter({
       } catch (createError) {
         // 失敗した場合、親プランのrecurrence_end_dateを元に戻す
         await supabase
-          .from('plans')
+          .from('entries')
           .update({
             recurrence_end_date: parentPlan.recurrence_end_date,
             updated_at: parentPlan.updated_at,
@@ -165,18 +164,18 @@ export const recurrenceRouter = createTRPCRouter({
 
       // 4. 親プランのタグを新プランにコピー
       const { data: parentTags } = await supabase
-        .from('plan_tags')
+        .from('entry_tags')
         .select('tag_id')
-        .eq('plan_id', planId);
+        .eq('entry_id', planId);
 
       if (parentTags && parentTags.length > 0) {
         const tagInserts = parentTags.map((t) => ({
-          plan_id: newPlan.id,
+          entry_id: newPlan.id,
           tag_id: t.tag_id,
           user_id: userId,
         }));
 
-        await supabase.from('plan_tags').insert(tagInserts);
+        await supabase.from('entry_tags').insert(tagInserts);
       }
 
       return {

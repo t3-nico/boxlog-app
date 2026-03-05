@@ -21,6 +21,7 @@ export interface ListNotificationsOptions {
 export interface CreateNotificationOptions {
   userId: string;
   type: string;
+  /** entry_id (legacy name: planId for backward compatibility) */
   planId: string;
 }
 

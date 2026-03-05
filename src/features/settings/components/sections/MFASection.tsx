@@ -35,7 +35,7 @@ export function MFASection() {
   } = useMFA();
 
   return (
-    <SettingsCard title={t('settings.account.twoFactor')} isSaving={isLoading}>
+    <SettingsCard title={t('settings.account.twoFactor')}>
       <div className="space-y-4">
         {/* エラー・成功メッセージ */}
         {error && (

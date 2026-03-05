@@ -13,7 +13,7 @@ import { CACHE_5_MINUTES } from '@/constants/time';
 import { PlanCreateTrigger } from '@/features/plans';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import {
   CHRONOTYPE_PRESETS,
   getChronotypeColor,
@@ -29,7 +29,7 @@ import {
  */
 export function ScheduleStatusItem() {
   const t = useTranslations('calendar');
-  const openInspector = usePlanInspectorStore((state) => state.openInspector);
+  const openInspector = useEntryInspectorStore((state) => state.openInspector);
   const [currentTime, setCurrentTime] = useState(() => new Date());
 
   // DBから直接クロノタイプ設定を取得（Zustandストアに依存しない）
@@ -83,8 +83,8 @@ export function ScheduleStatusItem() {
     };
   }, [todayStr]);
 
-  // 今日の予定のみ取得（全plans取得を回避してDB負荷を大幅削減）
-  const { data: plans, isPending } = api.plans.list.useQuery(todayDateFilter, {
+  // 今日の予定のみ取得（全entries取得を回避してDB負荷を大幅削減）
+  const { data: plans, isPending } = api.entries.list.useQuery(todayDateFilter, {
     staleTime: 60 * 1000, // 1分
     refetchInterval: 60 * 1000, // 1分ごとに再取得
   });
@@ -95,8 +95,8 @@ export function ScheduleStatusItem() {
 
     return plans
       .filter((plan) => {
-        // start_time があり、完了・キャンセル以外
-        return plan.start_time && plan.status !== 'closed' && plan.status !== 'cancel';
+        // start_time があるもの（reviewed_at は完了済みだが表示は許可）
+        return plan.start_time;
       })
       .sort((a, b) => {
         const aTime = a.start_time ? new Date(a.start_time).getTime() : Infinity;

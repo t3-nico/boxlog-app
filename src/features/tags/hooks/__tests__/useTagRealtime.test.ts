@@ -6,7 +6,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const mockUtils = {
   tags: {
     list: { invalidate: vi.fn() },
-    listParentTags: { invalidate: vi.fn() },
     getById: { invalidate: vi.fn() },
   },
 };
@@ -91,7 +90,6 @@ describe('useTagRealtime', () => {
     });
 
     expect(mockUtils.tags.list.invalidate).toHaveBeenCalled();
-    expect(mockUtils.tags.listParentTags.invalidate).toHaveBeenCalled();
     expect(mockUtils.tags.getById.invalidate).toHaveBeenCalledWith({ id: 'tag-new' });
   });
 

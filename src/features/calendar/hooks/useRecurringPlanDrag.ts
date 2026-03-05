@@ -5,21 +5,18 @@
  *
  * 繰り返しインスタンスのドラッグ移動時にスコープ選択ダイアログを表示し、
  * 選択に応じて適切な更新処理を行う（Googleカレンダー準拠）
+ *
+ * entries 統合: Plan/Record 区別なし、全エントリに同じ更新ロジックを適用
  */
 
 import { useCallback, useRef } from 'react';
 
-import { usePlanMutations } from '@/hooks/usePlanMutations';
-import { useRecordMutations } from '@/hooks/useRecordMutations';
+import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
-import { formatInTimezone } from '@/lib/date/timezone';
 import { logger } from '@/lib/logger';
-import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
-import type { RecurringEditScope } from '@/stores/useRecurringEditConfirmStore';
-import { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmStore';
+import { openRecurringEditConfirm, type RecurringEditScope } from '@/stores/useModalStore';
 
 import type { CalendarPlan } from '../types/calendar.types';
-import { isRecordEvent } from '../utils/planDataAdapter';
 
 interface PendingDragUpdate {
   plan: CalendarPlan;
@@ -32,20 +29,14 @@ interface UseRecurringPlanDragOptions {
 }
 
 export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
-  const { updatePlan } = usePlanMutations();
-  const { updateRecord } = useRecordMutations();
+  const { updateEntry } = useEntryMutations();
   const { applyEdit } = useRecurringScopeMutations();
-  const timezone = useCalendarSettingsStore((s) => s.timezone);
 
   // 保留中のドラッグ更新（refで保持してダイアログのコールバックで参照）
   const pendingDragUpdateRef = useRef<PendingDragUpdate | null>(null);
 
-  // グローバルストアのopenDialog
-  const openDialog = useRecurringEditConfirmStore((state) => state.openDialog);
-
   /**
    * スコープ選択後の処理
-   * handleUpdatePlanより先に定義（依存関係のため）
    */
   const handleScopeConfirm = useCallback(
     async (scope: RecurringEditScope) => {
@@ -78,31 +69,21 @@ export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
   );
 
   /**
-   * プラン更新ハンドラー（ドラッグ&ドロップ用）
+   * エントリ更新ハンドラー（ドラッグ&ドロップ用）
    * 繰り返しインスタンスの場合はダイアログを表示
-   *
-   * BaseViewProps の onUpdatePlan と互換性のある型シグネチャ:
-   * - (planId: string, updates: { startTime: Date; endTime: Date }) - ドラッグ用
-   * - (plan: CalendarPlan) - カレンダーオブジェクト形式
-   *
-   * Note: 繰り返しプラン編集時は { skipToast: true } を返し、
-   * 呼び出し元でtoast表示をスキップする
    */
   const handleUpdatePlan = useCallback(
     async (
       planIdOrPlan: string | CalendarPlan,
       updates?: { startTime: Date; endTime: Date },
     ): Promise<{ skipToast: true } | void> => {
-      // プランIDとupdatesを取得
       let plan: CalendarPlan | undefined;
       let resolvedUpdates: { startTime: Date; endTime: Date } | undefined;
 
       if (typeof planIdOrPlan === 'string' && updates) {
-        // (planId, updates) 形式
         plan = plans.find((p) => p.id === planIdOrPlan);
         resolvedUpdates = updates;
       } else if (typeof planIdOrPlan === 'object') {
-        // (CalendarPlan) 形式
         plan = planIdOrPlan;
         if (plan.startDate && plan.endDate) {
           resolvedUpdates = {
@@ -113,44 +94,12 @@ export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
       }
 
       if (!plan) {
-        logger.warn('Plan not found for update:', planIdOrPlan);
+        logger.warn('Entry not found for update:', planIdOrPlan);
         return;
       }
 
       if (!resolvedUpdates) {
-        logger.warn('No updates provided for plan:', plan.id);
-        return;
-      }
-
-      // Recordかどうか判定
-      const isRecord = isRecordEvent(plan);
-
-      if (isRecord) {
-        // Recordの場合: Record更新mutationを使用
-        const recordId = plan.recordId;
-        if (!recordId) {
-          logger.warn('Record ID not found for update:', plan.id);
-          return;
-        }
-
-        // worked_at は startTime から取得（YYYY-MM-DD）- カレンダーTZで日付を取得
-        const workedAt = formatInTimezone(resolvedUpdates.startTime, timezone, 'yyyy-MM-dd');
-        // start_time, end_time は HH:MM:SS 形式 - カレンダーTZで時刻を取得
-        const startTime = formatInTimezone(resolvedUpdates.startTime, timezone, 'HH:mm:ss');
-        const endTime = formatInTimezone(resolvedUpdates.endTime, timezone, 'HH:mm:ss');
-        // duration_minutes を計算
-        const durationMs = resolvedUpdates.endTime.getTime() - resolvedUpdates.startTime.getTime();
-        const durationMinutes = Math.round(durationMs / (1000 * 60));
-
-        updateRecord.mutate({
-          id: recordId,
-          data: {
-            worked_at: workedAt,
-            start_time: startTime,
-            end_time: endTime,
-            duration_minutes: durationMinutes,
-          },
-        });
+        logger.warn('No updates provided for entry:', plan.id);
         return;
       }
 
@@ -158,15 +107,12 @@ export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
       const isRecurringInstance = plan.isRecurring && plan.originalPlanId && plan.instanceDate;
 
       if (isRecurringInstance) {
-        // 繰り返しインスタンスの場合: ダイアログを表示
         pendingDragUpdateRef.current = { plan, updates: resolvedUpdates };
-        openDialog(plan.title, 'edit', handleScopeConfirm);
-
-        // ダイアログを表示するためtoastはスキップ
+        openRecurringEditConfirm(plan.title, 'edit', handleScopeConfirm);
         return { skipToast: true };
       } else {
-        // 通常プランの場合: 直接更新
-        updatePlan.mutate({
+        // 通常エントリ: 直接更新
+        updateEntry.mutate({
           id: plan.id,
           data: {
             start_time: resolvedUpdates.startTime.toISOString(),
@@ -175,11 +121,10 @@ export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
         });
       }
     },
-    [plans, updatePlan, updateRecord, openDialog, handleScopeConfirm, timezone],
+    [plans, updateEntry, handleScopeConfirm],
   );
 
   return {
-    // 更新ハンドラー
     handleUpdatePlan,
   };
 }

@@ -9,14 +9,15 @@ import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useTranslations } from 'next-intl';
 
-import { useSidebarStore } from '@/stores/useSidebarStore';
+import { useLayoutStore } from '@/stores/useLayoutStore';
 
-import { CreateNewDropdown } from './CreateNewDropdown';
 import { NavUser } from './nav-user';
 
 interface SidebarShellProps {
   /** Sidebarのコンテンツ */
   children: ReactNode;
+  /** ヘッダー右側に配置するアクション（通知アイコン等） */
+  headerActions?: ReactNode;
   /** 追加のクラス名 */
   className?: string;
   /** NavUserを非表示にする（AppSidebarで独自に表示する場合） */
@@ -45,9 +46,14 @@ interface SidebarShellProps {
  * </SidebarShell>
  * ```
  */
-export function SidebarShell({ children, className, hideNavUser = false }: SidebarShellProps) {
+export function SidebarShell({
+  children,
+  headerActions,
+  className,
+  hideNavUser = false,
+}: SidebarShellProps) {
   const user = useAuthStore((state) => state.user);
-  const toggle = useSidebarStore.use.toggle();
+  const toggle = useLayoutStore.use.toggleSidebar();
   const t = useTranslations();
 
   const userData = {
@@ -67,7 +73,7 @@ export function SidebarShell({ children, className, hideNavUser = false }: Sideb
       {!hideNavUser && (
         <div className="flex h-12 shrink-0 items-center justify-between px-2">
           <NavUser user={userData} />
-          <div className="flex items-center gap-1">
+          <div className="flex items-center">
             <HoverTooltip content={t('sidebar.closeSidebar')} side="bottom">
               <Button
                 variant="ghost"
@@ -79,11 +85,7 @@ export function SidebarShell({ children, className, hideNavUser = false }: Sideb
                 <PanelLeftClose className="size-4" />
               </Button>
             </HoverTooltip>
-            <CreateNewDropdown
-              size="sm"
-              tooltipContent={t('sidebar.quickCreate')}
-              tooltipSide="bottom"
-            />
+            {headerActions}
           </div>
         </div>
       )}

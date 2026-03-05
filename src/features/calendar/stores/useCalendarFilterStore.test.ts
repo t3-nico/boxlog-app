@@ -7,7 +7,6 @@ describe('useCalendarFilterStore', () => {
     useCalendarFilterStore.setState({
       visibleTypes: { plan: true, record: true },
       visibleTagIds: new Set<string>(),
-      showUntagged: true,
       initialized: false,
     });
   });
@@ -17,10 +16,6 @@ describe('useCalendarFilterStore', () => {
       const state = useCalendarFilterStore.getState();
       expect(state.visibleTypes.plan).toBe(true);
       expect(state.visibleTypes.record).toBe(true);
-    });
-
-    it('タグなしが表示', () => {
-      expect(useCalendarFilterStore.getState().showUntagged).toBe(true);
     });
 
     it('未初期化状態', () => {
@@ -55,20 +50,12 @@ describe('useCalendarFilterStore', () => {
     });
   });
 
-  describe('toggleUntagged', () => {
-    it('タグなしを非表示にできる', () => {
-      useCalendarFilterStore.getState().toggleUntagged();
-      expect(useCalendarFilterStore.getState().showUntagged).toBe(false);
-    });
-  });
-
   describe('showAllTags / hideAllTags', () => {
     it('全タグを表示できる', () => {
       const tagIds = ['tag-1', 'tag-2', 'tag-3'];
       useCalendarFilterStore.getState().showAllTags(tagIds);
       const state = useCalendarFilterStore.getState();
       expect(state.visibleTagIds.size).toBe(3);
-      expect(state.showUntagged).toBe(true);
     });
 
     it('全タグを非表示にできる', () => {
@@ -76,7 +63,6 @@ describe('useCalendarFilterStore', () => {
       useCalendarFilterStore.getState().hideAllTags();
       const state = useCalendarFilterStore.getState();
       expect(state.visibleTagIds.size).toBe(0);
-      expect(state.showUntagged).toBe(false);
     });
   });
 
@@ -159,15 +145,6 @@ describe('useCalendarFilterStore', () => {
       const state = useCalendarFilterStore.getState();
       expect(state.visibleTagIds.size).toBe(1);
       expect(state.visibleTagIds.has('tag-2')).toBe(true);
-      expect(state.showUntagged).toBe(false);
-    });
-
-    it('showOnlyUntagged: タグなしのみ表示', () => {
-      useCalendarFilterStore.getState().showAllTags(['tag-1']);
-      useCalendarFilterStore.getState().showOnlyUntagged();
-      const state = useCalendarFilterStore.getState();
-      expect(state.visibleTagIds.size).toBe(0);
-      expect(state.showUntagged).toBe(true);
     });
 
     it('showOnlyGroupTags: 指定グループのタグのみ表示', () => {
@@ -175,7 +152,6 @@ describe('useCalendarFilterStore', () => {
       useCalendarFilterStore.getState().showOnlyGroupTags(['tag-1', 'tag-3']);
       const state = useCalendarFilterStore.getState();
       expect(state.visibleTagIds.size).toBe(2);
-      expect(state.showUntagged).toBe(false);
     });
   });
 
@@ -207,25 +183,24 @@ describe('useCalendarFilterStore', () => {
       expect(useCalendarFilterStore.getState().getGroupVisibility([])).toBe('none');
     });
 
-    it('matchesTagFilter: タグなしアイテム', () => {
-      expect(useCalendarFilterStore.getState().matchesTagFilter([])).toBe(true);
-      useCalendarFilterStore.getState().toggleUntagged();
-      expect(useCalendarFilterStore.getState().matchesTagFilter([])).toBe(false);
+    it('matchesTagFilter: タグなしアイテムは常に表示', () => {
+      // タグなし（null）は常に表示される
+      expect(useCalendarFilterStore.getState().matchesTagFilter(null)).toBe(true);
     });
 
     it('matchesTagFilter: タグ付きアイテム', () => {
       useCalendarFilterStore.getState().showAllTags(['tag-1']);
-      expect(useCalendarFilterStore.getState().matchesTagFilter(['tag-1'])).toBe(true);
-      expect(useCalendarFilterStore.getState().matchesTagFilter(['tag-99'])).toBe(false);
+      expect(useCalendarFilterStore.getState().matchesTagFilter('tag-1')).toBe(true);
+      expect(useCalendarFilterStore.getState().matchesTagFilter('tag-99')).toBe(false);
     });
 
     it('isPlanVisible: 種類＋タグの複合チェック', () => {
       useCalendarFilterStore.getState().showAllTags(['tag-1']);
-      expect(useCalendarFilterStore.getState().isPlanVisible(['tag-1'])).toBe(true);
+      expect(useCalendarFilterStore.getState().isPlanVisible('tag-1')).toBe(true);
 
       // planを非表示
       useCalendarFilterStore.getState().toggleType('plan');
-      expect(useCalendarFilterStore.getState().isPlanVisible(['tag-1'])).toBe(false);
+      expect(useCalendarFilterStore.getState().isPlanVisible('tag-1')).toBe(false);
     });
   });
 });

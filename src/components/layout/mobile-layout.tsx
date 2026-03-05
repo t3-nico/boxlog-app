@@ -7,7 +7,7 @@ import { PageHeader } from '@/components/layout/PageHeader';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { isCalendarViewPath } from '@/features/calendar';
 import { AppSidebar } from '@/features/navigation';
-import { useSidebarStore } from '@/stores/useSidebarStore';
+import { useLayoutStore } from '@/stores/useLayoutStore';
 
 import { MainContentWrapper } from './main-content-wrapper';
 import { SidebarContent } from './SidebarContent';
@@ -32,9 +32,9 @@ interface MobileLayoutProps {
  */
 export function MobileLayout({ children, locale }: MobileLayoutProps) {
   // selector化: 必要な値だけ監視（他の状態変更時の再レンダリングを防止）
-  const isOpen = useSidebarStore((state) => state.isOpen);
-  const toggle = useSidebarStore((state) => state.toggle);
-  const close = useSidebarStore((state) => state.close);
+  const isOpen = useLayoutStore((state) => state.sidebarOpen);
+  const toggle = useLayoutStore((state) => state.toggleSidebar);
+  const close = useLayoutStore((state) => state.closeSidebar);
 
   // モバイルでの初期表示時にサイドバーを閉じる
   // デスクトップとストアを共有しているため、初期状態がtrueになる問題を解決
@@ -52,10 +52,10 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
 
   const pathname = usePathname();
 
-  // ページ判定: カレンダービューかどうか（ヘッダー表示制御用）
-  const isCalendarPage = useMemo(() => {
+  // ページ判定: 独自ヘッダーを持つページかどうか（PageHeader表示制御用）
+  const hasOwnHeader = useMemo(() => {
     const pathWithoutLocale = pathname?.replace(new RegExp(`^/${locale}`), '') ?? '';
-    return isCalendarViewPath(pathWithoutLocale);
+    return isCalendarViewPath(pathWithoutLocale) || pathWithoutLocale === '/stats';
   }, [pathname, locale]);
 
   return (
@@ -76,8 +76,8 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
 
       {/* PageHeader + Main Content */}
       <div className="flex h-full flex-1 flex-col">
-        {/* PageHeader（Calendarは独自ヘッダーを持つため非表示） */}
-        {!isCalendarPage && <PageHeader />}
+        {/* PageHeader（Calendar/Statsは独自ヘッダーを持つため非表示） */}
+        {!hasOwnHeader && <PageHeader />}
 
         {/* Main Content */}
         <MainContentWrapper>{children}</MainContentWrapper>

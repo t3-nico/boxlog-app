@@ -25,7 +25,6 @@
       "rename": "Rename",
       "archive": "Archive",
       "delete": "Delete",
-      "moveToGroup": "Move to Group",
       "noGroup": "No Group",
       "permanentDelete": "Permanently Delete",
       "tagCreated": "Created tag \"{name}\"",
@@ -78,6 +77,7 @@
       "noHashPrefix": "Tag name cannot start with #",
       "descriptionMaxLength": "Description must be 200 characters or less",
       "duplicateName": "A tag with this name already exists",
+      "groupNameConflict": "This name conflicts with an existing group or tag",
       "namePlaceholder": "Enter tag name",
       "rootLevel": "Root Level (No Parent)",
       "tagName": "Tag Name",
@@ -91,10 +91,11 @@
       "preview": "Preview",
       "tagNamePlaceholder": "(Tag Name)",
       "parentTagPrefix": "Parent Tag:",
-      "examplePlaceholder": "A label to categorize your time entries",
+      "examplePlaceholder": "e.g. Work, Dev:API, Exercise",
       "group": "Group",
       "groupSupportText": "Group similar tags together",
-      "selectGroupPlaceholder": "Select group (optional)"
+      "selectGroupPlaceholder": "Select group (optional)",
+      "noGroup": "No Group"
     },
     "modal": {
       "createTitle": "Create New Tag",
@@ -282,7 +283,7 @@
     "merge": {
       "title": "Merge Tags",
       "description": "Merge \"{source}\" into another tag",
-      "autoMergeDescription": "All plan associations will be moved to the target tag, and the source tag will be automatically deleted.",
+      "autoMergeDescription": "All plans from the source tag will be transferred to the target tag, and the source tag will be automatically deleted.",
       "targetTag": "Target tag",
       "selectTarget": "Select target...",
       "noTargetSelected": "Please select a target tag",

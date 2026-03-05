@@ -9,8 +9,7 @@ import { useDialogKeyboard } from '@/hooks/useDialogKeyboard';
 import { useHasMounted } from '@/hooks/useHasMounted';
 import { useTranslations } from 'next-intl';
 
-import type { RecurringEditScope } from '@/stores/useRecurringEditConfirmStore';
-import { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmStore';
+import { closeModal, useModalStore, type RecurringEditScope } from '@/stores/useModalStore';
 
 // Re-export type for backward compatibility
 export type { RecurringEditScope };
@@ -29,10 +28,12 @@ export function RecurringEditConfirmDialog() {
   const mounted = useHasMounted();
   const [scope, setScope] = useState<RecurringEditScope>('this');
 
-  const isOpen = useRecurringEditConfirmStore((state) => state.isOpen);
-  const mode = useRecurringEditConfirmStore((state) => state.mode);
-  const onConfirm = useRecurringEditConfirmStore((state) => state.onConfirm);
-  const closeDialog = useRecurringEditConfirmStore((state) => state.closeDialog);
+  const modal = useModalStore((state) => state.modal);
+  const isRecurringEdit = modal?.type === 'recurringEdit';
+  const isOpen = isRecurringEdit;
+  const mode = isRecurringEdit ? modal.mode : 'edit';
+  const onConfirm = isRecurringEdit ? modal.onConfirm : null;
+  const closeDialog = closeModal;
 
   // ダイアログが開くたびにscopeをリセット
   useEffect(() => {
@@ -73,11 +74,13 @@ export function RecurringEditConfirmDialog() {
   if (!mounted || !isOpen) return null;
 
   const isEdit = mode === 'edit';
-  const title = t(isEdit ? 'confirm.recurring.editTitle' : 'confirm.recurring.deleteTitle');
+  const title = t(
+    isEdit ? 'common.confirm.recurring.editTitle' : 'common.confirm.recurring.deleteTitle',
+  );
 
   const dialog = (
     <div
-      className="animate-in fade-in bg-card fixed inset-0 z-[250] flex items-center justify-center duration-150"
+      className="animate-in fade-in bg-card z-overlay-confirm fixed inset-0 flex items-center justify-center duration-150"
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"

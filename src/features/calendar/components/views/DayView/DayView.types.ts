@@ -13,7 +13,6 @@ export interface SimpleDayViewProps {
   plans?: CalendarPlan[];
   className?: string;
   onPlanClick?: (plan: CalendarPlan) => void;
-  onEmptyClick?: (date: Date, time: string) => void;
   onPlanUpdate?: (plan: CalendarPlan) => void;
   onPlanCreate?: (date: Date, time: string) => void;
   onPlanDelete?: (planId: string) => void;
@@ -30,7 +29,6 @@ export interface DayContentProps {
   onEmptyAreaContextMenu?:
     | ((date: Date, hour: number, minute: number, e: React.MouseEvent) => void)
     | undefined;
-  onEmptyClick?: ((date: Date, time: string) => void) | undefined;
   onPlanUpdate?: ((plan: CalendarPlan) => void) | undefined;
   onEventUpdate?:
     | ((

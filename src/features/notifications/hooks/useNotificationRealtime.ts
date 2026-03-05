@@ -22,7 +22,7 @@ import { useNotificationPreferences } from './useNotificationPreferences';
 interface NotificationPayload {
   id: string;
   type: NotificationType;
-  plan_id: string | null;
+  entry_id: string | null;
   created_at: string;
   user_id: string;
 }
@@ -60,14 +60,14 @@ export function useNotificationRealtime(userId: string | undefined, enabled = tr
             return;
           }
 
-          // plan titleをtRPCキャッシュから取得
+          // entry titleをtRPCキャッシュから取得
           const cachedList = utils.notifications.list.getData();
           const cachedNotification = cachedList?.find(
-            (n) => 'plan_id' in n && n.plan_id === notification.plan_id,
+            (n) => 'entry_id' in n && n.entry_id === notification.entry_id,
           );
           const planTitle =
-            cachedNotification && 'plans' in cachedNotification
-              ? (cachedNotification.plans as { title: string } | null)?.title
+            cachedNotification && 'entries' in cachedNotification
+              ? (cachedNotification.entries as { title: string } | null)?.title
               : undefined;
 
           const toastTitle = planTitle ?? notification.type;

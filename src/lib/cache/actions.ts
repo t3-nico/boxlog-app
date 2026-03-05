@@ -2,7 +2,7 @@
 
 import { revalidateTag } from 'next/cache';
 
-import { getUserParentTagsCacheTag, getUserTagsCacheTag } from './tag-cache';
+import { getUserTagsCacheTag } from './tag-cache';
 
 /**
  * Next.js revalidateTagを安全に呼び出す
@@ -36,16 +36,4 @@ function safeRevalidateTag(tag: string): void {
  */
 export async function invalidateUserTagsCache(userId: string): Promise<void> {
   safeRevalidateTag(getUserTagsCacheTag(userId));
-  safeRevalidateTag(getUserParentTagsCacheTag(userId));
-}
-
-/**
- * ユーザーの親タグキャッシュのみを無効化
- *
- * 親タグ構造に影響する操作（親変更など）後に呼び出す。
- *
- * @param userId - ユーザーID
- */
-export async function invalidateUserParentTagsCache(userId: string): Promise<void> {
-  safeRevalidateTag(getUserParentTagsCacheTag(userId));
 }

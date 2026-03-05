@@ -1,10 +1,14 @@
 // タグマージ用ミューテーションフック（楽観的更新付き）
 
+import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
+
 import { trpc } from '@/lib/trpc/client';
 import { useTagCacheStore } from '@/stores/useTagCacheStore';
 
 export function useMergeTag() {
   const utils = trpc.useUtils();
+  const t = useTranslations('tags');
   const incrementMutation = useTagCacheStore((state) => state.incrementMutation);
   const decrementMutation = useTagCacheStore((state) => state.decrementMutation);
 
@@ -13,63 +17,59 @@ export function useMergeTag() {
       incrementMutation();
 
       await utils.tags.list.cancel();
-      await utils.tags.listParentTags.cancel();
       await utils.tags.getById.cancel({ id: sourceTagId });
       await utils.tags.getById.cancel({ id: targetTagId });
-      await utils.plans.getTagStats.cancel();
-      await utils.plans.list.cancel();
+      await utils.entries.getTagStats.cancel();
+      await utils.entries.list.cancel();
 
       const previousData = utils.tags.list.getData();
-      const previousParentTags = utils.tags.listParentTags.getData();
       const previousSourceDetail = utils.tags.getById.getData({ id: sourceTagId });
       const previousTargetDetail = utils.tags.getById.getData({ id: targetTagId });
+      const previousTagStats = utils.entries.getTagStats.getData();
 
       utils.tags.list.setData(undefined, (old) => {
         if (!old) return old;
         return {
           ...old,
-          data: old.data
-            .filter((tag) => tag.id !== sourceTagId)
-            .map((tag) => (tag.parent_id === sourceTagId ? { ...tag, parent_id: null } : tag)),
+          data: old.data.filter((tag) => tag.id !== sourceTagId),
           count: old.count - 1,
         };
-      });
-
-      utils.tags.listParentTags.setData(undefined, (old) => {
-        if (!old) return old;
-        return { ...old, data: old.data.filter((tag) => tag.id !== sourceTagId) };
       });
 
       utils.tags.getById.setData({ id: sourceTagId }, undefined);
 
       return {
         previousData,
-        previousParentTags,
         previousSourceDetail,
         previousTargetDetail,
+        previousTagStats,
         sourceTagId,
         targetTagId,
       };
     },
+    onSuccess: (result) => {
+      toast.success(t('merge.success', { count: result.mergedAssociations }));
+    },
     onError: (_err, _variables, context) => {
       if (context?.previousData) utils.tags.list.setData(undefined, context.previousData);
-      if (context?.previousParentTags)
-        utils.tags.listParentTags.setData(undefined, context.previousParentTags);
       if (context?.previousSourceDetail && context?.sourceTagId) {
         utils.tags.getById.setData({ id: context.sourceTagId }, context.previousSourceDetail);
       }
       if (context?.previousTargetDetail && context?.targetTagId) {
         utils.tags.getById.setData({ id: context.targetTagId }, context.previousTargetDetail);
       }
+      if (context?.previousTagStats) {
+        utils.entries.getTagStats.setData(undefined, context.previousTagStats);
+      }
+      toast.error(t('merge.failed'));
     },
     onSettled: (_data, _err, input) => {
       decrementMutation();
       void utils.tags.list.invalidate();
-      void utils.tags.listParentTags.invalidate();
       void utils.tags.getById.invalidate({ id: input.sourceTagId });
       void utils.tags.getById.invalidate({ id: input.targetTagId });
-      void utils.plans.list.invalidate();
-      void utils.plans.getTagStats.refetch();
+      void utils.entries.list.invalidate();
+      void utils.entries.getTagStats.refetch();
     },
   });
 }

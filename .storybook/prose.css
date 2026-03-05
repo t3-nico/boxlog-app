@@ -12,7 +12,7 @@
  * .sb-docs-prose でスコープし @tailwindcss/typography の .prose と衝突回避。
  * ダークモードは CSS変数 (:root / .dark) の自動切替で対応。
  *
- * @see src/styles/globals.css
+ * @see src/styles/tokens/colors.css
  * @see src/stories/tokens/Typography.stories.tsx
  */
 

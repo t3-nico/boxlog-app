@@ -4,10 +4,10 @@ import { useCallback, useRef } from 'react';
 
 import { addDays, startOfWeek } from 'date-fns';
 
-import { usePlanMutations } from '@/hooks/usePlanMutations';
+import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { convertFromTimezone } from '@/lib/date/timezone';
-import type { PlanWithTags } from '@/server/services/plans/types';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
+import type { DragEntryData } from '../stores/useCalendarDragStore';
 
 import {
   calculatePreviewHeight,
@@ -27,7 +27,7 @@ const DRAG_THRESHOLD = 5;
 
 /** ドラッグ中の内部状態 */
 interface DragData {
-  plan: PlanWithTags;
+  plan: DragEntryData;
   startX: number;
   startY: number;
   hasMoved: boolean;
@@ -63,7 +63,7 @@ function getDisplayDates(viewType: CalendarViewType, currentDate: Date): Date[] 
  */
 export function usePanelDrag() {
   const navigation = useCalendarNavigation();
-  const { updatePlan } = usePlanMutations();
+  const { updateEntry } = useEntryMutations();
   const timezone = useCalendarSettingsStore((s) => s.timezone);
 
   const startPanelDrag = useCalendarDragStore((s) => s.startPanelDrag);
@@ -192,7 +192,7 @@ export function usePanelDrag() {
         const endTime = new Date(startTime.getTime() + DEFAULT_DURATION_MS);
 
         // mutation: Plan に時間を設定
-        updatePlan.mutate({
+        updateEntry.mutate({
           id: data.plan.id,
           data: {
             start_time: startTime.toISOString(),
@@ -204,7 +204,7 @@ export function usePanelDrag() {
 
       cleanup();
     },
-    [cleanup, navigation, updatePlan, timezone],
+    [cleanup, navigation, updateEntry, timezone],
   );
 
   const handleKeyDown = useCallback(
@@ -219,7 +219,7 @@ export function usePanelDrag() {
   // --- 公開API ---
 
   const handleDragStart = useCallback(
-    (plan: PlanWithTags, e: React.MouseEvent, sourceElement: HTMLElement) => {
+    (plan: DragEntryData, e: React.MouseEvent, sourceElement: HTMLElement) => {
       // 初期化
       dragDataRef.current = {
         plan,

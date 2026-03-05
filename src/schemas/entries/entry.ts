@@ -23,6 +23,8 @@ export const createEntrySchema = z.object({
   origin: entryOriginSchema.optional(), // 省略時はサーバー側で時間位置から判定
   start_time: z.string().datetime().nullable().optional(),
   end_time: z.string().datetime().nullable().optional(),
+  actual_start_time: z.string().datetime().nullable().optional(),
+  actual_end_time: z.string().datetime().nullable().optional(),
   duration_minutes: z.number().int().min(1).nullable().optional(),
   fulfillment_score: fulfillmentScoreSchema.nullable().optional(),
   recurrence_type: recurrenceTypeSchema.optional(),

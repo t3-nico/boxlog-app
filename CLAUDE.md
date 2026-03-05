@@ -12,33 +12,32 @@
 
 ## Tech Stack
 
-| カテゴリ           | 技術                                                |
-| ------------------ | --------------------------------------------------- |
-| **フレームワーク** | Next.js 15 (App Router), React 19                   |
-| **言語**           | TypeScript (strict mode)                            |
-| **スタイリング**   | Tailwind CSS v4, globals.css セマンティックトークン |
-| **状態管理**       | Zustand（グローバル）, useState（ローカル）         |
-| **データ**         | Supabase, tRPC v11, Zod                             |
-| **UI**             | shadcn/ui                                           |
-| **CI/品質**        | Lighthouse CI, Vitest, Playwright                   |
-| **アナリティクス** | Sentry                                              |
+| カテゴリ           | 技術                                                          |
+| ------------------ | ------------------------------------------------------------- |
+| **フレームワーク** | Next.js 15 (App Router), React 19                             |
+| **言語**           | TypeScript (strict mode)                                      |
+| **スタイリング**   | Tailwind CSS v4, セマンティックトークン（src/styles/tokens/） |
+| **状態管理**       | Zustand（グローバル）, useState（ローカル）                   |
+| **データ**         | Supabase, tRPC v11, Zod                                       |
+| **UI**             | shadcn/ui                                                     |
+| **CI/品質**        | Lighthouse CI, Vitest, Playwright                             |
+| **アナリティクス** | Sentry                                                        |
 
 ## 主要機能（Features）
 
-| 機能            | ディレクトリ               | 説明                                   |
-| --------------- | -------------------------- | -------------------------------------- |
-| **Plans**       | `src/features/plans`       | プラン（タスク）管理、タイムボクシング |
-| **Records**     | `src/features/records`     | 時間記録、実績管理                     |
-| **Calendar**    | `src/features/calendar`    | カレンダービュー、ドラッグ&ドロップ    |
-| **Tags**        | `src/features/tags`        | タグ管理、親子階層モデル               |
-| **Stats**       | `src/features/stats`       | 統計・分析、ヒートマップ               |
-| **Auth**        | `src/features/auth`        | 認証、Supabase Auth連携                |
-| **Settings**    | `src/features/settings`    | ユーザー設定、通知設定                 |
-| **Navigation**  | `src/features/navigation`  | サイドバー、ナビゲーションタブ         |
-| **Search**      | `src/features/search`      | グローバル検索                         |
-| **AI**          | `src/features/ai`          | AIチャット、インスペクタ統合           |
-| **Automations** | `src/features/automations` | 自動化ルール、トリガー/アクション      |
-| **Reflection**  | `src/features/reflection`  | 振り返り、日次/週次レビュー            |
+| 機能           | ディレクトリ              | 説明                                   |
+| -------------- | ------------------------- | -------------------------------------- |
+| **Plans**      | `src/features/plans`      | プラン（タスク）管理、タイムボクシング |
+| **Records**    | `src/features/records`    | 時間記録、実績管理                     |
+| **Calendar**   | `src/features/calendar`   | カレンダービュー、ドラッグ&ドロップ    |
+| **Tags**       | `src/features/tags`       | タグ管理、親子階層モデル               |
+| **Stats**      | `src/features/stats`      | 統計・分析、ヒートマップ               |
+| **Auth**       | `src/features/auth`       | 認証、Supabase Auth連携                |
+| **Settings**   | `src/features/settings`   | ユーザー設定、通知設定                 |
+| **Navigation** | `src/features/navigation` | サイドバー、ナビゲーションタブ         |
+| **Search**     | `src/features/search`     | グローバル検索                         |
+| **AI**         | `src/features/ai`         | AIチャット、インスペクタ統合           |
+| **Reflection** | `src/features/reflection` | 振り返り、日次/週次レビュー            |
 
 ## コマンド
 

@@ -17,13 +17,13 @@ import { useTranslations } from 'next-intl';
 
 import type { DateFormatType } from '@/stores/useCalendarSettingsStore';
 import { useUserSettings } from '../hooks/useUserSettings';
-import { formatHour, getTimeZones } from '../utils/timezone-utils';
+import { getTimeZones } from '../utils/timezone-utils';
 
 import { SettingRow } from './fields/SettingRow';
 import { SettingsCard } from './SettingsCard';
 
 export function CalendarSettings() {
-  const { settings, saveSettings, isSaving, isPending } = useUserSettings();
+  const { settings, saveSettings, isPending } = useUserSettings();
   const t = useTranslations();
 
   // jsx-no-bind optimization: Reset settings handler
@@ -36,10 +36,8 @@ export function CalendarSettings() {
         dateFormat: 'yyyy/MM/dd',
         weekStartsOn: 1,
         showWeekNumbers: false,
-        showDeclinedEvents: false,
         defaultDuration: 60,
         snapInterval: 15,
-        businessHours: { start: 9, end: 18 },
       });
     }
   }, [settings, saveSettings, t]);
@@ -80,13 +78,6 @@ export function CalendarSettings() {
     [saveSettings],
   );
 
-  const handleShowDeclinedEventsChange = useCallback(
-    (checked: boolean) => {
-      saveSettings({ showDeclinedEvents: checked });
-    },
-    [saveSettings],
-  );
-
   const handleDefaultDurationChange = useCallback(
     (value: string) => {
       saveSettings({ defaultDuration: Number(value) });
@@ -108,30 +99,6 @@ export function CalendarSettings() {
     [saveSettings],
   );
 
-  const handleBusinessHoursStartChange = useCallback(
-    (value: string) => {
-      saveSettings({
-        businessHours: {
-          ...settings.businessHours,
-          start: Number(value),
-        },
-      });
-    },
-    [saveSettings, settings.businessHours],
-  );
-
-  const handleBusinessHoursEndChange = useCallback(
-    (value: string) => {
-      saveSettings({
-        businessHours: {
-          ...settings.businessHours,
-          end: Number(value),
-        },
-      });
-    },
-    [saveSettings, settings.businessHours],
-  );
-
   if (isPending) {
     return (
       <div className="space-y-8">
@@ -150,7 +117,7 @@ export function CalendarSettings() {
   return (
     <div className="space-y-8">
       {/* Time & Timezone Section */}
-      <SettingsCard title={t('settings.calendar.timeAndTimezone')} isSaving={isSaving}>
+      <SettingsCard title={t('settings.calendar.timeAndTimezone')}>
         <div className="space-y-0">
           <SettingRow label={t('settings.calendar.timezone')}>
             <Select value={settings.timezone} onValueChange={handleTimezoneChange}>
@@ -194,7 +161,7 @@ export function CalendarSettings() {
       </SettingsCard>
 
       {/* Default View Section */}
-      <SettingsCard title={t('settings.calendar.defaultViewSection')} isSaving={isSaving}>
+      <SettingsCard title={t('settings.calendar.defaultViewSection')}>
         <div className="space-y-0">
           <SettingRow label={t('settings.calendar.defaultView')}>
             <Select value={settings.defaultView} onValueChange={handleDefaultViewChange}>
@@ -213,7 +180,7 @@ export function CalendarSettings() {
       </SettingsCard>
 
       {/* Week & Calendar Display Section */}
-      <SettingsCard title={t('settings.calendar.weekAndCalendar')} isSaving={isSaving}>
+      <SettingsCard title={t('settings.calendar.weekAndCalendar')}>
         <div className="space-y-0">
           <SettingRow label={t('settings.calendar.weekStartsOn')}>
             <Select value={String(settings.weekStartsOn)} onValueChange={handleWeekStartsOnChange}>
@@ -233,17 +200,11 @@ export function CalendarSettings() {
               onCheckedChange={handleShowWeekNumbersChange}
             />
           </SettingRow>
-          <SettingRow label={t('settings.calendar.showDeclinedEvents')}>
-            <Switch
-              checked={settings.showDeclinedEvents}
-              onCheckedChange={handleShowDeclinedEventsChange}
-            />
-          </SettingRow>
         </div>
       </SettingsCard>
 
       {/* Default Task Settings Section */}
-      <SettingsCard title={t('settings.calendar.defaultTaskSettings')} isSaving={isSaving}>
+      <SettingsCard title={t('settings.calendar.defaultTaskSettings')}>
         <div className="space-y-0">
           <SettingRow label={t('settings.calendar.defaultDuration')}>
             <Select
@@ -275,56 +236,6 @@ export function CalendarSettings() {
               </SelectContent>
             </Select>
           </SettingRow>
-        </div>
-      </SettingsCard>
-
-      {/* Business Hours Section */}
-      <SettingsCard title={t('settings.calendar.businessHours')} isSaving={isSaving}>
-        <div className="space-y-0">
-          <SettingRow label={t('settings.calendar.businessHoursStart')}>
-            <Select
-              value={String(settings.businessHours.start)}
-              onValueChange={handleBusinessHoursStartChange}
-            >
-              <SelectTrigger variant="ghost">
-                <SelectValue placeholder={t('settings.calendar.selectStartTime')} />
-              </SelectTrigger>
-              <SelectContent>
-                {Array.from({ length: 24 }, (_, i) => (
-                  <SelectItem key={i} value={String(i)}>
-                    {formatHour(i, settings.timeFormat)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </SettingRow>
-          <SettingRow label={t('settings.calendar.businessHoursEnd')}>
-            <Select
-              value={String(settings.businessHours.end)}
-              onValueChange={handleBusinessHoursEndChange}
-            >
-              <SelectTrigger variant="ghost">
-                <SelectValue placeholder={t('settings.calendar.selectEndTime')} />
-              </SelectTrigger>
-              <SelectContent>
-                {Array.from({ length: 24 }, (_, i) => (
-                  <SelectItem key={i} value={String(i)}>
-                    {formatHour(i, settings.timeFormat)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </SettingRow>
-        </div>
-        {/* 営業時間プレビュー */}
-        <div className="bg-card border-border mt-4 rounded-lg border p-4">
-          <p className="text-muted-foreground text-sm">
-            {t('settings.calendar.businessHoursPreview')}{' '}
-            <span className="text-foreground font-normal">
-              {formatHour(settings.businessHours.start, settings.timeFormat)} -{' '}
-              {formatHour(settings.businessHours.end, settings.timeFormat)}
-            </span>
-          </p>
         </div>
       </SettingsCard>
 

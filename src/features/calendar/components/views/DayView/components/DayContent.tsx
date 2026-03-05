@@ -2,9 +2,8 @@
 
 import React, { useCallback } from 'react';
 
-import { usePlanMutations } from '@/hooks/usePlanMutations';
 import { cn } from '@/lib/utils';
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 
 import {
   CalendarDragSelection,
@@ -12,7 +11,9 @@ import {
   calculatePlanGhostStyle,
   calculatePreviewTime,
 } from '../../shared';
+import { InlineTagPalette } from '../../shared/components/InlineTagPalette';
 import { PanelDragPreview } from '../../shared/components/PanelDragPreview';
+import { ChronotypeBackground } from '../../shared/grid/ChronotypeBackground';
 import { useGlobalDragCursor } from '../../shared/hooks/useGlobalDragCursor';
 import { useResponsiveHourHeight } from '../../shared/hooks/useResponsiveHourHeight';
 import type { CalendarPlan } from '../../shared/types/base.types';
@@ -32,17 +33,8 @@ export const DayContent = ({
   className,
 }: DayContentProps) => {
   // Inspectorで開いているプランのIDを取得
-  const inspectorPlanId = usePlanInspectorStore((state) => state.planId);
-  const isInspectorOpen = usePlanInspectorStore((state) => state.isOpen);
-
-  // ステータス変更を1度だけ初期化し、全PlanCardに配布
-  const { updatePlan } = usePlanMutations();
-  const handleStatusChange = useCallback(
-    (planId: string, newStatus: 'open' | 'closed') => {
-      updatePlan.mutate({ id: planId, data: { status: newStatus } });
-    },
-    [updatePlan],
-  );
+  const inspectorPlanId = useEntryInspectorStore((state) => state.entryId);
+  const isInspectorOpen = useEntryInspectorStore((state) => state.isOpen);
 
   // レスポンシブな高さ
   const HOUR_HEIGHT = useResponsiveHourHeight();
@@ -118,6 +110,7 @@ export const DayContent = ({
       >
         {/* 背景グリッド */}
         <div className="absolute inset-0" style={{ height: gridHeight }}>
+          <ChronotypeBackground startHour={0} endHour={24} hourHeight={HOUR_HEIGHT} />
           {timeGrid}
         </div>
       </CalendarDragSelection>
@@ -184,7 +177,6 @@ export const DayContent = ({
                           ? (dragState.snappedPosition.height ?? currentHeight)
                           : currentHeight,
                     }}
-                    onStatusChange={handleStatusChange}
                     // クリックは useDragAndDrop で処理されるため削除
                     onContextMenu={(p: CalendarPlan, e: React.MouseEvent) =>
                       handlePlanContextMenu(p, e)
@@ -212,6 +204,9 @@ export const DayContent = ({
               </div>
             );
           })}
+
+        {/* インラインタグパレット（ドラッグ/タップ後のタグ選択UI） */}
+        <InlineTagPalette hourHeight={HOUR_HEIGHT} />
       </div>
     </div>
   );

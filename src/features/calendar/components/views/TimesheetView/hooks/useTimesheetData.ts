@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import { eachDayOfInterval, endOfWeek, format, startOfDay, startOfWeek } from 'date-fns';
 
+import { getTagColorClasses } from '@/config/ui/colors';
 import { useTagsMap } from '@/hooks/useTagsMap';
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 import type { CalendarPlan } from '../../../../types/calendar.types';
@@ -16,7 +17,6 @@ import type { TimesheetData, TimesheetTagGroup } from '../TimesheetView.types';
 export function useTimesheetData(plans: CalendarPlan[], currentDate: Date): TimesheetData {
   const { getTagById } = useTagsMap();
   const visibleTagIds = useCalendarFilterStore((state) => state.visibleTagIds);
-  const showUntagged = useCalendarFilterStore((state) => state.showUntagged);
 
   const weekDates = useMemo(() => {
     const start = startOfWeek(currentDate, { weekStartsOn: 1 });
@@ -35,21 +35,18 @@ export function useTimesheetData(plans: CalendarPlan[], currentDate: Date): Time
       // startDate がないプランはスキップ
       if (!plan.startDate) continue;
 
-      const tags = plan.tagIds ?? [];
-      if (tags.length === 0) {
-        // タグなし（showUntagged が false なら除外）
-        if (!showUntagged) continue;
+      const tagId = plan.tagId ?? null;
+      if (!tagId) {
+        // タグなし → 常に表示（タグなしフィルター廃止）
         const existing = groupMap.get(null) ?? [];
         existing.push(plan);
         groupMap.set(null, existing);
       } else {
         // 表示中のタグのみグループに登場させる
-        for (const tagId of tags) {
-          if (!visibleTagIds.has(tagId)) continue;
-          const existing = groupMap.get(tagId) ?? [];
-          existing.push(plan);
-          groupMap.set(tagId, existing);
-        }
+        if (!visibleTagIds.has(tagId)) continue;
+        const existing = groupMap.get(tagId) ?? [];
+        existing.push(plan);
+        groupMap.set(tagId, existing);
       }
     }
 
@@ -73,21 +70,17 @@ export function useTimesheetData(plans: CalendarPlan[], currentDate: Date): Time
       tagGroups.push({
         tagId,
         tagName: tagInfo?.name ?? '',
-        tagColor: tagInfo?.color ?? '#6b7280',
-        parentId: tagInfo?.parent_id ?? null,
+        tagColor: tagInfo ? getTagColorClasses(tagInfo.color).cssVar : 'var(--tag-gray)',
         plans: groupPlans,
         dailyTotals,
         weekTotal,
       });
     }
 
-    // 親タグ → 子タグ の順にソート（untagged は最後）
+    // タグ名順にソート（untagged は最後）
     tagGroups.sort((a, b) => {
       if (a.tagId === null) return 1;
       if (b.tagId === null) return -1;
-      // 親タグを先に
-      if (a.parentId === null && b.parentId !== null) return -1;
-      if (a.parentId !== null && b.parentId === null) return 1;
       return a.tagName.localeCompare(b.tagName);
     });
 
@@ -104,7 +97,7 @@ export function useTimesheetData(plans: CalendarPlan[], currentDate: Date): Time
     }
 
     return { tagGroups, dailyTotals, weekTotal, weekDates };
-  }, [plans, weekDates, getTagById, visibleTagIds, showUntagged]);
+  }, [plans, weekDates, getTagById, visibleTagIds]);
 
   return result;
 }

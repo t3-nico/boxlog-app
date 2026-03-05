@@ -20,60 +20,40 @@ export type {
   UpdatePlanInput,
 } from './types/plan';
 
-export type { CreateTagInput, Tag, UpdateTagInput } from './types/tag';
-
-export type {
-  ActivityActionType,
-  ActivityIconColor,
-  PlanActivity,
-  PlanActivityDisplay,
-} from './types/activity';
-
 // =============================================================================
-// Stores (Re-export from shared stores for backward compatibility)
+// Stores (Re-export from shared stores)
 // =============================================================================
-export { useDeleteConfirmStore } from '@/stores/useDeleteConfirmStore';
-export { usePlanCacheStore, useplanCacheStore } from '@/stores/usePlanCacheStore';
+export { useEntryCacheStore } from '@/stores/useEntryCacheStore';
+export { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
+export type { PendingChanges } from '@/stores/useEntryInspectorStore';
 export { usePlanClipboardStore } from '@/stores/usePlanClipboardStore';
 export type { ClipboardPlan, LastClickedPosition } from '@/stores/usePlanClipboardStore';
-export { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
-export type {
-  CreateEntryType,
-  DraftPlan,
-  PendingChanges,
-  PlanInitialData,
-} from '@/stores/usePlanInspectorStore';
-export { useRecurringEditConfirmStore } from '@/stores/useRecurringEditConfirmStore';
 
 // =============================================================================
 // Hooks
 // =============================================================================
+export { useEntries } from '@/hooks/useEntries';
+export { useEntryMutations } from '@/hooks/useEntryMutations';
 export {
   instancesToExceptionsMap,
   usePlanInstanceMutations,
   usePlanInstances,
 } from '@/hooks/usePlanInstances';
-export { usePlanMutations } from '@/hooks/usePlanMutations';
-export { usePlans, useplans } from '@/hooks/usePlans';
 export { usePlanTags } from '@/hooks/usePlanTags';
 export { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
 export { usePlan, useplan } from './hooks/usePlan';
-export { usePlanActivities } from './hooks/usePlanActivities';
-export { usePlanRealtime } from './hooks/usePlanRealtime';
 
 // =============================================================================
 // Utils
 // =============================================================================
-export { expandRecurrence, getPlanRecurrenceConfig, isRecurringPlan } from './utils/recurrence';
-export type { ExpandedOccurrence, PlanInstanceException } from './utils/recurrence';
+export { expandRecurrence, getPlanRecurrenceConfig, isRecurringPlan } from '@/lib/plan-recurrence';
+export type { ExpandedOccurrence, PlanInstanceException } from '@/lib/plan-recurrence';
 
 export { decodeInstanceId, encodeInstanceId, getInstanceRef } from './utils/instanceId';
 export type { RecurrenceInstanceRef } from './utils/instanceId';
 
-export { isOverdue, isScheduled, normalizeStatus } from './utils/status';
-
-export { groupItems } from './utils/grouping';
-export type { GroupByField, GroupedData } from './utils/grouping';
+export { groupItems } from '@/lib/plan-grouping';
+export type { GroupByField, GroupedData } from '@/lib/plan-grouping';
 
 // =============================================================================
 // Components
@@ -95,10 +75,9 @@ export type {
 export { ReminderSelect } from './components/shared/ReminderSelect';
 export { TimeSelect } from './components/shared/TimeSelect';
 
-// Inspector shared components (used by records feature)
+// Inspector shared components
 export { useInspectorKeyboard } from './components/inspector/hooks';
 export {
-  ActivityPopover,
   DraggableInspector,
   InspectorContent,
   InspectorDetailsLayout,
@@ -106,15 +85,4 @@ export {
   InspectorShell,
   NoteIconButton,
   TitleInput,
-  useDragHandle,
 } from './components/inspector/shared';
-export type { ActivityDisplayItem } from './components/inspector/shared';
-
-// =============================================================================
-// Adapters
-// =============================================================================
-export {
-  expandRecurringPlansToCalendarPlans,
-  planToCalendarPlan,
-  plansToCalendarPlans,
-} from './adapters/toCalendarEvent';

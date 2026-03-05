@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import path, { dirname } from 'path';
 
 import type { StorybookConfig } from '@storybook/react-vite';
+import tailwindcss from '@tailwindcss/vite';
 import remarkGfm from 'remark-gfm';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -70,6 +71,13 @@ const config: StorybookConfig = {
     config.esbuild = {
       ...config.esbuild,
       jsx: 'automatic',
+    };
+    // Tailwind CSS v4: Viteプラグインで @import チェーンを正しく処理
+    // PostCSS の @tailwindcss/postcss と競合するため、Vite側で上書き
+    config.plugins = [...(config.plugins || []), tailwindcss()];
+    config.css = {
+      ...config.css,
+      postcss: { plugins: [] },
     };
     return config;
   },

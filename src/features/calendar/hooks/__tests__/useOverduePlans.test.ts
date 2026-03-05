@@ -8,10 +8,10 @@ function createMockPlan(overrides: Partial<CalendarPlan> = {}): CalendarPlan {
   return {
     id: 'plan-1',
     title: 'Test Plan',
-    status: 'open',
+    entryState: 'upcoming' as const,
     startDate: new Date('2026-02-20T09:00:00'),
     endDate: new Date('2026-02-20T10:00:00'),
-    color: '#3b82f6',
+    color: 'blue',
     tagIds: [],
     ...overrides,
   } as CalendarPlan;
@@ -31,7 +31,7 @@ describe('useAllOverduePlans', () => {
     const plans = [
       createMockPlan({
         id: 'overdue-1',
-        status: 'open',
+        entryState: 'upcoming' as const,
         endDate: new Date('2026-02-21T10:00:00'), // 2時間前
       }),
     ];
@@ -47,7 +47,7 @@ describe('useAllOverduePlans', () => {
     const plans = [
       createMockPlan({
         id: 'closed-1',
-        status: 'closed',
+        entryState: 'past' as const,
         endDate: new Date('2026-02-21T10:00:00'), // 過去だがclosed
       }),
     ];
@@ -61,7 +61,7 @@ describe('useAllOverduePlans', () => {
     const plans = [
       createMockPlan({
         id: 'no-end-1',
-        status: 'open',
+        entryState: 'upcoming' as const,
         endDate: null,
       }),
     ];
@@ -75,7 +75,7 @@ describe('useAllOverduePlans', () => {
     const plans = [
       createMockPlan({
         id: 'future-1',
-        status: 'open',
+        entryState: 'upcoming' as const,
         endDate: new Date('2026-02-21T14:00:00'), // 2時間後
       }),
     ];
@@ -94,7 +94,7 @@ describe('useAllOverduePlans', () => {
     const plans = [
       createMockPlan({
         id: 'overdue-30min',
-        status: 'open',
+        entryState: 'upcoming' as const,
         endDate: new Date('2026-02-21T11:30:00'), // 30分前
       }),
     ];
@@ -108,22 +108,22 @@ describe('useAllOverduePlans', () => {
     const plans = [
       createMockPlan({
         id: 'overdue-1',
-        status: 'open',
+        entryState: 'upcoming' as const,
         endDate: new Date('2026-02-21T10:00:00'),
       }),
       createMockPlan({
         id: 'on-time',
-        status: 'open',
+        entryState: 'upcoming' as const,
         endDate: new Date('2026-02-21T14:00:00'),
       }),
       createMockPlan({
         id: 'overdue-2',
-        status: 'open',
+        entryState: 'upcoming' as const,
         endDate: new Date('2026-02-21T11:00:00'),
       }),
       createMockPlan({
         id: 'closed',
-        status: 'closed',
+        entryState: 'past' as const,
         endDate: new Date('2026-02-20T10:00:00'),
       }),
     ];

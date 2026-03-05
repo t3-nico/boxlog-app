@@ -24,7 +24,7 @@ export const bulkRouter = createTRPCRouter({
     const updateData = removeUndefinedFields(input.data) as Record<string, unknown>;
 
     const { data, error } = await supabase
-      .from('plans')
+      .from('entries')
       .update(updateData)
       .in('id', input.ids)
       .eq('user_id', userId)
@@ -44,7 +44,7 @@ export const bulkRouter = createTRPCRouter({
     const { supabase, userId } = ctx;
 
     const { error, count } = await supabase
-      .from('plans')
+      .from('entries')
       .delete()
       .in('id', input.ids)
       .eq('user_id', userId);
@@ -68,21 +68,21 @@ export const bulkRouter = createTRPCRouter({
     const { planIds, tagIds } = input;
 
     // プランとタグの全組み合わせを作成
-    const planTagsToInsert = planIds.flatMap((planId) =>
+    const entryTagsToInsert = planIds.flatMap((planId) =>
       tagIds.map((tagId) => ({
         user_id: userId,
-        plan_id: planId,
+        entry_id: planId,
         tag_id: tagId,
       })),
     );
 
-    if (planTagsToInsert.length === 0) {
+    if (entryTagsToInsert.length === 0) {
       return { success: true, count: 0 };
     }
 
     // upsertで既存の関連は無視
-    const { error, count } = await supabase.from('plan_tags').upsert(planTagsToInsert, {
-      onConflict: 'user_id,plan_id,tag_id',
+    const { error, count } = await supabase.from('entry_tags').upsert(entryTagsToInsert, {
+      onConflict: 'user_id,entry_id,tag_id',
       ignoreDuplicates: true,
     });
 
@@ -93,6 +93,6 @@ export const bulkRouter = createTRPCRouter({
       });
     }
 
-    return { success: true, count: count ?? planTagsToInsert.length };
+    return { success: true, count: count ?? entryTagsToInsert.length };
   }),
 });

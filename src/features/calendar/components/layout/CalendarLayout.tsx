@@ -9,9 +9,8 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/utils';
 
 import { AppAside, type AsideType } from '@/components/layout/AppAside';
-import { useAppAsideStore } from '@/stores/useAppAsideStore';
+import { useLayoutStore } from '@/stores/useLayoutStore';
 import { PlanListPanel } from '../aside/PlanListPanel';
-import { RecordListPanel } from '../aside/RecordListPanel';
 
 // tiptap + AI SDK を初期バンドルから除外（LCP改善）
 const AIInspectorContent = dynamic(
@@ -56,6 +55,9 @@ export interface CalendarLayoutProps {
   // Aside
   currentAside?: AsideType | undefined;
   onAsideChange?: ((aside: AsideType) => void) | undefined;
+
+  // Header right slot (PageSwitcher など)
+  rightSlot?: React.ReactNode | undefined;
 }
 
 /**
@@ -85,6 +87,9 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
     // Aside
     currentAside,
     onAsideChange,
+
+    // Header right slot
+    rightSlot,
   }) => {
     const t = useTranslations('calendar');
 
@@ -107,8 +112,8 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
     const showAside = currentAside && currentAside !== 'none';
 
     // アサイドリサイズ
-    const asideSize = useAppAsideStore.use.asideSize();
-    const setAsideSize = useAppAsideStore.use.setAsideSize();
+    const asideSize = useLayoutStore.use.asideSize();
+    const setAsideSize = useLayoutStore.use.setAsideSize();
     const { percent, isResizing, handleMouseDown, containerRef } = useResizeHandle({
       initialPercent: asideSize,
       onResizeEnd: setAsideSize,
@@ -140,6 +145,7 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
               displayRange={displayRange}
               currentAside={currentAside}
               onAsideChange={onAsideChange}
+              rightSlot={rightSlot}
             />
 
             {/* カレンダーコンテンツ（スワイプ対応） */}
@@ -189,10 +195,8 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
                   onAsideChange={onAsideChange}
                   renderContent={(type) => {
                     switch (type) {
-                      case 'plan':
+                      case 'entries':
                         return <PlanListPanel />;
-                      case 'record':
-                        return <RecordListPanel />;
                       case 'chat':
                         return <AIInspectorContent />;
                       default:
@@ -219,10 +223,8 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
                 onAsideChange={onAsideChange}
                 renderContent={(type) => {
                   switch (type) {
-                    case 'plan':
+                    case 'entries':
                       return <PlanListPanel />;
-                    case 'record':
-                      return <RecordListPanel />;
                     case 'chat':
                       return <AIInspectorContent />;
                     default:

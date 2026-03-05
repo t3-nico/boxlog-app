@@ -5,14 +5,17 @@
  *
  * Sidebar CreateNewDropdown / Calendar EmptyAreaContextMenu / Mobile CreateActionSheet
  * の3箇所で使用されるメニュー項目を一元管理する。
+ *
+ * 即DB保存 + Inspector edit mode で開く。
  */
 
 import { useCallback, useMemo } from 'react';
 
-import { CalendarPlus, Clock, Tag } from 'lucide-react';
+import { CalendarPlus, Tag } from 'lucide-react';
 
+import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { useTagModalNavigation } from '@/hooks/useTagModalNavigation';
-import { usePlanInspectorStore } from '@/stores/usePlanInspectorStore';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { useTranslations } from 'next-intl';
 
 import type { LucideIcon } from 'lucide-react';
@@ -39,20 +42,24 @@ interface UseCreateMenuItemsOptions {
 /**
  * 新規作成メニューのアイテム一覧を返すフック
  *
- * @returns Plan / Record / --- / Tag のメニュー項目配列
+ * @returns Entry / --- / Tag のメニュー項目配列
  */
 export function useCreateMenuItems(options?: UseCreateMenuItemsOptions): CreateMenuEntry[] {
   const t = useTranslations();
-  const openInspectorWithDraft = usePlanInspectorStore((state) => state.openInspectorWithDraft);
+  const openInspector = useEntryInspectorStore((state) => state.openInspector);
+  const { createEntry } = useEntryMutations();
   const { openTagCreateModal } = useTagModalNavigation();
 
-  const handleCreatePlan = useCallback(() => {
-    openInspectorWithDraft(options?.initialData, 'plan');
-  }, [openInspectorWithDraft, options?.initialData]);
-
-  const handleCreateRecord = useCallback(() => {
-    openInspectorWithDraft(options?.initialData, 'record');
-  }, [openInspectorWithDraft, options?.initialData]);
+  const handleCreateEntry = useCallback(async () => {
+    const result = await createEntry.mutateAsync({
+      title: '',
+      start_time: options?.initialData?.start_time,
+      end_time: options?.initialData?.end_time,
+    });
+    if (result?.id) {
+      openInspector(result.id);
+    }
+  }, [createEntry, openInspector, options?.initialData]);
 
   const handleCreateTag = useCallback(() => {
     openTagCreateModal();
@@ -62,17 +69,10 @@ export function useCreateMenuItems(options?: UseCreateMenuItemsOptions): CreateM
     () => [
       {
         type: 'item' as const,
-        id: 'plan',
+        id: 'entry',
         icon: CalendarPlus,
-        label: t('common.createSheet.plan'),
-        action: handleCreatePlan,
-      },
-      {
-        type: 'item' as const,
-        id: 'record',
-        icon: Clock,
-        label: t('common.createSheet.record'),
-        action: handleCreateRecord,
+        label: t('common.createSheet.entry'),
+        action: handleCreateEntry,
       },
       { type: 'separator' as const },
       {
@@ -83,6 +83,6 @@ export function useCreateMenuItems(options?: UseCreateMenuItemsOptions): CreateM
         action: handleCreateTag,
       },
     ],
-    [t, handleCreatePlan, handleCreateRecord, handleCreateTag],
+    [t, handleCreateEntry, handleCreateTag],
   );
 }
