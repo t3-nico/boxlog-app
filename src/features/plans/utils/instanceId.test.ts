@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { CalendarPlan } from '@/core/types/calendar-event';
 
-import { decodeInstanceId, encodeInstanceId, getInstanceRef } from './instanceId';
+import { decodeInstanceId, encodeInstanceId, getInstanceRef } from '@/lib/instance-id';
 
 describe('instanceId', () => {
   describe('encodeInstanceId', () => {

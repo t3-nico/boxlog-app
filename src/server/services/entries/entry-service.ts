@@ -9,7 +9,7 @@ import { logger } from '@/lib/logger';
 import {
   normalizeDateTimeConsistency,
   removeUndefinedFields,
-} from '@/server/api/routers/plans/utils';
+} from '@/server/api/routers/shared/utils';
 
 import type {
   CreateEntryOptions,

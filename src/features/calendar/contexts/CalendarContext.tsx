@@ -66,7 +66,6 @@ export interface CalendarContextValue {
   onDeletePlanConfirm: (plan: CalendarPlan) => void;
   onDuplicatePlan: (plan: CalendarPlan) => void;
   onCopyPlan: (plan: CalendarPlan) => void;
-  onCompletePlan: (plan: CalendarPlan) => void;
   onCompleteWithRecord: (plan: CalendarPlan) => void;
 
   // --- Navigation handlers ---

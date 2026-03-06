@@ -40,7 +40,7 @@ export function normalizeDateTime(value: string | null | undefined): string | un
  * queryClient.setQueriesData({ predicate: isPlansList }, updateFn);
  * ```
  */
-export function createListQueryPredicate(entityName: 'plans' | 'entries') {
+export function createListQueryPredicate(entityName: 'entries') {
   return (query: { queryKey: unknown }) => {
     const key = query.queryKey;
     return (
@@ -74,7 +74,7 @@ export interface InvalidateEntityCachesOptions {
  */
 export async function invalidateEntityCaches(
   utils: ReturnType<typeof api.useUtils>,
-  entityName: 'plans' | 'entries',
+  entityName: 'entries',
   options: InvalidateEntityCachesOptions = {},
 ): Promise<void> {
   const { entityId, refetchType = 'active' } = options;
@@ -87,13 +87,6 @@ export async function invalidateEntityCaches(
     await utils[entityName].getById.invalidate({ id: entityId }, { refetchType });
   }
 
-  // entries の場合: 累積時間も無効化
-  if (entityName === 'entries') {
-    await utils.entries.getCumulativeTime.invalidate();
-  }
-
-  // plans の場合も entries 経由で無効化（後方互換）
-  if (entityName === 'plans') {
-    await utils.entries.getCumulativeTime.invalidate();
-  }
+  // 累積時間も無効化
+  await utils.entries.getCumulativeTime.invalidate();
 }

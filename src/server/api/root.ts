@@ -6,11 +6,8 @@
 import { chatRouter } from './routers/chat';
 import { emailRouter } from './routers/email';
 import { entriesRouter } from './routers/entries';
-import { gamificationRouter } from './routers/gamification';
 import { notificationPreferencesRouter } from './routers/notificationPreferences';
 import { notificationsRouter } from './routers/notifications';
-import { plansRouter } from './routers/plans';
-import { reflectionsRouter } from './routers/reflections';
 import { suggestionsRouter } from './routers/suggestions';
 import { tagsRouter } from './routers/tags';
 import { userRouter } from './routers/user';
@@ -24,9 +21,6 @@ export const appRouter = createTRPCRouter({
   chat: chatRouter,
   email: emailRouter,
   entries: entriesRouter,
-  gamification: gamificationRouter,
-  plans: plansRouter, // 後方互換性（Part Bで削除予定）
-  reflections: reflectionsRouter,
   suggestions: suggestionsRouter,
   tags: tagsRouter,
   user: userRouter,

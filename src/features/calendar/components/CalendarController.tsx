@@ -57,7 +57,6 @@ export function CalendarController({
     onDeletePlanConfirm,
     onDuplicatePlan,
     onCopyPlan,
-    onCompletePlan,
     onNavigate,
     onViewChange,
     onNavigatePrev,
@@ -168,7 +167,6 @@ export function CalendarController({
           onDelete={onDeletePlanConfirm}
           onDuplicate={onDuplicatePlan}
           onCopy={onCopyPlan}
-          onComplete={onCompletePlan}
         />
       ) : null}
 

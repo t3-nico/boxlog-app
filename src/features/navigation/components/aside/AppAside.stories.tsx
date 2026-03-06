@@ -3,7 +3,7 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import { AppAside } from './AppAside';
+import { AppAside } from '@/components/layout/AppAside';
 import type { AsideType } from './AsideSwitcher';
 
 /** AppAside - アプリケーション共通アサイド */

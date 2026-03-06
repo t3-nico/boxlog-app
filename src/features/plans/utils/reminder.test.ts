@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { getReminderI18nKey, REMINDER_OPTIONS } from './reminder';
+import { getReminderI18nKey, REMINDER_OPTIONS } from '@/lib/reminder';
 
 describe('reminder', () => {
   describe('REMINDER_OPTIONS', () => {

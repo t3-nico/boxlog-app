@@ -58,87 +58,42 @@ describe('mutationUtils', () => {
   });
 
   describe('createListQueryPredicate', () => {
-    it('plans.list クエリキーにマッチする', () => {
-      const predicate = createListQueryPredicate('plans');
-      expect(predicate({ queryKey: [['plans', 'list']] })).toBe(true);
-    });
-
-    it('plans.list + input 付きクエリキーにマッチする', () => {
-      const predicate = createListQueryPredicate('plans');
-      expect(
-        predicate({ queryKey: [['plans', 'list'], { input: { status: 'open' }, type: 'query' }] }),
-      ).toBe(true);
-    });
-
     it('entries.list クエリキーにマッチする', () => {
       const predicate = createListQueryPredicate('entries');
       expect(predicate({ queryKey: [['entries', 'list']] })).toBe(true);
     });
 
-    it('plans.getById にはマッチしない', () => {
-      const predicate = createListQueryPredicate('plans');
-      expect(predicate({ queryKey: [['plans', 'getById']] })).toBe(false);
+    it('entries.list + input 付きクエリキーにマッチする', () => {
+      const predicate = createListQueryPredicate('entries');
+      expect(
+        predicate({
+          queryKey: [['entries', 'list'], { input: { status: 'open' }, type: 'query' }],
+        }),
+      ).toBe(true);
+    });
+
+    it('entries.getById にはマッチしない', () => {
+      const predicate = createListQueryPredicate('entries');
+      expect(predicate({ queryKey: [['entries', 'getById']] })).toBe(false);
     });
 
     it('異なるエンティティにはマッチしない', () => {
-      const predicate = createListQueryPredicate('plans');
-      expect(predicate({ queryKey: [['entries', 'list']] })).toBe(false);
+      const predicate = createListQueryPredicate('entries');
+      expect(predicate({ queryKey: [['tags', 'list']] })).toBe(false);
     });
 
     it('配列でないキーにはマッチしない', () => {
-      const predicate = createListQueryPredicate('plans');
-      expect(predicate({ queryKey: 'plans' })).toBe(false);
+      const predicate = createListQueryPredicate('entries');
+      expect(predicate({ queryKey: 'entries' })).toBe(false);
     });
 
     it('空配列にはマッチしない', () => {
-      const predicate = createListQueryPredicate('plans');
+      const predicate = createListQueryPredicate('entries');
       expect(predicate({ queryKey: [] })).toBe(false);
     });
   });
 
   describe('invalidateEntityCaches', () => {
-    it('plans エンティティのキャッシュを無効化する', async () => {
-      const mockUtils = {
-        plans: {
-          list: { invalidate: vi.fn() },
-          getById: { invalidate: vi.fn() },
-          getCumulativeTime: { invalidate: vi.fn() },
-        },
-        entries: {
-          getCumulativeTime: { invalidate: vi.fn() },
-        },
-      };
-
-      await invalidateEntityCaches(mockUtils as unknown as TRPCUtils, 'plans');
-
-      expect(mockUtils.plans.list.invalidate).toHaveBeenCalledWith(undefined, {
-        refetchType: 'active',
-      });
-      expect(mockUtils.entries.getCumulativeTime.invalidate).toHaveBeenCalled();
-    });
-
-    it('entityId 指定時に個別キャッシュも無効化する', async () => {
-      const mockUtils = {
-        plans: {
-          list: { invalidate: vi.fn() },
-          getById: { invalidate: vi.fn() },
-          getCumulativeTime: { invalidate: vi.fn() },
-        },
-        entries: {
-          getCumulativeTime: { invalidate: vi.fn() },
-        },
-      };
-
-      await invalidateEntityCaches(mockUtils as unknown as TRPCUtils, 'plans', {
-        entityId: 'plan-1',
-      });
-
-      expect(mockUtils.plans.getById.invalidate).toHaveBeenCalledWith(
-        { id: 'plan-1' },
-        { refetchType: 'active' },
-      );
-    });
-
     it('entries エンティティのキャッシュを無効化する', async () => {
       const mockUtils = {
         entries: {
@@ -150,26 +105,44 @@ describe('mutationUtils', () => {
 
       await invalidateEntityCaches(mockUtils as unknown as TRPCUtils, 'entries');
 
-      expect(mockUtils.entries.list.invalidate).toHaveBeenCalled();
+      expect(mockUtils.entries.list.invalidate).toHaveBeenCalledWith(undefined, {
+        refetchType: 'active',
+      });
       expect(mockUtils.entries.getCumulativeTime.invalidate).toHaveBeenCalled();
     });
 
-    it('カスタム refetchType を指定できる', async () => {
+    it('entityId 指定時に個別キャッシュも無効化する', async () => {
       const mockUtils = {
-        plans: {
-          list: { invalidate: vi.fn() },
-          getCumulativeTime: { invalidate: vi.fn() },
-        },
         entries: {
+          list: { invalidate: vi.fn() },
+          getById: { invalidate: vi.fn() },
           getCumulativeTime: { invalidate: vi.fn() },
         },
       };
 
-      await invalidateEntityCaches(mockUtils as unknown as TRPCUtils, 'plans', {
+      await invalidateEntityCaches(mockUtils as unknown as TRPCUtils, 'entries', {
+        entityId: 'entry-1',
+      });
+
+      expect(mockUtils.entries.getById.invalidate).toHaveBeenCalledWith(
+        { id: 'entry-1' },
+        { refetchType: 'active' },
+      );
+    });
+
+    it('カスタム refetchType を指定できる', async () => {
+      const mockUtils = {
+        entries: {
+          list: { invalidate: vi.fn() },
+          getCumulativeTime: { invalidate: vi.fn() },
+        },
+      };
+
+      await invalidateEntityCaches(mockUtils as unknown as TRPCUtils, 'entries', {
         refetchType: 'all',
       });
 
-      expect(mockUtils.plans.list.invalidate).toHaveBeenCalledWith(undefined, {
+      expect(mockUtils.entries.list.invalidate).toHaveBeenCalledWith(undefined, {
         refetchType: 'all',
       });
     });

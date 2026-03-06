@@ -1,6 +1,6 @@
 /**
- * Plans Router Utilities
- * Helper functions for plan operations
+ * Shared Router Utilities
+ * Helper functions for router operations
  */
 
 import { logger } from '@/lib/logger';
@@ -19,7 +19,7 @@ export function removeUndefinedFields<T extends Record<string, unknown>>(obj: T)
 }
 
 /**
- * Normalize date-time consistency for plans
+ * Normalize date-time consistency for entries
  *
  * Rules:
  * 1. start_time and end_time must have the same date portion

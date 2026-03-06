@@ -100,14 +100,10 @@
       "enterEventTitle": "Enter event title",
       "reminderSet": "Reminder set",
       "noTitle": "(No title)",
-      "allDay": "All day",
-      "markComplete": "Mark as complete",
-      "markIncomplete": "Mark as incomplete"
+      "allDay": "All day"
     },
     "contextMenu": {
       "edit": "Edit",
-      "markComplete": "Mark as Complete",
-      "markIncomplete": "Mark as Incomplete",
       "completeWithRecord": "Complete & Copy Record",
       "duplicate": "Duplicate",
       "copy": "Copy",

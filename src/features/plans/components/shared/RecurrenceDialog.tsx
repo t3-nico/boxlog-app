@@ -20,8 +20,8 @@ import {
 import { useDateFormat } from '@/hooks/useDateFormat';
 import { useSubmitShortcut } from '@/hooks/useSubmitShortcut';
 
+import { configToRRule, ruleToConfig } from '@/lib/plan-rrule';
 import type { RecurrenceConfig } from '../../types/plan';
-import { configToRRule, ruleToConfig } from '../../utils/rrule';
 
 interface RecurrenceDialogProps {
   value: string | null; // RRULE文字列

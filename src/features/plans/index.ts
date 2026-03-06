@@ -49,8 +49,8 @@ export { usePlan, useplan } from './hooks/usePlan';
 export { expandRecurrence, getPlanRecurrenceConfig, isRecurringPlan } from '@/lib/plan-recurrence';
 export type { ExpandedOccurrence, PlanInstanceException } from '@/lib/plan-recurrence';
 
-export { decodeInstanceId, encodeInstanceId, getInstanceRef } from './utils/instanceId';
-export type { RecurrenceInstanceRef } from './utils/instanceId';
+export { decodeInstanceId, encodeInstanceId, getInstanceRef } from '@/lib/instance-id';
+export type { RecurrenceInstanceRef } from '@/lib/instance-id';
 
 export { groupItems } from '@/lib/plan-grouping';
 export type { GroupByField, GroupedData } from '@/lib/plan-grouping';

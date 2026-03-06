@@ -158,11 +158,6 @@ export function usePlanContextActions() {
     [createEntry, openInspector],
   );
 
-  // TODO: entries統合後、status概念は削除されたため要リファクタ
-  const handleCompletePlan = useCallback((_plan: CalendarPlan) => {
-    // entries モデルには status フィールドがないため no-op
-  }, []);
-
   const handleCompleteWithRecord = useCallback(
     async (plan: CalendarPlan) => {
       // 即DB作成 → Inspector edit mode で開く
@@ -188,7 +183,6 @@ export function usePlanContextActions() {
     handleDuplicatePlan,
     handleCopyPlan,
     handlePastePlan,
-    handleCompletePlan,
     handleCompleteWithRecord,
   };
 }

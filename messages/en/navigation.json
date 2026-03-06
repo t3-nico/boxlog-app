@@ -17,15 +17,6 @@
       "logoutDescription": "Sign out of your account"
     }
   },
-  "appbar": {
-    "navigation": {
-      "calendar": "Calendar",
-      "plan": "Plan",
-      "stats": "Stats",
-      "settings": "Settings"
-    },
-    "toggleSidebar": "Toggle Sidebar"
-  },
   "sidebar": {
     "views": "Views",
     "quickCreate": "Create",

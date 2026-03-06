@@ -17,15 +17,6 @@
       "logoutDescription": "アカウントからログアウト"
     }
   },
-  "appbar": {
-    "navigation": {
-      "calendar": "カレンダー",
-      "plan": "Plan",
-      "stats": "統計",
-      "settings": "設定"
-    },
-    "toggleSidebar": "サイドバーを開閉"
-  },
   "sidebar": {
     "views": "ビュー",
     "quickCreate": "作成",

@@ -1,11 +1,8 @@
 // Auth feature exports
 // Component exports - individually exported to avoid conflicts
-export { AuthGuard } from './components/AuthGuard';
 export { AuthLayout } from './components/AuthLayout';
-export { AuthPageLayout } from './components/AuthPageLayout';
 export { LoginForm } from './components/LoginForm';
 export { PasswordResetForm } from './components/PasswordResetForm';
-export { ProtectedRoute } from './components/ProtectedRoute';
 export { ResetPasswordForm } from './components/ResetPasswordForm';
 export { SessionMonitorProvider } from './components/SessionMonitorProvider';
 export { SessionTimeoutDialog } from './components/SessionTimeoutDialog';
