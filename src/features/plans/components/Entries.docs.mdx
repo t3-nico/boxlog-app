@@ -1,0 +1,125 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Features/Entries/Docs" />
+
+# Entries
+
+タスク・予定の統合エントリ機能。タイムボクシング、繰り返し、充実度記録をサポート。
+
+---
+
+## 概要
+
+| 項目 | 値 |
+|------|-----|
+| 時間位置 | `upcoming` / `active` / `past`（`getEntryState()` で自動判定） |
+| 起源 | `planned`（予定）/ `unplanned`（記録のみ） |
+| 時間指定 | `start_time` + `end_time`（ISO 8601、任意） |
+| 繰り返し | RRULE ベース（daily / weekly / monthly / yearly） |
+| タグ | 多対多（`plan_tags` 経由） |
+| リマインダー | 開始N分前（5/10/15/30） |
+| 充実度 | `fulfillment_score`（1-5、active/past のみ） |
+
+---
+
+## コンポーネント構成
+
+```
+PlanInspector                     Inspector シェル
+├── InspectorShell                PC: Popover / Mobile: Drawer
+│   └── DraggableInspector        ドラッグ移動（PC、dnd-kit）
+├── InspectorContent              ローディング/空状態ハンドリング
+├── PlanInspectorContent          メインロジック
+│   ├── PlanInspectorDetailsTab   編集フォーム
+│   │   ├── InspectorTagRow       タグ選択 + ⋯ メニュー
+│   │   ├── InspectorTimeSection  時間セクション（下記参照）
+│   │   ├── RecurrenceIconButton  繰り返し設定（upcoming のみ）
+│   │   └── ReminderSelect        リマインダー設定（upcoming のみ）
+│   └── InspectorSaveBar          保存バー（pending changes 時）
+└── PlanInspectorMenu             アクションメニュー（複製/削除等）
+```
+
+### InspectorTimeSection 内部構成
+
+```
+InspectorTimeSection
+├── DateNavigatorRow        日付ナビゲーション
+├── TimeRow                 予定時間 / 実績時間の表示・編集
+├── TimeConflictAlert       時間重複警告
+├── FulfillmentRow          充実度スコア（active/past のみ）
+└── InlineNoteSection       メモ入力
+```
+
+---
+
+## 共有インスペクタ基盤（`@/core/components/inspector`）
+
+外部API（barrel export）:
+
+| コンポーネント | 用途 |
+|-------------|------|
+| `InspectorShell` | PC/Mobile レスポンシブラッパー |
+| `InspectorContent` | ローディング/空状態 |
+| `InspectorDetailsLayout` | 詳細タブレイアウト |
+| `InspectorTagRow` | タグ選択行 |
+| `InspectorTimeSection` | 時間セクション |
+| `InspectorSaveBar` | 保存バー |
+
+---
+
+## 状態管理
+
+### Zustand Stores
+
+| Store | 用途 |
+|-------|------|
+| `useEntryInspectorStore` | Inspector開閉、entryId、pendingChanges |
+| `usePlanFilterStore` | フィルター（ステータス、タグ、検索等）persist |
+| `usePlanCacheStore` | Realtime競合防止（recurrence_type即時同期） |
+| `useModalStore` | 削除確認、繰り返し編集スコープ選択 |
+| `usePlanClipboardStore` | エントリのコピー&ペースト |
+
+---
+
+## Hooks
+
+| Hook | 用途 |
+|------|------|
+| `usePlan(id)` | 単一エントリ取得 |
+| `useEntryMutations()` | エントリCRUD（楽観的更新付き） |
+| `usePlanInspectorContentLogic()` | Inspectorメインロジック |
+| `useInspectorAutoSave` | デバウンス付き自動保存（500ms） |
+| `useInspectorNavigation` | 前後ナビゲーション（矢印キー） |
+| `useInspectorKeyboard` | ESC、Cmd+Z、矢印キー |
+| `useInspectorURLSync` | URL同期 |
+
+---
+
+## 「Time waits for no one」原則
+
+- `status` フィールドなし — 時間位置から `getEntryState()` で自動判定
+- `upcoming`: 予定時間セクション + 繰り返し + リマインダー
+- `active`: 予定 + 実績時間 + 充実度
+- `past`: 予定 + 実績時間 + 充実度
+
+---
+
+## 保存フロー
+
+```
+パネル開く
+  └── entryId セット → usePlan で取得
+
+ユーザー編集
+  ├── タイトル/説明 → 即時保存（autoSave）
+  └── 日時変更 → pendingChanges にバッファ
+      └── 繰り返しエントリの場合 → スコープダイアログ表示
+
+パネル閉じる
+  └── saveAndClose()
+      └── updatePlan mutation（楽観的更新）
+```
+
+---
+
+**最終更新**: 2026-03-06
