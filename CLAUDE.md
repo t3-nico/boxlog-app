@@ -37,7 +37,6 @@
 | **Navigation** | `src/features/navigation` | サイドバー、ナビゲーションタブ         |
 | **Search**     | `src/features/search`     | グローバル検索                         |
 | **AI**         | `src/features/ai`         | AIチャット、インスペクタ統合           |
-| **Reflection** | `src/features/reflection` | 振り返り、日次/週次レビュー            |
 
 ## コマンド
 

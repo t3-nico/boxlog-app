@@ -8,13 +8,13 @@ const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
 const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
 const meta = {
-  title: 'Draft/Notifications/NotificationItem',
+  title: 'Features/Notifications/NotificationItem',
   component: NotificationItem,
   parameters: {
     layout: 'padded',
     docs: {
       description: {
-        component: '> **Note:** このコンポーネントは開発中です。',
+        component: '通知アイテムコンポーネント。リマインダー・期限超過など各種通知タイプに対応。',
       },
     },
   },

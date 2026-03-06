@@ -98,16 +98,14 @@ export const DateNavigatorPatterns: Story = {
   },
 };
 
-/** ヘッダーアクションボタン群。設定・エクスポート・インポート・その他。 */
+/** ヘッダーアクションボタン群。設定・エクスポート・インポート。 */
 export const HeaderActionsAll: Story = {
-  render: () => <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} onMore={fn()} />,
+  render: () => <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} />,
 };
 
 /** コンパクトモード。アイコンサイズが小さくなる。 */
 export const HeaderActionsCompact: Story = {
-  render: () => (
-    <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} onMore={fn()} compact />
-  ),
+  render: () => <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} compact />,
 };
 
 /** アサイド切替セグメントコントロール。None/Plan/Record/Stats。 */
@@ -125,8 +123,8 @@ export const AllPatterns: Story = {
         <CompactDateNavigator onNavigate={fn()} />
         <DateNavigator onNavigate={fn()} showArrows={false} />
       </div>
-      <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} onMore={fn()} />
-      <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} onMore={fn()} compact />
+      <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} />
+      <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} compact />
       <AsideSwitcherExample />
     </div>
   ),
