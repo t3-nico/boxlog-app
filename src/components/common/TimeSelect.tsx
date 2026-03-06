@@ -384,8 +384,9 @@ export function TimeSelect({
               onFocus={handleInputFocus}
               disabled={disabled}
               placeholder="--:--"
-              className={`flex h-8 rounded-lg bg-transparent text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
-                showIcon ? 'w-auto' : 'w-14 px-2 text-center'
+              size={5}
+              className={`flex h-8 rounded-lg bg-transparent text-sm tabular-nums outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
+                showIcon ? 'w-auto' : 'px-2 text-right'
               } ${value ? 'text-foreground' : 'text-muted-foreground'} ${error || hasError ? 'text-destructive' : ''}`}
             />
             {error && (

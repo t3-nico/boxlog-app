@@ -90,7 +90,9 @@ export function TimeRowPlaceholder({
         {Icon && <Icon className="text-muted-foreground size-4 flex-shrink-0" />}
         <span className="text-muted-foreground text-sm">{label}</span>
       </div>
-      <span className={cn('text-muted-foreground text-sm', muted && 'opacity-60')}>{message}</span>
+      <span className={cn('text-muted-foreground px-2 text-sm', muted && 'opacity-60')}>
+        {message}
+      </span>
     </div>
   );
 }

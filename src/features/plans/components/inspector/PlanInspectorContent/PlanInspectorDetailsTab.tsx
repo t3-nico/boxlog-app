@@ -123,8 +123,8 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
           entryState={entryState}
           origin={origin}
           timeConflictError={timeConflictError}
-          fulfillmentScore={fulfillmentScore}
-          onFulfillmentChange={onFulfillmentChange}
+          fulfillmentScore={entryState !== 'upcoming' ? fulfillmentScore : undefined}
+          onFulfillmentChange={entryState !== 'upcoming' ? onFulfillmentChange : undefined}
           note={plan.description || ''}
           onNoteChange={(text) => onAutoSave('description', text)}
           notePlaceholder={t('plan.inspector.note.placeholder')}

@@ -19,6 +19,7 @@ import { expect, userEvent, within } from 'storybook/test';
 import { openSettingsModal, useModalStore, type SettingsCategory } from '@/stores/useModalStore';
 import { SettingsCard } from '../SettingsCard';
 import { SettingRow } from '../fields/SettingRow';
+import { SettingsModalMobileView } from './SettingsModalMobileView';
 import { SettingsModalSidebar } from './SettingsModalSidebar';
 
 // ─────────────────────────────────────────────────────────
@@ -407,4 +408,31 @@ export const DataControls: Story = {
 /** Account カテゴリ */
 export const Account: Story = {
   render: () => <SettingsModalShell initialCategory="account" />,
+};
+
+// ─────────────────────────────────────────────────────────
+// Mobile Stories
+// ─────────────────────────────────────────────────────────
+
+function MobileSettingsShell({ initialCategory }: { initialCategory?: SettingsCategory }) {
+  useEffect(() => {
+    openSettingsModal(initialCategory ?? 'general');
+    return () => {
+      useModalStore.setState({ modal: null });
+    };
+  }, [initialCategory]);
+
+  return (
+    <div className="bg-background h-[100dvh]">
+      <SettingsModalMobileView />
+    </div>
+  );
+}
+
+/** モバイル表示。カテゴリリスト → 詳細のスタック遷移。viewport addon で自動切替。 */
+export const Mobile: Story = {
+  render: () => <MobileSettingsShell />,
+  globals: {
+    viewport: { value: 'mobile1' },
+  },
 };

@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 
 import { InspectorDetailsLayout } from './InspectorDetailsLayout';
 import { InspectorTimeSection } from './InspectorTimeSection';
-import { InspectorFrame } from './story-helpers';
+import { InspectorFrame, MobileInspectorFrame } from './story-helpers';
 
 /**
  * Entry Inspector — 3パターンの表示確認
@@ -21,11 +21,11 @@ import { InspectorFrame } from './story-helpers';
  *
  * ## 3パターン
  *
- * | パターン | entryState | origin | 予定行 | 記録行 | 充実度 | 繰り返し/リマインダー |
- * |----------|-----------|--------|--------|--------|--------|----------------------|
- * | **Upcoming + Planned** | upcoming | planned | 編集可 | "Same as planned" | × | ○ |
- * | **Past + Planned** | past | planned | 編集可 | 編集可 + 差分表示 | ○ | × |
- * | **Past + Unplanned** | past | unplanned | プレースホルダー | 編集可 | ○ | × |
+ * | パターン | 予定行 | 記録行 | 期間 | 繰り返し/通知 | 充実度 | メモ |
+ * |----------|--------|--------|------|--------------|--------|------|
+ * | **Upcoming + Planned** | 編集可 | placeholder | 編集可 | ○ | × (Hide) | ○ |
+ * | **Past + Planned** | 編集可 | 編集可 | 編集可 | × (Hide) | ○ | ○ |
+ * | **Past + Unplanned** | placeholder | 編集可 | 読取専用 | × (Hide) | ○ | ○ |
  */
 const meta = {
   title: 'Recipes/Inspector/EntryInspector',
@@ -99,6 +99,8 @@ interface EntryInspectorStoryProps {
   initialActualEnd?: string | null;
   initialNote?: string;
   initialFulfillment?: FulfillmentScore | null;
+  /** trueの場合、モバイルDrawer風フレームで表示 */
+  mobile?: boolean;
 }
 
 function EntryInspectorStory({
@@ -112,6 +114,7 @@ function EntryInspectorStory({
   initialActualEnd = null,
   initialNote = '',
   initialFulfillment = null,
+  mobile = false,
 }: EntryInspectorStoryProps) {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [plannedStart, setPlannedStart] = useState(initialPlannedStart);
@@ -122,8 +125,10 @@ function EntryInspectorStory({
   const [fulfillment, setFulfillment] = useState<FulfillmentScore | null>(initialFulfillment);
   const t = useTranslations();
 
+  const Frame = mobile ? MobileInspectorFrame : InspectorFrame;
+
   return (
-    <InspectorFrame>
+    <Frame>
       <InspectorDetailsLayout
         tagRow={<MockTagRow tagName={tagName} dotClass={tagDotClass} />}
         schedule={
@@ -185,7 +190,7 @@ function EntryInspectorStory({
         }
         options={null}
       />
-    </InspectorFrame>
+    </Frame>
   );
 }
 
@@ -196,11 +201,9 @@ function EntryInspectorStory({
 /**
  * ## Upcoming + Planned
  *
- * 未来の予定エントリ。
- * - 予定行: 編集可能（10:00–11:30）
- * - 記録行: "Same as planned" プレースホルダー
- * - オプション: 繰り返し + リマインダー
- * - 充実度: 非表示
+ * 未来の予定エントリ。計画の編集がメイン操作。
+ * - 予定行: 編集可能 | 記録行: placeholder
+ * - 期間: 編集可 | 繰り返し/通知: ○ | 充実度: × (Hide) | メモ: ○
  */
 export const UpcomingPlanned: Story = {
   render: () => (
@@ -219,11 +222,9 @@ export const UpcomingPlanned: Story = {
 /**
  * ## Past + Planned
  *
- * 完了した予定エントリ（予定 vs 記録の差分表示）。
- * - 予定行: 編集可能（10:00–11:30）
- * - 記録行: 編集可能（10:15–12:00）+ 差分表示
- * - オプション: 充実度ボタン
- * - 繰り返し/リマインダー: 非表示
+ * 完了した予定エントリ。振り返りがメイン操作。
+ * - 予定行: 編集可 | 記録行: 編集可
+ * - 期間: 編集可 | 繰り返し/通知: × (Hide) | 充実度: ○ | メモ: ○
  */
 export const PastPlanned: Story = {
   render: () => (
@@ -245,11 +246,9 @@ export const PastPlanned: Story = {
 /**
  * ## Past + Unplanned
  *
- * 直接記録されたエントリ（予定なし）。
- * - 予定行: "No planned time" プレースホルダー
- * - 記録行: 編集可能（13:00–14:00）
- * - オプション: 充実度ボタン
- * - 繰り返し/リマインダー: 非表示
+ * 直接記録されたエントリ（予定なし）。記録のみがメイン操作。
+ * - 予定行: placeholder | 記録行: 編集可
+ * - 期間: 読取専用 | 繰り返し/通知: × (Hide) | 充実度: ○ | メモ: ○
  */
 export const PastUnplanned: Story = {
   render: () => (
@@ -324,4 +323,29 @@ export const AllPatterns: Story = {
       </div>
     </div>
   ),
+};
+
+/**
+ * ## Mobile Drawer
+ *
+ * モバイルではボトムシート（Drawer）として表示。
+ * ドラッグハンドル + メニューボタンが上部に追加される。
+ * viewport addon で iframe がリサイズされ、useMediaQuery が反応して自動切替。
+ */
+export const MobileDrawer: Story = {
+  render: () => (
+    <EntryInspectorStory
+      entryState="upcoming"
+      origin="planned"
+      tagName="Work"
+      tagDotClass="bg-blue-500"
+      initialPlannedStart="14:00"
+      initialPlannedEnd="15:30"
+      initialNote="Prepare slides for the meeting"
+      mobile
+    />
+  ),
+  globals: {
+    viewport: { value: 'mobile1' },
+  },
 };

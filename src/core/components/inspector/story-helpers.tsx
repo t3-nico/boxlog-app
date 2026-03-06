@@ -4,7 +4,7 @@
  * Plan/Record の Inspector Stories で共通利用するモックデータとコンポーネント
  */
 
-import { FolderOpen, X } from 'lucide-react';
+import { FolderOpen, MoreHorizontal, X } from 'lucide-react';
 
 import { HoverTooltip } from '@/components/ui/tooltip';
 import type { Tag } from '@/core/types/tag';
@@ -15,6 +15,31 @@ export function InspectorFrame({ children }: { children: React.ReactNode }) {
   return (
     <div className="bg-card surface-raised-heavy w-[400px] overflow-hidden rounded-2xl">
       {children}
+    </div>
+  );
+}
+
+/** モバイルDrawer風コンテナ（ボトムシートを模擬） */
+export function MobileInspectorFrame({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="mx-auto max-w-sm">
+      <div className="bg-card flex flex-col overflow-hidden rounded-t-2xl">
+        {/* ドラッグハンドル + メニュー */}
+        <div className="flex h-10 shrink-0 items-center justify-between px-2 pt-2">
+          <div className="w-10" />
+          <div className="bg-border h-1.5 w-12 rounded-full" />
+          <div className="flex w-10 justify-end">
+            <button
+              type="button"
+              className="text-muted-foreground flex size-10 items-center justify-center rounded-lg"
+              aria-label="オプション"
+            >
+              <MoreHorizontal className="size-5" />
+            </button>
+          </div>
+        </div>
+        {children}
+      </div>
     </div>
   );
 }

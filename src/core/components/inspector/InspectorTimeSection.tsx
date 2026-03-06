@@ -11,7 +11,7 @@
 
 import type { ReactNode } from 'react';
 
-import { Calendar, CircleCheck, Clock, StickyNote, Timer } from 'lucide-react';
+import { Calendar, Clock, Play, StickyNote, Timer } from 'lucide-react';
 import { useCallback, useMemo } from 'react';
 
 import { useTranslations } from 'next-intl';
@@ -19,7 +19,7 @@ import { useTranslations } from 'next-intl';
 import type { EntryOrigin, FulfillmentScore } from '@/core/types/entry';
 import { useAutoAdjustEndTime } from '@/hooks/useAutoAdjustEndTime';
 import type { EntryState } from '@/lib/entry-status';
-import { computeDuration } from '@/lib/time-utils';
+import { computeDuration, formatDurationDisplay } from '@/lib/time-utils';
 
 import { DateNavigatorRow } from './DateNavigatorRow';
 import { DurationSelect } from './DurationSelect';
@@ -143,6 +143,10 @@ export function InspectorTimeSection({
     () => computeDuration(plannedStart, plannedEnd),
     [plannedStart, plannedEnd],
   );
+  const actualDuration = useMemo(
+    () => computeDuration(effectiveActualStart, effectiveActualEnd),
+    [effectiveActualStart, effectiveActualEnd],
+  );
 
   const hasActualTime = actualStart !== null || actualEnd !== null;
 
@@ -157,7 +161,7 @@ export function InspectorTimeSection({
   );
 
   return (
-    <div className="flex flex-col gap-2 p-4">
+    <div className="flex flex-col gap-2 py-4 pr-2 pl-4">
       {/* 日付 */}
       <DateNavigatorRow
         label={t('plan.inspector.time.date')}
@@ -192,13 +196,13 @@ export function InspectorTimeSection({
       {showActualPlaceholder ? (
         <TimeRowPlaceholder
           label={t('plan.inspector.time.actual')}
-          icon={CircleCheck}
+          icon={Play}
           message={t('plan.inspector.time.sameAsPlanned')}
         />
       ) : hasActualTime || isUnplanned ? (
         <TimeRow
           label={t('plan.inspector.time.actual')}
-          icon={CircleCheck}
+          icon={Play}
           startTime={effectiveActualStart}
           endTime={effectiveActualEnd}
           onStartChange={handleActualStartChange}
@@ -208,12 +212,12 @@ export function InspectorTimeSection({
       ) : (
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <CircleCheck className="text-muted-foreground size-4 flex-shrink-0" />
+            <Play className="text-muted-foreground size-4 flex-shrink-0" />
             <span className="text-muted-foreground text-sm">{t('plan.inspector.time.actual')}</span>
           </div>
           <button
             type="button"
-            className="text-muted-foreground hover:text-foreground text-xs transition-colors"
+            className="text-muted-foreground hover:text-foreground px-2 text-xs transition-colors"
             onClick={() => {
               onActualStartChange(plannedStart);
               onActualEndChange(plannedEnd);
@@ -225,21 +229,37 @@ export function InspectorTimeSection({
       )}
 
       {/* 期間（Duration） */}
-      {!isPlannedRowDisabled && plannedStart && (
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Timer className="text-muted-foreground size-4 flex-shrink-0" />
-            <span className="text-muted-foreground text-sm">
-              {t('plan.inspector.time.duration')}
-            </span>
-          </div>
-          <DurationSelect
-            value={plannedDuration}
-            onChange={handleDurationChange}
-            disabled={disabled}
-          />
-        </div>
-      )}
+      {isUnplanned
+        ? // Unplanned: 記録時間ベースの期間（読み取り専用）
+          actualDuration > 0 && (
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Timer className="text-muted-foreground size-4 flex-shrink-0" />
+                <span className="text-muted-foreground text-sm">
+                  {t('plan.inspector.time.duration')}
+                </span>
+              </div>
+              <span className="text-muted-foreground px-2 text-sm tabular-nums">
+                {formatDurationDisplay(actualDuration)}
+              </span>
+            </div>
+          )
+        : // Planned: 予定の期間（編集可能）
+          plannedStart && (
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Timer className="text-muted-foreground size-4 flex-shrink-0" />
+                <span className="text-muted-foreground text-sm">
+                  {t('plan.inspector.time.duration')}
+                </span>
+              </div>
+              <DurationSelect
+                value={plannedDuration}
+                onChange={handleDurationChange}
+                disabled={disabled}
+              />
+            </div>
+          )}
 
       {/* 繰り返し */}
       {recurrenceRow}

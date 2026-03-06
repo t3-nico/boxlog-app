@@ -121,8 +121,8 @@
         "date": "Date",
         "planned": "Plan",
         "actual": "Actual",
-        "sameAsPlanned": "Same as plan",
-        "noPlanned": "No plan",
+        "sameAsPlanned": "Not yet",
+        "noPlanned": "Lived, not planned",
         "duration": "Duration",
         "fulfillment": "Fulfillment"
       },

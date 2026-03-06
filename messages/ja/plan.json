@@ -121,8 +121,8 @@
         "date": "日付",
         "planned": "予定",
         "actual": "記録",
-        "sameAsPlanned": "予定と同じ",
-        "noPlanned": "予定なし",
+        "sameAsPlanned": "まだこれから",
+        "noPlanned": "計画せず過ごした",
         "duration": "期間",
         "fulfillment": "充実度"
       },

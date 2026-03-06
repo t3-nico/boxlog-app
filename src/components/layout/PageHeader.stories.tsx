@@ -38,6 +38,14 @@ export const Default: Story = {
   render: () => <PageHeaderWithTitle title="Plans" />,
 };
 
+/** モバイル表示。viewport addon で md:hidden / hidden md:flex が自動切替。 */
+export const Mobile: Story = {
+  render: () => <PageHeaderWithTitle title="Plans" />,
+  globals: {
+    viewport: { value: 'mobile1' },
+  },
+};
+
 /** 全パターン一覧 */
 export const AllPatterns: Story = {
   render: () => (

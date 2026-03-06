@@ -129,3 +129,16 @@ export const AllPatterns: Story = {
     </div>
   ),
 };
+
+/** モバイルレイアウト。コンパクト日付ナビ + コンパクトアクション。viewport addon で自動切替。 */
+export const MobileLayout: Story = {
+  render: () => (
+    <div className="flex items-center justify-between gap-2">
+      <CompactDateNavigator onNavigate={fn()} />
+      <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} compact />
+    </div>
+  ),
+  globals: {
+    viewport: { value: 'mobile1' },
+  },
+};

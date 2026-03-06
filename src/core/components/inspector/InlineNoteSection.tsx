@@ -36,6 +36,7 @@ interface InlineNoteSectionProps {
   onNoteChange: (text: string) => void;
   placeholder?: string | undefined;
   disabled?: boolean;
+  maxLength?: number;
 }
 
 export function InlineNoteSection({
@@ -45,14 +46,20 @@ export function InlineNoteSection({
   onNoteChange,
   placeholder,
   disabled = false,
+  maxLength = 1000,
 }: InlineNoteSectionProps) {
   const displayNote = useMemo(() => stripHtml(note), [note]);
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex items-center gap-2">
-        {Icon && <Icon className="text-muted-foreground size-4 flex-shrink-0" />}
-        <span className="text-muted-foreground text-sm">{label}</span>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          {Icon && <Icon className="text-muted-foreground size-4 flex-shrink-0" />}
+          <span className="text-muted-foreground text-sm">{label}</span>
+        </div>
+        <span className="text-muted-foreground px-2 text-xs tabular-nums">
+          {displayNote.length}/{maxLength}
+        </span>
       </div>
       <input
         type="text"
@@ -60,7 +67,8 @@ export function InlineNoteSection({
         onChange={(e) => onNoteChange(e.target.value)}
         placeholder={placeholder}
         disabled={disabled}
-        className="bg-input text-foreground placeholder:text-muted-foreground surface-sunken focus-visible:ring-ring h-8 w-full rounded-lg border border-transparent px-4 text-sm outline-none focus-visible:ring-2"
+        maxLength={maxLength}
+        className="bg-input text-foreground placeholder:text-muted-foreground surface-sunken focus-visible:ring-ring mr-2 h-8 rounded-lg border border-transparent px-4 text-sm outline-none focus-visible:ring-2"
       />
     </div>
   );
