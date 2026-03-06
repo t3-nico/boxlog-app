@@ -30,7 +30,7 @@ import { InspectorFrame } from './story-helpers';
  * | **Past + Unplanned** | past | unplanned | プレースホルダー | 編集可 | ○ | × |
  */
 const meta = {
-  title: 'Components/Inspector/EntryInspector',
+  title: 'Recipes/Inspector/EntryInspector',
   parameters: {
     layout: 'centered',
   },
@@ -52,25 +52,25 @@ function MockTagRow({
   dotClass?: string | undefined;
 }) {
   return (
-    <div className="flex items-center justify-between gap-2 px-6 pt-6 pb-2">
+    <div className="flex items-center justify-between gap-2 px-5 pt-5 pb-1">
       <button
         type="button"
-        className="hover:bg-state-hover -ml-2 flex items-center gap-2.5 rounded-lg py-1 pr-2 pl-2 text-xl font-bold transition-colors"
+        className="hover:bg-state-hover -mt-1 -ml-1.5 flex items-center gap-2 rounded-lg py-1 pr-2 pl-1.5 text-base font-semibold transition-colors"
       >
         {tagName ? (
           <>
             <span
-              className={cn('inline-block size-4 flex-shrink-0 rounded-full', dotClass)}
+              className={cn('inline-block size-2.5 flex-shrink-0 rounded-full', dotClass)}
               aria-hidden
             />
             <span className="text-foreground">{tagName}</span>
-            <ChevronDown className="text-muted-foreground size-5 flex-shrink-0" aria-hidden />
+            <ChevronDown className="text-muted-foreground size-4 flex-shrink-0" aria-hidden />
           </>
         ) : (
           <>
-            <Plus className="text-muted-foreground size-4 flex-shrink-0" aria-hidden />
+            <Plus className="text-muted-foreground size-3.5 flex-shrink-0" aria-hidden />
             <span className="text-muted-foreground">Add tag</span>
-            <ChevronDown className="text-muted-foreground size-5 flex-shrink-0" aria-hidden />
+            <ChevronDown className="text-muted-foreground size-4 flex-shrink-0" aria-hidden />
           </>
         )}
       </button>

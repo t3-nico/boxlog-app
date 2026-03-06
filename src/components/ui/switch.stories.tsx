@@ -7,7 +7,7 @@ import { Switch } from './switch';
 
 /** Switch - トグルスイッチ（ON/OFF切替）。即座に反映される設定に使用、フォーム送信後に反映する場合はCheckboxを使用。 */
 const meta = {
-  title: 'Components/Switch',
+  title: 'Primitives/Switch',
   component: Switch,
   tags: ['autodocs'],
   parameters: { layout: 'fullscreen' },

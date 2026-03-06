@@ -21,7 +21,7 @@ import {
 } from './chart';
 
 const meta = {
-  title: 'Components/Chart',
+  title: 'Primitives/Chart',
   component: ChartContainer,
   tags: ['autodocs'],
   parameters: {

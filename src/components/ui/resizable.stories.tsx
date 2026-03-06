@@ -27,7 +27,7 @@ import { cn } from '@/lib/utils';
  * Next.js 15 RSC環境で動作しないため、カスタム実装を使用。
  */
 const meta = {
-  title: 'Components/Resizable',
+  title: 'Primitives/Resizable',
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',

@@ -6,7 +6,7 @@ import { PageHeader } from './PageHeader';
 
 /** PageHeader - 統合ページヘッダー */
 const meta = {
-  title: 'Components/Layout/PageHeader',
+  title: 'Primitives/Layout/PageHeader',
   parameters: {
     layout: 'padded',
   },

@@ -12,7 +12,7 @@ import {
 import { Input } from './input';
 
 const meta = {
-  title: 'Components/Field',
+  title: 'Recipes/Field',
   component: FieldLabel,
   tags: ['autodocs'],
   parameters: {

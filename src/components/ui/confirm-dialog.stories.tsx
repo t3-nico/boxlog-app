@@ -5,7 +5,7 @@ import { Button } from './button';
 import { ConfirmDialog } from './confirm-dialog';
 
 const meta = {
-  title: 'Components/ConfirmDialog',
+  title: 'Recipes/ConfirmDialog',
   component: ConfirmDialog,
   tags: ['autodocs'],
   parameters: {

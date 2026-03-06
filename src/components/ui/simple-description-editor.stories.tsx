@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { SimpleDescriptionEditor } from '@/components/ui/simple-description-editor';
 
 const meta = {
-  title: 'Components/Editor',
+  title: 'Recipes/Editor',
   component: SimpleDescriptionEditor,
   tags: ['autodocs'],
   parameters: {

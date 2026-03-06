@@ -36,7 +36,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
  *
  * | Storybookパス | 物理ディレクトリ | 備考 |
  * |---|---|---|
- * | `Components/Layout/*` | `src/components/layout/` | このディレクトリ |
+ * | `Primitives/Layout/*` | `src/components/layout/` | このディレクトリ |
  * | `Features/Aside/*` | `src/features/navigation/components/aside/` | feature層のAside |
  * | `Features/Sidebar/*` | `src/features/navigation/components/sidebar/` | feature層のSidebar |
  *
@@ -44,7 +44,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
  * 各コンポーネントの依存関係に基づいて物理配置を決定している。
  */
 const meta = {
-  title: 'Components/Layout/Overview',
+  title: 'Primitives/Layout/Overview',
   parameters: {
     layout: 'padded',
   },

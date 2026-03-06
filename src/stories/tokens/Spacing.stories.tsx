@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
-  title: 'Tokens/Spacing',
+  title: 'Foundations/Spacing',
   parameters: {
     layout: 'fullscreen',
   },

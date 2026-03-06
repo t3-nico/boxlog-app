@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Separator } from './separator';
 
 const meta = {
-  title: 'Components/Separator',
+  title: 'Primitives/Separator',
   component: Separator,
   tags: ['autodocs'],
   parameters: {

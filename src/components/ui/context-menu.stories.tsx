@@ -11,7 +11,7 @@ import {
 } from './context-menu';
 
 const meta = {
-  title: 'Components/ContextMenu',
+  title: 'Primitives/ContextMenu',
   component: ContextMenu,
   tags: ['autodocs'],
   parameters: {

@@ -6,7 +6,7 @@ import { Field, FieldError, FieldLabel } from './field';
 import { Input } from './input';
 
 const meta = {
-  title: 'Components/Input',
+  title: 'Primitives/Input',
   component: Input,
   tags: ['autodocs'],
   parameters: {

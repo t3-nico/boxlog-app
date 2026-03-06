@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useCallback, useState } from 'react';
 
 const meta = {
-  title: 'Tokens/Motion',
+  title: 'Foundations/Motion',
   parameters: {
     layout: 'fullscreen',
   },

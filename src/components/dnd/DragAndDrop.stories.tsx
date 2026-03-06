@@ -41,7 +41,7 @@ import { PlanCard } from '@/features/calendar/components/views/shared/components
  * TagReorder / TagReorderNested でインタラクティブに操作可能。
  */
 const meta = {
-  title: 'Components/DragAndDrop',
+  title: 'Primitives/DragAndDrop',
   parameters: {
     layout: 'padded',
   },

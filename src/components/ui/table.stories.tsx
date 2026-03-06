@@ -14,7 +14,7 @@ import {
 
 /** Table - データテーブル（shadcn/ui プリミティブ）。複数属性の比較・ソート・フィルターに使用。 */
 const meta = {
-  title: 'Components/Table',
+  title: 'Primitives/Table',
   component: Table,
   tags: ['autodocs'],
   parameters: { layout: 'fullscreen' },

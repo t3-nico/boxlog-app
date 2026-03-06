@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
-  title: 'Tokens/Primitives',
+  title: 'Foundations/Primitives',
   parameters: {
     layout: 'fullscreen',
   },

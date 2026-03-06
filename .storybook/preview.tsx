@@ -64,7 +64,7 @@ const preview: Preview = {
     options: {
       storySort: {
         method: 'alphabetical',
-        order: ['Docs', 'Tokens', 'Components', 'Features', 'Patterns'],
+        order: ['Docs', 'Foundations', 'Primitives', 'Recipes', 'Features', 'Patterns'],
       },
     },
     darkMode: {

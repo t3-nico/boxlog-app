@@ -17,7 +17,7 @@ import { Button } from './button';
 import { Input } from './input';
 
 const meta = {
-  title: 'Components/AlertDialog',
+  title: 'Primitives/AlertDialog',
   component: AlertDialog,
   tags: [],
   parameters: {

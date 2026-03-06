@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from './input-otp';
 
 const meta = {
-  title: 'Components/InputOTP',
+  title: 'Primitives/InputOTP',
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',

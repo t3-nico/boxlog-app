@@ -29,7 +29,7 @@ import {
 } from 'lucide-react';
 
 const meta = {
-  title: 'Tokens/Icons',
+  title: 'Foundations/Icons',
   parameters: {
     layout: 'fullscreen',
   },

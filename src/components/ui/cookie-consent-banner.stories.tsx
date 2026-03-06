@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Button } from './button';
 
 const meta = {
-  title: 'Components/CookieConsentBanner',
+  title: 'Recipes/CookieConsentBanner',
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',

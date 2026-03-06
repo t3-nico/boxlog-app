@@ -5,7 +5,7 @@ import { Separator } from './separator';
 
 /** ScrollArea - カスタムスクロールエリア */
 const meta = {
-  title: 'Components/ScrollArea',
+  title: 'Primitives/ScrollArea',
   component: ScrollArea,
   tags: ['autodocs'],
   parameters: {
