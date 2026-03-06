@@ -84,3 +84,36 @@
 .aspect-card {
   aspect-ratio: 3 / 2;
 }
+
+/* ============================================
+ * Physical Elevation ユーティリティ
+ *
+ * 3段階のサーフェスロール（物理照明ベース）。
+ * 高レベルのコンテナ要素に適用する。
+ * カレンダーイベントカード等のリスト要素には適用しない。
+ *
+ * 使い方:
+ *   surface-sunken       → input well, 凹み領域
+ *   surface-flat          → card, コンテンツ面
+ *   surface-raised        → dropdown, popover
+ *   surface-raised-heavy  → dialog, sheet, inspector
+ * ============================================ */
+
+@utility surface-sunken {
+  background-image: var(--elevation-gradient-sunken);
+  box-shadow: var(--elevation-sunken);
+}
+
+@utility surface-flat {
+  background-image: var(--elevation-gradient-card);
+}
+
+@utility surface-raised {
+  background-image: var(--elevation-gradient-card);
+  box-shadow: var(--elevation-raised);
+}
+
+@utility surface-raised-heavy {
+  background-image: var(--elevation-gradient-card);
+  box-shadow: var(--elevation-raised-heavy);
+}

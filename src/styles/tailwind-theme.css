@@ -62,6 +62,11 @@
   --shadow-color: oklch(0 0 0 / 15%);
   --shadow-color-heavy: oklch(0 0 0 / 20%);
 
+  /* Physical Lighting — 合成シャドウ */
+  --shadow-elevation-sunken: var(--elevation-sunken);
+  --shadow-elevation-raised: var(--elevation-raised);
+  --shadow-elevation-raised-heavy: var(--elevation-raised-heavy);
+
   /* ============================================
    * Tag Colors — Base（borders / dots / accents）
    * 使用例: bg-tag-blue, border-tag-red
