@@ -13,8 +13,6 @@
 import type { LucideIcon } from 'lucide-react';
 import { useMemo } from 'react';
 
-import { cn } from '@/lib/utils';
-
 /** HTML タグを除去してプレーンテキストに変換 */
 function stripHtml(html: string): string {
   if (!html) return '';
@@ -36,7 +34,7 @@ interface InlineNoteSectionProps {
   icon?: LucideIcon;
   note: string;
   onNoteChange: (text: string) => void;
-  placeholder?: string;
+  placeholder?: string | undefined;
   disabled?: boolean;
 }
 
@@ -51,21 +49,18 @@ export function InlineNoteSection({
   const displayNote = useMemo(() => stripHtml(note), [note]);
 
   return (
-    <div className="flex items-start gap-2">
-      <div className="flex items-center gap-2 pt-1">
+    <div className="flex flex-col gap-1">
+      <div className="flex items-center gap-2">
         {Icon && <Icon className="text-muted-foreground size-4 flex-shrink-0" />}
         <span className="text-muted-foreground text-sm">{label}</span>
       </div>
-      <textarea
+      <input
+        type="text"
         value={displayNote}
         onChange={(e) => onNoteChange(e.target.value)}
         placeholder={placeholder}
         disabled={disabled}
-        rows={1}
-        className={cn(
-          'text-foreground placeholder:text-muted-foreground/60 w-full resize-none bg-transparent text-sm leading-relaxed outline-none',
-          'max-h-32 min-h-7 overflow-y-auto',
-        )}
+        className="bg-input text-foreground placeholder:text-muted-foreground surface-sunken focus-visible:ring-ring h-8 w-full rounded-lg border border-transparent px-4 text-sm outline-none focus-visible:ring-2"
       />
     </div>
   );

@@ -1,15 +1,13 @@
 import { useState } from 'react';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Bell, ChevronDown, Plus, Repeat } from 'lucide-react';
+import { ChevronDown, MoreHorizontal, Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import type { EntryOrigin, FulfillmentScore } from '@/core/types/entry';
 import type { EntryState } from '@/lib/entry-status';
 import { cn } from '@/lib/utils';
 
-import { FulfillmentButton } from './FulfillmentButton';
-import { InlineNoteSection } from './InlineNoteSection';
 import { InspectorDetailsLayout } from './InspectorDetailsLayout';
 import { InspectorTimeSection } from './InspectorTimeSection';
 import { InspectorFrame } from './story-helpers';
@@ -52,7 +50,7 @@ function MockTagRow({
   dotClass?: string | undefined;
 }) {
   return (
-    <div className="flex items-center justify-between gap-2 px-5 pt-5 pb-1">
+    <div className="flex items-center justify-between gap-2 px-4 pt-5 pb-0">
       <button
         type="button"
         className="hover:bg-state-hover -mt-1 -ml-1.5 flex items-center gap-2 rounded-lg py-1 pr-2 pl-1.5 text-base font-semibold transition-colors"
@@ -74,33 +72,15 @@ function MockTagRow({
           </>
         )}
       </button>
+
+      <button
+        type="button"
+        className="text-muted-foreground hover:bg-state-hover flex size-8 items-center justify-center rounded-lg transition-colors"
+        aria-label="Options"
+      >
+        <MoreHorizontal className="size-5" />
+      </button>
     </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────
-// Mock: オプションボタン（feature依存のためモック）
-// ─────────────────────────────────────────────────────────
-
-function MockRecurrenceButton() {
-  return (
-    <button
-      type="button"
-      className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex h-7 items-center gap-1 rounded-md border border-transparent px-2 transition-colors"
-    >
-      <Repeat className="size-4" />
-    </button>
-  );
-}
-
-function MockReminderButton() {
-  return (
-    <button
-      type="button"
-      className="text-muted-foreground hover:text-foreground hover:bg-state-hover flex h-7 items-center gap-1 rounded-md border border-transparent px-2 transition-colors"
-    >
-      <Bell className="size-4" />
-    </button>
   );
 }
 
@@ -142,9 +122,6 @@ function EntryInspectorStory({
   const [fulfillment, setFulfillment] = useState<FulfillmentScore | null>(initialFulfillment);
   const t = useTranslations();
 
-  const showFulfillment = entryState !== 'upcoming';
-  const showRecurrence = entryState === 'upcoming';
-
   return (
     <InspectorFrame>
       <InspectorDetailsLayout
@@ -163,29 +140,14 @@ function EntryInspectorStory({
             onActualEndChange={setActualEnd}
             entryState={entryState}
             origin={origin}
-          />
-        }
-        note={
-          <InlineNoteSection
-            label={t('plan.inspector.note.label')}
+            fulfillmentScore={fulfillment}
+            onFulfillmentChange={setFulfillment}
             note={note}
             onNoteChange={setNote}
-            placeholder={t('plan.inspector.note.placeholder')}
+            notePlaceholder={t('plan.inspector.note.placeholder')}
           />
         }
-        options={
-          <>
-            {showFulfillment && (
-              <FulfillmentButton score={fulfillment} onScoreChange={setFulfillment} />
-            )}
-            {showRecurrence && (
-              <>
-                <MockRecurrenceButton />
-                <MockReminderButton />
-              </>
-            )}
-          </>
-        }
+        options={null}
       />
     </InspectorFrame>
   );

@@ -22,9 +22,6 @@ interface TimeRowProps {
   onEndChange: (time: string) => void;
   disabled?: boolean;
   hasError?: boolean;
-  durationDisplay?: string | undefined;
-  diffDisplay?: string | undefined;
-  diffType?: 'over' | 'under' | undefined;
   /** true で記録行（実績）を視覚的に強調 */
   isPrimary?: boolean;
 }
@@ -38,9 +35,6 @@ export function TimeRow({
   onEndChange,
   disabled = false,
   hasError = false,
-  durationDisplay,
-  diffDisplay,
-  diffType,
   isPrimary = false,
 }: TimeRowProps) {
   return (
@@ -72,19 +66,6 @@ export function TimeRow({
           showDurationInMenu
           hasError={hasError}
         />
-        {durationDisplay && (
-          <span className="text-muted-foreground ml-1 text-xs tabular-nums">{durationDisplay}</span>
-        )}
-        {diffDisplay && (
-          <span
-            className={cn(
-              'ml-1 text-xs tabular-nums',
-              diffType === 'under' ? 'text-success' : 'text-warning',
-            )}
-          >
-            {diffDisplay}
-          </span>
-        )}
       </div>
     </div>
   );

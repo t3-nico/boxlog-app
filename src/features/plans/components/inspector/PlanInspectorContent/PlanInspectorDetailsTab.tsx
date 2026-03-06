@@ -12,8 +12,6 @@ import type { ReactNode } from 'react';
 import { memo } from 'react';
 
 import {
-  FulfillmentButton,
-  InlineNoteSection,
   InspectorDetailsLayout,
   InspectorTagRow,
   InspectorTimeSection,
@@ -97,8 +95,6 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
 
   // upcoming のみ繰り返し・リマインダーを表示
   const showRecurrence = entryState === 'upcoming';
-  // active/past で充実度を表示
-  const showFulfillment = entryState !== 'upcoming' && onFulfillmentChange;
 
   return (
     <InspectorDetailsLayout
@@ -125,36 +121,25 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
           entryState={entryState}
           origin={origin}
           timeConflictError={timeConflictError}
-        />
-      }
-      note={
-        <InlineNoteSection
-          label={t('plan.inspector.note.label')}
+          fulfillmentScore={fulfillmentScore}
+          onFulfillmentChange={onFulfillmentChange}
           note={plan.description || ''}
           onNoteChange={(text) => onAutoSave('description', text)}
-          placeholder={t('plan.inspector.note.placeholder')}
+          notePlaceholder={t('plan.inspector.note.placeholder')}
         />
       }
       options={
-        <>
-          {showFulfillment && (
-            <FulfillmentButton
-              score={fulfillmentScore ?? null}
-              onScoreChange={onFulfillmentChange}
+        showRecurrence ? (
+          <>
+            <RecurrenceIconButton
+              recurrenceRule={recurrenceRule}
+              recurrenceType={recurrenceType}
+              onRepeatTypeChange={onRepeatTypeChange}
+              onRecurrenceRuleChange={onRecurrenceRuleChange}
             />
-          )}
-          {showRecurrence && (
-            <>
-              <RecurrenceIconButton
-                recurrenceRule={recurrenceRule}
-                recurrenceType={recurrenceType}
-                onRepeatTypeChange={onRepeatTypeChange}
-                onRecurrenceRuleChange={onRecurrenceRuleChange}
-              />
-              <ReminderSelect value={reminderMinutes} onChange={onReminderChange} variant="icon" />
-            </>
-          )}
-        </>
+            <ReminderSelect value={reminderMinutes} onChange={onReminderChange} variant="icon" />
+          </>
+        ) : null
       }
     />
   );

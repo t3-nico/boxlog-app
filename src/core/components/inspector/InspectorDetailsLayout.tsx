@@ -16,12 +16,10 @@ import type { ReactNode } from 'react';
 export interface InspectorDetailsLayoutProps {
   /** Row 0: タグ表示（カラードット + タグ名） */
   tagRow?: ReactNode;
-  /** Row 1: スケジュール選択コンポーネント */
+  /** Row 1: スケジュール + メモ等のコンテンツグループ */
   schedule: ReactNode;
-  /** Row 2: メモ（インラインテキストエリア） */
-  note?: ReactNode;
-  /** Row 3: オプションボタン群 */
-  options: ReactNode;
+  /** Row 2: オプションボタン群 */
+  options?: ReactNode;
   /** フッター（保存バーなど） */
   footer?: ReactNode;
 }
@@ -29,7 +27,6 @@ export interface InspectorDetailsLayoutProps {
 export function InspectorDetailsLayout({
   tagRow,
   schedule,
-  note,
   options,
   footer,
 }: InspectorDetailsLayoutProps) {
@@ -38,14 +35,13 @@ export function InspectorDetailsLayout({
       {/* Row 0: タグ */}
       {tagRow}
 
-      {/* Row 1: スケジュール */}
-      {schedule}
+      {/* コンテンツグループ */}
+      <div className="bg-container mx-4 mt-3 mb-6 rounded-xl">{schedule}</div>
 
-      {/* Row 2: メモ */}
-      {note && <div className="px-5 py-2">{note}</div>}
-
-      {/* Row 3: オプション */}
-      <div className="flex flex-wrap items-center gap-1.5 px-5 pt-2 pb-5">{options}</div>
+      {/* オプション */}
+      {options && (
+        <div className="flex flex-wrap items-center gap-1.5 px-5 pt-2 pb-5">{options}</div>
+      )}
 
       {/* フッター（保存バー） */}
       {footer}

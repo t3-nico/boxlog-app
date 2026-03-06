@@ -122,7 +122,9 @@
         "planned": "Plan",
         "actual": "Actual",
         "sameAsPlanned": "Same as plan",
-        "noPlanned": "No plan"
+        "noPlanned": "No plan",
+        "duration": "Duration",
+        "fulfillment": "Fulfillment"
       },
       "note": {
         "label": "Note",

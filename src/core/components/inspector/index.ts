@@ -1,6 +1,7 @@
 export { DateNavigatorRow } from './DateNavigatorRow';
 export { DraggableInspector } from './DraggableInspector';
 export { FulfillmentButton } from './FulfillmentButton';
+export { FulfillmentRow } from './FulfillmentRow';
 export { InlineNoteSection } from './InlineNoteSection';
 export { InspectorContent } from './InspectorContent';
 export { InspectorDetailsLayout } from './InspectorDetailsLayout';
