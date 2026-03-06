@@ -75,7 +75,7 @@ export function RecurrenceIconButton({
               type="button"
               disabled={disabled}
               className={cn(
-                'flex h-7 items-center gap-1 rounded-md border px-2 transition-colors',
+                'flex h-8 items-center gap-1 rounded-lg border px-2 transition-colors',
                 'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
                 hasRecurrence
                   ? 'border-border text-foreground'

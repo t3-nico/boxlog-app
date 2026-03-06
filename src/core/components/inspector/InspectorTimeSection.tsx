@@ -9,6 +9,8 @@
  * TimeComparisonSection の後継（同じ props interface）。
  */
 
+import type { ReactNode } from 'react';
+
 import { Calendar, CircleCheck, Clock, StickyNote, Timer } from 'lucide-react';
 import { useCallback, useMemo } from 'react';
 
@@ -65,6 +67,9 @@ interface InspectorTimeSectionProps {
   note?: string | undefined;
   onNoteChange?: ((text: string) => void) | undefined;
   notePlaceholder?: string | undefined;
+  // 繰り返し・通知（ReactNode スロット）
+  recurrenceRow?: ReactNode;
+  reminderRow?: ReactNode;
 }
 
 export function InspectorTimeSection({
@@ -87,6 +92,8 @@ export function InspectorTimeSection({
   note,
   onNoteChange,
   notePlaceholder,
+  recurrenceRow,
+  reminderRow,
 }: InspectorTimeSectionProps) {
   const t = useTranslations();
 
@@ -233,6 +240,12 @@ export function InspectorTimeSection({
           />
         </div>
       )}
+
+      {/* 繰り返し */}
+      {recurrenceRow}
+
+      {/* 通知 */}
+      {reminderRow}
 
       {/* 充実度 */}
       {onFulfillmentChange && (

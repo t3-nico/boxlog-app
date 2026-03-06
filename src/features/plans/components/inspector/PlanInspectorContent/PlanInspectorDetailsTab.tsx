@@ -26,6 +26,8 @@ import type {
 } from '@/core/types/entry';
 import type { EntryState } from '@/lib/entry-status';
 
+import { Bell, Repeat } from 'lucide-react';
+
 import { RecurrenceIconButton } from '../../shared/RecurrenceIconButton';
 import { ReminderSelect } from '../../shared/ReminderSelect';
 
@@ -126,20 +128,42 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
           note={plan.description || ''}
           onNoteChange={(text) => onAutoSave('description', text)}
           notePlaceholder={t('plan.inspector.note.placeholder')}
+          recurrenceRow={
+            showRecurrence ? (
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Repeat className="text-muted-foreground size-4 flex-shrink-0" />
+                  <span className="text-muted-foreground text-sm">
+                    {t('common.recurrence.label')}
+                  </span>
+                </div>
+                <RecurrenceIconButton
+                  recurrenceRule={recurrenceRule}
+                  recurrenceType={recurrenceType}
+                  onRepeatTypeChange={onRepeatTypeChange}
+                  onRecurrenceRuleChange={onRecurrenceRuleChange}
+                />
+              </div>
+            ) : undefined
+          }
+          reminderRow={
+            showRecurrence ? (
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Bell className="text-muted-foreground size-4 flex-shrink-0" />
+                  <span className="text-muted-foreground text-sm">
+                    {t('common.reminder.label')}
+                  </span>
+                </div>
+                <ReminderSelect
+                  value={reminderMinutes}
+                  onChange={onReminderChange}
+                  variant="inspector"
+                />
+              </div>
+            ) : undefined
+          }
         />
-      }
-      options={
-        showRecurrence ? (
-          <>
-            <RecurrenceIconButton
-              recurrenceRule={recurrenceRule}
-              recurrenceType={recurrenceType}
-              onRepeatTypeChange={onRepeatTypeChange}
-              onRecurrenceRuleChange={onRecurrenceRuleChange}
-            />
-            <ReminderSelect value={reminderMinutes} onChange={onReminderChange} variant="icon" />
-          </>
-        ) : null
       }
     />
   );

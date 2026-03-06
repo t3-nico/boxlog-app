@@ -49,7 +49,7 @@ export function InlineNoteSection({
   const displayNote = useMemo(() => stripHtml(note), [note]);
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-2">
       <div className="flex items-center gap-2">
         {Icon && <Icon className="text-muted-foreground size-4 flex-shrink-0" />}
         <span className="text-muted-foreground text-sm">{label}</span>

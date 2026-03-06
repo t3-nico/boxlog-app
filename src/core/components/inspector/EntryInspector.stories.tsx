@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { ChevronDown, MoreHorizontal, Plus } from 'lucide-react';
+import { Bell, ChevronDown, MoreHorizontal, Plus, Repeat } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import type { EntryOrigin, FulfillmentScore } from '@/core/types/entry';
@@ -145,6 +145,42 @@ function EntryInspectorStory({
             note={note}
             onNoteChange={setNote}
             notePlaceholder={t('plan.inspector.note.placeholder')}
+            recurrenceRow={
+              entryState === 'upcoming' ? (
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Repeat className="text-muted-foreground size-4 flex-shrink-0" />
+                    <span className="text-muted-foreground text-sm">
+                      {t('common.recurrence.label')}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    className="text-muted-foreground hover:bg-state-hover flex h-8 items-center gap-1 rounded-lg px-2 text-sm transition-colors"
+                  >
+                    {t('common.recurrence.none')}
+                  </button>
+                </div>
+              ) : undefined
+            }
+            reminderRow={
+              entryState === 'upcoming' ? (
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Bell className="text-muted-foreground size-4 flex-shrink-0" />
+                    <span className="text-muted-foreground text-sm">
+                      {t('common.reminder.label')}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    className="text-muted-foreground hover:bg-state-hover flex h-8 items-center gap-1 rounded-lg px-2 text-sm transition-colors"
+                  >
+                    {t('common.reminder.none')}
+                  </button>
+                </div>
+              ) : undefined
+            }
           />
         }
         options={null}

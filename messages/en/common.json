@@ -146,7 +146,7 @@
     },
     "reminder": {
       "label": "Reminder",
-      "none": "None",
+      "none": "Add reminder",
       "atStart": "At start time",
       "min5": "5 minutes before",
       "min10": "10 minutes before",
@@ -172,7 +172,7 @@
     },
     "recurrence": {
       "label": "Repeat",
-      "none": "Repeat",
+      "none": "Don't repeat",
       "daily": "Daily",
       "weekly": "Weekly",
       "monthly": "Monthly",
