@@ -29,7 +29,7 @@ import { cn } from '@/lib/utils';
  *
  * `icon` を指定するとアイコン専用の正方形ボタンになる。
  * サイズは通常ボタンと同じ sm/default/lg スケールを共有。
- * SVGアイコンサイズはTokens/Iconsに準拠（size-4: 16px, size-5: 20px）。
+ * SVGアイコンサイズはFoundations/Iconsに準拠（size-4: 16px, size-5: 20px）。
  *
  * | size  + icon | ボタン | アイコン | タップターゲット |
  * |--------------|--------|---------|-----------------|
