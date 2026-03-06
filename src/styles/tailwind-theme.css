@@ -4,16 +4,18 @@
  * ============================================ */
 @theme inline {
   /* ============================================
-   * Surface トークン（GAFA準拠・3段階）
-   * background: ページ背景
-   * container: サイドバー、セクション
-   * card: カード、ダイアログ、ポップオーバー
-   * overlay: モーダル背景（半透明・MD3 scrim）
+   * Surface トークン（MD3準拠・4段階）
+   * background:     ページ背景（MD3 Surface）
+   * surface-inset:  card内セクション（MD3 Surface Container Low）
+   * container:      サイドバー、セクション（MD3 Surface Container）
+   * card:           カード、ダイアログ、ポップオーバー（MD3 Surface Container High）
+   * overlay:        モーダル背景（半透明・MD3 scrim）
    * ============================================ */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
+  --color-surface-inset: var(--surface-inset);
   --color-container: var(--container);
   --color-surface-container: var(--container);  /* 後方互換: bg-surface-container（70箇所で使用） */
   --color-overlay: var(--overlay);

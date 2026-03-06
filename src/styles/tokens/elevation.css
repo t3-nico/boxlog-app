@@ -1,5 +1,8 @@
 /* ============================================
  * シャドウ（modern-minimal準拠）
+ * Surface体系はMD3準拠:
+ *   Light: background(0.99) > inset(0.96) > container(0.93) > card(0.90)
+ *   Dark:  background(0.12) < inset(0.16) < container(0.18) < card(0.24)
  * ============================================ */
 @theme {
   --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
@@ -61,7 +64,7 @@
 }
 
 .dark {
-  /* ハイライト: ダークでは弱め（card L=0.12 上で7%は目立つ） */
+  /* ハイライト: ダークでは弱め（card L=0.24 上で控えめに） */
   --elevation-highlight: oklch(1 0 0 / 0.05);
 
   /* グラデーション: var(--card) 等を参照するため自動でダーク適応 → 再定義不要 */

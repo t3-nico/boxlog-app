@@ -8,16 +8,18 @@ import { Meta } from '@storybook/blocks';
 
 ---
 
-## Surface 階層（MD3準拠・3段階）
+## Surface 階層（MD3準拠・4段階）
 
 ダークモードでは高elevation = 明るい（MD3原則）。明度差は3-6%で視認性を確保。
 
-| レベル | トークン | 用途 |
-|--------|---------|------|
-| 基準 | `bg-background` | ページ背景 |
-| Lv.1 | `bg-container` | サイドバー、セクション、コードブロック |
-| Lv.2 | `bg-card` | カード、ダイアログ、ポップオーバー |
-| Lv.3 | `bg-muted` | ミュート背景、アイコン背景 |
+| レベル | トークン | MD3 | 用途 |
+|--------|---------|-----|------|
+| 基準 | `bg-background` | Surface | ページ背景 |
+| Lv.1 | `bg-surface-inset` | Surface Container Low | card内セクション |
+| Lv.2 | `bg-container` | Surface Container | サイドバー、セクション |
+| Lv.3 | `bg-card` | Surface Container High | カード、ダイアログ、ポップオーバー |
+
+> `bg-muted` は `bg-container` のshadcn/ui互換エイリアス
 
 > 視覚的なデモは [Foundations/Colors → Surface](?path=/story/foundations-colors--surface) を参照
 

@@ -54,10 +54,20 @@ export const AllColors: Story = {
     <div>
       <h1 className="mb-8 text-2xl font-bold">カラートークン</h1>
 
-      <ColorGroup title="Surface（背景色）">
-        <ColorSwatch tailwindClass="bg-background" description="ページ背景" />
-        <ColorSwatch tailwindClass="bg-container" description="サイドバー、セクション" />
-        <ColorSwatch tailwindClass="bg-card" description="カード、ダイアログ、ポップオーバー" />
+      <ColorGroup title="Surface（背景色・MD3準拠4段階）">
+        <ColorSwatch tailwindClass="bg-background" description="ページ背景（MD3 Surface）" />
+        <ColorSwatch
+          tailwindClass="bg-surface-inset"
+          description="card内セクション（MD3 Surface Container Low）"
+        />
+        <ColorSwatch
+          tailwindClass="bg-container"
+          description="サイドバー、セクション（MD3 Surface Container）"
+        />
+        <ColorSwatch
+          tailwindClass="bg-card"
+          description="カード、ダイアログ、ポップオーバー（MD3 Surface Container High）"
+        />
         <ColorSwatch tailwindClass="bg-overlay" description="モーダル背景（半透明・MD3 scrim）" />
       </ColorGroup>
 

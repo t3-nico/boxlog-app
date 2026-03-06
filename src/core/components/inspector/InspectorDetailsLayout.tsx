@@ -36,7 +36,7 @@ export function InspectorDetailsLayout({
       {tagRow}
 
       {/* コンテンツグループ */}
-      <div className="bg-container mx-4 mt-3 mb-6 rounded-xl">{schedule}</div>
+      <div className="bg-surface-inset mx-4 mt-3 mb-6 rounded-xl">{schedule}</div>
 
       {/* オプション */}
       {options && (

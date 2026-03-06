@@ -207,7 +207,7 @@ const MOCK_CONTENT: Record<SettingsCategory, React.ReactNode> = {
   'data-controls': (
     <>
       <SettingsCard title="データエクスポート">
-        <div className="bg-surface-container rounded-2xl p-4">
+        <div className="bg-surface-inset rounded-2xl p-4">
           <h4 className="mb-2 text-sm font-normal">エクスポート対象</h4>
           <ul className="text-muted-foreground grid grid-cols-2 gap-1 text-sm">
             <li>• プロフィール</li>
