@@ -75,14 +75,5 @@ export type {
 export { ReminderSelect } from './components/shared/ReminderSelect';
 export { TimeSelect } from './components/shared/TimeSelect';
 
-// Inspector shared components
+// Inspector hooks
 export { useInspectorKeyboard } from './components/inspector/hooks';
-export {
-  DraggableInspector,
-  InspectorContent,
-  InspectorDetailsLayout,
-  InspectorHeader,
-  InspectorShell,
-  NoteIconButton,
-  TitleInput,
-} from './components/inspector/shared';

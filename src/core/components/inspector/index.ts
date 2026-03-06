@@ -5,7 +5,7 @@ export { InlineNoteSection } from './InlineNoteSection';
 export { InspectorContent } from './InspectorContent';
 export { InspectorDetailsLayout } from './InspectorDetailsLayout';
 export type { InspectorDetailsLayoutProps } from './InspectorDetailsLayout';
-export { InspectorHeader } from './InspectorHeader';
+export { InspectorSaveBar } from './InspectorSaveBar';
 export { InspectorShell } from './InspectorShell';
 export { InspectorTagRow } from './InspectorTagRow';
 export { InspectorTimeSection } from './InspectorTimeSection';

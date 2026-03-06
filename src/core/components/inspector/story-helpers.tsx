@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils';
 /** Inspector風コンテナ（400px幅） */
 export function InspectorFrame({ children }: { children: React.ReactNode }) {
   return (
-    <div className="bg-card border-border w-[400px] overflow-hidden rounded-xl border shadow-lg">
+    <div className="bg-card surface-raised-heavy w-[400px] overflow-hidden rounded-2xl">
       {children}
     </div>
   );

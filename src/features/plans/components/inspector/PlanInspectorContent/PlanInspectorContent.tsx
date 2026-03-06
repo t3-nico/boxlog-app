@@ -9,12 +9,14 @@
  * - ドラフトモードなし（即DB保存 + edit mode）
  */
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
+import { InspectorSaveBar } from '@/core/components/inspector';
 import type { EntryOrigin, FulfillmentScore } from '@/core/types/entry';
 import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { getEntryState } from '@/lib/entry-status';
 import { cn } from '@/lib/utils';
+import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 
 import { PlanInspectorDetailsTab } from './PlanInspectorDetailsTab';
 import { PlanInspectorMenu } from './PlanInspectorMenu';
@@ -45,7 +47,16 @@ export function PlanInspectorContent() {
     handleCopyId,
     handleDuplicate,
     getCache,
+    saveAndClose,
+    hasPendingChanges,
   } = usePlanInspectorContentLogic();
+
+  // closeWithSave をストアに登録（PlanInspector の handleClose から呼べるようにする）
+  const setCloseWithSave = useEntryInspectorStore((s) => s.setCloseWithSave);
+  useEffect(() => {
+    setCloseWithSave(saveAndClose);
+    return () => setCloseWithSave(null);
+  }, [saveAndClose, setCloseWithSave]);
 
   // エントリの時間位置ベース状態（upcoming/active/past）
   const entryState = useMemo(() => {
@@ -97,6 +108,7 @@ export function PlanInspectorContent() {
         <PlanInspectorDetailsTab
           plan={plan}
           menuContent={menuContent}
+          footer={<InspectorSaveBar onSave={saveAndClose} visible={hasPendingChanges ?? false} />}
           scheduleDate={scheduleDate}
           startTime={startTime}
           endTime={endTime}

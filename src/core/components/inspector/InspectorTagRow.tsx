@@ -76,31 +76,31 @@ export function InspectorTagRow({ tagId, onTagChange, menuContent }: InspectorTa
 
   return (
     <>
-      <div className="flex items-center justify-between gap-2 px-6 pt-6 pb-2">
+      <div className="flex items-center justify-between gap-2 px-5 pt-5 pb-1">
         <button
           ref={buttonRef}
           type="button"
           onClick={() => setSelectorOpen(true)}
-          className="hover:bg-state-hover -ml-2 flex items-center gap-2.5 rounded-lg py-1 pr-2 pl-2 text-xl font-bold transition-colors"
+          className="hover:bg-state-hover -mt-1 -ml-1.5 flex items-center gap-2 rounded-lg py-1 pr-2 pl-1.5 text-base font-semibold transition-colors"
           aria-label={tag ? `${t('common.tags.change')}: ${tag.name}` : t('common.tags.add')}
         >
           {tag ? (
             <>
               <span
                 className={cn(
-                  'inline-block size-4 flex-shrink-0 rounded-full',
+                  'inline-block size-2.5 flex-shrink-0 rounded-full',
                   colorClasses?.dot ?? 'bg-muted-foreground',
                 )}
                 aria-hidden
               />
               <span className="text-foreground">{tag.name}</span>
-              <ChevronDown className="text-muted-foreground size-5 flex-shrink-0" aria-hidden />
+              <ChevronDown className="text-muted-foreground size-4 flex-shrink-0" aria-hidden />
             </>
           ) : (
             <>
-              <Plus className="text-muted-foreground size-4 flex-shrink-0" aria-hidden />
+              <Plus className="text-muted-foreground size-3.5 flex-shrink-0" aria-hidden />
               <span className="text-muted-foreground">{t('common.tags.add')}</span>
-              <ChevronDown className="text-muted-foreground size-5 flex-shrink-0" aria-hidden />
+              <ChevronDown className="text-muted-foreground size-4 flex-shrink-0" aria-hidden />
             </>
           )}
         </button>
@@ -113,7 +113,7 @@ export function InspectorTagRow({ tagId, onTagChange, menuContent }: InspectorTa
                 variant="ghost"
                 size="sm"
                 icon
-                className="-mr-2 focus-visible:ring-0"
+                className="-mr-1.5 focus-visible:ring-0"
                 aria-label={t('common.actions.options')}
               >
                 <MoreHorizontal className="size-5" />

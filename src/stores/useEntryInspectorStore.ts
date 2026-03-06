@@ -73,6 +73,9 @@ interface EntryInspectorActions {
   clearPendingChanges: () => void;
   /** 未保存の変更を取得してクリア（保存前に呼ぶ） */
   consumePendingChanges: () => PendingChanges | null;
+  /** PlanInspectorContent が saveAndClose を登録。PlanInspector の handleClose から呼ぶ */
+  closeWithSave: (() => void) | null;
+  setCloseWithSave: (handler: (() => void) | null) => void;
 }
 
 /**
@@ -88,6 +91,7 @@ export const useEntryInspectorStore = create<EntryInspectorStore>()(
       instanceDate: null,
       pendingChanges: null,
       anchorRect: null,
+      closeWithSave: null,
 
       openInspector: (entryId, options) =>
         set(
@@ -141,6 +145,8 @@ export const useEntryInspectorStore = create<EntryInspectorStore>()(
         }
         return pendingChanges;
       },
+
+      setCloseWithSave: (handler) => set({ closeWithSave: handler }, false, 'setCloseWithSave'),
     }),
     { name: 'entry-inspector-store' },
   ),

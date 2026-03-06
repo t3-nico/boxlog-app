@@ -31,7 +31,7 @@ import { ScheduleRow } from './ScheduleRow';
  * - Record Inspector Row 2
  */
 const meta = {
-  title: 'Features/Plans/ScheduleRow',
+  title: 'Recipes/Inspector/ScheduleRow',
   parameters: {
     layout: 'padded',
   },

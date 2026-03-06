@@ -33,7 +33,7 @@ import { NoteIconButton } from './NoteIconButton';
  * - Record: 500ms デバウンスで即時保存
  */
 const meta = {
-  title: 'Features/Plans/NoteIconButton',
+  title: 'Recipes/Inspector/NoteIconButton',
   parameters: {
     layout: 'padded',
   },

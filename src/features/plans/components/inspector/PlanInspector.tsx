@@ -5,8 +5,8 @@ import { useTranslations } from 'next-intl';
 import { Suspense, useCallback } from 'react';
 
 import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
+import { InspectorContent, InspectorShell } from '@/core/components/inspector';
 import { useInspectorKeyboard } from './hooks';
-import { InspectorContent, InspectorShell } from './shared';
 
 import type { EntryWithTags } from '@/core/types/entry';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
@@ -45,16 +45,21 @@ export function PlanInspector() {
   });
   const plan: EntryWithTags | null = (planData ?? null) as EntryWithTags | null;
 
+  const closeWithSave = useEntryInspectorStore((state) => state.closeWithSave);
+
   // 繰り返しダイアログが開いている間はInspectorを閉じない
-  // ×ボタン/ESC/外側クリック = キャンセル（変更を破棄）
+  // ×ボタン/ESC/外側クリック = saveAndClose（Google Calendar方式）
   const handleClose = useCallback(() => {
     const modal = useModalStore.getState().modal;
-    const isRecurringDialogOpen = modal?.type === 'recurringEdit';
-    if (!isRecurringDialogOpen) {
+    if (modal?.type === 'recurringEdit') return;
+
+    if (closeWithSave) {
+      closeWithSave();
+    } else {
       clearPendingChanges();
       closeInspector();
     }
-  }, [closeInspector, clearPendingChanges]);
+  }, [closeWithSave, closeInspector, clearPendingChanges]);
 
   // ナビゲーション
   const { hasPrevious, hasNext, goToPrevious, goToNext } = useInspectorNavigation(planId);

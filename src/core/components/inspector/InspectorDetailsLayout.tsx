@@ -22,6 +22,8 @@ export interface InspectorDetailsLayoutProps {
   note?: ReactNode;
   /** Row 3: オプションボタン群 */
   options: ReactNode;
+  /** フッター（保存バーなど） */
+  footer?: ReactNode;
 }
 
 export function InspectorDetailsLayout({
@@ -29,6 +31,7 @@ export function InspectorDetailsLayout({
   schedule,
   note,
   options,
+  footer,
 }: InspectorDetailsLayoutProps) {
   return (
     <div>
@@ -39,10 +42,13 @@ export function InspectorDetailsLayout({
       {schedule}
 
       {/* Row 2: メモ */}
-      {note && <div className="px-6 py-2">{note}</div>}
+      {note && <div className="px-5 py-2">{note}</div>}
 
       {/* Row 3: オプション */}
-      <div className="flex flex-wrap items-center gap-1 px-4 pt-3 pb-6">{options}</div>
+      <div className="flex flex-wrap items-center gap-1.5 px-5 pt-2 pb-5">{options}</div>
+
+      {/* フッター（保存バー） */}
+      {footer}
     </div>
   );
 }

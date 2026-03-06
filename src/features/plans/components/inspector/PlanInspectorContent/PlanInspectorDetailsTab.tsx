@@ -11,14 +11,14 @@
 import type { ReactNode } from 'react';
 import { memo } from 'react';
 
-import { useTranslations } from 'next-intl';
 import {
   FulfillmentButton,
   InlineNoteSection,
   InspectorDetailsLayout,
   InspectorTagRow,
   InspectorTimeSection,
-} from '../shared';
+} from '@/core/components/inspector';
+import { useTranslations } from 'next-intl';
 
 import type {
   EntryOrigin,
@@ -35,6 +35,8 @@ interface PlanInspectorDetailsTabProps {
   plan: EntryWithTags;
   /** ⋯ メニューの内容（InspectorTagRow に伝搬） */
   menuContent?: ReactNode;
+  /** フッター（保存バーなど） */
+  footer?: ReactNode;
   scheduleDate: Date | undefined;
   startTime: string;
   endTime: string;
@@ -65,6 +67,7 @@ interface PlanInspectorDetailsTabProps {
 export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   plan,
   menuContent,
+  footer,
   scheduleDate,
   startTime,
   endTime,
@@ -99,6 +102,7 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
 
   return (
     <InspectorDetailsLayout
+      footer={footer}
       tagRow={
         <InspectorTagRow
           tagId={selectedTagId}

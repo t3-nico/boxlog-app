@@ -9,6 +9,7 @@
  * TimeComparisonSection の後継（同じ props interface）。
  */
 
+import { Calendar, CircleCheck, Clock } from 'lucide-react';
 import { useMemo } from 'react';
 
 import { useTranslations } from 'next-intl';
@@ -141,10 +142,11 @@ export function InspectorTimeSection({
   const diffDisplay = formatDiffDisplay(diffMinutes);
 
   return (
-    <div className="flex flex-col gap-1 px-6 py-2">
+    <div className="flex flex-col gap-2 px-5 pt-4 pb-3">
       {/* 日付 */}
       <DateNavigatorRow
         label={t('plan.inspector.time.date')}
+        icon={Calendar}
         selectedDate={selectedDate}
         onDateChange={onDateChange}
         disabled={disabled}
@@ -154,12 +156,14 @@ export function InspectorTimeSection({
       {isPlannedRowDisabled ? (
         <TimeRowPlaceholder
           label={t('plan.inspector.time.planned')}
+          icon={Clock}
           message={t('plan.inspector.time.noPlanned')}
           muted
         />
       ) : (
         <TimeRow
           label={t('plan.inspector.time.planned')}
+          icon={Clock}
           startTime={plannedStart}
           endTime={plannedEnd}
           onStartChange={handlePlannedStartChange}
@@ -174,11 +178,13 @@ export function InspectorTimeSection({
       {showActualPlaceholder ? (
         <TimeRowPlaceholder
           label={t('plan.inspector.time.actual')}
+          icon={CircleCheck}
           message={t('plan.inspector.time.sameAsPlanned')}
         />
       ) : hasActualTime || isUnplanned ? (
         <TimeRow
           label={t('plan.inspector.time.actual')}
+          icon={CircleCheck}
           startTime={effectiveActualStart}
           endTime={effectiveActualEnd}
           onStartChange={handleActualStartChange}
@@ -187,12 +193,14 @@ export function InspectorTimeSection({
           durationDisplay={actualDurationDisplay}
           diffDisplay={diffDisplay || undefined}
           diffType={diffMinutes < 0 ? 'under' : 'over'}
+          isPrimary
         />
       ) : (
-        <div className="flex items-center gap-1">
-          <span className="text-muted-foreground w-8 flex-shrink-0 text-xs">
-            {t('plan.inspector.time.actual')}
-          </span>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <CircleCheck className="text-muted-foreground size-4 flex-shrink-0" />
+            <span className="text-muted-foreground text-sm">{t('plan.inspector.time.actual')}</span>
+          </div>
           <button
             type="button"
             className="text-muted-foreground hover:text-foreground text-xs transition-colors"

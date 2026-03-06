@@ -23,7 +23,7 @@ import { FulfillmentButton } from './FulfillmentButton';
  * - **RecordCreateForm** — Plan InspectorからのRecord新規作成（ドラフト）
  */
 const meta = {
-  title: 'Features/Plans/FulfillmentButton',
+  title: 'Recipes/Inspector/FulfillmentButton',
   parameters: {
     layout: 'padded',
   },
