@@ -99,8 +99,8 @@ export function DraggableInspector({ children, onClose, title }: DraggableInspec
       <div
         style={style}
         className={cn(
-          'border-border bg-card text-card-foreground z-inspector',
-          'rounded-2xl border shadow-lg',
+          'bg-card text-card-foreground z-inspector',
+          'surface-raised-heavy rounded-2xl',
           'flex max-h-[40rem] w-[95vw] max-w-[30rem] flex-col gap-0 overflow-hidden p-0',
         )}
         role="dialog"
