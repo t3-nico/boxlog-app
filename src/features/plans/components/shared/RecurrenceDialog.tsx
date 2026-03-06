@@ -5,6 +5,7 @@ import { format } from 'date-fns';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 
+import { ActionFooter } from '@/components/ui/action-footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -450,14 +451,14 @@ export function RecurrenceDialog({
         </div>
 
         {/* フッター */}
-        <div className="border-border flex justify-end gap-2 border-t px-6 py-4">
+        <ActionFooter className="border-border border-t px-6 py-4">
           <Button variant="outline" onClick={() => onOpenChange(false)} type="button">
             {t('common.actions.cancel')}
           </Button>
           <Button onClick={handleSave} type="button">
             {t('common.apply')}
           </Button>
-        </div>
+        </ActionFooter>
       </div>
     </Portal.Root>
   );

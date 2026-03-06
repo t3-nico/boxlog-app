@@ -3,6 +3,7 @@
 import { type ReactNode, useCallback, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { ActionFooter } from '@/components/ui/action-footer';
 import { Button } from '@/components/ui/button';
 import { useDialogKeyboard } from '@/hooks/useDialogKeyboard';
 import { useHasMounted } from '@/hooks/useHasMounted';
@@ -190,8 +191,8 @@ export function ConfirmDialog({
         {/* Custom content */}
         {children && <div className="mt-6">{children}</div>}
 
-        {/* Footer: gap-2, justify-end */}
-        <div className="mt-6 flex justify-end gap-2">
+        {/* Footer */}
+        <ActionFooter className="mt-6">
           <Button
             variant="outline"
             onClick={onClose}
@@ -208,7 +209,7 @@ export function ConfirmDialog({
           >
             {isLoading ? resolvedLoadingLabel : resolvedConfirmLabel}
           </Button>
-        </div>
+        </ActionFooter>
       </div>
     </div>
   );

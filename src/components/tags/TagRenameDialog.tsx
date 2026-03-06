@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { ActionFooter } from '@/components/ui/action-footer';
 import { Button } from '@/components/ui/button';
 import { Field, FieldError } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
@@ -198,14 +199,14 @@ export function TagRenameDialog({
         </Field>
 
         {/* Footer */}
-        <div className="flex justify-end gap-2">
+        <ActionFooter>
           <Button variant="ghost" onClick={onClose} disabled={isLoading}>
             {t('common.actions.cancel')}
           </Button>
           <Button onClick={handleSubmit} disabled={isLoading}>
             {isLoading ? '...' : 'OK'}
           </Button>
-        </div>
+        </ActionFooter>
       </div>
     </div>
   );
