@@ -8,10 +8,12 @@
  *
  * 既存データが HTML 形式の場合は自動的にタグを除去して表示。
  * 保存はプレーンテキストで行う。
+ *
+ * textarea は入力に合わせて自動拡張し、max-h-20（80px ≈ 3行）で内部スクロールに切り替わる。
  */
 
 import type { LucideIcon } from 'lucide-react';
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 /** HTML タグを除去してプレーンテキストに変換 */
 function stripHtml(html: string): string {
@@ -49,6 +51,27 @@ export function InlineNoteSection({
   maxLength = 1000,
 }: InlineNoteSectionProps) {
   const displayNote = useMemo(() => stripHtml(note), [note]);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  /** textarea の高さをコンテンツに合わせて自動調整（max-height 超過時のみスクロール表示） */
+  const adjustHeight = useCallback(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.overflowY = 'hidden';
+    el.style.height = 'auto';
+    const scrollH = el.scrollHeight;
+    el.style.height = `${scrollH}px`;
+    // max-height（max-h-20 = 80px）を超えた場合のみスクロール表示
+    const maxH = parseFloat(getComputedStyle(el).maxHeight) || Infinity;
+    if (scrollH > maxH) {
+      el.style.overflowY = 'auto';
+    }
+  }, []);
+
+  // 値が外部から変わったときも高さを再調整
+  useEffect(() => {
+    adjustHeight();
+  }, [displayNote, adjustHeight]);
 
   return (
     <div className="flex flex-col gap-2">
@@ -61,14 +84,19 @@ export function InlineNoteSection({
           {displayNote.length}/{maxLength}
         </span>
       </div>
-      <input
-        type="text"
+      <textarea
+        ref={textareaRef}
         value={displayNote}
-        onChange={(e) => onNoteChange(e.target.value)}
+        onChange={(e) => {
+          onNoteChange(e.target.value);
+          adjustHeight();
+        }}
         placeholder={placeholder}
         disabled={disabled}
         maxLength={maxLength}
-        className="bg-input text-foreground placeholder:text-muted-foreground surface-sunken focus-visible:ring-ring mr-2 h-8 rounded-lg border border-transparent px-4 text-sm outline-none focus-visible:ring-2"
+        rows={1}
+        style={{ overflowY: 'hidden' }}
+        className="bg-input text-foreground placeholder:text-muted-foreground surface-sunken focus-visible:ring-ring mr-2 max-h-20 min-h-8 resize-none rounded-lg border border-transparent px-4 py-2 text-sm leading-normal outline-none focus-visible:ring-2"
       />
     </div>
   );

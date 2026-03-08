@@ -20,31 +20,21 @@ export interface InspectorDetailsLayoutProps {
   schedule: ReactNode;
   /** Row 2: オプションボタン群 */
   options?: ReactNode;
-  /** フッター（保存バーなど） */
-  footer?: ReactNode;
 }
 
-export function InspectorDetailsLayout({
-  tagRow,
-  schedule,
-  options,
-  footer,
-}: InspectorDetailsLayoutProps) {
+export function InspectorDetailsLayout({ tagRow, schedule, options }: InspectorDetailsLayoutProps) {
   return (
-    <div>
+    <div className="md:pt-3">
       {/* Row 0: タグ */}
       {tagRow}
 
       {/* コンテンツグループ */}
-      <div className="bg-surface-inset mx-4 mt-3 mb-6 rounded-xl">{schedule}</div>
+      <div className="bg-surface-inset mx-4 mt-3 mb-4 rounded-xl">{schedule}</div>
 
       {/* オプション */}
       {options && (
         <div className="flex flex-wrap items-center gap-1.5 px-5 pt-2 pb-5">{options}</div>
       )}
-
-      {/* フッター（保存バー） */}
-      {footer}
     </div>
   );
 }
