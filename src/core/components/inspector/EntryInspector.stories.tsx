@@ -9,8 +9,9 @@ import type { EntryState } from '@/lib/entry-status';
 import { cn } from '@/lib/utils';
 
 import { InspectorDetailsLayout } from './InspectorDetailsLayout';
+import { InspectorShell } from './InspectorShell';
 import { InspectorTimeSection } from './InspectorTimeSection';
-import { InspectorFrame, MobileInspectorFrame } from './story-helpers';
+import { InspectorFrame } from './story-helpers';
 
 /**
  * Entry Inspector — 3パターンの表示確認
@@ -26,11 +27,16 @@ import { InspectorFrame, MobileInspectorFrame } from './story-helpers';
  * | **Upcoming + Planned** | 編集可 | placeholder | 編集可 | ○ | × (Hide) | ○ |
  * | **Past + Planned** | 編集可 | 編集可 | 編集可 | × (Hide) | ○ | ○ |
  * | **Past + Unplanned** | placeholder | 編集可 | 読取専用 | × (Hide) | ○ | ○ |
+ *
+ * ## レスポンシブ
+ *
+ * 実際の `InspectorShell` を使用。viewport addon で iframe がリサイズされると
+ * `useMediaQuery` が反応し、自動的に PC（DraggableInspector）/ モバイル（Drawer）が切り替わる。
  */
 const meta = {
   title: 'Recipes/Inspector/EntryInspector',
   parameters: {
-    layout: 'centered',
+    layout: 'fullscreen',
   },
   tags: ['autodocs'],
 } satisfies Meta;
@@ -85,10 +91,10 @@ function MockTagRow({
 }
 
 // ─────────────────────────────────────────────────────────
-// Interactive Wrapper
+// Shared content（InspectorShell / InspectorFrame 共用）
 // ─────────────────────────────────────────────────────────
 
-interface EntryInspectorStoryProps {
+interface InspectorContentProps {
   entryState: EntryState;
   origin: EntryOrigin;
   tagName?: string;
@@ -99,11 +105,9 @@ interface EntryInspectorStoryProps {
   initialActualEnd?: string | null;
   initialNote?: string;
   initialFulfillment?: FulfillmentScore | null;
-  /** trueの場合、モバイルDrawer風フレームで表示 */
-  mobile?: boolean;
 }
 
-function EntryInspectorStory({
+function InspectorContent({
   entryState,
   origin,
   tagName,
@@ -114,8 +118,7 @@ function EntryInspectorStory({
   initialActualEnd = null,
   initialNote = '',
   initialFulfillment = null,
-  mobile = false,
-}: EntryInspectorStoryProps) {
+}: InspectorContentProps) {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [plannedStart, setPlannedStart] = useState(initialPlannedStart);
   const [plannedEnd, setPlannedEnd] = useState(initialPlannedEnd);
@@ -125,72 +128,92 @@ function EntryInspectorStory({
   const [fulfillment, setFulfillment] = useState<FulfillmentScore | null>(initialFulfillment);
   const t = useTranslations();
 
-  const Frame = mobile ? MobileInspectorFrame : InspectorFrame;
-
   return (
-    <Frame>
-      <InspectorDetailsLayout
-        tagRow={<MockTagRow tagName={tagName} dotClass={tagDotClass} />}
-        schedule={
-          <InspectorTimeSection
-            selectedDate={date}
-            onDateChange={setDate}
-            plannedStart={plannedStart}
-            plannedEnd={plannedEnd}
-            onPlannedStartChange={setPlannedStart}
-            onPlannedEndChange={setPlannedEnd}
-            actualStart={actualStart}
-            actualEnd={actualEnd}
-            onActualStartChange={setActualStart}
-            onActualEndChange={setActualEnd}
-            entryState={entryState}
-            origin={origin}
-            fulfillmentScore={fulfillment}
-            onFulfillmentChange={setFulfillment}
-            note={note}
-            onNoteChange={setNote}
-            notePlaceholder={t('plan.inspector.note.placeholder')}
-            recurrenceRow={
-              entryState === 'upcoming' ? (
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Repeat className="text-muted-foreground size-4 flex-shrink-0" />
-                    <span className="text-muted-foreground text-sm">
-                      {t('common.recurrence.label')}
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    className="text-muted-foreground hover:bg-state-hover flex h-8 items-center gap-1 rounded-lg px-2 text-sm transition-colors"
-                  >
-                    {t('common.recurrence.none')}
-                  </button>
+    <InspectorDetailsLayout
+      tagRow={<MockTagRow tagName={tagName} dotClass={tagDotClass} />}
+      schedule={
+        <InspectorTimeSection
+          selectedDate={date}
+          onDateChange={setDate}
+          plannedStart={plannedStart}
+          plannedEnd={plannedEnd}
+          onPlannedStartChange={setPlannedStart}
+          onPlannedEndChange={setPlannedEnd}
+          actualStart={actualStart}
+          actualEnd={actualEnd}
+          onActualStartChange={setActualStart}
+          onActualEndChange={setActualEnd}
+          entryState={entryState}
+          origin={origin}
+          fulfillmentScore={fulfillment}
+          onFulfillmentChange={setFulfillment}
+          note={note}
+          onNoteChange={setNote}
+          notePlaceholder={t('plan.inspector.note.placeholder')}
+          recurrenceRow={
+            entryState === 'upcoming' ? (
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Repeat className="text-muted-foreground size-4 flex-shrink-0" />
+                  <span className="text-muted-foreground text-sm">
+                    {t('common.recurrence.label')}
+                  </span>
                 </div>
-              ) : undefined
-            }
-            reminderRow={
-              entryState === 'upcoming' ? (
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Bell className="text-muted-foreground size-4 flex-shrink-0" />
-                    <span className="text-muted-foreground text-sm">
-                      {t('common.reminder.label')}
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    className="text-muted-foreground hover:bg-state-hover flex h-8 items-center gap-1 rounded-lg px-2 text-sm transition-colors"
-                  >
-                    {t('common.reminder.none')}
-                  </button>
+                <button
+                  type="button"
+                  className="text-muted-foreground hover:bg-state-hover flex h-8 items-center gap-1 rounded-lg px-2 text-sm transition-colors"
+                >
+                  {t('common.recurrence.none')}
+                </button>
+              </div>
+            ) : undefined
+          }
+          reminderRow={
+            entryState === 'upcoming' ? (
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Bell className="text-muted-foreground size-4 flex-shrink-0" />
+                  <span className="text-muted-foreground text-sm">
+                    {t('common.reminder.label')}
+                  </span>
                 </div>
-              ) : undefined
-            }
-          />
-        }
-        options={null}
-      />
-    </Frame>
+                <button
+                  type="button"
+                  className="text-muted-foreground hover:bg-state-hover flex h-8 items-center gap-1 rounded-lg px-2 text-sm transition-colors"
+                >
+                  {t('common.reminder.none')}
+                </button>
+              </div>
+            ) : undefined
+          }
+        />
+      }
+      options={null}
+    />
+  );
+}
+
+// ─────────────────────────────────────────────────────────
+// Interactive Wrapper（実際の InspectorShell を使用）
+// ─────────────────────────────────────────────────────────
+
+function EntryInspectorStory(props: InspectorContentProps) {
+  return (
+    <InspectorShell isOpen onClose={() => {}} title="Entry Inspector">
+      <InspectorContent {...props} />
+    </InspectorShell>
+  );
+}
+
+// ─────────────────────────────────────────────────────────
+// Static Wrapper（AllPatterns 比較用、InspectorFrame 使用）
+// ─────────────────────────────────────────────────────────
+
+function StaticEntryInspector(props: InspectorContentProps) {
+  return (
+    <InspectorFrame>
+      <InspectorContent {...props} />
+    </InspectorFrame>
   );
 }
 
@@ -270,16 +293,19 @@ export const PastUnplanned: Story = {
 /**
  * ## All Patterns
  *
- * 3パターンを横並びで比較確認。
+ * 3パターンを横並びで比較確認（静的 InspectorFrame 使用）。
  */
 export const AllPatterns: Story = {
+  parameters: {
+    layout: 'centered',
+  },
   render: () => (
     <div className="flex flex-wrap items-start gap-6">
       <div>
         <p className="text-muted-foreground mb-3 text-center text-xs font-medium">
           Upcoming + Planned
         </p>
-        <EntryInspectorStory
+        <StaticEntryInspector
           entryState="upcoming"
           origin="planned"
           tagName="Work"
@@ -291,7 +317,7 @@ export const AllPatterns: Story = {
       </div>
       <div>
         <p className="text-muted-foreground mb-3 text-center text-xs font-medium">Past + Planned</p>
-        <EntryInspectorStory
+        <StaticEntryInspector
           entryState="past"
           origin="planned"
           tagName="Meeting"
@@ -308,7 +334,7 @@ export const AllPatterns: Story = {
         <p className="text-muted-foreground mb-3 text-center text-xs font-medium">
           Past + Unplanned
         </p>
-        <EntryInspectorStory
+        <StaticEntryInspector
           entryState="past"
           origin="unplanned"
           tagName="Personal"
@@ -329,8 +355,8 @@ export const AllPatterns: Story = {
  * ## Mobile Drawer
  *
  * モバイルではボトムシート（Drawer）として表示。
- * ドラッグハンドル + メニューボタンが上部に追加される。
- * viewport addon で iframe がリサイズされ、useMediaQuery が反応して自動切替。
+ * viewport addon で iframe が 320px にリサイズされ、
+ * InspectorShell 内の useMediaQuery が反応して実際の Vaul Drawer が描画される。
  */
 export const MobileDrawer: Story = {
   render: () => (
@@ -342,7 +368,6 @@ export const MobileDrawer: Story = {
       initialPlannedStart="14:00"
       initialPlannedEnd="15:30"
       initialNote="Prepare slides for the meeting"
-      mobile
     />
   ),
   globals: {
