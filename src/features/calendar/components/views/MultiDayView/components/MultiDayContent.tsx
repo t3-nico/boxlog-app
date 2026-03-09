@@ -220,6 +220,7 @@ export function MultiDayContent({
                   isResizing={isResizingThis}
                   isActive={isInspectorOpen && inspectorPlanId === plan.id}
                   previewTime={calculatePreviewTime(plan.id, dragState)}
+                  hourHeight={HOUR_HEIGHT}
                   className={`h-full w-full ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
                 />
               </div>

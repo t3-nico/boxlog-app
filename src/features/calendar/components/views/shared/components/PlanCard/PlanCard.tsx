@@ -16,8 +16,9 @@ import { useTagsMap } from '@/hooks/useTagsMap';
 import { cn } from '@/lib/utils';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 
-import { MIN_EVENT_HEIGHT, Z_INDEX } from '../../constants/grid.constants';
+import { HOUR_HEIGHT, MIN_EVENT_HEIGHT, Z_INDEX } from '../../constants/grid.constants';
 import type { PlanCardProps } from '../../types/plan.types';
+import { computeActualTimeDiffOverlay } from '../../utils/planPositioning';
 
 import { PlanCardContent } from './PlanCardContent';
 
@@ -36,6 +37,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   className = '',
   style = {},
   previewTime = null,
+  hourHeight: hourHeightProp,
 }) {
   const t = useTranslations();
   const isMobile = useMediaQuery(MEDIA_QUERIES.mobile);
@@ -51,6 +53,12 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   // ドラフト（未保存プレビュー）かどうか判定
   const isDraft = plan.isDraft === true;
 
+  // 予定 vs 記録の差分オーバーレイ
+  const overlay = useMemo(
+    () => computeActualTimeDiffOverlay(plan, hourHeightProp ?? HOUR_HEIGHT),
+    [plan, hourHeightProp],
+  );
+
   // positionが未定義の場合のデフォルト値
   const safePosition = useMemo(
     () =>
@@ -63,14 +71,18 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     [position],
   );
 
-  // 動的スタイルを計算
+  // hourHeightProp がある = DayColumn（グリッド相対配置）→ 位置調整を適用
+  // hourHeightProp がない = WeekContent等（ラッパー相対配置）→ 位置調整は不要
+  const applyPositionAdjust = hourHeightProp !== undefined;
+
+  // 動的スタイルを計算（overlay.topShift/heightDelta でカード位置を調整）
   const dynamicStyle: React.CSSProperties = useMemo(
     () => ({
       position: 'absolute' as const,
-      top: `${safePosition.top}px`,
+      top: `${safePosition.top - (applyPositionAdjust ? overlay.topShift : 0)}px`,
       left: `${safePosition.left}%`,
       width: `calc(${safePosition.width}% - 8px)`,
-      height: `${Math.max(safePosition.height, MIN_EVENT_HEIGHT)}px`,
+      height: `${Math.max(safePosition.height + (applyPositionAdjust ? overlay.heightDelta : 0), MIN_EVENT_HEIGHT)}px`,
       zIndex: isSelected || isDragging ? Z_INDEX.DRAGGING : Z_INDEX.EVENTS,
       cursor: isDragging ? 'grabbing' : 'pointer',
       // タグカラーを左ボーダーと背景に反映
@@ -78,7 +90,16 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       backgroundColor: accentTint,
       ...style,
     }),
-    [safePosition, isSelected, isDragging, accentColor, accentTint, style],
+    [
+      safePosition,
+      overlay,
+      applyPositionAdjust,
+      isSelected,
+      isDragging,
+      accentColor,
+      accentTint,
+      style,
+    ],
   );
 
   // アンカー位置の設定（Inspector 配置用）
@@ -244,6 +265,24 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         previewTime={previewTime}
         isMobile={isMobile}
       />
+
+      {/* 予定 vs 記録: 上部差分ハッチング */}
+      {overlay.topKind === 'hatch' && (
+        <div
+          aria-hidden="true"
+          className="pattern-hatch pointer-events-none absolute top-0 right-0 left-0"
+          style={{ height: `${overlay.topHeight}px` }}
+        />
+      )}
+
+      {/* 予定 vs 記録: 下部差分ハッチング */}
+      {overlay.bottomKind === 'hatch' && (
+        <div
+          aria-hidden="true"
+          className="pattern-hatch pointer-events-none absolute right-0 bottom-0 left-0"
+          style={{ height: `${overlay.bottomHeight}px` }}
+        />
+      )}
 
       {/* 下端リサイズハンドル（Draft は未保存なので非表示） */}
       {!isDraft && (

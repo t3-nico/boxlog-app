@@ -224,35 +224,41 @@ export function useInspectorTimeState({
     [planId, updatePlan],
   );
 
-  // 記録時間変更ハンドラー
+  // 記録時間変更ハンドラー（即座にmutate → 楽観的更新でカードに即反映）
   const handleActualStartChange = useCallback(
     (time: string | null) => {
       setActualStartTime(time);
+      if (!planId) return;
 
-      if (time && scheduleDate) {
-        const [hours, minutes] = time.split(':').map(Number);
-        const isoValue = localTimeToUTCISO(scheduleDate, hours ?? 0, minutes ?? 0, timezone);
-        addPendingChange({ actual_start_time: isoValue });
-      } else {
-        addPendingChange({ actual_start_time: null });
-      }
+      const isoValue =
+        time && scheduleDate
+          ? localTimeToUTCISO(
+              scheduleDate,
+              ...(time.split(':').map(Number) as [number, number]),
+              timezone,
+            )
+          : null;
+      updatePlan.mutate({ id: planId, data: { actual_start_time: isoValue } });
     },
-    [scheduleDate, addPendingChange, timezone],
+    [planId, scheduleDate, updatePlan, timezone],
   );
 
   const handleActualEndChange = useCallback(
     (time: string | null) => {
       setActualEndTime(time);
+      if (!planId) return;
 
-      if (time && scheduleDate) {
-        const [hours, minutes] = time.split(':').map(Number);
-        const isoValue = localTimeToUTCISO(scheduleDate, hours ?? 0, minutes ?? 0, timezone);
-        addPendingChange({ actual_end_time: isoValue });
-      } else {
-        addPendingChange({ actual_end_time: null });
-      }
+      const isoValue =
+        time && scheduleDate
+          ? localTimeToUTCISO(
+              scheduleDate,
+              ...(time.split(':').map(Number) as [number, number]),
+              timezone,
+            )
+          : null;
+      updatePlan.mutate({ id: planId, data: { actual_end_time: isoValue } });
     },
-    [scheduleDate, addPendingChange, timezone],
+    [planId, scheduleDate, updatePlan, timezone],
   );
 
   return {

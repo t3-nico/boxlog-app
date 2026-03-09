@@ -52,6 +52,8 @@ export interface PlanCardProps {
   className?: string | undefined;
   style?: React.CSSProperties | undefined;
   previewTime?: ({ start: Date; end: Date } | null) | undefined;
+  /** グリッドの1時間あたりの高さ（px）。予定vs記録の差分オーバーレイ計算に使用 */
+  hourHeight?: number | undefined;
 }
 
 export interface PlanCardPosition {

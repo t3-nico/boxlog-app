@@ -2,6 +2,8 @@
  * プラン配置計算ユーティリティ
  */
 
+import type { CalendarEvent } from '@/core/types/calendar-event';
+
 import type { PlanColumn, TimedPlan } from '../types/plan.types';
 
 /**
@@ -113,4 +115,101 @@ export function filterPlansByDate(plans: TimedPlan[], date: Date): TimedPlan[] {
     // 時間指定プランは時間範囲で比較
     return plan.start < dayEnd && plan.end > dayStart;
   });
+}
+
+// --- 予定 vs 記録 差分オーバーレイ ---
+
+export interface ActualTimeDiffOverlay {
+  /** 上部: 開始差分 */
+  topKind: 'hatch' | 'none';
+  topHeight: number; // px
+
+  /** 下部: 終了差分 */
+  bottomKind: 'hatch' | 'none';
+  bottomHeight: number; // px
+
+  /** カード位置の調整量 */
+  topShift: number; // px（上に伸ばす分。正の値 = top を減算）
+  heightDelta: number; // px（全体の追加高さ）
+}
+
+const NO_OVERLAY: ActualTimeDiffOverlay = {
+  topKind: 'none',
+  topHeight: 0,
+  bottomKind: 'none',
+  bottomHeight: 0,
+  topShift: 0,
+  heightDelta: 0,
+};
+
+function toMinutesOfDay(date: Date): number {
+  return date.getHours() * 60 + date.getMinutes();
+}
+
+/**
+ * 予定時間と実績時間の差分からオーバーレイ情報を計算
+ *
+ * 対象: entryState === 'past' && origin === 'planned' で
+ * actualStartDate または actualEndDate が1つ以上ある場合
+ * 未設定の方は予定通り（差分なし）として扱う
+ */
+export function computeActualTimeDiffOverlay(
+  plan: CalendarEvent,
+  hourHeight: number,
+): ActualTimeDiffOverlay {
+  if (
+    plan.entryState !== 'past' ||
+    plan.origin !== 'planned' ||
+    (!plan.actualStartDate && !plan.actualEndDate) ||
+    !plan.startDate ||
+    !plan.endDate
+  ) {
+    return NO_OVERLAY;
+  }
+
+  const plannedStartMin = toMinutesOfDay(plan.startDate);
+  const plannedEndMin = toMinutesOfDay(plan.endDate);
+  // 未設定の実績時間は予定通りとして扱う
+  const actualStartMin = plan.actualStartDate
+    ? toMinutesOfDay(plan.actualStartDate)
+    : plannedStartMin;
+  const actualEndMin = plan.actualEndDate ? toMinutesOfDay(plan.actualEndDate) : plannedEndMin;
+
+  const minutesToPx = (minutes: number) => (Math.abs(minutes) * hourHeight) / 60;
+
+  // --- 上部（開始差分） ---
+  const startDiffMin = actualStartMin - plannedStartMin;
+  let topKind: ActualTimeDiffOverlay['topKind'] = 'none';
+  let topHeight = 0;
+  let topShift = 0;
+
+  if (startDiffMin > 0) {
+    // 実績が遅れて開始 → ハッチング（予定開始〜実績開始）
+    topKind = 'hatch';
+    topHeight = minutesToPx(startDiffMin);
+  } else if (startDiffMin < 0) {
+    // 実績が早く開始 → カードを上に拡張 + ハッチング
+    topKind = 'hatch';
+    topHeight = minutesToPx(startDiffMin);
+    topShift = topHeight;
+  }
+
+  // --- 下部（終了差分） ---
+  const endDiffMin = actualEndMin - plannedEndMin;
+  let bottomKind: ActualTimeDiffOverlay['bottomKind'] = 'none';
+  let bottomHeight = 0;
+  let heightDelta = topShift; // topShift分はすでに高さに追加
+
+  if (endDiffMin < 0) {
+    // 実績が早く終了 → ハッチング（実績終了〜予定終了）
+    bottomKind = 'hatch';
+    bottomHeight = minutesToPx(endDiffMin);
+  } else if (endDiffMin > 0) {
+    // 実績が超過 → カードを下に拡張 + ハッチング
+    bottomKind = 'hatch';
+    bottomHeight = minutesToPx(endDiffMin);
+    heightDelta += bottomHeight;
+  }
+
+  return { topKind, topHeight, bottomKind, bottomHeight, topShift, heightDelta };
 }

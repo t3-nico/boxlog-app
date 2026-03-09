@@ -34,3 +34,14 @@
   /* Secondary ホバー */
   --color-secondary-hover: oklch(from var(--secondary) l c h / 80%);
 }
+
+/* 予定 vs 記録の差分: 斜線ハッチングパターン */
+.pattern-hatch {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 3px,
+    oklch(from currentColor l c h / 0.15) 3px,
+    oklch(from currentColor l c h / 0.15) 6px
+  );
+}
