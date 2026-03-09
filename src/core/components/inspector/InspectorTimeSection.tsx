@@ -186,7 +186,7 @@ export function InspectorTimeSection({
           icon={Play}
           message={t('plan.inspector.time.sameAsPlanned')}
         />
-      ) : hasActualTime || isUnplanned ? (
+      ) : (
         <TimeRow
           label={t('plan.inspector.time.actual')}
           icon={Play}
@@ -196,27 +196,10 @@ export function InspectorTimeSection({
           onEndChange={handleActualEndChange}
           disabled={disabled}
         />
-      ) : (
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Play className="text-muted-foreground size-4 flex-shrink-0" />
-            <span className="text-muted-foreground text-sm">{t('plan.inspector.time.actual')}</span>
-          </div>
-          <button
-            type="button"
-            className="text-muted-foreground hover:bg-state-hover hover:text-foreground -mr-2 rounded-lg px-2 py-1 text-xs transition-colors"
-            onClick={() => {
-              onActualStartChange(plannedStart);
-              onActualEndChange(plannedEnd);
-            }}
-          >
-            {t('plan.inspector.time.sameAsPlanned')}
-          </button>
-        </div>
       )}
 
       {/* 予定 vs 記録の差分（プログレスバー + バッジ） */}
-      {hasActualTime && plannedDuration > 0 && !isUnplanned && (
+      {(hasActualTime || entryState !== 'upcoming') && plannedDuration > 0 && !isUnplanned && (
         <div className="flex items-center gap-2">
           <div className="flex-1">
             <TimeProgressBar plannedMinutes={plannedDuration} actualMinutes={actualDuration} />
@@ -246,11 +229,9 @@ export function InspectorTimeSection({
         />
       )}
 
-      {/* 繰り返し */}
-      {recurrenceRow}
-
-      {/* 通知 */}
-      {reminderRow}
+      {/* 繰り返し・通知（記録のみのエントリでは非表示） */}
+      {!isUnplanned && recurrenceRow}
+      {!isUnplanned && reminderRow}
 
       {/* メモ */}
       {onNoteChange && (

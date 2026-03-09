@@ -92,8 +92,8 @@ export const EntryInspectorDetailsTab = memo(function EntryInspectorDetailsTab({
 }: EntryInspectorDetailsTabProps) {
   const t = useTranslations();
 
-  // upcoming のみ繰り返し・リマインダーを表示
-  const showRecurrence = entryState === 'upcoming';
+  // 予定エントリでは繰り返し・リマインダーを表示（記録のみは非表示）
+  const showRecurrence = origin !== 'unplanned';
 
   return (
     <InspectorDetailsLayout
