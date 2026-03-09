@@ -11,11 +11,11 @@ import { useHasMounted } from '@/hooks/useHasMounted';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { cn } from '@/lib/utils';
 
-import type { TimeIconType } from '@/components/common/TimeSelect';
+import type { TimeIconType, TimeQuickActions } from '@/components/common/TimeSelect';
 
 import 'timepicker-ui/index.css';
 
-export type { TimeIconType };
+export type { TimeIconType, TimeQuickActions };
 
 export interface ClockTimePickerProps {
   /** 時刻値 "HH:MM" 形式 */
@@ -38,6 +38,8 @@ export interface ClockTimePickerProps {
   className?: string | undefined;
   /** ドロップダウン内に duration を表示するか（minTime からの経過時間） */
   showDurationInMenu?: boolean | undefined;
+  /** クイックアクション表示（start: 現在時刻ベース, end: プリセットDuration） */
+  quickActions?: TimeQuickActions | undefined;
 }
 
 /**
@@ -58,6 +60,7 @@ export const ClockTimePicker = memo<ClockTimePickerProps>(
     iconType = 'clock',
     className,
     showDurationInMenu = false,
+    quickActions,
   }) => {
     const isMobile = useIsMobile();
 
@@ -87,6 +90,7 @@ export const ClockTimePicker = memo<ClockTimePickerProps>(
         showIcon={showIcon}
         iconType={iconType}
         {...(minTime ? { minTime, showDurationInMenu } : {})}
+        quickActions={quickActions}
       />
     );
   },

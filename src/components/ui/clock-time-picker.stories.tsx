@@ -40,6 +40,11 @@ const meta = {
       control: 'boolean',
       description: 'ドロップダウン内にduration表示',
     },
+    quickActions: {
+      control: 'select',
+      options: [undefined, 'start', 'end'],
+      description: 'クイックアクション（start: 現在時刻ベース, end: プリセットDuration）',
+    },
   },
   decorators: [
     (Story) => (
@@ -53,18 +58,18 @@ const meta = {
 export default meta;
 type Story = StoryObj;
 
-/** 開始時刻（showIcon + clock）。実使用: ScheduleRow, RecordCreateForm の開始時刻 */
+/** 開始時刻 + クイックアクション（Now / +30m / +1h）。実使用: TimeRow の開始時刻 */
 export const StartTime: Story = {
   render: () => {
     function Demo() {
       const [value, setValue] = useState('');
-      return <ClockTimePicker value={value} onChange={setValue} showIcon />;
+      return <ClockTimePicker value={value} onChange={setValue} showIcon quickActions="start" />;
     }
     return <Demo />;
   },
 };
 
-/** 終了時刻（flag + minTime + duration表示）。実使用: ScheduleRow, RecordCreateForm の終了時刻 */
+/** 終了時刻 + クイックアクション（30m / 1h / 1.5h / 2h）。実使用: TimeRow の終了時刻 */
 export const EndTime: Story = {
   render: () => {
     function Demo() {
@@ -77,6 +82,7 @@ export const EndTime: Story = {
           iconType="flag"
           minTime="09:00"
           showDurationInMenu
+          quickActions="end"
         />
       );
     }
@@ -117,7 +123,12 @@ export const AllPatterns: Story = {
 
       return (
         <div className="flex flex-col items-start gap-6">
-          <ClockTimePicker value={startValue} onChange={setStartValue} showIcon />
+          <ClockTimePicker
+            value={startValue}
+            onChange={setStartValue}
+            showIcon
+            quickActions="start"
+          />
           <ClockTimePicker
             value={endValue}
             onChange={setEndValue}
@@ -125,6 +136,7 @@ export const AllPatterns: Story = {
             iconType="flag"
             minTime="09:00"
             showDurationInMenu
+            quickActions="end"
           />
           <ClockTimePicker value={errorValue} onChange={setErrorValue} showIcon hasError />
           <ClockTimePicker value={disabledValue} onChange={setDisabledValue} showIcon disabled />

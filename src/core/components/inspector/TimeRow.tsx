@@ -56,6 +56,7 @@ export function TimeRow({
           onChange={onStartChange}
           disabled={disabled}
           hasError={hasError}
+          quickActions="start"
         />
         <ArrowRight className="text-muted-foreground size-3.5 flex-shrink-0" />
         <ClockTimePicker
@@ -65,6 +66,7 @@ export function TimeRow({
           minTime={startTime}
           showDurationInMenu
           hasError={hasError}
+          quickActions="end"
         />
       </div>
     </div>
