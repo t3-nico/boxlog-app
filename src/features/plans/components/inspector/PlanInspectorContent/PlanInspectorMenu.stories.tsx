@@ -28,7 +28,7 @@ interface MenuArgs {
 }
 
 const meta = {
-  title: 'Features/Plans/PlanInspectorMenu',
+  title: 'Features/Entry/EntryInspectorMenu',
   parameters: { layout: 'centered' },
   tags: ['autodocs'],
   args: {

@@ -10,7 +10,7 @@ import { RecurringEditConfirmDialog } from './RecurringEditConfirmDialog';
 
 /** RecurringEditConfirmDialog - 繰り返しプランのスコープ選択ダイアログ */
 const meta = {
-  title: 'Features/Plans/RecurringEditConfirmDialog',
+  title: 'Features/Entry/RecurringEditConfirmDialog',
   parameters: {
     layout: 'padded',
   },
