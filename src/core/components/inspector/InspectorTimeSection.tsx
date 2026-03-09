@@ -10,7 +10,7 @@
 import type { ReactNode } from 'react';
 
 import { Calendar, Clock, Play, StickyNote } from 'lucide-react';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { useTranslations } from 'next-intl';
 
@@ -120,23 +120,12 @@ export function InspectorTimeSection({
   const effectiveActualStart = actualStart ?? plannedStart;
   const effectiveActualEnd = actualEnd ?? plannedEnd;
 
-  // 記録行の自動調整
-  // 注意: onActualEndChange を直接渡す（インラインコールバックだと毎回新しい参照になり、
-  // useAutoAdjustEndTime 内の useEffect が不要に再実行される）
-  const stableActualEndChange = useCallback(
-    (time: string) => onActualEndChange(time),
-    [onActualEndChange],
-  );
-  const { handleStartTimeChange: autoActualStartChange, handleEndTimeChange: autoActualEndChange } =
-    useAutoAdjustEndTime(effectiveActualStart, effectiveActualEnd, stableActualEndChange);
-
+  // 記録行は連動なし（開始を変えても終了はそのまま）
   const handleActualStartChange = (time: string) => {
-    autoActualStartChange(time);
     onActualStartChange(time);
   };
 
   const handleActualEndChange = (time: string) => {
-    autoActualEndChange(time);
     onActualEndChange(time);
   };
 
