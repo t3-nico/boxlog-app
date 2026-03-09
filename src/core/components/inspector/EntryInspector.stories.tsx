@@ -22,11 +22,25 @@ import { InspectorFrame } from './story-helpers';
  *
  * ## 3パターン
  *
- * | パターン | 予定行 | 記録行 | 期間 | 繰り返し/通知 | 充実度 | メモ |
- * |----------|--------|--------|------|--------------|--------|------|
- * | **Upcoming + Planned** | 編集可 | placeholder | 編集可 | ○ | × (Hide) | ○ |
- * | **Past + Planned** | 編集可 | 編集可 | 編集可 | × (Hide) | ○ | ○ |
- * | **Past + Unplanned** | placeholder | 編集可 | 読取専用 | × (Hide) | ○ | ○ |
+ * | パターン | 予定行 | 記録行 | 期間 | 繰り返し/通知 | 充実度 | ボーダー |
+ * |----------|--------|--------|------|--------------|--------|----------|
+ * | **Upcoming + Planned** | 編集可 | placeholder | 編集可 | ○ | × (Hide) | 実線 |
+ * | **Past + Planned** | 編集可 | 編集可 | 編集可 | × (Hide) | ○ | 実線 |
+ * | **Past + Unplanned** | placeholder | 編集可 | 読取専用 | × (Hide) | ○ | 点線 |
+ *
+ * ## origin 自動遷移（ドラッグ移動時）
+ *
+ * `origin` は作成時に固定されるが、ドラッグで時間境界を跨ぐと自動遷移する。
+ *
+ * | 操作 | origin 変更 | フィールドクリア |
+ * |------|-------------|-----------------|
+ * | unplanned → 未来にドラッグ | `unplanned` → `planned` | actual_start/end, fulfillment_score |
+ * | unplanned → 過去内で移動 | 変更なし | なし |
+ * | planned → 過去にドラッグ | 変更なし（完了した予定） | なし |
+ * | planned → 未来内で移動 | 変更なし | なし |
+ *
+ * 逆方向（planned → unplanned）の自動遷移は行わない。
+ * 実装: `computeOriginTransition()` in `src/lib/entry-status.ts`
  *
  * ## レスポンシブ
  *
@@ -56,7 +70,7 @@ function MockTagRow({
   dotClass?: string | undefined;
 }) {
   return (
-    <div className="flex items-center justify-between gap-2 px-4 pt-5 pb-0">
+    <div className="flex items-center justify-between gap-2 px-4">
       <button
         type="button"
         className="hover:bg-state-hover -mt-1 -ml-1.5 flex items-center gap-2 rounded-lg py-1 pr-2 pl-1.5 text-base font-semibold transition-colors"
@@ -145,8 +159,8 @@ function InspectorContent({
           onActualEndChange={setActualEnd}
           entryState={entryState}
           origin={origin}
-          fulfillmentScore={fulfillment}
-          onFulfillmentChange={setFulfillment}
+          fulfillmentScore={entryState !== 'upcoming' ? fulfillment : undefined}
+          onFulfillmentChange={entryState !== 'upcoming' ? setFulfillment : undefined}
           note={note}
           onNoteChange={setNote}
           notePlaceholder={t('plan.inspector.note.placeholder')}
@@ -349,28 +363,4 @@ export const AllPatterns: Story = {
       </div>
     </div>
   ),
-};
-
-/**
- * ## Mobile Drawer
- *
- * モバイルではボトムシート（Drawer）として表示。
- * viewport addon で iframe が 320px にリサイズされ、
- * InspectorShell 内の useMediaQuery が反応して実際の Vaul Drawer が描画される。
- */
-export const MobileDrawer: Story = {
-  render: () => (
-    <EntryInspectorStory
-      entryState="upcoming"
-      origin="planned"
-      tagName="Work"
-      tagDotClass="bg-blue-500"
-      initialPlannedStart="14:00"
-      initialPlannedEnd="15:30"
-      initialNote="Prepare slides for the meeting"
-    />
-  ),
-  globals: {
-    viewport: { value: 'mobile1' },
-  },
 };
