@@ -17,7 +17,6 @@ import { getEntryState } from '@/lib/entry-status';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 
 import { EntryInspectorDetailsTab } from './EntryInspectorDetailsTab';
-import { EntryInspectorMenu } from './EntryInspectorMenu';
 import { useEntryInspectorContentLogic } from './useEntryInspectorContentLogic';
 
 export function EntryInspectorContent() {
@@ -42,8 +41,6 @@ export function EntryInspectorContent() {
     autoSave,
     updatePlan,
     handleDelete,
-    handleCopyId,
-    handleDuplicate,
     getCache,
     saveAndClose,
   } = useEntryInspectorContentLogic();
@@ -88,20 +85,12 @@ export function EntryInspectorContent() {
     [planId, updateEntry],
   );
 
-  const menuContent = (
-    <EntryInspectorMenu
-      onDuplicate={handleDuplicate}
-      onCopyId={handleCopyId}
-      onDelete={handleDelete}
-    />
-  );
-
   if (!plan) return null;
 
   return (
     <EntryInspectorDetailsTab
       plan={plan}
-      menuContent={menuContent}
+      onDelete={handleDelete}
       scheduleDate={scheduleDate}
       startTime={startTime}
       endTime={endTime}

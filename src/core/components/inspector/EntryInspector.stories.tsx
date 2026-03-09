@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Bell, ChevronDown, MoreHorizontal, Plus, Repeat } from 'lucide-react';
+import { Bell, ChevronDown, Plus, Repeat, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import type { EntryOrigin, FulfillmentScore } from '@/core/types/entry';
@@ -96,9 +96,9 @@ function MockTagRow({
       <button
         type="button"
         className="text-muted-foreground hover:bg-state-hover -mr-2 flex size-8 items-center justify-center rounded-lg transition-colors"
-        aria-label="Options"
+        aria-label="Delete"
       >
-        <MoreHorizontal className="size-5" />
+        <Trash2 className="size-4" />
       </button>
     </div>
   );

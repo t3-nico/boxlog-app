@@ -8,20 +8,13 @@
  * 右側に ⋯ メニューを配置。
  */
 
-import type { ReactNode } from 'react';
 import { useCallback, useRef, useState } from 'react';
 
-import { ChevronDown, MoreHorizontal, Plus } from 'lucide-react';
+import { ChevronDown, Plus, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
 import { TagQuickSelector } from '@/components/tags/TagQuickSelector';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { getTagColorClasses } from '@/config/ui/colors';
 import { useCreateTag } from '@/hooks/mutations/useTagCrudMutations';
 import { useTagsMap } from '@/hooks/useTagsMap';
@@ -31,11 +24,11 @@ import { cn } from '@/lib/utils';
 interface InspectorTagRowProps {
   tagId: string | null;
   onTagChange: (tagId: string | null) => void;
-  /** ⋯ ドロップダウンメニューの内容 */
-  menuContent?: ReactNode;
+  /** 削除ボタンのコールバック */
+  onDelete?: (() => void) | undefined;
 }
 
-export function InspectorTagRow({ tagId, onTagChange, menuContent }: InspectorTagRowProps) {
+export function InspectorTagRow({ tagId, onTagChange, onDelete }: InspectorTagRowProps) {
   const t = useTranslations();
   const { getTagById } = useTagsMap();
   const [selectorOpen, setSelectorOpen] = useState(false);
@@ -105,24 +98,16 @@ export function InspectorTagRow({ tagId, onTagChange, menuContent }: InspectorTa
           )}
         </button>
 
-        {/* 右側: メニュー */}
-        {menuContent && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                icon
-                className="-mr-2 focus-visible:ring-0"
-                aria-label={t('common.actions.options')}
-              >
-                <MoreHorizontal className="size-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              {menuContent}
-            </DropdownMenuContent>
-          </DropdownMenu>
+        {/* 右側: 削除 */}
+        {onDelete && (
+          <button
+            type="button"
+            onClick={onDelete}
+            className="text-muted-foreground hover:bg-state-hover -mr-2 flex size-8 items-center justify-center rounded-lg transition-colors"
+            aria-label={t('common.actions.delete')}
+          >
+            <Trash2 className="size-4" />
+          </button>
         )}
       </div>
 

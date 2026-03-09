@@ -8,7 +8,6 @@
  * Row 2: オプションボタン群
  */
 
-import type { ReactNode } from 'react';
 import { memo } from 'react';
 
 import {
@@ -34,8 +33,8 @@ import { RecurrenceIconButton } from '../../shared/RecurrenceIconButton';
 
 interface EntryInspectorDetailsTabProps {
   plan: EntryWithTags;
-  /** ⋯ メニューの内容（InspectorTagRow に伝搬） */
-  menuContent?: ReactNode;
+  /** 削除ボタンのコールバック */
+  onDelete?: () => void;
   scheduleDate: Date | undefined;
   startTime: string;
   endTime: string;
@@ -65,7 +64,7 @@ interface EntryInspectorDetailsTabProps {
 
 export const EntryInspectorDetailsTab = memo(function EntryInspectorDetailsTab({
   plan,
-  menuContent,
+  onDelete,
   scheduleDate,
   startTime,
   endTime,
@@ -99,11 +98,7 @@ export const EntryInspectorDetailsTab = memo(function EntryInspectorDetailsTab({
   return (
     <InspectorDetailsLayout
       tagRow={
-        <InspectorTagRow
-          tagId={selectedTagId}
-          onTagChange={onTagChange}
-          menuContent={menuContent}
-        />
+        <InspectorTagRow tagId={selectedTagId} onTagChange={onTagChange} onDelete={onDelete} />
       }
       schedule={
         <InspectorTimeSection

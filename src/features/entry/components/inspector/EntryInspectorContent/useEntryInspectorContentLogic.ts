@@ -14,7 +14,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 
 import type { EntryWithTags } from '@/core/types/entry';
-import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
 import { logger } from '@/lib/logger';
 import { useEntryCacheStore } from '@/stores/useEntryCacheStore';
@@ -52,7 +51,6 @@ export function useEntryInspectorContentLogic() {
 
   const getCache = useEntryCacheStore((state) => state.getCache);
   const { applyDelete } = useRecurringScopeMutations();
-  const { createEntry } = useEntryMutations();
 
   // Inspectorマウント時にグローバルダイアログをリセット
   useEffect(() => {
@@ -234,32 +232,6 @@ export function useEntryInspectorContentLogic() {
     closeInspector,
   ]);
 
-  // Menu handlers
-  const handleCopyId = useCallback(() => {
-    if (entryId) navigator.clipboard.writeText(entryId);
-  }, [entryId]);
-
-  const handleDuplicate = useCallback(async () => {
-    if (!plan || !('id' in plan)) return;
-
-    try {
-      const result = await createEntry.mutateAsync({
-        title: plan.title,
-        description: plan.description ?? undefined,
-        start_time: plan.start_time ?? undefined,
-        end_time: plan.end_time ?? undefined,
-      });
-      if (result?.id) {
-        closeInspector();
-        setTimeout(() => {
-          useEntryInspectorStore.getState().openInspector(result.id);
-        }, 100);
-      }
-    } catch {
-      logger.error('Failed to duplicate entry');
-    }
-  }, [plan, createEntry, closeInspector]);
-
   return {
     // Store state
     planId: entryId,
@@ -301,8 +273,6 @@ export function useEntryInspectorContentLogic() {
 
     // Menu handlers
     handleDelete,
-    handleCopyId,
-    handleDuplicate,
     // Cache
     getCache,
   };
