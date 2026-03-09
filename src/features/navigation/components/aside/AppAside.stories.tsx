@@ -1,10 +1,7 @@
-import { useState } from 'react';
-
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
 import { AppAside } from '@/components/layout/AppAside';
-import type { AsideType } from './AsideSwitcher';
 
 /** AppAside - アプリケーション共通アサイド */
 const meta = {
@@ -26,27 +23,9 @@ function AsideFrame({ children }: { children: React.ReactNode }) {
   return <div className="border-border h-[500px] w-[320px] border">{children}</div>;
 }
 
-function InteractiveAsideStory() {
-  const [asideType, setAsideType] = useState<AsideType>('entries');
-  return (
-    <AsideFrame>
-      <AppAside asideType={asideType} onAsideChange={setAsideType} />
-    </AsideFrame>
-  );
-}
-
 // ─────────────────────────────────────────────────────────
 // Stories
 // ─────────────────────────────────────────────────────────
-
-/** Entriesパネル（デフォルト） */
-export const EntriesPanel: Story = {
-  render: () => (
-    <AsideFrame>
-      <AppAside asideType="entries" onAsideChange={fn()} />
-    </AsideFrame>
-  ),
-};
 
 /** Chatパネル */
 export const ChatPanel: Story = {
@@ -54,25 +33,5 @@ export const ChatPanel: Story = {
     <AsideFrame>
       <AppAside asideType="chat" onAsideChange={fn()} />
     </AsideFrame>
-  ),
-};
-
-/** インタラクティブ（アサイド切替可能） */
-export const Interactive: Story = {
-  render: () => <InteractiveAsideStory />,
-};
-
-/** 全パターン一覧 */
-export const AllPatterns: Story = {
-  render: () => (
-    <div className="flex flex-col items-start gap-6">
-      <AsideFrame>
-        <AppAside asideType="entries" onAsideChange={fn()} />
-      </AsideFrame>
-
-      <AsideFrame>
-        <AppAside asideType="chat" onAsideChange={fn()} />
-      </AsideFrame>
-    </div>
   ),
 };

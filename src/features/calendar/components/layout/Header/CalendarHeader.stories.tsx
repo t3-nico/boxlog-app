@@ -3,14 +3,11 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
-import { type AsideType } from '@/components/layout/AppAside';
-import { SegmentedControl } from '@/components/ui/segmented-control';
-
 import { CompactDateNavigator, DateNavigator } from './DateNavigator';
 import { HeaderActions } from './HeaderActions';
 import { ViewSwitcher } from './ViewSwitcher';
 
-/** カレンダーヘッダーのサブコンポーネント（ViewSwitcher, DateNavigator, HeaderActions, AsideSwitcher）。 */
+/** カレンダーヘッダーのサブコンポーネント（ViewSwitcher, DateNavigator, HeaderActions）。 */
 const meta = {
   title: 'Features/Calendar/Header',
   parameters: {
@@ -32,22 +29,6 @@ function ViewSwitcherExample({
   const [current, setCurrent] =
     useState<import('@/features/calendar/types/calendar.types').CalendarViewType>(initial);
   return <ViewSwitcher currentView={current} onChange={setCurrent} />;
-}
-
-const asideOptions = [
-  { value: 'entries' as const, label: 'Entries' },
-  { value: 'chat' as const, label: 'Chat' },
-];
-
-function AsideSwitcherExample() {
-  const [aside, setAside] = useState<AsideType>('none');
-  return (
-    <SegmentedControl
-      options={asideOptions}
-      value={aside as 'entries' | 'chat'}
-      onChange={setAside}
-    />
-  );
 }
 
 // ---------------------------------------------------------------------------
@@ -108,11 +89,6 @@ export const HeaderActionsCompact: Story = {
   render: () => <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} compact />,
 };
 
-/** アサイド切替セグメントコントロール。None/Plan/Record/Stats。 */
-export const AsideSwitcherDefault: Story = {
-  render: () => <AsideSwitcherExample />,
-};
-
 /** 全パターン一覧。 */
 export const AllPatterns: Story = {
   render: () => (
@@ -125,7 +101,6 @@ export const AllPatterns: Story = {
       </div>
       <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} />
       <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} compact />
-      <AsideSwitcherExample />
     </div>
   ),
 };

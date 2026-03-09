@@ -2,8 +2,6 @@
 
 import dynamic from 'next/dynamic';
 
-import { PlanListPanel } from '@/features/calendar';
-
 import type { AsideType } from '@/components/layout/AppAside';
 
 // tiptap + AI SDK を初期バンドルから除外（LCP改善）
@@ -19,8 +17,6 @@ const AIInspectorContent = dynamic(
  */
 export function renderStatsAsideContent(asideType: AsideType): React.ReactNode {
   switch (asideType) {
-    case 'entries':
-      return <PlanListPanel />;
     case 'chat':
       return <AIInspectorContent />;
     case 'reflection':

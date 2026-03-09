@@ -8,7 +8,6 @@
 // =============================================================================
 // Components
 // =============================================================================
-export { AsideSwitcher } from './components/aside/AsideSwitcher';
 export type { AsideType } from './components/aside/AsideSwitcher';
 export { CreateActionSheet, useCreateActionSheet } from './components/mobile/CreateActionSheet';
 export type { CreateActionType } from './components/mobile/CreateActionSheet';

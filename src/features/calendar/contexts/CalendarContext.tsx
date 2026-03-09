@@ -16,7 +16,7 @@ import type { CalendarEvent, CalendarViewType, ViewDateRange } from '../types/ca
 
 // AsideType は stores/useLayoutStore から来るが、features/ からは直接importできない。
 // 型だけここで再定義する（string literal union）。
-type AsideType = 'none' | 'entries' | 'chat' | 'reflection';
+type AsideType = 'none' | 'chat' | 'reflection';
 
 // =============================================================================
 // Context Value Type

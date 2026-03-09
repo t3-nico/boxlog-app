@@ -37,11 +37,6 @@ export { MultiDayView } from './components/views/MultiDayView';
 export { WeekView } from './components/views/WeekView';
 
 // =============================================================================
-// Aside (Panel) Components
-// =============================================================================
-export { PlanListPanel } from './components/aside/PlanListPanel';
-
-// =============================================================================
 // Sidebar Components
 // =============================================================================
 export { CalendarFilterList } from './components/sidebar/tag-filter/CalendarFilterList';

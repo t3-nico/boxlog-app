@@ -91,7 +91,7 @@ export function StatsPageContent({ renderAsideContent, headerSlot }: StatsPageCo
                     variant="ghost"
                     icon
                     className="size-8"
-                    onClick={() => setCurrentAside('entries')}
+                    onClick={() => setCurrentAside('chat')}
                     aria-label={t('calendar.aside.open')}
                   >
                     <PanelRight className="size-4" />
