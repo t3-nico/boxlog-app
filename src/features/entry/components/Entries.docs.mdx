@@ -1,6 +1,6 @@
 import { Meta } from '@storybook/addon-docs/blocks';
 
-<Meta title="Features/Entries/Docs" />
+<Meta title="Features/Entry/Docs" />
 
 # Entries
 
@@ -33,8 +33,8 @@ PlanInspector                     Inspector シェル
 │   ├── PlanInspectorDetailsTab   編集フォーム
 │   │   ├── InspectorTagRow       タグ選択 + ⋯ メニュー
 │   │   ├── InspectorTimeSection  時間セクション（下記参照）
-│   │   ├── RecurrenceIconButton  繰り返し設定（upcoming のみ）
-│   │   └── ReminderSelect        リマインダー設定（upcoming のみ）
+│   │   ├── RecurrenceIconButton  繰り返し設定（planned エントリのみ）
+│   │   └── ReminderSelect        リマインダー設定（planned エントリのみ）
 │   └── InspectorSaveBar          保存バー（pending changes 時）
 └── PlanInspectorMenu             アクションメニュー（複製/削除等）
 ```
@@ -99,8 +99,8 @@ InspectorTimeSection
 
 - `status` フィールドなし — 時間位置から `getEntryState()` で自動判定
 - `upcoming`: 予定時間セクション + 繰り返し + リマインダー
-- `active`: 予定 + 実績時間 + 充実度
-- `past`: 予定 + 実績時間 + 充実度
+- `active`: 予定 + 実績時間 + 充実度 + 繰り返し + リマインダー
+- `past`: 予定 + 実績時間 + 充実度 + 繰り返し + リマインダー
 
 ---
 

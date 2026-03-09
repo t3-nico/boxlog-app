@@ -25,7 +25,7 @@ import { InspectorFrame } from './story-helpers';
  * | パターン | 予定行 | 記録行 | 期間 | 繰り返し/通知 | 充実度 | ボーダー |
  * |----------|--------|--------|------|--------------|--------|----------|
  * | **Upcoming + Planned** | 編集可 | placeholder | 編集可 | ○ | × (Hide) | 実線 |
- * | **Past + Planned** | 編集可 | 編集可 | 編集可 | × (Hide) | ○ | 実線 |
+ * | **Past + Planned** | 編集可 | 編集可 | 編集可 | ○ | ○ | 実線 |
  * | **Past + Unplanned** | placeholder | 編集可 | 読取専用 | × (Hide) | ○ | 点線 |
  *
  * ## origin 自動遷移（ドラッグ移動時）
@@ -165,7 +165,7 @@ function InspectorContent({
           onNoteChange={setNote}
           notePlaceholder={t('plan.inspector.note.placeholder')}
           recurrenceRow={
-            entryState === 'upcoming' ? (
+            origin !== 'unplanned' ? (
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Repeat className="text-muted-foreground size-4 flex-shrink-0" />
@@ -185,7 +185,7 @@ function InspectorContent({
             ) : undefined
           }
           reminderRow={
-            entryState === 'upcoming' ? (
+            origin !== 'unplanned' ? (
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Bell className="text-muted-foreground size-4 flex-shrink-0" />
@@ -265,7 +265,7 @@ export const UpcomingPlanned: Story = {
  *
  * 完了した予定エントリ。振り返りがメイン操作。
  * - 予定行: 編集可 | 記録行: 編集可
- * - 差分: バッジ表示 | 繰り返し/通知: × (Hide) | 充実度: ○ | メモ: ○
+ * - 差分: バッジ表示 | 繰り返し/通知: ○ | 充実度: ○ | メモ: ○
  */
 export const PastPlanned: Story = {
   render: () => (
