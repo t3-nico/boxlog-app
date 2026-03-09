@@ -3,15 +3,13 @@
 /**
  * Inspector 時間セクション（組み立て役）
  *
- * DateNavigatorRow + TimeRow × 2 + TimeProgressBar + TimeConflictAlert を
+ * DateNavigatorRow + TimeRow × 2 + 差分バッジ + TimeConflictAlert を
  * 3パターン（upcoming+planned, past+planned, past+unplanned）に応じて組み立てる。
- *
- * TimeComparisonSection の後継（同じ props interface）。
  */
 
 import type { ReactNode } from 'react';
 
-import { Calendar, Clock, Play, StickyNote, Timer } from 'lucide-react';
+import { Calendar, Clock, Play, StickyNote } from 'lucide-react';
 import { useCallback, useMemo } from 'react';
 
 import { useTranslations } from 'next-intl';
@@ -19,26 +17,26 @@ import { useTranslations } from 'next-intl';
 import type { EntryOrigin, FulfillmentScore } from '@/core/types/entry';
 import { useAutoAdjustEndTime } from '@/hooks/useAutoAdjustEndTime';
 import type { EntryState } from '@/lib/entry-status';
-import { computeDuration, formatDurationDisplay } from '@/lib/time-utils';
+import { computeDuration } from '@/lib/time-utils';
+import { cn } from '@/lib/utils';
 
 import { DateNavigatorRow } from './DateNavigatorRow';
-import { DurationSelect } from './DurationSelect';
 import { FulfillmentRow } from './FulfillmentRow';
 import { InlineNoteSection } from './InlineNoteSection';
 import { TimeConflictAlert } from './TimeConflictAlert';
+import { TimeProgressBar } from './TimeProgressBar';
 import { TimeRow, TimeRowPlaceholder } from './TimeRow';
 
-/**
- * start + duration(分) から end 時刻 "HH:MM" を算出
- */
-function addMinutesToTime(start: string, minutes: number): string {
-  if (!start) return '';
-  const [h, m] = start.split(':').map(Number);
-  if (isNaN(h!) || isNaN(m!)) return '';
-  const total = h! * 60 + m! + minutes;
-  const endH = Math.floor(total / 60) % 24;
-  const endM = total % 60;
-  return `${endH.toString().padStart(2, '0')}:${endM.toString().padStart(2, '0')}`;
+/** 差分（分）を "+15m" / "±0" / "-10m" 形式にフォーマット */
+function formatDiffDisplay(diffMinutes: number): string {
+  if (diffMinutes === 0) return '±0';
+  const abs = Math.abs(diffMinutes);
+  const sign = diffMinutes > 0 ? '+' : '-';
+  const h = Math.floor(abs / 60);
+  const m = abs % 60;
+  if (h > 0 && m > 0) return `${sign}${h}h ${m}m`;
+  if (h > 0) return `${sign}${h}h`;
+  return `${sign}${m}m`;
 }
 
 interface InspectorTimeSectionProps {
@@ -154,14 +152,10 @@ export function InspectorTimeSection({
 
   const hasActualTime = actualStart !== null || actualEnd !== null;
 
-  // Duration 変更 → 予定の end_time を調整
-  const handleDurationChange = useCallback(
-    (minutes: number) => {
-      if (!plannedStart) return;
-      const newEnd = addMinutesToTime(plannedStart, minutes);
-      onPlannedEndChange(newEnd);
-    },
-    [plannedStart, onPlannedEndChange],
+  // 差分計算（予定 vs 記録）
+  const diffMinutes = useMemo(
+    () => actualDuration - plannedDuration,
+    [actualDuration, plannedDuration],
   );
 
   return (
@@ -232,38 +226,26 @@ export function InspectorTimeSection({
         </div>
       )}
 
-      {/* 期間（Duration） */}
-      {isUnplanned
-        ? // Unplanned: 記録時間ベースの期間（読み取り専用）
-          actualDuration > 0 && (
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Timer className="text-muted-foreground size-4 flex-shrink-0" />
-                <span className="text-muted-foreground text-sm">
-                  {t('plan.inspector.time.duration')}
-                </span>
-              </div>
-              <span className="text-muted-foreground px-2 text-sm tabular-nums">
-                {formatDurationDisplay(actualDuration)}
-              </span>
-            </div>
-          )
-        : // Planned: 予定の期間（編集可能）
-          plannedStart && (
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Timer className="text-muted-foreground size-4 flex-shrink-0" />
-                <span className="text-muted-foreground text-sm">
-                  {t('plan.inspector.time.duration')}
-                </span>
-              </div>
-              <DurationSelect
-                value={plannedDuration}
-                onChange={handleDurationChange}
-                disabled={disabled}
-              />
-            </div>
-          )}
+      {/* 予定 vs 記録の差分（プログレスバー + バッジ） */}
+      {hasActualTime && plannedDuration > 0 && !isUnplanned && (
+        <div className="flex items-center gap-2">
+          <div className="flex-1">
+            <TimeProgressBar plannedMinutes={plannedDuration} actualMinutes={actualDuration} />
+          </div>
+          <span
+            className={cn(
+              'shrink-0 rounded-md px-1.5 py-0.5 text-xs font-medium tabular-nums',
+              diffMinutes > 0
+                ? 'bg-warning/15 text-warning'
+                : diffMinutes < 0
+                  ? 'bg-destructive/15 text-destructive'
+                  : 'bg-success/15 text-success',
+            )}
+          >
+            {formatDiffDisplay(diffMinutes)}
+          </span>
+        </div>
+      )}
 
       {/* 繰り返し */}
       {recurrenceRow}

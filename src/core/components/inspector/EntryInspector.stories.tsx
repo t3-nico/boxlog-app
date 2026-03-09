@@ -240,7 +240,7 @@ function StaticEntryInspector(props: InspectorContentProps) {
  *
  * 未来の予定エントリ。計画の編集がメイン操作。
  * - 予定行: 編集可能 | 記録行: placeholder
- * - 期間: 編集可 | 繰り返し/通知: ○ | 充実度: × (Hide) | メモ: ○
+ * - 期間: テキスト表示 | 繰り返し/通知: ○ | 充実度: × (Hide) | メモ: ○
  */
 export const UpcomingPlanned: Story = {
   render: () => (
@@ -261,7 +261,7 @@ export const UpcomingPlanned: Story = {
  *
  * 完了した予定エントリ。振り返りがメイン操作。
  * - 予定行: 編集可 | 記録行: 編集可
- * - 期間: 編集可 | 繰り返し/通知: × (Hide) | 充実度: ○ | メモ: ○
+ * - 差分: バッジ表示 | 繰り返し/通知: × (Hide) | 充実度: ○ | メモ: ○
  */
 export const PastPlanned: Story = {
   render: () => (
@@ -285,7 +285,7 @@ export const PastPlanned: Story = {
  *
  * 直接記録されたエントリ（予定なし）。記録のみがメイン操作。
  * - 予定行: placeholder | 記録行: 編集可
- * - 期間: 読取専用 | 繰り返し/通知: × (Hide) | 充実度: ○ | メモ: ○
+ * - 期間: テキスト表示 | 繰り返し/通知: × (Hide) | 充実度: ○ | メモ: ○
  */
 export const PastUnplanned: Story = {
   render: () => (

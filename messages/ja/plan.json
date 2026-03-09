@@ -124,6 +124,7 @@
         "sameAsPlanned": "まだこれから",
         "noPlanned": "計画せず過ごした",
         "duration": "期間",
+        "diff": "差分",
         "fulfillment": "充実度"
       },
       "note": {

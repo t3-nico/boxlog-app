@@ -124,6 +124,7 @@
         "sameAsPlanned": "Not yet",
         "noPlanned": "Lived, not planned",
         "duration": "Duration",
+        "diff": "Diff",
         "fulfillment": "Fulfillment"
       },
       "note": {
