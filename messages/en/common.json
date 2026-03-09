@@ -142,12 +142,7 @@
       "monthsAgo": "{count, plural, one {1 month ago} other {# months ago}}",
       "justNow": "just now",
       "minutesAgo": "{count, plural, one {1 min ago} other {# min ago}}",
-      "hoursAgo": "{count, plural, one {1h ago} other {#h ago}}",
-      "now": "Now",
-      "duration30m": "30m",
-      "duration1h": "1h",
-      "duration1_5h": "1.5h",
-      "duration2h": "2h"
+      "hoursAgo": "{count, plural, one {1h ago} other {#h ago}}"
     },
     "reminder": {
       "label": "Reminder",

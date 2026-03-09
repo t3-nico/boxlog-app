@@ -1,29 +1,20 @@
 'use client';
 
-import { memo, useCallback, useEffect, useRef } from 'react';
-
-import { Clock, Flag } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { TimepickerUI } from 'timepicker-ui';
+import { memo } from 'react';
 
 import { TimeSelect } from '@/components/common/TimeSelect';
-import { useHasMounted } from '@/hooks/useHasMounted';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { cn } from '@/lib/utils';
 
-import type { TimeIconType, TimeQuickActions } from '@/components/common/TimeSelect';
+import type { TimeIconType } from '@/components/common/TimeSelect';
 
-import 'timepicker-ui/index.css';
-
-export type { TimeIconType, TimeQuickActions };
+export type { TimeIconType };
 
 export interface ClockTimePickerProps {
   /** 時刻値 "HH:MM" 形式 */
   value: string;
   /** 時刻変更コールバック */
   onChange: (time: string) => void;
-  /** プレースホルダー */
-  placeholder?: string | undefined;
   /** 無効状態 */
   disabled?: boolean | undefined;
   /** エラー状態 */
@@ -38,21 +29,18 @@ export interface ClockTimePickerProps {
   className?: string | undefined;
   /** ドロップダウン内に duration を表示するか（minTime からの経過時間） */
   showDurationInMenu?: boolean | undefined;
-  /** クイックアクション表示（start: 現在時刻ベース, end: プリセットDuration） */
-  quickActions?: TimeQuickActions | undefined;
 }
 
 /**
  * ClockTimePicker - デバイス適応型時刻ピッカー
  *
  * - PC: TimeSelect（ドロップダウン、キーボード操作に最適化）
- * - モバイル: Material Design風クロックピッカー（タッチ操作に最適化）
+ * - モバイル: ネイティブ <input type="time">（OS標準ピッカー）
  */
 export const ClockTimePicker = memo<ClockTimePickerProps>(
   ({
     value,
     onChange,
-    placeholder = '--:--',
     disabled = false,
     hasError = false,
     minTime,
@@ -60,21 +48,17 @@ export const ClockTimePicker = memo<ClockTimePickerProps>(
     iconType = 'clock',
     className,
     showDurationInMenu = false,
-    quickActions,
   }) => {
     const isMobile = useIsMobile();
 
-    // モバイル: クロックピッカー
+    // モバイル: ネイティブ時刻ピッカー（iOS=ホイール, Android=クロック）
     if (isMobile) {
       return (
-        <MobileClockPicker
+        <NativeTimePicker
           value={value}
           onChange={onChange}
-          placeholder={placeholder}
           disabled={disabled}
           hasError={hasError}
-          showIcon={showIcon}
-          iconType={iconType}
           className={className}
         />
       );
@@ -90,7 +74,6 @@ export const ClockTimePicker = memo<ClockTimePickerProps>(
         showIcon={showIcon}
         iconType={iconType}
         {...(minTime ? { minTime, showDurationInMenu } : {})}
-        quickActions={quickActions}
       />
     );
   },
@@ -99,129 +82,30 @@ export const ClockTimePicker = memo<ClockTimePickerProps>(
 ClockTimePicker.displayName = 'ClockTimePicker';
 
 /**
- * モバイル用: Material Design クロックピッカー
- * タッチ操作に最適化
+ * モバイル用: ネイティブ時刻ピッカー
+ * iOS: ホイールスピナー、Android: クロックダイアル
  */
-function MobileClockPicker({
+function NativeTimePicker({
   value,
   onChange,
-  placeholder = '--:--',
   disabled,
   hasError,
-  showIcon,
-  iconType = 'clock',
   className,
-}: ClockTimePickerProps) {
-  const t = useTranslations();
-  const inputRef = useRef<HTMLInputElement>(null);
-  const timepickerRef = useRef<TimepickerUI | null>(null);
-  const isInitializedRef = useRef(false);
-  const isMounted = useHasMounted();
-
-  // timepicker 初期化
-  useEffect(() => {
-    if (!isMounted || !inputRef.current || isInitializedRef.current) return;
-
-    const tp = new TimepickerUI(inputRef.current, {
-      clock: {
-        type: '24h',
-        incrementMinutes: 5,
-        autoSwitchToMinutes: true,
-      },
-      ui: {
-        theme: 'basic',
-        animation: true,
-        backdrop: true,
-        mobile: false, // 円形クロックを使用
-        enableSwitchIcon: false,
-        editable: false,
-      },
-      labels: {
-        ok: 'OK',
-        cancel: 'Cancel',
-        time: 'Select time',
-      },
-      behavior: {
-        focusInputAfterClose: false,
-      },
-    });
-
-    tp.create();
-    timepickerRef.current = tp;
-    isInitializedRef.current = true;
-
-    // イベントリスナー登録
-    tp.on('confirm', (data) => {
-      if (data.hour && data.minutes) {
-        const hour = data.hour.padStart(2, '0');
-        const minutes = data.minutes.padStart(2, '0');
-        onChange(`${hour}:${minutes}`);
-      }
-    });
-
-    return () => {
-      if (timepickerRef.current) {
-        timepickerRef.current.destroy();
-        timepickerRef.current = null;
-        isInitializedRef.current = false;
-      }
-    };
-  }, [isMounted, onChange]);
-
-  // value が変更されたら timepicker に反映
-  useEffect(() => {
-    if (timepickerRef.current && value) {
-      timepickerRef.current.setValue(value, true);
-    }
-  }, [value]);
-
-  // ボタンクリックで timepicker を開く
-  const handleButtonClick = useCallback(() => {
-    if (disabled) return;
-    timepickerRef.current?.open();
-  }, [disabled]);
-
-  // 表示用の時刻フォーマット
-  const displayValue = value || placeholder;
-
-  if (!isMounted) {
-    return null;
-  }
-
+}: Pick<ClockTimePickerProps, 'value' | 'onChange' | 'disabled' | 'hasError' | 'className'>) {
   return (
-    <div className="relative">
-      {/* 隠し入力（timepicker-ui が使用） */}
-      <input
-        ref={inputRef}
-        type="text"
-        className="sr-only"
-        defaultValue={value}
-        readOnly
-        disabled={disabled}
-      />
-
-      {/* 表示用ボタン */}
-      <button
-        type="button"
-        disabled={disabled}
-        onClick={handleButtonClick}
-        className={cn(
-          'text-muted-foreground data-[state=selected]:text-foreground',
-          'hover:bg-state-hover inline-flex h-8 items-center gap-2 rounded-lg px-2 text-sm transition-colors',
-          'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
-          'disabled:pointer-events-none disabled:opacity-50',
-          hasError && 'text-destructive',
-          className,
-        )}
-        data-state={value ? 'selected' : undefined}
-        aria-label={
-          value ? t('common.aria.selectTime', { time: value }) : t('common.aria.timeNotSelected')
-        }
-      >
-        {showIcon &&
-          (iconType === 'flag' ? <Flag className="size-4" /> : <Clock className="size-4" />)}
-        <span>{displayValue}</span>
-      </button>
-    </div>
+    <input
+      type="time"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      disabled={disabled}
+      className={cn(
+        'text-foreground h-8 rounded-lg bg-transparent px-2 text-sm tabular-nums',
+        'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
+        'disabled:pointer-events-none disabled:opacity-50',
+        hasError && 'text-destructive',
+        !value && 'text-muted-foreground',
+        className,
+      )}
+    />
   );
 }
