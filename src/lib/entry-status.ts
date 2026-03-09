@@ -8,6 +8,8 @@
  * - past: 過去の記録（充実度入力可、自動確定）
  */
 
+import type { EntryOrigin } from '@/core/types/entry';
+
 type EntryLike = {
   start_time: string | null;
   end_time: string | null;
@@ -57,4 +59,39 @@ export function isTimePast(time: string | Date, now?: Date): boolean {
   const currentTime = now ?? new Date();
   const targetTime = typeof time === 'string' ? new Date(time) : time;
   return targetTime < currentTime;
+}
+
+/**
+ * ドラッグ移動時の origin 自動遷移を計算
+ *
+ * unplanned エントリが未来に移動された場合のみ planned に遷移し、
+ * 記録系フィールド（actual_start/end, fulfillment_score）をクリアする。
+ * planned エントリは移動先に関わらず planned のまま。
+ */
+export function computeOriginTransition(
+  currentOrigin: EntryOrigin,
+  newStartTime: Date,
+  newEndTime: Date,
+): { origin: EntryOrigin; clearFields: Record<string, null> | null } {
+  if (currentOrigin === 'planned') {
+    return { origin: 'planned', clearFields: null };
+  }
+
+  const newState = getEntryState({
+    start_time: newStartTime.toISOString(),
+    end_time: newEndTime.toISOString(),
+  });
+
+  if (newState === 'upcoming' || newState === 'active') {
+    return {
+      origin: 'planned',
+      clearFields: {
+        actual_start_time: null,
+        actual_end_time: null,
+        fulfillment_score: null,
+      },
+    };
+  }
+
+  return { origin: 'unplanned', clearFields: null };
 }

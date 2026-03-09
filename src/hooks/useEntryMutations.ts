@@ -50,8 +50,11 @@ export function useEntryMutations() {
   const t = useTranslations();
   const queryClient = useQueryClient();
   const utils = api.useUtils();
-  const { closeInspector, openInspector } = useEntryInspectorStore();
-  const { updateCache, clearCache, setIsMutating } = useEntryCacheStore();
+  const closeInspector = useEntryInspectorStore((s) => s.closeInspector);
+  const openInspector = useEntryInspectorStore((s) => s.openInspector);
+  const updateCache = useEntryCacheStore((s) => s.updateCache);
+  const clearCache = useEntryCacheStore((s) => s.clearCache);
+  const setIsMutating = useEntryCacheStore((s) => s.setIsMutating);
 
   // 作成（楽観的更新付き）
   const createEntry = api.entries.create.useMutation({
@@ -188,6 +191,10 @@ export function useEntryMutations() {
       if (data.fulfillment_score !== undefined)
         updateData.fulfillment_score = data.fulfillment_score;
       if (data.duration_minutes !== undefined) updateData.duration_minutes = data.duration_minutes;
+      if (data.origin !== undefined) updateData.origin = data.origin;
+      if (data.actual_start_time !== undefined)
+        updateData.actual_start_time = data.actual_start_time;
+      if (data.actual_end_time !== undefined) updateData.actual_end_time = data.actual_end_time;
 
       // Zustandキャッシュを更新
       if (Object.keys(updateData).length > 0) {
