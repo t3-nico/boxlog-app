@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import type { CalendarPlan } from '../../../types/calendar.types';
+import type { CalendarEvent } from '../../../types/calendar.types';
 
 import { AgendaView } from './AgendaView';
 
@@ -32,7 +32,7 @@ function makeDate(base: Date, hour: number, minute = 0): Date {
   return d;
 }
 
-const basePlan: CalendarPlan = {
+const basePlan: CalendarEvent = {
   id: 'plan-1',
   title: 'チームミーティング',
   description: '週次の進捗確認',
@@ -47,10 +47,10 @@ const basePlan: CalendarPlan = {
   duration: 60,
   isMultiDay: false,
   isRecurring: false,
-  type: 'plan',
+  origin: 'planned',
 };
 
-const mockPlans: CalendarPlan[] = [
+const mockPlans: CalendarEvent[] = [
   basePlan,
   {
     ...basePlan,

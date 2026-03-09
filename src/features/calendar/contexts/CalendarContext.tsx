@@ -12,7 +12,7 @@
 
 import { createContext, useContext } from 'react';
 
-import type { CalendarPlan, CalendarViewType, ViewDateRange } from '../types/calendar.types';
+import type { CalendarEvent, CalendarViewType, ViewDateRange } from '../types/calendar.types';
 
 // AsideType は stores/useLayoutStore から来るが、features/ からは直接importできない。
 // 型だけここで再定義する（string literal union）。
@@ -30,8 +30,8 @@ export interface CalendarContextValue {
 
   // --- Data ---
   viewDateRange: ViewDateRange;
-  filteredEvents: CalendarPlan[];
-  allCalendarPlans: CalendarPlan[];
+  filteredEvents: CalendarEvent[];
+  allCalendarEvents: CalendarEvent[];
 
   // --- Settings ---
   showWeekends: boolean;
@@ -44,7 +44,7 @@ export interface CalendarContextValue {
   onAsideChange: (aside: AsideType) => void;
 
   // --- Plan click handlers ---
-  onPlanClick: (plan: CalendarPlan) => void;
+  onPlanClick: (plan: CalendarEvent) => void;
   onTimeRangeSelect: (selection: {
     date: Date;
     startHour: number;
@@ -55,18 +55,18 @@ export interface CalendarContextValue {
 
   // --- Plan CRUD ---
   onUpdatePlan: (
-    planIdOrPlan: string | CalendarPlan,
+    planIdOrPlan: string | CalendarEvent,
     updates?: { startTime: Date; endTime: Date },
   ) => void | Promise<void> | Promise<{ skipToast: true } | void>;
   onDeletePlan: (planId: string) => void;
-  onRestorePlan: (plan: CalendarPlan) => Promise<void>;
+  onRestorePlan: (plan: CalendarEvent) => Promise<void>;
 
   // --- Context menu actions ---
-  onEditPlan: (plan: CalendarPlan) => void;
-  onDeletePlanConfirm: (plan: CalendarPlan) => void;
-  onDuplicatePlan: (plan: CalendarPlan) => void;
-  onCopyPlan: (plan: CalendarPlan) => void;
-  onCompleteWithRecord: (plan: CalendarPlan) => void;
+  onEditPlan: (plan: CalendarEvent) => void;
+  onDeletePlanConfirm: (plan: CalendarEvent) => void;
+  onDuplicatePlan: (plan: CalendarEvent) => void;
+  onCopyPlan: (plan: CalendarEvent) => void;
+  onCompleteWithRecord: (plan: CalendarEvent) => void;
 
   // --- Navigation handlers ---
   onNavigate: (direction: 'prev' | 'next' | 'today') => void;

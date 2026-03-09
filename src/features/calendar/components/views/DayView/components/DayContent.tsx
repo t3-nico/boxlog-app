@@ -16,7 +16,7 @@ import { PanelDragPreview } from '../../shared/components/PanelDragPreview';
 import { ChronotypeBackground } from '../../shared/grid/ChronotypeBackground';
 import { useGlobalDragCursor } from '../../shared/hooks/useGlobalDragCursor';
 import { useResponsiveHourHeight } from '../../shared/hooks/useResponsiveHourHeight';
-import type { CalendarPlan } from '../../shared/types/base.types';
+import type { CalendarEvent } from '../../shared/types/base.types';
 import type { DayContentProps } from '../DayView.types';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 
@@ -70,7 +70,7 @@ export const DayContent = ({
 
   // プラン右クリックハンドラー
   const handlePlanContextMenu = useCallback(
-    (plan: CalendarPlan, mouseEvent: React.MouseEvent) => {
+    (plan: CalendarEvent, mouseEvent: React.MouseEvent) => {
       // ドラッグ操作中またはリサイズ操作中は右クリックを無視
       if (dragState.isDragging || dragState.isResizing) {
         return;
@@ -178,11 +178,11 @@ export const DayContent = ({
                           : currentHeight,
                     }}
                     // クリックは useDragAndDrop で処理されるため削除
-                    onContextMenu={(p: CalendarPlan, e: React.MouseEvent) =>
+                    onContextMenu={(p: CalendarEvent, e: React.MouseEvent) =>
                       handlePlanContextMenu(p, e)
                     }
                     onResizeStart={(
-                      p: CalendarPlan,
+                      p: CalendarEvent,
                       direction: 'top' | 'bottom',
                       e: React.MouseEvent,
                       _position: { top: number; left: number; width: number; height: number },

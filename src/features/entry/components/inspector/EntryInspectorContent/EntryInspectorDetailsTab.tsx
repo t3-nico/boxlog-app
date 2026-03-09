@@ -127,7 +127,7 @@ export const EntryInspectorDetailsTab = memo(function EntryInspectorDetailsTab({
           notePlaceholder={t('plan.inspector.note.placeholder')}
           recurrenceRow={
             showRecurrence ? (
-              <div className="flex items-center justify-between">
+              <div className="-mr-2 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Repeat className="text-muted-foreground size-4 flex-shrink-0" />
                   <span className="text-muted-foreground text-sm">
@@ -145,7 +145,7 @@ export const EntryInspectorDetailsTab = memo(function EntryInspectorDetailsTab({
           }
           reminderRow={
             showRecurrence ? (
-              <div className="flex items-center justify-between">
+              <div className="-mr-2 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Bell className="text-muted-foreground size-4 flex-shrink-0" />
                   <span className="text-muted-foreground text-sm">

@@ -1,4 +1,4 @@
-import type { CalendarPlan } from '../../../types/calendar.types';
+import type { CalendarEvent } from '../../../types/calendar.types';
 
 import type { BaseViewProps } from '../shared';
 
@@ -12,14 +12,14 @@ import type { BaseViewProps } from '../shared';
 export type AgendaViewProps = BaseViewProps;
 
 export interface AgendaItemProps {
-  plan: CalendarPlan;
-  onClick?: ((plan: CalendarPlan) => void) | undefined;
-  onContextMenu?: ((plan: CalendarPlan, mouseEvent: React.MouseEvent) => void) | undefined;
+  plan: CalendarEvent;
+  onClick?: ((plan: CalendarEvent) => void) | undefined;
+  onContextMenu?: ((plan: CalendarEvent, mouseEvent: React.MouseEvent) => void) | undefined;
 }
 
 export interface AgendaDayGroupProps {
   date: Date;
-  plans: CalendarPlan[];
-  onPlanClick?: ((plan: CalendarPlan) => void) | undefined;
-  onPlanContextMenu?: ((plan: CalendarPlan, mouseEvent: React.MouseEvent) => void) | undefined;
+  plans: CalendarEvent[];
+  onPlanClick?: ((plan: CalendarEvent) => void) | undefined;
+  onPlanContextMenu?: ((plan: CalendarEvent, mouseEvent: React.MouseEvent) => void) | undefined;
 }

@@ -18,7 +18,7 @@ describe('planPositioning', () => {
     end: new Date(2025, 0, 15, endHour, endMinute),
     startDate: new Date(2025, 0, 15, startHour, startMinute),
     endDate: new Date(2025, 0, 15, endHour, endMinute),
-    type: 'plan',
+    origin: 'planned',
     status: 'open',
     color: 'blue',
     isRecurring: false,

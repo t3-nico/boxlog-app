@@ -7,9 +7,9 @@ import { addDays, format, subDays } from 'date-fns';
 import type { EntryWithTags } from '@/core/types/entry';
 import { useEntries } from '@/hooks/useEntries';
 import { useTags } from '@/hooks/useTagsQuery';
-import { expandEntriesToCalendarEvents, type PlanInstanceException } from '@/lib/entry-adapter';
+import { expandEntriesToCalendarEvents, type EntryInstanceException } from '@/lib/entry-adapter';
+import { isRecurringEntry } from '@/lib/entry-recurrence';
 import { logger } from '@/lib/logger';
-import { isRecurringPlan } from '@/lib/plan-recurrence';
 import { api } from '@/lib/trpc';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
@@ -17,7 +17,7 @@ import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 
 import { calculateViewDateRange } from '../../../lib/view-helpers';
 
-import type { CalendarPlan, CalendarViewType, ViewDateRange } from '../../../types/calendar.types';
+import type { CalendarEvent, CalendarViewType, ViewDateRange } from '../../../types/calendar.types';
 
 interface UseCalendarDataOptions {
   viewType: CalendarViewType;
@@ -26,8 +26,8 @@ interface UseCalendarDataOptions {
 
 interface UseCalendarDataResult {
   viewDateRange: ViewDateRange;
-  filteredEvents: CalendarPlan[];
-  allCalendarPlans: CalendarPlan[];
+  filteredEvents: CalendarEvent[];
+  allCalendarEvents: CalendarEvent[];
   entriesData: ReturnType<typeof useEntries>['data'];
 }
 
@@ -83,7 +83,7 @@ export function useCalendarData({
   }, [currentDate, viewType, weekStartsOn, utils.entries.list]);
 
   // フィルター関数と状態を取得（ストアに統一）
-  const isPlanVisible = useCalendarFilterStore((state) => state.isPlanVisible);
+  const isEntryVisible = useCalendarFilterStore((state) => state.isEntryVisible);
   const matchesTagFilter = useCalendarFilterStore((state) => state.matchesTagFilter);
   const visibleTypes = useCalendarFilterStore((state) => state.visibleTypes);
   // タグフィルタ変更時に useMemo を再実行させるためのリアクティブ依存
@@ -92,7 +92,7 @@ export function useCalendarData({
   // 繰り返しエントリのIDを抽出
   const recurringEntryIds = useMemo(() => {
     if (!entriesData) return [];
-    return entriesData.filter((entry) => isRecurringPlan(entry)).map((entry) => entry.id);
+    return entriesData.filter((entry) => isRecurringEntry(entry)).map((entry) => entry.id);
   }, [entriesData]);
 
   // 繰り返しエントリの例外情報を取得（繰り返しエントリがある場合のみ）
@@ -110,7 +110,7 @@ export function useCalendarData({
 
   // 例外情報をMapに変換
   const exceptionsMap = useMemo(() => {
-    const map = new Map<string, PlanInstanceException[]>();
+    const map = new Map<string, EntryInstanceException[]>();
     if (!instancesData) return map;
 
     for (const inst of instancesData) {
@@ -131,9 +131,9 @@ export function useCalendarData({
     return map;
   }, [instancesData]);
 
-  // 全エントリをCalendarPlan型に変換（繰り返しエントリを展開）
-  const allCalendarPlans = useMemo(() => {
-    const calendarPlans: CalendarPlan[] = [];
+  // 全エントリをCalendarEvent型に変換（繰り返しエントリを展開）
+  const allCalendarEvents = useMemo(() => {
+    const calendarPlans: CalendarEvent[] = [];
 
     // Entries の変換（繰り返し展開含む）
     if (entriesData) {
@@ -156,7 +156,7 @@ export function useCalendarData({
 
   // 表示範囲のイベントをフィルタリング
   const filteredEvents = useMemo(() => {
-    if (allCalendarPlans.length === 0) {
+    if (allCalendarEvents.length === 0) {
       return [];
     }
 
@@ -172,7 +172,7 @@ export function useCalendarData({
       viewDateRange.end.getDate(),
     );
 
-    const filtered = allCalendarPlans.filter((event) => {
+    const filtered = allCalendarEvents.filter((event) => {
       if (!event.startDate || !event.endDate) {
         return false;
       }
@@ -195,18 +195,18 @@ export function useCalendarData({
     });
 
     // サイドバーのフィルター設定を適用
-    // visibleTypes.plan → origin='planned' のエントリ
-    // visibleTypes.record → origin='unplanned' のエントリ
+    // visibleTypes.planned → origin='planned' のエントリ
+    // visibleTypes.unplanned → origin='unplanned' のエントリ
     const visibilityFiltered = filtered.filter((event) => {
-      // origin ベースのフィルタリング（type フィールドで UX 互換維持）
-      if (event.type === 'record') {
-        return visibleTypes.record && matchesTagFilter(event.tagId ?? null);
+      const origin = event.origin ?? 'planned';
+      if (origin === 'unplanned') {
+        return visibleTypes.unplanned && matchesTagFilter(event.tagId ?? null);
       }
-      return visibleTypes.plan && isPlanVisible(event.tagId ?? null);
+      return visibleTypes.planned && isEntryVisible(event.tagId ?? null);
     });
 
     logger.log(`[useCalendarData] entriesフィルタリング:`, {
-      totalEntries: allCalendarPlans.length,
+      totalEntries: allCalendarEvents.length,
       dateFiltered: filtered.length,
       visibilityFiltered: visibilityFiltered.length,
       dateRange: {
@@ -225,8 +225,8 @@ export function useCalendarData({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- visibleTagIds はリアクティブ依存（関数参照は安定のため直接依存不可）
   }, [
     viewDateRange,
-    allCalendarPlans,
-    isPlanVisible,
+    allCalendarEvents,
+    isEntryVisible,
     matchesTagFilter,
     visibleTypes,
     visibleTagIds,
@@ -235,7 +235,7 @@ export function useCalendarData({
   return {
     viewDateRange,
     filteredEvents,
-    allCalendarPlans,
+    allCalendarEvents,
     entriesData,
   };
 }

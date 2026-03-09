@@ -8,7 +8,7 @@ import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { useInlineCreateStore } from '@/stores/useInlineCreateStore';
 import { closeModal, useModalStore } from '@/stores/useModalStore';
 
-import type { CalendarPlan } from '../../../types/calendar.types';
+import type { CalendarEvent } from '../../../types/calendar.types';
 
 export function useCalendarHandlers() {
   const openPlanInspector = useEntryInspectorStore((state) => state.openInspector);
@@ -22,7 +22,7 @@ export function useCalendarHandlers() {
 
   // エントリクリックハンドラー（Plan/Record 統一）
   const handlePlanClick = useCallback(
-    (plan: CalendarPlan) => {
+    (plan: CalendarEvent) => {
       // ドラッグ操作で開いたダイアログが残っている場合は閉じる
       const modal = useModalStore.getState().modal;
       if (modal?.type === 'recurringEdit') closeModal();
@@ -42,7 +42,7 @@ export function useCalendarHandlers() {
       logger.log('📋 Opening Entry Inspector:', {
         entryId: entryIdToOpen,
         title: plan.title,
-        type: plan.type,
+        origin: plan.origin,
         isRecurringInstance: !!plan.calendarId,
         instanceDate: instanceDateRaw,
       });

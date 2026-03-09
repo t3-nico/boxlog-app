@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import type { CalendarPlan } from '@/core/types/calendar-event';
+import type { CalendarEvent } from '@/core/types/calendar-event';
 import { useCalendarDragStore } from '@/features/calendar/stores/useCalendarDragStore';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
@@ -94,7 +94,7 @@ function FileList({ files }: { files: Array<{ path: string; role: string }> }) {
   );
 }
 
-const basePlan: CalendarPlan = {
+const basePlan: CalendarEvent = {
   id: 'plan-1',
   title: 'Design Review',
   description: 'Weekly design sync',
@@ -109,7 +109,7 @@ const basePlan: CalendarPlan = {
   duration: 60,
   isMultiDay: false,
   isRecurring: false,
-  type: 'plan',
+  origin: 'planned',
 };
 
 const basePosition = {

@@ -1,6 +1,6 @@
 import type React from 'react';
 
-import type { CalendarPlan } from '../../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../../types/calendar.types';
 
 export interface DragState {
   /** マウスダウン後、移動前の準備状態 */
@@ -54,12 +54,12 @@ export interface UseDragAndDropProps {
         updates: { startTime: Date; endTime: Date },
       ) => Promise<void | { skipToast: true }> | void)
     | undefined;
-  onEventClick?: ((plan: CalendarPlan) => void) | undefined;
-  onPlanClick?: ((plan: CalendarPlan) => void) | undefined;
+  onEventClick?: ((plan: CalendarEvent) => void) | undefined;
+  onPlanClick?: ((plan: CalendarEvent) => void) | undefined;
   date: Date;
-  events: CalendarPlan[];
+  events: CalendarEvent[];
   /** 重複チェック用の全イベント（週/複数日表示で別日への移動時に使用） */
-  allEventsForOverlapCheck?: CalendarPlan[] | undefined;
+  allEventsForOverlapCheck?: CalendarEvent[] | undefined;
   displayDates?: Date[] | undefined;
   viewMode?: string | undefined;
   /** DnDを無効化するプランID（Inspector表示中のプランなど） */

@@ -17,16 +17,16 @@ import { computeOriginTransition } from '@/lib/entry-status';
 import { logger } from '@/lib/logger';
 import { openRecurringEditConfirm, type RecurringEditScope } from '@/stores/useModalStore';
 
-import type { CalendarPlan } from '../types/calendar.types';
+import type { CalendarEvent } from '../types/calendar.types';
 
 interface PendingDragUpdate {
-  plan: CalendarPlan;
+  plan: CalendarEvent;
   updates: { startTime: Date; endTime: Date };
 }
 
 interface UseRecurringPlanDragOptions {
   /** 全プラン配列（繰り返しインスタンス情報を含む） */
-  plans: CalendarPlan[];
+  plans: CalendarEvent[];
 }
 
 export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
@@ -45,14 +45,14 @@ export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
       if (!pendingDragUpdate) return;
 
       const { plan, updates } = pendingDragUpdate;
-      const parentPlanId = plan.originalPlanId!;
+      const parentEntryId = plan.originalEntryId!;
       const instanceDate = plan.instanceDate!;
       const newDate = updates.startTime.toISOString().slice(0, 10);
 
       try {
         await applyEdit({
           scope,
-          planId: parentPlanId,
+          planId: parentEntryId,
           instanceDate,
           changes: {
             start_time: updates.startTime.toISOString(),
@@ -75,10 +75,10 @@ export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
    */
   const handleUpdatePlan = useCallback(
     async (
-      planIdOrPlan: string | CalendarPlan,
+      planIdOrPlan: string | CalendarEvent,
       updates?: { startTime: Date; endTime: Date },
     ): Promise<{ skipToast: true } | void> => {
-      let plan: CalendarPlan | undefined;
+      let plan: CalendarEvent | undefined;
       let resolvedUpdates: { startTime: Date; endTime: Date } | undefined;
 
       if (typeof planIdOrPlan === 'string' && updates) {
@@ -105,7 +105,7 @@ export function useRecurringPlanDrag({ plans }: UseRecurringPlanDragOptions) {
       }
 
       // 繰り返しインスタンスかどうか判定
-      const isRecurringInstance = plan.isRecurring && plan.originalPlanId && plan.instanceDate;
+      const isRecurringInstance = plan.isRecurring && plan.originalEntryId && plan.instanceDate;
 
       if (isRecurringInstance) {
         pendingDragUpdateRef.current = { plan, updates: resolvedUpdates };

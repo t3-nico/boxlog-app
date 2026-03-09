@@ -1,15 +1,15 @@
-// Entry型定義（Plan互換）
-// Canonical definitions are in @/core/types/plan.
-// Re-exported here for backward compatibility.
+// Entry型定義
+// Canonical definitions are in @/core/types/entry.
+// Re-exported here for feature-internal usage.
 
 export type {
-  CreatePlanInput,
-  Plan,
-  PlanFilters,
-  PlanStats,
-  PlanStatus,
-  PlanWithTags,
+  CreateEntryInput,
+  Entry,
+  EntryFilters,
+  EntryOrigin,
+  EntryWithTags,
+  FulfillmentScore,
   RecurrenceConfig,
   RecurrenceType,
-  UpdatePlanInput,
-} from '@/core/types/plan';
+  UpdateEntryInput,
+} from '@/core/types/entry';

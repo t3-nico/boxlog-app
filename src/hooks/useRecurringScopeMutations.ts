@@ -13,8 +13,8 @@
 
 import { useCallback } from 'react';
 
+import { useEntryInstanceMutations } from '@/hooks/useEntryInstances';
 import { useEntryMutations } from '@/hooks/useEntryMutations';
-import { usePlanInstanceMutations } from '@/hooks/usePlanInstances';
 import { api } from '@/lib/trpc';
 import type { RecurringEditScope } from '@/stores/useModalStore';
 
@@ -41,7 +41,7 @@ interface ApplyDeleteParams {
 export function useRecurringScopeMutations() {
   const utils = api.useUtils();
   const { updateEntry, deleteEntry } = useEntryMutations();
-  const { createInstance } = usePlanInstanceMutations();
+  const { createInstance } = useEntryInstanceMutations();
 
   // splitRecurrence mutation（楽観的更新付き）- 1箇所で定義
   const splitRecurrence = api.entries.splitRecurrence.useMutation({

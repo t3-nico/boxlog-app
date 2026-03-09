@@ -6,8 +6,6 @@ import { Check, Repeat } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { HoverTooltip } from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
 
 import { RecurrenceDialog } from './RecurrenceDialog';
 
@@ -62,36 +60,22 @@ export function RecurrenceIconButton({
   return (
     <>
       <Popover open={showPopover} onOpenChange={setShowPopover}>
-        <HoverTooltip
-          content={
-            hasRecurrence
-              ? t('plan.inspector.recurrence.repeatLabel', { type: displayText ?? '' })
-              : t('plan.inspector.recurrence.setRepeat')
-          }
-          side="top"
-        >
-          <PopoverTrigger asChild>
-            <button
-              type="button"
-              disabled={disabled}
-              className={cn(
-                'flex h-8 items-center gap-1 rounded-lg border px-2 transition-colors',
-                'hover:bg-state-hover focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
-                hasRecurrence
-                  ? 'border-border text-foreground'
-                  : 'text-muted-foreground hover:text-foreground border-transparent',
-              )}
-              aria-label={
-                hasRecurrence
-                  ? t('plan.inspector.recurrence.repeatLabel', { type: displayText ?? '' })
-                  : t('plan.inspector.recurrence.setRepeat')
-              }
-            >
-              <Repeat className="size-4" />
-              {hasRecurrence && <span className="text-sm">{displayText}</span>}
-            </button>
-          </PopoverTrigger>
-        </HoverTooltip>
+        <PopoverTrigger asChild>
+          <button
+            type="button"
+            disabled={disabled}
+            className="text-muted-foreground data-[state=selected]:text-foreground hover:bg-state-hover hover:text-foreground focus-visible:ring-ring inline-flex h-8 items-center gap-1 rounded-lg px-2 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+            data-state={hasRecurrence ? 'selected' : undefined}
+            aria-label={
+              hasRecurrence
+                ? t('plan.inspector.recurrence.repeatLabel', { type: displayText ?? '' })
+                : t('plan.inspector.recurrence.setRepeat')
+            }
+          >
+            <Repeat className="size-4" />
+            {hasRecurrence && displayText}
+          </button>
+        </PopoverTrigger>
 
         <PopoverContent className="z-overlay-popover w-48 p-1" align="start" sideOffset={4}>
           <div role="menu" aria-label={t('plan.inspector.recurrence.options')}>

@@ -2,10 +2,10 @@
 
 import type { Tag } from '@/core/types/tag';
 
-import type { PlanWithTags } from '@/core/types/plan';
+import type { EntryWithTags } from '@/core/types/entry';
 
 // Search result types
-export type SearchResultType = 'command' | 'plan' | 'tag';
+export type SearchResultType = 'command' | 'entry' | 'tag';
 
 export interface SearchResult {
   id: string;
@@ -75,4 +75,4 @@ export interface SearchHistoryItem {
 }
 
 // Export data source types
-export type { PlanWithTags, Tag };
+export type { EntryWithTags, Tag };

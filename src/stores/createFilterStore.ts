@@ -50,14 +50,14 @@ export interface CreateFilterStoreOptions<TState extends BaseFilterState, TExtra
  *
  * @example
  * ```typescript
- * interface PlanFilterState extends BaseFilterState {
- *   status: PlanStatus[];
+ * interface EntryFilterState extends BaseFilterState {
+ *   status: ('open' | 'closed')[];
  *   tags: string[];
  *   search: string;
  * }
  *
- * const usePlanFilterStore = createFilterStore({
- *   name: 'plan-filter',
+ * const useEntryFilterStore = createFilterStore({
+ *   name: 'entry-filter',
  *   initialState: {
  *     status: [],
  *     tags: [],

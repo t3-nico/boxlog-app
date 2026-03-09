@@ -3,9 +3,9 @@
 import { create } from 'zustand';
 
 /**
- * クリップボードにコピーされたプランの情報
+ * クリップボードにコピーされたエントリの情報
  */
-export interface ClipboardPlan {
+export interface ClipboardEntry {
   /** タイトル */
   title: string;
   /** 説明 */
@@ -28,51 +28,51 @@ export interface LastClickedPosition {
   date: Date;
 }
 
-interface PlanClipboardState {
-  /** コピーされたプラン */
-  copiedPlan: ClipboardPlan | null;
+interface EntryClipboardState {
+  /** コピーされたエントリ */
+  copiedEntry: ClipboardEntry | null;
   /** 最後にクリックした位置（Cmd+Vでペーストする位置） */
   lastClickedPosition: LastClickedPosition | null;
 }
 
-interface PlanClipboardActions {
-  /** プランをクリップボードにコピー */
-  copyPlan: (plan: ClipboardPlan) => void;
+interface EntryClipboardActions {
+  /** エントリをクリップボードにコピー */
+  copyEntry: (entry: ClipboardEntry) => void;
   /** クリップボードをクリア */
   clearClipboard: () => void;
-  /** クリップボードにプランがあるかチェック */
-  hasCopiedPlan: () => boolean;
+  /** クリップボードにエントリがあるかチェック */
+  hasCopiedEntry: () => boolean;
   /** 最後にクリックした位置を設定（Googleカレンダー互換のCmd+Vペースト用） */
   setLastClickedPosition: (position: LastClickedPosition) => void;
   /** 最後にクリックした位置をクリア */
   clearLastClickedPosition: () => void;
 }
 
-type PlanClipboardStore = PlanClipboardState & PlanClipboardActions;
+type EntryClipboardStore = EntryClipboardState & EntryClipboardActions;
 
 /**
- * プランクリップボードStore
+ * エントリクリップボードStore
  *
- * プランのコピー＆ペースト機能用のクリップボード管理
- * - コピー: プランの情報を保存
- * - ペースト: 保存された情報を使って新規プランをドラフトモードで作成
+ * エントリのコピー＆ペースト機能用のクリップボード管理
+ * - コピー: エントリの情報を保存
+ * - ペースト: 保存された情報を使って新規エントリをドラフトモードで作成
  */
-export const usePlanClipboardStore = create<PlanClipboardStore>((set, get) => ({
+export const useEntryClipboardStore = create<EntryClipboardStore>((set, get) => ({
   // State
-  copiedPlan: null,
+  copiedEntry: null,
   lastClickedPosition: null,
 
   // Actions
-  copyPlan: (plan) => {
-    set({ copiedPlan: plan });
+  copyEntry: (entry) => {
+    set({ copiedEntry: entry });
   },
 
   clearClipboard: () => {
-    set({ copiedPlan: null });
+    set({ copiedEntry: null });
   },
 
-  hasCopiedPlan: () => {
-    return get().copiedPlan !== null;
+  hasCopiedEntry: () => {
+    return get().copiedEntry !== null;
   },
 
   setLastClickedPosition: (position) => {

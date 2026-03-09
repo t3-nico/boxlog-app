@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { toast } from 'sonner';
 
-import type { CalendarPlan } from '../../types';
+import type { CalendarEvent } from '../../types';
 
 import { getTranslation } from './get-translation';
 import { toastTemplates } from './templates';
@@ -71,28 +71,28 @@ export const useCalendarToast = () => {
 
   // 便利なショートカット関数
   const eventCreated = useCallback(
-    (plan: CalendarPlan, options?: CalendarToastOptions) => {
+    (plan: CalendarEvent, options?: CalendarToastOptions) => {
       return showCalendarToast('created', { event: plan, ...options });
     },
     [showCalendarToast],
   );
 
   const eventUpdated = useCallback(
-    (plan: CalendarPlan, options?: CalendarToastOptions) => {
+    (plan: CalendarEvent, options?: CalendarToastOptions) => {
       return showCalendarToast('updated', { event: plan, ...options });
     },
     [showCalendarToast],
   );
 
   const eventDeleted = useCallback(
-    (plan: CalendarPlan, undoAction?: () => void) => {
+    (plan: CalendarEvent, undoAction?: () => void) => {
       return showCalendarToast('deleted', { event: plan, undoAction: undoAction ?? undefined });
     },
     [showCalendarToast],
   );
 
   const eventMoved = useCallback(
-    (plan: CalendarPlan, toDate: Date, options?: CalendarToastOptions) => {
+    (plan: CalendarEvent, toDate: Date, options?: CalendarToastOptions) => {
       return showCalendarToast('moved', { event: plan, toDate, ...options });
     },
     [showCalendarToast],

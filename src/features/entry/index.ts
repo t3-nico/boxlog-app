@@ -9,51 +9,55 @@
 // Types
 // =============================================================================
 export type {
-  CreatePlanInput,
-  Plan,
-  PlanFilters,
-  PlanStats,
-  PlanStatus,
-  PlanWithTags,
+  CreateEntryInput,
+  Entry,
+  EntryFilters,
+  EntryOrigin,
+  EntryWithTags,
+  FulfillmentScore,
   RecurrenceConfig,
   RecurrenceType,
-  UpdatePlanInput,
+  UpdateEntryInput,
 } from './types/entry';
 
 // =============================================================================
 // Stores (Re-export from shared stores)
 // =============================================================================
 export { useEntryCacheStore } from '@/stores/useEntryCacheStore';
+export { useEntryClipboardStore } from '@/stores/useEntryClipboardStore';
+export type { ClipboardEntry, LastClickedPosition } from '@/stores/useEntryClipboardStore';
 export { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 export type { PendingChanges } from '@/stores/useEntryInspectorStore';
-export { usePlanClipboardStore } from '@/stores/usePlanClipboardStore';
-export type { ClipboardPlan, LastClickedPosition } from '@/stores/usePlanClipboardStore';
 
 // =============================================================================
 // Hooks
 // =============================================================================
 export { useEntries } from '@/hooks/useEntries';
-export { useEntryMutations } from '@/hooks/useEntryMutations';
 export {
   instancesToExceptionsMap,
-  usePlanInstanceMutations,
-  usePlanInstances,
-} from '@/hooks/usePlanInstances';
-export { usePlanTags } from '@/hooks/usePlanTags';
+  useEntryInstanceMutations,
+  useEntryInstances,
+} from '@/hooks/useEntryInstances';
+export { useEntryMutations } from '@/hooks/useEntryMutations';
+export { useEntryTags } from '@/hooks/useEntryTags';
 export { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
 export { useEntry, usePlan, useplan } from './hooks/useEntry';
 
 // =============================================================================
 // Utils
 // =============================================================================
-export { expandRecurrence, getPlanRecurrenceConfig, isRecurringPlan } from '@/lib/plan-recurrence';
-export type { ExpandedOccurrence, PlanInstanceException } from '@/lib/plan-recurrence';
+export {
+  expandRecurrence,
+  getEntryRecurrenceConfig,
+  isRecurringEntry,
+} from '@/lib/entry-recurrence';
+export type { EntryInstanceException, ExpandedOccurrence } from '@/lib/entry-recurrence';
 
 export { decodeInstanceId, encodeInstanceId, getInstanceRef } from '@/lib/instance-id';
 export type { RecurrenceInstanceRef } from '@/lib/instance-id';
 
-export { groupItems } from '@/lib/plan-grouping';
-export type { GroupByField, GroupedData } from '@/lib/plan-grouping';
+export { groupItems } from '@/lib/entry-grouping';
+export type { GroupByField, GroupedData } from '@/lib/entry-grouping';
 
 // =============================================================================
 // Components

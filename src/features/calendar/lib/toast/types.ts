@@ -1,6 +1,6 @@
 import type { ExternalToast } from 'sonner';
 
-import type { CalendarPlan } from '../../types';
+import type { CalendarEvent } from '../../types';
 
 // Calendar操作の種類
 export type CalendarAction =
@@ -16,8 +16,8 @@ export type CalendarAction =
 
 // Calendar Toast用の拡張型
 export interface CalendarToastOptions {
-  event?: CalendarPlan;
-  events?: CalendarPlan[];
+  event?: CalendarEvent;
+  events?: CalendarEvent[];
   count?: number;
   undoAction?: (() => void | Promise<void>) | undefined;
   viewAction?: (() => void) | undefined;

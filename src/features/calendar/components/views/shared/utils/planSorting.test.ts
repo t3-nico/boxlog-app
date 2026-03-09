@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { CalendarPlan } from '../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../types/calendar.types';
 
 import {
   sortAgendaEventsByDateKeys,
@@ -9,7 +9,7 @@ import {
   sortEventsForAgenda,
 } from './planSorting';
 
-function makePlan(id: string, startDate: Date | null): CalendarPlan {
+function makePlan(id: string, startDate: Date | null): CalendarEvent {
   return {
     id,
     title: `Plan ${id}`,
@@ -62,7 +62,7 @@ describe('planSorting', () => {
 
   describe('sortEventsByDateKeys', () => {
     it('各日付キーのイベントをソートする', () => {
-      const eventsByDate: Record<string, CalendarPlan[]> = {
+      const eventsByDate: Record<string, CalendarEvent[]> = {
         '2026-02-21': [
           makePlan('b', new Date('2026-02-21T14:00:00')),
           makePlan('a', new Date('2026-02-21T09:00:00')),
@@ -92,7 +92,7 @@ describe('planSorting', () => {
 
   describe('sortAgendaEventsByDateKeys', () => {
     it('各日付キーのイベントをAgenda用にソートする', () => {
-      const eventsByDate: Record<string, CalendarPlan[]> = {
+      const eventsByDate: Record<string, CalendarEvent[]> = {
         '2026-02-21': [
           makePlan('b', new Date('2026-02-21T14:00:00')),
           makePlan('a', new Date('2026-02-21T09:00:00')),

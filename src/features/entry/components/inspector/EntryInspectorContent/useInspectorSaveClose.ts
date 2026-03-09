@@ -20,7 +20,7 @@ interface UseInspectorSaveCloseProps {
   hasTagChanges: boolean;
   selectedTagIdRef: React.RefObject<string | null>;
   originalTagIdRef: React.RefObject<string | null>;
-  setPlanTags: (planId: string, tagIds: string[]) => Promise<void>;
+  setEntryTags: (planId: string, tagIds: string[]) => Promise<void>;
   updatePlan: {
     mutateAsync: (args: {
       id: string;
@@ -37,7 +37,7 @@ export function useInspectorSaveClose({
   hasTagChanges,
   selectedTagIdRef,
   originalTagIdRef,
-  setPlanTags,
+  setEntryTags,
   updatePlan,
   closeInspector,
   pendingChanges,
@@ -81,11 +81,11 @@ export function useInspectorSaveClose({
     }
 
     if (currentHasTagChanges && currentEntryId) {
-      setPlanTags(currentEntryId, currentTagId ? [currentTagId] : []).catch(() => {
+      setEntryTags(currentEntryId, currentTagId ? [currentTagId] : []).catch(() => {
         toast.error(t('plan.inspector.toast.tagsSaveFailed'));
       });
     }
-  }, [t, updatePlan, closeInspector, setPlanTags, hasTagChanges, selectedTagIdRef]);
+  }, [t, updatePlan, closeInspector, setEntryTags, hasTagChanges, selectedTagIdRef]);
 
   /**
    * 変更を破棄してInspectorを閉じる（キャンセル）

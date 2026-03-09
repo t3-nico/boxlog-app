@@ -10,10 +10,10 @@ import {
 } from 'date-fns';
 
 import { MS_PER_DAY, MS_PER_MINUTE } from '@/constants/time';
-import { CalendarPlan } from '../types/calendar.types';
+import { CalendarEvent } from '../types/calendar.types';
 
-export interface PlanSegment extends CalendarPlan {
-  originalPlan: CalendarPlan;
+export interface PlanSegment extends CalendarEvent {
+  originalPlan: CalendarEvent;
   segmentStart: Date;
   segmentEnd: Date;
   isPartialSegment: boolean;
@@ -31,7 +31,7 @@ export interface PlanSegment extends CalendarPlan {
  * @returns 分割されたプランセグメント
  */
 export function splitCrossWeekPlans(
-  plans: CalendarPlan[],
+  plans: CalendarEvent[],
   showWeekends: boolean,
   weekStart: Date,
 ): PlanSegment[] {
@@ -97,7 +97,7 @@ export function splitCrossWeekPlans(
  * - 'calendar.segment.end' → 「終了」
  */
 function createPlanSegments(
-  plan: CalendarPlan,
+  plan: CalendarEvent,
   showWeekends: boolean,
   _weekStart: Date,
 ): PlanSegment[] {
@@ -199,9 +199,9 @@ function getSegmentLabelKey(segmentType: 'start' | 'middle' | 'end' | 'full'): s
  * 週末に含まれるプランをフィルタリング
  */
 export function filterWeekendPlans(
-  plans: CalendarPlan[],
+  plans: CalendarEvent[],
   dateRange: { start: Date; end: Date },
-): CalendarPlan[] {
+): CalendarEvent[] {
   return plans.filter((plan) => {
     if (!plan.startDate) return false;
 
@@ -215,7 +215,7 @@ export function filterWeekendPlans(
 /**
  * 金曜から月曜にまたがるプランを検出
  */
-export function detectFridayToMondayPlans(plans: CalendarPlan[]): CalendarPlan[] {
+export function detectFridayToMondayPlans(plans: CalendarEvent[]): CalendarEvent[] {
   return plans.filter((plan) => {
     if (!plan.startDate || !plan.endDate) return false;
 

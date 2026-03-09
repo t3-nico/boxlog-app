@@ -123,13 +123,13 @@ function calculateGroupLayout(plans: TimedPlan[]): PlanLayout[] {
   // 各プランにカラムを割り当て
   const assignments = new Map<string, number>();
 
-  // Planを先に処理してcolumn: 0を優先的に割り当て、Recordを後に処理
+  // Planned を先に処理してcolumn: 0を優先的に割り当て、Unplanned を後に処理
   const sortedForAssignment = [...plans].sort((a, b) => {
-    const aIsRecord = a.type === 'record';
-    const bIsRecord = b.type === 'record';
-    // Planを先（左側）、Recordを後（右側）
-    if (aIsRecord !== bIsRecord) return aIsRecord ? 1 : -1;
-    // 同じタイプなら開始時間順
+    const aIsUnplanned = a.origin === 'unplanned';
+    const bIsUnplanned = b.origin === 'unplanned';
+    // Planned を先（左側）、Unplanned を後（右側）
+    if (aIsUnplanned !== bIsUnplanned) return aIsUnplanned ? 1 : -1;
+    // 同じ起源なら開始時間順
     return new Date(a.start).getTime() - new Date(b.start).getTime();
   });
 

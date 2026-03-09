@@ -12,8 +12,8 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 
 import { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
+import { isRecurringEntry } from '@/lib/entry-recurrence';
 import { logger } from '@/lib/logger';
-import { isRecurringPlan } from '@/lib/plan-recurrence';
 import { openRecurringEditConfirm, type RecurringEditScope } from '@/stores/useModalStore';
 
 import type { EntryWithTags } from '@/core/types/entry';
@@ -45,7 +45,7 @@ export function useRecurringEntryEdit({
   const isRecurringInstance = useMemo(() => {
     if (!plan || !instanceDate) return false;
     // 繰り返し設定があり、かつインスタンス日付が指定されている
-    return isRecurringPlan(plan);
+    return isRecurringEntry(plan);
   }, [plan, instanceDate]);
 
   // 保留中の変更

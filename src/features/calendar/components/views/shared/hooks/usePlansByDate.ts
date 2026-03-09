@@ -7,18 +7,18 @@ import { useMemo } from 'react';
 import { isSameDay } from 'date-fns';
 
 import { getDateKey } from '@/lib/date';
-import type { CalendarPlan } from '../types/base.types';
+import type { CalendarEvent } from '../types/base.types';
 import { isValidEvent } from '../utils/dateHelpers';
 import { sortAgendaEventsByDateKeys, sortEventsByDateKeys } from '../utils/planSorting';
 
 export interface UsePlansByDateOptions {
   dates: Date[];
-  plans: CalendarPlan[];
+  plans: CalendarEvent[];
   sortType?: 'standard' | 'agenda'; // agenda = 終日プラン優先
 }
 
 export interface UsePlansByDateReturn {
-  plansByDate: Record<string, CalendarPlan[]>;
+  plansByDate: Record<string, CalendarEvent[]>;
   totalPlans: number;
   hasPlans: boolean;
 }
@@ -39,7 +39,7 @@ export function usePlansByDate({
   sortType = 'standard',
 }: UsePlansByDateOptions): UsePlansByDateReturn {
   const plansByDate = useMemo(() => {
-    const grouped: Record<string, CalendarPlan[]> = {};
+    const grouped: Record<string, CalendarEvent[]> = {};
 
     // Step 1: 各日付のキーを初期化
     dates.forEach((date) => {

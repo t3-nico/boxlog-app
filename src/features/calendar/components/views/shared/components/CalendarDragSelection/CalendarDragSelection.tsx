@@ -12,7 +12,7 @@
 import { useDroppable } from '@dnd-kit/core';
 
 import { cn } from '@/lib/utils';
-import { usePlanClipboardStore } from '@/stores/usePlanClipboardStore';
+import { useEntryClipboardStore } from '@/stores/useEntryClipboardStore';
 
 import { useResponsiveHourHeight } from '../../hooks/useResponsiveHourHeight';
 import { DragSelectionPreview } from './DragSelectionPreview';
@@ -94,7 +94,7 @@ export const CalendarDragSelection = ({
         // Googleカレンダー互換: クリックした日付を記憶（Cmd+Vでペーストする日付として使用）
         const target = e.target as HTMLElement;
         if (!target.closest('[data-plan-card]') && !target.closest('[data-plan-block]')) {
-          usePlanClipboardStore.getState().setLastClickedPosition({ date });
+          useEntryClipboardStore.getState().setLastClickedPosition({ date });
         }
         handleMouseDown(e);
       }}

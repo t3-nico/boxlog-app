@@ -43,7 +43,7 @@ export function CalendarController({
     currentDate,
     viewDateRange,
     filteredEvents,
-    allCalendarPlans,
+    allCalendarEvents,
     showWeekends,
     disabledPlanId,
     currentAside,
@@ -97,7 +97,7 @@ export function CalendarController({
     () => ({
       dateRange: viewDateRange,
       plans: filteredEvents,
-      allPlans: allCalendarPlans,
+      allPlans: allCalendarEvents,
       currentDate,
       showWeekends,
       disabledPlanId,
@@ -116,7 +116,7 @@ export function CalendarController({
     [
       viewDateRange,
       filteredEvents,
-      allCalendarPlans,
+      allCalendarEvents,
       currentDate,
       showWeekends,
       disabledPlanId,

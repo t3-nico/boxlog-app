@@ -1,26 +1,26 @@
 import { describe, expect, it } from 'vitest';
 
-import type { CalendarPlan } from '@/core/types/calendar-event';
+import type { CalendarEvent } from '@/core/types/calendar-event';
 
 import { decodeInstanceId, encodeInstanceId, getInstanceRef } from '@/lib/instance-id';
 
 describe('instanceId', () => {
   describe('encodeInstanceId', () => {
-    it('parentPlanIdとinstanceDateから合成IDを生成する', () => {
+    it('parentEntryIdとinstanceDateから合成IDを生成する', () => {
       expect(encodeInstanceId('plan-123', '2025-01-15')).toBe('plan-123_2025-01-15');
     });
 
-    it('UUIDを含むparentPlanIdでも正しく動作する', () => {
+    it('UUIDを含むparentEntryIdでも正しく動作する', () => {
       const uuid = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
       expect(encodeInstanceId(uuid, '2025-06-01')).toBe(`${uuid}_2025-06-01`);
     });
   });
 
   describe('decodeInstanceId', () => {
-    it('合成IDからparentPlanIdとinstanceDateを復元する', () => {
+    it('合成IDからparentEntryIdとinstanceDateを復元する', () => {
       const result = decodeInstanceId('plan-123_2025-01-15');
       expect(result).toEqual({
-        parentPlanId: 'plan-123',
+        parentEntryId: 'plan-123',
         instanceDate: '2025-01-15',
       });
     });
@@ -29,15 +29,15 @@ describe('instanceId', () => {
       const uuid = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
       const result = decodeInstanceId(`${uuid}_2025-06-01`);
       expect(result).toEqual({
-        parentPlanId: uuid,
+        parentEntryId: uuid,
         instanceDate: '2025-06-01',
       });
     });
 
-    it('parentPlanIdにアンダースコアが含まれる場合もlastIndexOfで正しくデコードする', () => {
+    it('parentEntryIdにアンダースコアが含まれる場合もlastIndexOfで正しくデコードする', () => {
       const result = decodeInstanceId('plan_with_underscores_2025-03-20');
       expect(result).toEqual({
-        parentPlanId: 'plan_with_underscores',
+        parentEntryId: 'plan_with_underscores',
         instanceDate: '2025-03-20',
       });
     });
@@ -54,13 +54,13 @@ describe('instanceId', () => {
       expect(decodeInstanceId('')).toBeNull();
     });
 
-    it('parentPlanIdが空の場合はnullを返す', () => {
+    it('parentEntryIdが空の場合はnullを返す', () => {
       expect(decodeInstanceId('_2025-01-15')).toBeNull();
     });
   });
 
   describe('getInstanceRef', () => {
-    const createMockCalendarPlan = (overrides: Partial<CalendarPlan> = {}): CalendarPlan =>
+    const createMockCalendarEvent = (overrides: Partial<CalendarEvent> = {}): CalendarEvent =>
       ({
         id: 'plan-1',
         title: 'Test',
@@ -69,74 +69,74 @@ describe('instanceId', () => {
         status: 'open',
         isRecurring: false,
         ...overrides,
-      }) as CalendarPlan;
+      }) as CalendarEvent;
 
-    it('優先度1: originalPlanIdとinstanceDateがある場合はそれを使用', () => {
-      const plan = createMockCalendarPlan({
+    it('優先度1: originalEntryIdとinstanceDateがある場合はそれを使用', () => {
+      const plan = createMockCalendarEvent({
         id: 'parent-plan_2025-01-15',
-        originalPlanId: 'parent-plan',
+        originalEntryId: 'parent-plan',
         instanceDate: '2025-01-15',
         calendarId: 'parent-plan',
       });
 
       const result = getInstanceRef(plan);
       expect(result).toEqual({
-        parentPlanId: 'parent-plan',
+        parentEntryId: 'parent-plan',
         instanceDate: '2025-01-15',
       });
     });
 
     it('優先度2: 合成IDからデコード（calendarIdがあればそちらを使用）', () => {
-      const plan = createMockCalendarPlan({
+      const plan = createMockCalendarEvent({
         id: 'some-plan_2025-02-10',
         calendarId: 'real-parent-id',
-        originalPlanId: undefined,
+        originalEntryId: undefined,
         instanceDate: undefined,
       });
 
       const result = getInstanceRef(plan);
       expect(result).toEqual({
-        parentPlanId: 'real-parent-id',
+        parentEntryId: 'real-parent-id',
         instanceDate: '2025-02-10',
       });
     });
 
-    it('優先度2: calendarIdがない場合はデコードされたparentPlanIdを使用', () => {
-      const plan = createMockCalendarPlan({
+    it('優先度2: calendarIdがない場合はデコードされたparentEntryIdを使用', () => {
+      const plan = createMockCalendarEvent({
         id: 'decoded-plan_2025-03-05',
         calendarId: undefined,
-        originalPlanId: undefined,
+        originalEntryId: undefined,
         instanceDate: undefined,
       });
 
       const result = getInstanceRef(plan);
       expect(result).toEqual({
-        parentPlanId: 'decoded-plan',
+        parentEntryId: 'decoded-plan',
         instanceDate: '2025-03-05',
       });
     });
 
     it('優先度3: calendarId + startDateフォールバック', () => {
-      const plan = createMockCalendarPlan({
+      const plan = createMockCalendarEvent({
         id: 'non-composite-id',
         calendarId: 'parent-plan',
-        originalPlanId: undefined,
+        originalEntryId: undefined,
         instanceDate: undefined,
         startDate: new Date('2025-04-20T09:00:00Z'),
       });
 
       const result = getInstanceRef(plan);
       expect(result).toEqual({
-        parentPlanId: 'parent-plan',
+        parentEntryId: 'parent-plan',
         instanceDate: '2025-04-20',
       });
     });
 
     it('情報不足の場合はnullを返す', () => {
-      const plan = createMockCalendarPlan({
+      const plan = createMockCalendarEvent({
         id: 'plain-id',
         calendarId: undefined,
-        originalPlanId: undefined,
+        originalEntryId: undefined,
         instanceDate: undefined,
         startDate: null,
       });

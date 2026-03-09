@@ -9,7 +9,7 @@ import { useCallback } from 'react';
 
 import { useCalendarDragStore } from '../../../../../stores/useCalendarDragStore';
 
-import type { CalendarPlan } from '../../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../../types/calendar.types';
 import type { DragDataRef, DragState } from './types';
 import { initialDragState } from './types';
 import {
@@ -26,8 +26,8 @@ interface UseDragEventsProps {
   dragState: DragState;
   setDragState: React.Dispatch<React.SetStateAction<DragState>>;
   dragDataRef: React.MutableRefObject<DragDataRef | null>;
-  eventsRef: React.MutableRefObject<CalendarPlan[]>;
-  allEventsRef: React.MutableRefObject<CalendarPlan[]>;
+  eventsRef: React.MutableRefObject<CalendarEvent[]>;
+  allEventsRef: React.MutableRefObject<CalendarEvent[]>;
   date: Date;
   displayDates: Date[] | undefined;
   viewMode: string;

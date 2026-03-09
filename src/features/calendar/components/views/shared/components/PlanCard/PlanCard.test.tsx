@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import type { CalendarPlan } from '../../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../../types/calendar.types';
 
 import { PlanCard } from './PlanCard';
 
@@ -36,7 +36,7 @@ vi.mock('@/hooks/useMediaQuery', () => ({
 }));
 
 describe('PlanCard', () => {
-  const mockEvent: CalendarPlan = {
+  const mockEvent: CalendarEvent = {
     id: 'event-1',
     title: 'テストイベント',
     description: 'テスト説明',

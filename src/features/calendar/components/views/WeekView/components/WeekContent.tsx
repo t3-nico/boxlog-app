@@ -5,7 +5,7 @@ import React, { useCallback } from 'react';
 import { cn } from '@/lib/utils';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { useCalendarDragStore } from '../../../../stores/useCalendarDragStore';
-import type { CalendarPlan } from '../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../types/calendar.types';
 
 import {
   calculatePlanGhostStyle,
@@ -24,13 +24,13 @@ import type { WeekPlanPosition } from '../WeekView.types';
 
 interface WeekContentProps {
   date: Date;
-  plans: CalendarPlan[];
+  plans: CalendarEvent[];
   /** 重複チェック用の全イベント（週全体のイベント） */
-  allEventsForOverlapCheck?: CalendarPlan[] | undefined;
+  allEventsForOverlapCheck?: CalendarEvent[] | undefined;
   planPositions: WeekPlanPosition[];
-  onPlanClick?: ((plan: CalendarPlan) => void) | undefined;
-  onPlanContextMenu?: ((plan: CalendarPlan, e: React.MouseEvent) => void) | undefined;
-  onPlanUpdate?: ((planId: string, updates: Partial<CalendarPlan>) => void) | undefined;
+  onPlanClick?: ((plan: CalendarEvent) => void) | undefined;
+  onPlanContextMenu?: ((plan: CalendarEvent, e: React.MouseEvent) => void) | undefined;
+  onPlanUpdate?: ((planId: string, updates: Partial<CalendarEvent>) => void) | undefined;
   onTimeRangeSelect?: ((selection: import('../../shared').DateTimeSelection) => void) | undefined;
   /** 空き領域の右クリックハンドラー */
   onEmptyAreaContextMenu?:
@@ -126,7 +126,7 @@ export const WeekContent = React.memo(function WeekContent({
 
   // プラン右クリックハンドラー
   const handlePlanContextMenu = useCallback(
-    (plan: CalendarPlan, mouseEvent: React.MouseEvent) => {
+    (plan: CalendarEvent, mouseEvent: React.MouseEvent) => {
       // ドラッグ操作中またはリサイズ操作中は右クリックを無視
       if (dragState.isDragging || dragState.isResizing) {
         return;
@@ -264,11 +264,11 @@ export const WeekContent = React.memo(function WeekContent({
                         : currentHeight,
                   }}
                   // クリックは useDragAndDrop で処理されるため削除
-                  onContextMenu={(plan: CalendarPlan, e: React.MouseEvent) =>
+                  onContextMenu={(plan: CalendarEvent, e: React.MouseEvent) =>
                     handlePlanContextMenu(plan, e)
                   }
                   onResizeStart={(
-                    plan: CalendarPlan,
+                    plan: CalendarEvent,
                     direction: 'top' | 'bottom',
                     e: React.MouseEvent,
                     _position: { top: number; left: number; width: number; height: number },

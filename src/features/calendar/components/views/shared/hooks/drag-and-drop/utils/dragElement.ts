@@ -1,5 +1,5 @@
-import type { CalendarPlan } from '../../../../../../types/calendar.types';
-import { getEventType } from '../../../../../../utils/planDataAdapter';
+import type { CalendarEvent } from '../../../../../../types/calendar.types';
+import { getEventOrigin } from '../../../../../../utils/planDataAdapter';
 
 /**
  * ドラッグ要素を作成する（position: fixed で自由移動）
@@ -139,7 +139,7 @@ export function calculateColumnWidth(
  * @returns 同タイプのイベントと重複している場合true
  */
 export function checkClientSideOverlap(
-  events: CalendarPlan[],
+  events: CalendarEvent[],
   draggedEventId: string,
   previewStartTime: Date,
   previewEndTime: Date,
@@ -149,7 +149,7 @@ export function checkClientSideOverlap(
   if (!draggedEvent) return false;
 
   // ドラッグ中のイベントのタイプを取得
-  const draggedType = getEventType(draggedEvent);
+  const draggedType = getEventOrigin(draggedEvent);
 
   // 同タイプのイベントとのみ重複チェック
   return events.some((event) => {
@@ -157,7 +157,7 @@ export function checkClientSideOverlap(
     if (event.id === draggedEventId) return false;
 
     // イベントのタイプを取得
-    const eventType = getEventType(event);
+    const eventType = getEventOrigin(event);
 
     // 異なるタイプは重複OK（Plan↔Record共存可能）
     if (eventType !== draggedType) return false;

@@ -11,7 +11,7 @@ import { useDateFormat } from '@/hooks/useDateFormat';
 import { getTagColorClasses } from '@/lib/tag-colors';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 import { useTranslations } from 'next-intl';
-import type { CalendarPlan } from '../../../types/calendar.types';
+import type { CalendarEvent } from '../../../types/calendar.types';
 
 import type { ViewDateRange } from '../../../types/calendar.types';
 
@@ -20,13 +20,13 @@ import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight
 
 interface WeekCalendarLayoutProps {
   dates: Date[];
-  events: CalendarPlan[];
+  events: CalendarEvent[];
   dateRange: ViewDateRange;
-  onPlanClick?: (plan: CalendarPlan) => void;
+  onPlanClick?: (plan: CalendarEvent) => void;
   onCreatePlan?: (date: Date, time?: string) => void;
-  onUpdatePlan?: (plan: CalendarPlan) => void;
+  onUpdatePlan?: (plan: CalendarEvent) => void;
   onDeletePlan?: (planId: string) => void;
-  onRestorePlan?: (plan: CalendarPlan) => Promise<void>;
+  onRestorePlan?: (plan: CalendarEvent) => Promise<void>;
 }
 
 // 現在時刻線コンポーネント（シンプル版）
@@ -157,7 +157,7 @@ export const WeekCalendarLayout = ({
 
   // プランの位置計算
   const calculatePlanPosition = useCallback(
-    (plan: CalendarPlan) => {
+    (plan: CalendarEvent) => {
       if (!plan.startDate) {
         return { top: 0, height: HOUR_HEIGHT };
       }
@@ -201,7 +201,7 @@ export const WeekCalendarLayout = ({
 
   // jsx-no-bind optimization: Plan click handler creator
   const createPlanClickHandler = useCallback(
-    (plan: CalendarPlan) => {
+    (plan: CalendarEvent) => {
       return (e: React.MouseEvent) => {
         e.stopPropagation();
         setSelectedPlanId(plan.id);
@@ -213,7 +213,7 @@ export const WeekCalendarLayout = ({
 
   // jsx-no-bind optimization: Plan keyboard handler creator
   const createPlanKeyDownHandler = useCallback(
-    (plan: CalendarPlan) => {
+    (plan: CalendarEvent) => {
       return (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();

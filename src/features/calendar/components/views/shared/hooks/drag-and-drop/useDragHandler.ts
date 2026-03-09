@@ -7,7 +7,7 @@ import { MS_PER_MINUTE } from '@/constants/time';
 import { logger } from '@/lib/logger';
 import { useTranslations } from 'next-intl';
 import useCalendarToast from '../../../../../lib/toast';
-import type { CalendarPlan } from '../../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../../types/calendar.types';
 
 import type { DragDataRef, DragState } from './types';
 import {
@@ -22,9 +22,9 @@ import {
 } from './utils';
 
 interface UseDragHandlerProps {
-  events: CalendarPlan[];
+  events: CalendarEvent[];
   /** 重複チェック用の全イベント（週/複数日表示で別日への移動時に使用） */
-  allEventsForOverlapCheck?: CalendarPlan[] | undefined;
+  allEventsForOverlapCheck?: CalendarEvent[] | undefined;
   date: Date;
   displayDates: Date[] | undefined;
   viewMode: string;
@@ -38,7 +38,7 @@ interface UseDragHandlerProps {
         updates: { startTime: Date; endTime: Date },
       ) => Promise<void | { skipToast: true }> | void)
     | undefined;
-  eventClickHandler: ((plan: CalendarPlan) => void) | undefined;
+  eventClickHandler: ((plan: CalendarEvent) => void) | undefined;
   dragDataRef: React.MutableRefObject<DragDataRef | null>;
   setDragState: React.Dispatch<React.SetStateAction<DragState>>;
 }
@@ -246,7 +246,7 @@ export function useDragHandler({
 
   // Toast通知を処理する
   const handleEventUpdateToast = useCallback(
-    async (promise: Promise<void>, plan: CalendarPlan, newStartTime: Date, durationMs: number) => {
+    async (promise: Promise<void>, plan: CalendarEvent, newStartTime: Date, durationMs: number) => {
       if (!plan) return;
 
       const previousStartTime = plan.startDate || date;
@@ -256,7 +256,7 @@ export function useDragHandler({
         return;
       }
 
-      const eventData: CalendarPlan = {
+      const eventData: CalendarEvent = {
         id: plan.id,
         title: plan.title || t('calendar.event.title'),
         description: plan.description,
@@ -273,7 +273,7 @@ export function useDragHandler({
         duration: Math.round(durationMs / MS_PER_MINUTE),
         isMultiDay: false,
         isRecurring: false,
-        type: plan.type,
+        origin: plan.origin,
         userId: plan.userId,
         location: plan.location,
         url: plan.url,

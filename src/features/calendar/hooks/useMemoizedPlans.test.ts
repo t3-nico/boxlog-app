@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import type { CalendarPlan } from '../types/calendar.types';
+import type { CalendarEvent } from '../types/calendar.types';
 
 import { CacheManager, useMemoizedPlans } from './useMemoizedPlans';
 
@@ -13,11 +13,11 @@ describe('useMemoizedPlans', () => {
 
   describe('基本的なフィルタリング', () => {
     it('日付範囲内のイベントのみ返す', () => {
-      const events: CalendarPlan[] = [
+      const events: CalendarEvent[] = [
         {
           id: 'event-1',
           title: 'イベント1',
-          type: 'event',
+          origin: 'planned',
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T10:00:00'),
@@ -33,7 +33,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-2',
           title: 'イベント2',
-          type: 'event',
+          origin: 'planned',
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-20T10:00:00'),
@@ -49,7 +49,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-3',
           title: 'イベント3',
-          type: 'event',
+          origin: 'planned',
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-25T10:00:00'),
@@ -75,11 +75,11 @@ describe('useMemoizedPlans', () => {
     });
 
     it('startDateがundefinedのイベントは除外される', () => {
-      const events: CalendarPlan[] = [
+      const events: CalendarEvent[] = [
         {
           id: 'event-1',
           title: 'イベント1',
-          type: 'event',
+          origin: 'planned',
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T10:00:00'),
@@ -95,7 +95,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-2',
           title: 'イベント2',
-          type: 'event',
+          origin: 'planned',
           status: 'open',
           color: 'blue',
           endDate: new Date('2024-06-20T11:00:00'),
@@ -106,7 +106,7 @@ describe('useMemoizedPlans', () => {
           isRecurring: false,
           createdAt: new Date(),
           updatedAt: new Date(),
-        } as CalendarPlan,
+        } as CalendarEvent,
       ];
 
       const startDate = new Date('2024-06-14');
@@ -121,11 +121,11 @@ describe('useMemoizedPlans', () => {
 
   describe('イベントのグルーピング', () => {
     it('日付別にイベントをグルーピングする', () => {
-      const events: CalendarPlan[] = [
+      const events: CalendarEvent[] = [
         {
           id: 'event-1',
           title: 'イベント1',
-          type: 'event',
+          origin: 'planned',
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T10:00:00'),
@@ -141,7 +141,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-2',
           title: 'イベント2',
-          type: 'event',
+          origin: 'planned',
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T14:00:00'),
@@ -157,7 +157,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-3',
           title: 'イベント3',
-          type: 'event',
+          origin: 'planned',
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-16T10:00:00'),
@@ -183,11 +183,11 @@ describe('useMemoizedPlans', () => {
     });
 
     it('時間別にイベントをグルーピングする', () => {
-      const events: CalendarPlan[] = [
+      const events: CalendarEvent[] = [
         {
           id: 'event-1',
           title: 'イベント1',
-          type: 'event',
+          origin: 'planned',
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T10:00:00'),
@@ -203,7 +203,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-2',
           title: 'イベント2',
-          type: 'event',
+          origin: 'planned',
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T10:30:00'),
@@ -219,7 +219,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-3',
           title: 'イベント3',
-          type: 'event',
+          origin: 'planned',
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T14:00:00'),
@@ -247,11 +247,11 @@ describe('useMemoizedPlans', () => {
 
   describe('合計時間の計算', () => {
     it('イベントの合計時間を計算する', () => {
-      const events: CalendarPlan[] = [
+      const events: CalendarEvent[] = [
         {
           id: 'event-1',
           title: 'イベント1',
-          type: 'event',
+          origin: 'planned',
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T10:00:00'),
@@ -267,7 +267,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-2',
           title: 'イベント2',
-          type: 'event',
+          origin: 'planned',
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T14:00:00'),
@@ -294,11 +294,11 @@ describe('useMemoizedPlans', () => {
 
   describe('重複イベントの検出', () => {
     it('重複するイベントを検出する', () => {
-      const events: CalendarPlan[] = [
+      const events: CalendarEvent[] = [
         {
           id: 'event-1',
           title: 'イベント1',
-          type: 'event',
+          origin: 'planned',
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T10:00:00'),
@@ -314,7 +314,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-2',
           title: 'イベント2',
-          type: 'event',
+          origin: 'planned',
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T10:30:00'),
@@ -330,7 +330,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-3',
           title: 'イベント3',
-          type: 'event',
+          origin: 'planned',
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T12:00:00'),
@@ -359,11 +359,11 @@ describe('useMemoizedPlans', () => {
 
   describe('フィルター機能', () => {
     it('タグでフィルタリングできる', () => {
-      const events: CalendarPlan[] = [
+      const events: CalendarEvent[] = [
         {
           id: 'event-1',
           title: 'イベント1',
-          type: 'event',
+          origin: 'planned',
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T10:00:00'),
@@ -380,7 +380,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-2',
           title: 'イベント2',
-          type: 'event',
+          origin: 'planned',
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T14:00:00'),
@@ -407,11 +407,11 @@ describe('useMemoizedPlans', () => {
     });
 
     it('検索クエリでフィルタリングできる', () => {
-      const events: CalendarPlan[] = [
+      const events: CalendarEvent[] = [
         {
           id: 'event-1',
           title: 'ミーティング',
-          type: 'event',
+          origin: 'planned',
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T10:00:00'),
@@ -427,7 +427,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-2',
           title: 'ランチ',
-          type: 'event',
+          origin: 'planned',
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T14:00:00'),
@@ -455,11 +455,11 @@ describe('useMemoizedPlans', () => {
 
   describe('キャッシュ機能', () => {
     it('同じ入力で2回目はキャッシュから返す', () => {
-      const events: CalendarPlan[] = [
+      const events: CalendarEvent[] = [
         {
           id: 'event-1',
           title: 'イベント1',
-          type: 'event',
+          origin: 'planned',
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T10:00:00'),
@@ -487,11 +487,11 @@ describe('useMemoizedPlans', () => {
     });
 
     it('CacheManagerでキャッシュをクリアできる', () => {
-      const events: CalendarPlan[] = [
+      const events: CalendarEvent[] = [
         {
           id: 'event-1',
           title: 'イベント1',
-          type: 'event',
+          origin: 'planned',
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T10:00:00'),

@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 
-import type { CalendarPlan } from '../../../types/calendar.types';
+import type { CalendarEvent } from '../../../types/calendar.types';
 
 import type { DateTimeSelection, GridViewProps, TimeSlot } from '../shared';
 
@@ -10,26 +10,26 @@ export type DayViewProps = GridViewProps;
 // シンプル版のProps（後方互換性のため）
 export interface SimpleDayViewProps {
   date: Date;
-  plans?: CalendarPlan[];
+  plans?: CalendarEvent[];
   className?: string;
-  onPlanClick?: (plan: CalendarPlan) => void;
-  onPlanUpdate?: (plan: CalendarPlan) => void;
+  onPlanClick?: (plan: CalendarEvent) => void;
+  onPlanUpdate?: (plan: CalendarEvent) => void;
   onPlanCreate?: (date: Date, time: string) => void;
   onPlanDelete?: (planId: string) => void;
 }
 
 export interface DayContentProps {
   date: Date;
-  plans?: CalendarPlan[] | undefined;
-  events?: CalendarPlan[] | undefined; // eventsはplansのエイリアス（後方互換性のため）
+  plans?: CalendarEvent[] | undefined;
+  events?: CalendarEvent[] | undefined; // eventsはplansのエイリアス（後方互換性のため）
   planStyles?: Record<string, CSSProperties> | undefined;
   eventStyles?: Record<string, CSSProperties> | undefined; // eventStylesはplanStylesのエイリアス（後方互換性のため）
-  onPlanClick?: ((plan: CalendarPlan) => void) | undefined;
-  onPlanContextMenu?: ((plan: CalendarPlan, mouseEvent: React.MouseEvent) => void) | undefined;
+  onPlanClick?: ((plan: CalendarEvent) => void) | undefined;
+  onPlanContextMenu?: ((plan: CalendarEvent, mouseEvent: React.MouseEvent) => void) | undefined;
   onEmptyAreaContextMenu?:
     | ((date: Date, hour: number, minute: number, e: React.MouseEvent) => void)
     | undefined;
-  onPlanUpdate?: ((plan: CalendarPlan) => void) | undefined;
+  onPlanUpdate?: ((plan: CalendarEvent) => void) | undefined;
   onEventUpdate?:
     | ((
         eventId: string,
@@ -44,13 +44,13 @@ export interface DayContentProps {
 
 export interface UseDayViewOptions {
   date: Date;
-  plans: CalendarPlan[];
-  onPlanUpdate?: (plan: CalendarPlan) => void;
+  plans: CalendarEvent[];
+  onPlanUpdate?: (plan: CalendarEvent) => void;
   timezone: string;
 }
 
 export interface UseDayViewReturn {
-  dayPlans: CalendarPlan[];
+  dayPlans: CalendarEvent[];
   planStyles: Record<string, CSSProperties>;
   isToday: boolean;
   timeSlots: TimeSlot[];
@@ -58,18 +58,18 @@ export interface UseDayViewReturn {
 
 export interface UseDayPlansOptions {
   date: Date;
-  plans: CalendarPlan[];
+  plans: CalendarEvent[];
   timezone: string;
 }
 
 export interface UseDayPlansReturn {
-  dayPlans: CalendarPlan[];
+  dayPlans: CalendarEvent[];
   planPositions: PlanPosition[];
   maxConcurrentPlans: number;
 }
 
 export interface PlanPosition {
-  plan: CalendarPlan;
+  plan: CalendarEvent;
   top: number;
   height: number;
   left: number;

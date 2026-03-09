@@ -1,6 +1,6 @@
 import { useDragAndDrop as useSharedDragAndDrop } from '../../shared/hooks/useDragAndDrop';
 
-import type { CalendarPlan } from '../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../types/calendar.types';
 
 export type { DragHandlers, DragState } from '../../shared/hooks/useDragAndDrop';
 
@@ -9,9 +9,9 @@ interface UseDragAndDropProps {
     eventId: string,
     updates: { startTime: Date; endTime: Date },
   ) => Promise<void | { skipToast: true }> | void;
-  onEventClick?: (plan: CalendarPlan) => void;
+  onEventClick?: (plan: CalendarEvent) => void;
   date: Date;
-  events: CalendarPlan[];
+  events: CalendarEvent[];
   /** DnDを無効化するプランID（Inspector表示中のプランなど） */
   disabledPlanId?: string | null | undefined;
 }

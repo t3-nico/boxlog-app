@@ -3,7 +3,7 @@
 // パフォーマンス計測のため、useMemo内でperformance.now()を呼び出す必要がある
 import { useEffect, useMemo, useRef } from 'react';
 
-import type { CalendarPlan } from '../types/calendar.types';
+import type { CalendarEvent } from '../types/calendar.types';
 
 // メモ化キーの生成
 interface MemoizationKey {
@@ -14,11 +14,11 @@ interface MemoizationKey {
 }
 
 interface MemoizedEventData {
-  processedEvents: CalendarPlan[];
-  eventsByDate: Map<string, CalendarPlan[]>;
-  eventsByHour: Map<number, CalendarPlan[]>;
+  processedEvents: CalendarEvent[];
+  eventsByDate: Map<string, CalendarEvent[]>;
+  eventsByHour: Map<number, CalendarEvent[]>;
   totalDuration: number;
-  overlappingEvents: CalendarPlan[][];
+  overlappingEvents: CalendarEvent[][];
 }
 
 // LRU キャッシュの実装
@@ -81,14 +81,14 @@ function fastHash(input: string): string {
 }
 
 // イベント配列のハッシュ生成
-function generateEventHash(events: CalendarPlan[]): string {
+function generateEventHash(events: CalendarEvent[]): string {
   const eventKeys = events.map((e) => `${e.id}-${e.startDate?.getTime()}-${e.endDate?.getTime()}`);
   return fastHash(eventKeys.join('|'));
 }
 
 // メモ化キーの生成
 function generateMemoKey(
-  events: CalendarPlan[],
+  events: CalendarEvent[],
   startDate: Date,
   endDate: Date,
   filters: Record<string, unknown>,
@@ -104,7 +104,7 @@ function generateMemoKey(
 }
 
 export function useMemoizedPlans(
-  events: CalendarPlan[],
+  events: CalendarEvent[],
   startDate: Date,
   endDate: Date,
   filters: Record<string, unknown> = {},
@@ -140,8 +140,8 @@ export function useMemoizedPlans(
     const processedEvents = applyFilters(filteredEvents, filters);
 
     // 日付別グルーピング
-    const eventsByDate = new Map<string, CalendarPlan[]>();
-    const eventsByHour = new Map<number, CalendarPlan[]>();
+    const eventsByDate = new Map<string, CalendarEvent[]>();
+    const eventsByHour = new Map<number, CalendarEvent[]>();
     let totalDuration = 0;
 
     for (const event of processedEvents) {
@@ -193,7 +193,7 @@ export function useMemoizedPlans(
 }
 
 // フィルターの適用
-function applyFilters(events: CalendarPlan[], filters: Record<string, unknown>): CalendarPlan[] {
+function applyFilters(events: CalendarEvent[], filters: Record<string, unknown>): CalendarEvent[] {
   if (!filters || Object.keys(filters).length === 0) {
     return events;
   }
@@ -235,8 +235,8 @@ function applyFilters(events: CalendarPlan[], filters: Record<string, unknown>):
 }
 
 // 重複イベントの検出
-function findOverlappingEvents(events: CalendarPlan[]): CalendarPlan[][] {
-  const overlappingGroups: CalendarPlan[][] = [];
+function findOverlappingEvents(events: CalendarEvent[]): CalendarEvent[][] {
+  const overlappingGroups: CalendarEvent[][] = [];
   const processedIds = new Set<string>();
 
   for (let i = 0; i < events.length; i++) {
@@ -328,7 +328,7 @@ export function useAsyncMemoizedComputation<T>(
 
 // カレンダー専用のメモ化フック
 export function useMemoizedCalendarData(
-  events: CalendarPlan[],
+  events: CalendarEvent[],
   viewDate: Date,
   viewType: 'day' | 'week' = 'week',
 ) {

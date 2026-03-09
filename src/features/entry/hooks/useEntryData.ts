@@ -1,5 +1,5 @@
 /**
- * Plan用データ取得フック
+ * Entry用データ取得フック
  * Board/Table共通のデータフェッチングhooks
  * TanStack Query統合済み
  */
@@ -11,7 +11,6 @@ import { useEntries } from '@/hooks/useEntries';
 import type { DateRangeFilter } from '@/lib/date';
 import { matchesDateRangeFilter } from '@/lib/date';
 import { getEntryState } from '@/lib/entry-status';
-import type { PlanStatus } from '../types/entry';
 
 import type {
   RecurrenceFilter,
@@ -19,13 +18,16 @@ import type {
   ScheduleFilter,
 } from '../stores/useEntryFilterStore';
 
+/** エントリステータス（時間位置から自動判定） */
+type EntryStatus = 'open' | 'closed';
+
 /**
  * ソートオプション
  */
 export type SortField = 'title' | 'created_at' | 'updated_at';
 export type SortDirection = 'asc' | 'desc';
 
-export interface PlanSortOptions {
+export interface EntrySortOptions {
   field: SortField | null;
   direction: SortDirection;
 }
@@ -37,21 +39,18 @@ export interface PlanSortOptions {
 export type PlanWithTagIds = EntryWithTags;
 
 /**
- * Planアイテム
+ * エントリアイテム
  */
-export interface PlanItem {
+export interface EntryItem {
   id: string;
-  type: 'plan';
   title: string;
-  status: PlanStatus;
+  status: EntryStatus;
   created_at: string;
   updated_at: string;
-  plan_number?: string | undefined;
-  planned_hours?: number | undefined;
   description?: string | undefined;
-  start_time?: string | null | undefined; // 開始時刻（ISO 8601）
-  end_time?: string | null | undefined; // 終了時刻（ISO 8601）
-  reminder_minutes?: number | null | undefined; // 通知タイミング（開始時刻の何分前か）
+  start_time?: string | null | undefined;
+  end_time?: string | null | undefined;
+  reminder_minutes?: number | null | undefined;
   recurrence_type?:
     | 'none'
     | 'daily'
@@ -60,25 +59,25 @@ export interface PlanItem {
     | 'yearly'
     | 'weekdays'
     | null
-    | undefined; // 繰り返しタイプ（シンプル版）
-  recurrence_end_date?: string | null | undefined; // 繰り返し終了日（YYYY-MM-DD）
-  recurrence_rule?: string | null | undefined; // カスタム繰り返し（RRULE形式）
-  tagId?: string | null | undefined; // タグID（タグ情報はtags.listキャッシュから取得）
+    | undefined;
+  recurrence_end_date?: string | null | undefined;
+  recurrence_rule?: string | null | undefined;
+  tagId?: string | null | undefined;
 }
 
 /**
- * Planフィルター型
+ * エントリフィルター型
  */
-export interface PlanFilters {
-  status?: PlanStatus | undefined;
+export interface EntryDataFilters {
+  status?: EntryStatus | undefined;
   search?: string | undefined;
-  tags?: string[] | undefined; // タグIDの配列
-  recurrence?: RecurrenceFilter | undefined; // 繰り返しフィルター
-  reminder?: ReminderFilter | undefined; // リマインダーフィルター
-  schedule?: ScheduleFilter | undefined; // スケジュールフィルター
-  createdAt?: DateRangeFilter | undefined; // 作成日フィルター
-  updatedAt?: DateRangeFilter | undefined; // 更新日フィルター
-  hideCompleted?: boolean | undefined; // 完了を非表示
+  tags?: string[] | undefined;
+  recurrence?: RecurrenceFilter | undefined;
+  reminder?: ReminderFilter | undefined;
+  schedule?: ScheduleFilter | undefined;
+  createdAt?: DateRangeFilter | undefined;
+  updatedAt?: DateRangeFilter | undefined;
+  hideCompleted?: boolean | undefined;
 }
 
 /**
@@ -118,59 +117,35 @@ function matchesScheduleFilter(
 }
 
 /**
- * PlanをPlanItemに変換
+ * EntryをEntryItemに変換
  * @internal テスト用にエクスポート
  */
-export function planToPlanItem(plan: PlanWithTagIds): PlanItem {
+export function planToPlanItem(entry: PlanWithTagIds): EntryItem {
   // 時間位置ベースでステータスを導出
-  const entryState = getEntryState({ start_time: plan.start_time, end_time: plan.end_time });
-  const status: PlanStatus = entryState === 'past' ? 'closed' : 'open';
+  const entryState = getEntryState({ start_time: entry.start_time, end_time: entry.end_time });
+  const status: EntryStatus = entryState === 'past' ? 'closed' : 'open';
 
   return {
-    id: plan.id,
-    type: 'plan',
-    title: plan.title,
+    id: entry.id,
+    title: entry.title,
     status,
-    created_at: plan.created_at ?? new Date().toISOString(),
-    updated_at: plan.updated_at ?? new Date().toISOString(),
-    description: plan.description ?? undefined,
-    start_time: plan.start_time,
-    end_time: plan.end_time,
-    recurrence_type: plan.recurrence_type,
-    recurrence_end_date: plan.recurrence_end_date,
-    recurrence_rule: plan.recurrence_rule,
-    tagId: plan.tagId,
+    created_at: entry.created_at ?? new Date().toISOString(),
+    updated_at: entry.updated_at ?? new Date().toISOString(),
+    description: entry.description ?? undefined,
+    start_time: entry.start_time,
+    end_time: entry.end_time,
+    recurrence_type: entry.recurrence_type,
+    recurrence_end_date: entry.recurrence_end_date,
+    recurrence_rule: entry.recurrence_rule,
+    tagId: entry.tagId,
   };
 }
 
 /**
- * Plan用データ取得フック
+ * Entry用データ取得フック
  * Board/Table共通のデータを取得
- *
- * @param filters - フィルター条件
- * @returns Planアイテム、ローディング状態、エラー情報
- *
- * @example
- * ```tsx
- * const { items, isPending, error } = usePlanData(
- *   { status: 'open' },
- *   { field: 'title', direction: 'asc' }
- * )
- *
- * if (isPending) return <div>Loading...</div>
- * if (error) return <div>Error: {error.message}</div>
- *
- * return (
- *   <div>
- *     {items.map(item => (
- *       <div key={item.id}>{item.title}</div>
- *     ))}
- *   </div>
- * )
- * ```
  */
-export function usePlanData(filters: PlanFilters = {}, sort?: PlanSortOptions) {
-  // plansの取得（リアルタイム性最適化済み）
+export function useEntryData(filters: EntryDataFilters = {}, sort?: EntrySortOptions) {
   const {
     data: entriesData,
     isPending,
@@ -179,17 +154,17 @@ export function usePlanData(filters: PlanFilters = {}, sort?: PlanSortOptions) {
     ...(filters.search && { search: filters.search }),
   });
 
-  // フィルタリング・ソートをメモ化（毎レンダリングでの再計算を防止）
+  // フィルタリング・ソートをメモ化
   const items = useMemo(() => {
-    let result: PlanItem[] =
-      entriesData?.map((plan) => planToPlanItem(plan as PlanWithTagIds)) || [];
+    let result: EntryItem[] =
+      entriesData?.map((entry) => planToPlanItem(entry as PlanWithTagIds)) || [];
 
-    // ステータスフィルタリング（クライアント側 - 楽観的更新後の即座反映用）
+    // ステータスフィルタリング
     if (filters.status) {
       result = result.filter((item) => item.status === filters.status);
     }
 
-    // タグフィルタリング（クライアント側）
+    // タグフィルタリング
     if (filters.tags && filters.tags.length > 0) {
       result = result.filter((item) => {
         if (!item.tagId) return false;
@@ -234,7 +209,7 @@ export function usePlanData(filters: PlanFilters = {}, sort?: PlanSortOptions) {
     // ソート適用
     if (sort?.field && sort?.direction) {
       result.sort((a, b) => {
-        const field = sort.field as keyof PlanItem;
+        const field = sort.field as keyof EntryItem;
         const aValue = a[field];
         const bValue = b[field];
 
@@ -260,20 +235,8 @@ export function usePlanData(filters: PlanFilters = {}, sort?: PlanSortOptions) {
 
   return {
     items,
-    plans: entriesData || [],
+    entries: entriesData || [],
     isPending,
     error,
   };
-}
-
-/**
- * plans専用データ取得フック
- * usePlanDataのエイリアス
- *
- * @param filters - フィルター条件
- * @param sort - ソートオプション
- * @returns plansデータ
- */
-export function usePlanPlans(filters: PlanFilters = {}, sort?: PlanSortOptions) {
-  return usePlanData(filters, sort);
 }

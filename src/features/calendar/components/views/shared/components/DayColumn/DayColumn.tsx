@@ -37,7 +37,7 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
 
   // この日のプランをフィルタリング
   const dayPlans = useMemo(() => {
-    // CalendarPlanをTimedPlanに変換
+    // CalendarEventをTimedPlanに変換
     const timedPlans = events.map((plan) => ({
       ...plan,
       start: plan.startDate || new Date(),

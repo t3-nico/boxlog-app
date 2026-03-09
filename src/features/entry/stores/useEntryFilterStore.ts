@@ -1,7 +1,9 @@
 import type { DateRangeFilter } from '@/lib/date';
 import type { BaseFilterState } from '@/stores/createFilterStore';
 import { createFilterStore } from '@/stores/createFilterStore';
-import type { PlanStatus } from '../types/entry';
+
+/** エントリステータス（時間位置から自動判定） */
+type EntryStatus = 'open' | 'closed';
 
 /**
  * 繰り返しフィルタータイプ
@@ -25,7 +27,7 @@ export type { DateRangeFilter };
  * Entry フィルタ状態
  */
 interface EntryFilterState extends BaseFilterState {
-  status: PlanStatus[];
+  status: EntryStatus[];
   tags: string[];
   search: string;
   assignee: string;

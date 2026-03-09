@@ -6,15 +6,15 @@ import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
 import { getInstanceRef } from '@/lib/instance-id';
 import { logger } from '@/lib/logger';
+import { useEntryClipboardStore } from '@/stores/useEntryClipboardStore';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import {
   openDeleteConfirm,
   openRecurringEditConfirm,
   type RecurringEditScope,
 } from '@/stores/useModalStore';
-import { usePlanClipboardStore } from '@/stores/usePlanClipboardStore';
 import { toast } from 'sonner';
-import type { CalendarPlan } from '../types/calendar.types';
+import type { CalendarEvent } from '../types/calendar.types';
 
 export function usePlanContextActions() {
   const openInspector = useEntryInspectorStore((s) => s.openInspector);
@@ -22,7 +22,7 @@ export function usePlanContextActions() {
   const { applyDelete } = useRecurringScopeMutations();
 
   // 繰り返しプラン削除用のターゲットをrefで保持（ダイアログのコールバックで参照）
-  const recurringDeleteTargetRef = useRef<CalendarPlan | null>(null);
+  const recurringDeleteTargetRef = useRef<CalendarEvent | null>(null);
 
   // 繰り返しプラン削除確認ハンドラー（ダイアログのコールバック）
   const handleRecurringDeleteConfirm = useCallback(
@@ -36,7 +36,7 @@ export function usePlanContextActions() {
 
         await applyDelete({
           scope,
-          planId: ref.parentPlanId,
+          planId: ref.parentEntryId,
           instanceDate: ref.instanceDate,
         });
       } finally {
@@ -47,7 +47,7 @@ export function usePlanContextActions() {
   );
 
   const handleDeletePlan = useCallback(
-    (plan: CalendarPlan) => {
+    (plan: CalendarEvent) => {
       // 繰り返しプランの場合はスコープ選択ダイアログを表示
       if (plan.isRecurring) {
         recurringDeleteTargetRef.current = plan;
@@ -65,7 +65,7 @@ export function usePlanContextActions() {
   );
 
   const handleEditPlan = useCallback(
-    (plan: CalendarPlan) => {
+    (plan: CalendarEvent) => {
       // planInspectorを開いて編集モードにする
       // 繰り返しプランの場合はインスタンス日付を渡す
       const ref = plan.isRecurring ? getInstanceRef(plan) : null;
@@ -77,7 +77,7 @@ export function usePlanContextActions() {
   );
 
   const handleDuplicatePlan = useCallback(
-    async (plan: CalendarPlan) => {
+    async (plan: CalendarEvent) => {
       const startTime = plan.startDate ? plan.startDate.toISOString() : undefined;
       const endTime = plan.endDate ? plan.endDate.toISOString() : undefined;
 
@@ -99,7 +99,7 @@ export function usePlanContextActions() {
     [createEntry, openInspector],
   );
 
-  const handleCopyPlan = useCallback((plan: CalendarPlan) => {
+  const handleCopyPlan = useCallback((plan: CalendarEvent) => {
     const startHour = plan.startDate?.getHours() ?? 0;
     const startMinute = plan.startDate?.getMinutes() ?? 0;
     const duration =
@@ -107,7 +107,7 @@ export function usePlanContextActions() {
         ? (plan.endDate.getTime() - plan.startDate.getTime()) / 60000
         : 60;
 
-    usePlanClipboardStore.getState().copyPlan({
+    useEntryClipboardStore.getState().copyEntry({
       title: plan.title,
       description: plan.description ?? null,
       duration,
@@ -127,24 +127,24 @@ export function usePlanContextActions() {
    */
   const handlePastePlan = useCallback(
     async (targetDate: Date, targetHour?: number, targetMinute?: number) => {
-      const clipboard = usePlanClipboardStore.getState();
-      const copiedPlan = clipboard.copiedPlan;
-      if (!copiedPlan) return;
+      const clipboard = useEntryClipboardStore.getState();
+      const copiedEntry = clipboard.copiedEntry;
+      if (!copiedEntry) return;
 
       // ペースト先の日付 + 指定時刻（なければコピー元の時刻）
       const startTime = new Date(targetDate);
-      const hour = targetHour ?? copiedPlan.startHour;
-      const minute = targetMinute ?? copiedPlan.startMinute;
+      const hour = targetHour ?? copiedEntry.startHour;
+      const minute = targetMinute ?? copiedEntry.startMinute;
       startTime.setHours(hour, minute, 0, 0);
 
       const endTime = new Date(startTime);
-      endTime.setMinutes(endTime.getMinutes() + copiedPlan.duration);
+      endTime.setMinutes(endTime.getMinutes() + copiedEntry.duration);
 
       // 即DB作成 → Inspector edit mode で開く
       try {
         const result = await createEntry.mutateAsync({
-          title: copiedPlan.title,
-          description: copiedPlan.description ?? undefined,
+          title: copiedEntry.title,
+          description: copiedEntry.description ?? undefined,
           start_time: startTime.toISOString(),
           end_time: endTime.toISOString(),
         });
@@ -159,7 +159,7 @@ export function usePlanContextActions() {
   );
 
   const handleCompleteWithRecord = useCallback(
-    async (plan: CalendarPlan) => {
+    async (plan: CalendarEvent) => {
       // 即DB作成 → Inspector edit mode で開く
       try {
         const result = await createEntry.mutateAsync({

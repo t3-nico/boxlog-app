@@ -3,7 +3,7 @@
  * RFC 5545 iCalendar仕様に準拠
  */
 
-import type { RecurrenceConfig } from '@/core/types/plan';
+import type { RecurrenceConfig } from '@/core/types/entry';
 
 const WEEKDAY_MAP = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
 

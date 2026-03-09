@@ -5,7 +5,7 @@ import React, { useCallback } from 'react';
 import { cn } from '@/lib/utils';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { useCalendarDragStore } from '../../../../stores/useCalendarDragStore';
-import type { CalendarPlan } from '../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../types/calendar.types';
 
 import {
   calculatePlanGhostStyle,
@@ -22,12 +22,12 @@ import { useResponsiveHourHeight } from '../../shared/hooks/useResponsiveHourHei
 
 interface MultiDayContentProps {
   date: Date;
-  plans: CalendarPlan[];
-  allEventsForOverlapCheck?: CalendarPlan[] | undefined;
+  plans: CalendarEvent[];
+  allEventsForOverlapCheck?: CalendarEvent[] | undefined;
   planStyles: Record<string, React.CSSProperties>;
-  onPlanClick?: ((plan: CalendarPlan) => void) | undefined;
-  onPlanContextMenu?: ((plan: CalendarPlan, e: React.MouseEvent) => void) | undefined;
-  onPlanUpdate?: ((planId: string, updates: Partial<CalendarPlan>) => void) | undefined;
+  onPlanClick?: ((plan: CalendarEvent) => void) | undefined;
+  onPlanContextMenu?: ((plan: CalendarEvent, e: React.MouseEvent) => void) | undefined;
+  onPlanUpdate?: ((planId: string, updates: Partial<CalendarEvent>) => void) | undefined;
   onTimeRangeSelect?: ((selection: DateTimeSelection) => void) | undefined;
   onEmptyAreaContextMenu?:
     | ((date: Date, hour: number, minute: number, e: React.MouseEvent) => void)
@@ -93,7 +93,7 @@ export function MultiDayContent({
   useGlobalDragCursor(dragState, handlers);
 
   const handlePlanContextMenu = useCallback(
-    (plan: CalendarPlan, mouseEvent: React.MouseEvent) => {
+    (plan: CalendarEvent, mouseEvent: React.MouseEvent) => {
       if (dragState.isDragging || dragState.isResizing) {
         return;
       }
@@ -205,11 +205,11 @@ export function MultiDayContent({
                         ? (dragState.snappedPosition.height ?? currentHeight)
                         : currentHeight,
                   }}
-                  onContextMenu={(plan: CalendarPlan, e: React.MouseEvent) =>
+                  onContextMenu={(plan: CalendarEvent, e: React.MouseEvent) =>
                     handlePlanContextMenu(plan, e)
                   }
                   onResizeStart={(
-                    plan: CalendarPlan,
+                    plan: CalendarEvent,
                     direction: 'top' | 'bottom',
                     e: React.MouseEvent,
                     _position: { top: number; left: number; width: number; height: number },

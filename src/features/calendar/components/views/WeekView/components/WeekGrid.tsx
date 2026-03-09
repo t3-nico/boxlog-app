@@ -54,7 +54,7 @@ export const WeekGrid = ({
   const handlePlanUpdate = React.useCallback(
     async (
       planId: string,
-      updates: Partial<import('@/features/calendar/types/calendar.types').CalendarPlan>,
+      updates: Partial<import('@/features/calendar/types/calendar.types').CalendarEvent>,
     ) => {
       if (!onEventUpdate) return;
       const plan = events.find((e) => e.id === planId);

@@ -11,10 +11,10 @@ import { RecurringIndicatorFromFlag } from '@/components/common/RecurringIndicat
 import { useTranslations } from 'next-intl';
 
 import { formatTimeRange } from '@/lib/date';
-import type { CalendarPlan } from '../../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../../types/calendar.types';
 
 interface PlanCardContentProps {
-  plan: CalendarPlan;
+  plan: CalendarEvent;
   tagName: string | null;
   isCompact?: boolean;
   showTime?: boolean;
@@ -24,16 +24,16 @@ interface PlanCardContentProps {
 }
 
 // Helper function: Parse plan start date
-function parseplanStartDate(plan: CalendarPlan): Date | null {
-  // CalendarPlanはstartDateを持つ
+function parseplanStartDate(plan: CalendarEvent): Date | null {
+  // CalendarEventはstartDateを持つ
   if (plan.startDate instanceof Date) return plan.startDate;
   if (plan.startDate) return new Date(plan.startDate);
   return null;
 }
 
 // Helper function: Parse plan end date
-function parseplanEndDate(plan: CalendarPlan): Date | null {
-  // CalendarPlanはendDateを持つ
+function parseplanEndDate(plan: CalendarEvent): Date | null {
+  // CalendarEventはendDateを持つ
   if (plan.endDate instanceof Date) return plan.endDate;
   if (plan.endDate) return new Date(plan.endDate);
   return null;

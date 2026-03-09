@@ -1,18 +1,18 @@
 /**
  * カレンダー固有のデータ変換ユーティリティ
  *
- * CalendarPlan のタイムゾーン適用やイベントタイプ判定を行う。
+ * CalendarEvent のタイムゾーン適用やイベントタイプ判定を行う。
  */
 
 import { convertToTimezone } from '@/lib/date/timezone';
 
-import type { CalendarPlan } from '../types/calendar.types';
+import type { CalendarEvent } from '../types/calendar.types';
 
 /**
- * CalendarPlan の displayStartDate/displayEndDate をユーザーTZに変換
+ * CalendarEvent の displayStartDate/displayEndDate をユーザーTZに変換
  * Records は変換しない（壁時計時刻のため）
  */
-export function applyTimezoneToDisplayDates(plan: CalendarPlan, timezone: string): CalendarPlan {
+export function applyTimezoneToDisplayDates(plan: CalendarEvent, timezone: string): CalendarEvent {
   if (plan.origin === 'unplanned' || !plan.startDate) {
     return plan;
   }
@@ -24,20 +24,18 @@ export function applyTimezoneToDisplayDates(plan: CalendarPlan, timezone: string
 }
 
 /**
- * CalendarPlanがRecordかどうかを判定
- * type === 'record' の場合はRecord（origin='unplanned' に対応）
+ * CalendarEventが記録（unplanned）かどうかを判定
  */
-export function isRecordEvent(event: Pick<CalendarPlan, 'type'> | null | undefined): boolean {
+export function isRecordEvent(event: Pick<CalendarEvent, 'origin'> | null | undefined): boolean {
   if (!event) return false;
-  return event.type === 'record';
+  return event.origin === 'unplanned';
 }
 
 /**
- * CalendarPlanのイベントタイプを取得
- * Record の場合は 'record'、それ以外は 'plan'
+ * CalendarEventの起源を取得
  */
-export function getEventType(
-  event: Pick<CalendarPlan, 'type'> | null | undefined,
-): 'record' | 'plan' {
-  return isRecordEvent(event) ? 'record' : 'plan';
+export function getEventOrigin(
+  event: Pick<CalendarEvent, 'origin'> | null | undefined,
+): 'planned' | 'unplanned' {
+  return isRecordEvent(event) ? 'unplanned' : 'planned';
 }

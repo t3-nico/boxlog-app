@@ -18,9 +18,9 @@ import {
   startOfDay,
 } from 'date-fns';
 
-import type { Plan, RecurrenceConfig } from '@/core/types/plan';
+import type { Entry, RecurrenceConfig } from '@/core/types/entry';
 
-import { ruleToConfig } from '@/lib/plan-rrule';
+import { ruleToConfig } from '@/lib/rrule';
 
 /**
  * 展開されたオカレンス
@@ -28,8 +28,8 @@ import { ruleToConfig } from '@/lib/plan-rrule';
 export interface ExpandedOccurrence {
   /** オカレンスの日付 */
   date: Date;
-  /** 元のプランID */
-  planId: string;
+  /** 元のエントリID */
+  entryId: string;
   /** 親プランの開始時刻（HH:mm形式、時刻部分のみ） */
   startTime: string | null;
   /** 親プランの終了時刻（HH:mm形式、時刻部分のみ） */
@@ -51,7 +51,7 @@ export interface ExpandedOccurrence {
 /**
  * 例外情報（DBから取得）
  */
-export interface PlanInstanceException {
+export interface EntryInstanceException {
   instanceDate: string; // YYYY-MM-DD
   exceptionType?: 'modified' | 'cancelled' | 'moved' | undefined;
   title?: string | undefined;
@@ -103,16 +103,16 @@ function simpleTypeToConfig(recurrenceType: string, startDate: Date): Recurrence
 /**
  * プランの繰り返し設定からRecurrenceConfigを取得
  */
-export function getPlanRecurrenceConfig(plan: Plan): RecurrenceConfig | null {
+export function getEntryRecurrenceConfig(entry: Entry): RecurrenceConfig | null {
   // recurrence_rule（RRULE形式）が優先
-  if (plan.recurrence_rule) {
-    return ruleToConfig(plan.recurrence_rule);
+  if (entry.recurrence_rule) {
+    return ruleToConfig(entry.recurrence_rule);
   }
 
   // recurrence_type（シンプル版）
-  if (plan.recurrence_type && plan.recurrence_type !== 'none') {
-    const startDate = plan.start_time ? new Date(plan.start_time) : new Date();
-    return simpleTypeToConfig(plan.recurrence_type, startDate);
+  if (entry.recurrence_type && entry.recurrence_type !== 'none') {
+    const startDate = entry.start_time ? new Date(entry.start_time) : new Date();
+    return simpleTypeToConfig(entry.recurrence_type, startDate);
   }
 
   return null;
@@ -178,12 +178,12 @@ function getNextOccurrence(current: Date, config: RecurrenceConfig, _startDate: 
  * @returns 展開されたオカレンスの配列
  */
 export function expandRecurrence(
-  plan: Plan,
+  entry: Entry,
   rangeStart: Date,
   rangeEnd: Date,
-  exceptions: PlanInstanceException[] = [],
+  exceptions: EntryInstanceException[] = [],
 ): ExpandedOccurrence[] {
-  const config = getPlanRecurrenceConfig(plan);
+  const config = getEntryRecurrenceConfig(entry);
   if (!config) {
     return [];
   }
@@ -191,26 +191,26 @@ export function expandRecurrence(
   const occurrences: ExpandedOccurrence[] = [];
 
   // 開始日を決定
-  const planStartDate = plan.start_time ? startOfDay(new Date(plan.start_time)) : null;
+  const entryStartDate = entry.start_time ? startOfDay(new Date(entry.start_time)) : null;
 
-  if (!planStartDate) {
+  if (!entryStartDate) {
     return [];
   }
 
   // 時刻を抽出（HH:mm形式）
-  const startTime = plan.start_time ? new Date(plan.start_time).toTimeString().slice(0, 5) : null;
-  const endTime = plan.end_time ? new Date(plan.end_time).toTimeString().slice(0, 5) : null;
+  const startTime = entry.start_time ? new Date(entry.start_time).toTimeString().slice(0, 5) : null;
+  const endTime = entry.end_time ? new Date(entry.end_time).toTimeString().slice(0, 5) : null;
 
   // 終了日を決定
   let recurrenceEndDate: Date | null = null;
   if (config.endType === 'until' && config.endDate) {
     recurrenceEndDate = new Date(config.endDate);
-  } else if (plan.recurrence_end_date) {
-    recurrenceEndDate = new Date(plan.recurrence_end_date);
+  } else if (entry.recurrence_end_date) {
+    recurrenceEndDate = new Date(entry.recurrence_end_date);
   }
 
   // 例外マップを作成
-  const exceptionMap = new Map<string, PlanInstanceException>();
+  const exceptionMap = new Map<string, EntryInstanceException>();
   exceptions.forEach((ex) => {
     exceptionMap.set(ex.instanceDate, ex);
   });
@@ -224,7 +224,7 @@ export function expandRecurrence(
   });
 
   // オカレンスを生成
-  let current = planStartDate;
+  let current = entryStartDate;
   let count = 0;
   const maxIterations = 1000; // 無限ループ防止
 
@@ -254,7 +254,7 @@ export function expandRecurrence(
       } else {
         occurrences.push({
           date: new Date(current),
-          planId: plan.id,
+          entryId: entry.id,
           startTime,
           endTime,
           isException: !!exception,
@@ -268,7 +268,7 @@ export function expandRecurrence(
     }
 
     // 次のオカレンスへ
-    const next = getNextOccurrence(current, config, planStartDate);
+    const next = getNextOccurrence(current, config, entryStartDate);
     if (!next || isSameDay(next, current)) {
       break;
     }
@@ -286,7 +286,7 @@ export function expandRecurrence(
       ) {
         occurrences.push({
           date: movedDate,
-          planId: plan.id,
+          entryId: entry.id,
           startTime,
           endTime,
           isException: true,
@@ -307,11 +307,11 @@ export function expandRecurrence(
 }
 
 /**
- * 繰り返しプランかどうかを判定
+ * 繰り返しエントリかどうかを判定
  */
-export function isRecurringPlan(plan: {
+export function isRecurringEntry(entry: {
   recurrence_type?: string | null;
   recurrence_rule?: string | null;
 }): boolean {
-  return !!((plan.recurrence_type && plan.recurrence_type !== 'none') || plan.recurrence_rule);
+  return !!((entry.recurrence_type && entry.recurrence_type !== 'none') || entry.recurrence_rule);
 }

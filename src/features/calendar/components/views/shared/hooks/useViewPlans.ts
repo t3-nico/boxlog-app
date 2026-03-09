@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { isSameDay, isValid } from 'date-fns';
 
-import type { CalendarPlan } from '../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../types/calendar.types';
 import { applyTimezoneToDisplayDates } from '../../../../utils/planDataAdapter';
 
 import { HOUR_HEIGHT } from '../constants/grid.constants';
@@ -14,13 +14,13 @@ const MIN_PLAN_HEIGHT = 20; // 最小プラン高さ
 
 interface UseViewPlansOptions {
   date: Date;
-  plans: CalendarPlan[];
+  plans: CalendarEvent[];
   hourHeight?: number;
   timezone: string;
 }
 
 export interface PlanPosition {
-  plan: CalendarPlan;
+  plan: CalendarEvent;
   top: number;
   height: number;
   left: number;
@@ -32,7 +32,7 @@ export interface PlanPosition {
 }
 
 interface UseViewPlansReturn {
-  dayPlans: CalendarPlan[];
+  dayPlans: CalendarEvent[];
   planPositions: PlanPosition[];
   maxConcurrentPlans: number;
   skippedPlansCount: number;
@@ -68,7 +68,7 @@ export function useViewPlans({
     });
   }, [date, tzPlans]);
 
-  // CalendarPlanをusePlanLayoutCalculatorで期待される形式に変換
+  // CalendarEventをusePlanLayoutCalculatorで期待される形式に変換
   // displayStartDate/displayEndDateを使用してTZ対応の位置計算を実現
   const convertedPlans = useMemo(() => {
     return dayPlans.map((plan) => ({
@@ -96,7 +96,7 @@ export function useViewPlans({
       const height = Math.max(duration * hourHeight - PLAN_PADDING, MIN_PLAN_HEIGHT);
 
       return {
-        plan: layout.plan as CalendarPlan,
+        plan: layout.plan as CalendarEvent,
         top,
         height,
         left: layout.left,

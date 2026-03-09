@@ -122,7 +122,7 @@ export function useEntryInspectorContentLogic() {
     originalTagIdRef,
     hasTagChanges,
     handleTagChange,
-    setPlanTags,
+    setEntryTags,
   } = useInspectorTagState({
     planId: entryId,
     planData: planData as EntryWithTags | undefined,
@@ -158,7 +158,7 @@ export function useEntryInspectorContentLogic() {
     hasTagChanges,
     selectedTagIdRef,
     originalTagIdRef,
-    setPlanTags: setPlanTags as unknown as (planId: string, tagIds: string[]) => Promise<void>,
+    setEntryTags: setEntryTags as unknown as (planId: string, tagIds: string[]) => Promise<void>,
     updatePlan,
     closeInspector,
     pendingChanges: pendingChanges as Record<string, string | number | null | undefined> | null,

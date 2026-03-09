@@ -55,7 +55,6 @@ export type {
   CalendarEvent,
   CalendarFilter,
   CalendarHeaderProps,
-  CalendarPlan,
   CalendarViewProps,
   CalendarViewState,
   CalendarViewType,
@@ -73,7 +72,6 @@ export type {
 // Stores (Re-export from shared stores for backward compatibility)
 // =============================================================================
 export { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
-export type { ItemType } from '@/stores/useCalendarFilterStore';
 
 // =============================================================================
 // Contexts
@@ -97,7 +95,7 @@ export { useWeekendNavigation } from './hooks/useWeekendNavigation';
 export { useCalendarData } from './components/controller/hooks/useCalendarData';
 export { useCalendarHandlers } from './components/controller/hooks/useCalendarHandlers';
 export { useCalendarNavigationHandlers } from './components/controller/hooks/useCalendarNavigationHandlers';
-export { useCalendarPlanKeyboard } from './hooks/useCalendarPlanKeyboard';
+export { useCalendarEventKeyboard } from './hooks/useCalendarPlanKeyboard';
 export { usePlanContextActions } from './hooks/usePlanContextActions';
 export { usePlanOperations } from './hooks/usePlanOperations';
 export { useRecurringPlanDrag } from './hooks/useRecurringPlanDrag';
@@ -115,7 +113,7 @@ export {
   parseDatetimeString,
   parseISOToUserTimezone,
 } from './utils/dateUtils';
-export { getEventType, isRecordEvent } from './utils/planDataAdapter';
+export { getEventOrigin, isRecordEvent } from './utils/planDataAdapter';
 
 // =============================================================================
 // Grid Constants (used by settings feature)

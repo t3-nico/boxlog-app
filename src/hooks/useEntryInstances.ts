@@ -3,10 +3,10 @@ import { useQueryClient } from '@tanstack/react-query';
 import { CACHE_2_MINUTES, CACHE_5_MINUTES } from '@/constants/time';
 import { api } from '@/lib/trpc';
 
-import type { PlanInstanceException } from '@/lib/plan-recurrence';
+import type { EntryInstanceException } from '@/lib/entry-recurrence';
 
 // entry_instances テーブルの行型
-interface PlanInstance {
+interface EntryInstance {
   entry_id: string;
   instance_date: string;
   exception_type: 'modified' | 'cancelled' | 'moved' | null;
@@ -18,16 +18,16 @@ interface PlanInstance {
 }
 
 /**
- * プランインスタンス（例外情報）取得フック
+ * エントリインスタンス（例外情報）取得フック
  *
- * @description 繰り返しプランの例外情報を取得
+ * @description 繰り返しエントリの例外情報を取得
  * カレンダー表示時に、キャンセル/変更/移動された日を判定するために使用
  *
- * @param planIds - 対象プランIDの配列
+ * @param entryIds - 対象エントリIDの配列
  * @param options - 日付範囲とReact Queryオプション
  */
-export function usePlanInstances(
-  planIds: string[],
+export function useEntryInstances(
+  entryIds: string[],
   options?: {
     startDate?: string; // YYYY-MM-DD
     endDate?: string; // YYYY-MM-DD
@@ -38,12 +38,12 @@ export function usePlanInstances(
 
   return api.entries.getInstances.useQuery(
     {
-      entryIds: planIds,
+      entryIds,
       startDate,
       endDate,
     },
     {
-      enabled: enabled && planIds.length > 0,
+      enabled: enabled && entryIds.length > 0,
       staleTime: CACHE_2_MINUTES,
       gcTime: CACHE_5_MINUTES,
     },
@@ -54,7 +54,7 @@ export function usePlanInstances(
  * 例外情報をMapに変換するユーティリティ
  *
  * @param instances - DBから取得した例外情報の配列
- * @returns planId -> exceptions[] のマップ
+ * @returns entryId -> exceptions[] のマップ
  */
 export function instancesToExceptionsMap(
   instances: Array<{
@@ -67,12 +67,12 @@ export function instancesToExceptionsMap(
     instance_end: string | null;
     original_date: string | null;
   }>,
-): Map<string, PlanInstanceException[]> {
-  const map = new Map<string, PlanInstanceException[]>();
+): Map<string, EntryInstanceException[]> {
+  const map = new Map<string, EntryInstanceException[]>();
 
   for (const instance of instances) {
     const exceptionType = instance.exception_type as 'modified' | 'cancelled' | 'moved' | null;
-    const exception: PlanInstanceException = {
+    const exception: EntryInstanceException = {
       instanceDate: instance.instance_date,
       exceptionType: exceptionType ?? undefined,
       title: instance.title ?? undefined,
@@ -91,12 +91,12 @@ export function instancesToExceptionsMap(
 }
 
 /**
- * プランインスタンス作成/削除mutation（楽観的更新付き）
+ * エントリインスタンス作成/削除mutation（楽観的更新付き）
  *
- * @description 繰り返しプランの例外（キャンセル/変更/移動）を作成・削除するmutation
+ * @description 繰り返しエントリの例外（キャンセル/変更/移動）を作成・削除するmutation
  * 楽観的更新により、サーバーレスポンスを待たずに即座にUIが更新される
  */
-export function usePlanInstanceMutations() {
+export function useEntryInstanceMutations() {
   const utils = api.useUtils();
   const queryClient = useQueryClient();
 
@@ -108,7 +108,7 @@ export function usePlanInstanceMutations() {
       await utils.entries.getInstances.cancel();
 
       // 一時的な例外を作成
-      const tempInstance: PlanInstance = {
+      const tempInstance: EntryInstance = {
         entry_id: input.entryId,
         instance_date: input.instanceDate,
         exception_type: input.exceptionType,
@@ -119,9 +119,9 @@ export function usePlanInstanceMutations() {
         original_date: input.originalDate ?? null,
       };
 
-      // 該当planIdを含むすべてのキャッシュを楽観的に更新
-      // getInstancesはplanIds[]をキーにするため、部分一致で更新が必要
-      queryClient.setQueriesData<PlanInstance[]>(
+      // 該当entryIdを含むすべてのキャッシュを楽観的に更新
+      // getInstancesはentryIds[]をキーにするため、部分一致で更新が必要
+      queryClient.setQueriesData<EntryInstance[]>(
         { queryKey: [['entries', 'getInstances']], exact: false },
         (oldData) => {
           if (!oldData) return oldData;
@@ -154,8 +154,8 @@ export function usePlanInstanceMutations() {
       // 進行中のクエリをキャンセル
       await utils.entries.getInstances.cancel();
 
-      // 該当planIdを含むすべてのキャッシュから例外を削除
-      queryClient.setQueriesData<PlanInstance[]>(
+      // 該当entryIdを含むすべてのキャッシュから例外を削除
+      queryClient.setQueriesData<EntryInstance[]>(
         { queryKey: [['entries', 'getInstances']], exact: false },
         (oldData) => {
           if (!oldData) return oldData;
@@ -166,7 +166,7 @@ export function usePlanInstanceMutations() {
         },
       );
 
-      return { deletedPlanId: input.entryId, deletedDate: input.instanceDate };
+      return { deletedEntryId: input.entryId, deletedDate: input.instanceDate };
     },
     onSuccess: () => {
       void utils.entries.getInstances.invalidate();

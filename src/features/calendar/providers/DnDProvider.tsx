@@ -254,7 +254,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
           setActiveId(null);
           return;
         }
-        // planとして扱う（CalendarPlanはplanベース）
+        // planとして扱う（CalendarEventはplanベース）
         currentPlanId = calendarEvent.id;
       } else {
         // 通常のplanカードの場合

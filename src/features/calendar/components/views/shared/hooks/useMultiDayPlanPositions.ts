@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { format, isSameDay, isValid } from 'date-fns';
 
-import type { CalendarPlan } from '../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../types/calendar.types';
 import { applyTimezoneToDisplayDates } from '../../../../utils/planDataAdapter';
 
 import { HOUR_HEIGHT as DEFAULT_HOUR_HEIGHT } from '../constants/grid.constants';
@@ -15,14 +15,14 @@ const MIN_PLAN_HEIGHT = 20; // 最小プラン高さ
 
 interface UseMultiDayPlanPositionsOptions {
   displayDates: Date[];
-  plans: CalendarPlan[];
+  plans: CalendarEvent[];
   hourHeight?: number;
   timezone: string;
 }
 
 interface UseMultiDayPlanPositionsReturn {
   planPositions: PlanPosition[];
-  plansByDate: Map<string, CalendarPlan[]>;
+  plansByDate: Map<string, CalendarEvent[]>;
 }
 
 /**
@@ -46,7 +46,7 @@ export function useMultiDayPlanPositions({
 
   // 日付別にプランをグループ化（displayStartDateで判定）
   const plansByDate = useMemo(() => {
-    const grouped = new Map<string, CalendarPlan[]>();
+    const grouped = new Map<string, CalendarEvent[]>();
 
     displayDates.forEach((date) => {
       const dateKey = format(date, 'yyyy-MM-dd');
@@ -67,7 +67,7 @@ export function useMultiDayPlanPositions({
   const allConvertedPlans = useMemo(() => {
     const converted: Array<{
       dateKey: string;
-      plan: CalendarPlan;
+      plan: CalendarEvent;
       start: Date;
       end: Date;
       id: string;
@@ -104,7 +104,7 @@ export function useMultiDayPlanPositions({
   const planPositions = useMemo((): PlanPosition[] => {
     return planLayouts.map((layout: PlanLayout, index: number) => {
       const originalPlan = allConvertedPlans.find((p) => p.id === layout.plan.id);
-      const plan = originalPlan?.plan || (layout.plan as CalendarPlan);
+      const plan = originalPlan?.plan || (layout.plan as CalendarEvent);
 
       const startDate = new Date(layout.plan.start);
       const endDate = new Date(layout.plan.end);

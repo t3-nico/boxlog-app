@@ -86,7 +86,7 @@ Dayoptのアクセシビリティ対応を支援するスキル。WCAG 2.1 AA準
 
 ```typescript
 // ✅ Dayoptのカレンダーキーボード操作（参考）
-// src/features/calendar/hooks/useCalendarPlanKeyboard.ts
+// src/features/calendar/hooks/useCalendarEventKeyboard.ts
 
 // Escape: Inspectorを閉じる
 // Delete/Backspace: 選択中プラン削除
@@ -208,7 +208,7 @@ const prefersReducedMotion = useReducedMotion();
 ## 関連ファイル
 
 - `src/hooks/useReducedMotion.ts` - モーション設定
-- `src/features/calendar/hooks/useCalendarPlanKeyboard.ts` - キーボードショートカット
+- `src/features/calendar/hooks/useCalendarEventKeyboard.ts` - キーボードショートカット
 - `src/components/debug/AxeAccessibilityChecker.tsx` - a11yチェッカー
 - Storybook Tokens/Colors - カラーコントラスト定義
 

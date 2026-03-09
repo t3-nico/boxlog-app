@@ -2,7 +2,7 @@
  * CalendarDragSelection 型定義
  */
 
-import type { CalendarPlan } from '../../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../../types/calendar.types';
 
 export interface TimeRange {
   startHour: number;
@@ -30,7 +30,7 @@ export interface CalendarDragSelectionProps {
   /** ドラッグ選択を無効にする */
   disabled?: boolean | undefined;
   /** 重複チェック用のプラン一覧 */
-  plans?: CalendarPlan[] | undefined;
+  plans?: CalendarEvent[] | undefined;
 }
 
 /** ドラッグ状態 */

@@ -10,7 +10,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useUpdateEntityTagsInCache } from '@/hooks/useUpdateEntityTagsInCache';
 
 import type { EntryWithTags } from '@/core/types/entry';
-import { usePlanTags } from '@/hooks/usePlanTags';
+import { useEntryTags } from '@/hooks/useEntryTags';
 
 interface UseInspectorTagStateProps {
   planId: string | null;
@@ -19,7 +19,7 @@ interface UseInspectorTagStateProps {
 
 export function useInspectorTagState({ planId, planData }: UseInspectorTagStateProps) {
   const updateTagsInCache = useUpdateEntityTagsInCache('entries');
-  const { setPlanTags } = usePlanTags();
+  const { setEntryTags } = useEntryTags();
 
   // Tags state（単一タグ）
   const [selectedTagId, setSelectedTagId] = useState<string | null>(null);
@@ -81,10 +81,10 @@ export function useInspectorTagState({ planId, planData }: UseInspectorTagStateP
       if (planId) {
         updateTagsInCache(planId, newTagId ? [newTagId] : []);
         // 即座にDB保存（title/descriptionと同じパターン）
-        setPlanTags(planId, newTagId ? [newTagId] : []);
+        setEntryTags(planId, newTagId ? [newTagId] : []);
       }
     },
-    [planId, updateTagsInCache, setPlanTags],
+    [planId, updateTagsInCache, setEntryTags],
   );
 
   return {
@@ -93,7 +93,7 @@ export function useInspectorTagState({ planId, planData }: UseInspectorTagStateP
     originalTagIdRef,
     hasTagChanges,
     handleTagChange,
-    setPlanTags,
+    setEntryTags,
     updateTagsInCache,
   };
 }
