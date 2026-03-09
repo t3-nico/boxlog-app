@@ -3,7 +3,7 @@
  * Recordの変更を検出して、適切なアクティビティを記録する
  */
 
-import type { ActivityActionType } from '@/schemas/records/activity';
+import type { ActivityActionType } from '@/schemas/plans/activity';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 interface RecordChanges {
