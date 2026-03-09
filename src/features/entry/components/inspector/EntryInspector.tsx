@@ -37,7 +37,6 @@ export function EntryInspector() {
   const isOpen = useEntryInspectorStore((state) => state.isOpen);
   const planId = useEntryInspectorStore((state) => state.entryId);
   const closeInspector = useEntryInspectorStore((state) => state.closeInspector);
-  const clearPendingChanges = useEntryInspectorStore((state) => state.clearPendingChanges);
 
   const { data: planData, isLoading } = useEntry(planId!, {
     includeTags: true,
@@ -46,22 +45,12 @@ export function EntryInspector() {
   const plan: EntryWithTags | null = (planData ?? null) as EntryWithTags | null;
 
   // 繰り返しダイアログが開いている間はInspectorを閉じない
-  // ×ボタン/ESC/外側クリック = saveAndClose（Google Calendar方式）
-  // 注意: closeWithSave はストアからgetState()で取得する（購読しない）。
-  // 購読するとEntryInspectorContent→setCloseWithSave→EntryInspector再レンダー→
-  // EntryInspectorContent再レンダー…の無限ループが発生する。
+  // 全フィールドはデバウンス即時保存のため、閉じる = ただの closeInspector()
   const handleClose = useCallback(() => {
     const modal = useModalStore.getState().modal;
     if (modal?.type === 'recurringEdit') return;
-
-    const closeWithSave = useEntryInspectorStore.getState().closeWithSave;
-    if (closeWithSave) {
-      closeWithSave();
-    } else {
-      clearPendingChanges();
-      closeInspector();
-    }
-  }, [closeInspector, clearPendingChanges]);
+    closeInspector();
+  }, [closeInspector]);
 
   // ナビゲーション
   const { hasPrevious, hasNext, goToPrevious, goToNext } = useInspectorNavigation(planId);

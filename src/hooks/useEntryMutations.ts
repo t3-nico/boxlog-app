@@ -280,13 +280,9 @@ export function useEntryMutations() {
         utils.entries.getById.setData({ id: context.id }, context.previousEntry);
       }
     },
-    onSettled: async (_data, _error, variables) => {
+    onSettled: async () => {
       setIsMutating(false);
-
-      // start_time 変更時はキャッシュを無効化して正確な日付フィルタ結果を保証
-      if (variables?.data.start_time !== undefined) {
-        void utils.entries.list.invalidate();
-      }
+      void utils.entries.list.invalidate();
       void utils.entries.getCumulativeTime.invalidate();
     },
   });

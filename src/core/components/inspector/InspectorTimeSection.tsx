@@ -3,7 +3,7 @@
 /**
  * Inspector 時間セクション（組み立て役）
  *
- * DateNavigatorRow + TimeRow × 2 + 差分バッジ + TimeConflictAlert を
+ * DateNavigatorRow + TimeRow × 2 + 差分バッジを
  * 3パターン（upcoming+planned, past+planned, past+unplanned）に応じて組み立てる。
  */
 
@@ -23,7 +23,6 @@ import { cn } from '@/lib/utils';
 import { DateNavigatorRow } from './DateNavigatorRow';
 import { FulfillmentRow } from './FulfillmentRow';
 import { InlineNoteSection } from './InlineNoteSection';
-import { TimeConflictAlert } from './TimeConflictAlert';
 import { TimeProgressBar } from './TimeProgressBar';
 import { TimeRow, TimeRowPlaceholder } from './TimeRow';
 
@@ -244,9 +243,6 @@ export function InspectorTimeSection({
           disabled={disabled}
         />
       )}
-
-      {/* 時間重複エラー */}
-      {timeConflictError && <TimeConflictAlert message={t('calendar.toast.conflictDescription')} />}
     </div>
   );
 }

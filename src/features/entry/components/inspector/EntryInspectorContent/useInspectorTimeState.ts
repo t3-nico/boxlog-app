@@ -23,7 +23,6 @@ interface UseInspectorTimeStateProps {
       value?: string | undefined,
     ) => void;
   };
-  addPendingChange: (change: Record<string, string | number | null | undefined>) => void;
   updatePlan: {
     mutate: (args: {
       id: string;
@@ -36,7 +35,6 @@ export function useInspectorTimeState({
   plan,
   planId,
   recurringEdit,
-  addPendingChange,
   updatePlan,
 }: UseInspectorTimeStateProps) {
   // ユーザーのタイムゾーン設定
@@ -58,6 +56,42 @@ export function useInspectorTimeState({
   // 記録時間（actual）— null = 予定と同じ
   const [actualStartTime, setActualStartTime] = useState<string | null>(null);
   const [actualEndTime, setActualEndTime] = useState<string | null>(null);
+
+  // デバウンス即時保存（予定時間用: 500ms後にmutate）
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingFieldsRef = useRef<Record<string, string | number | null | undefined>>({});
+
+  const debouncedSave = useCallback(
+    (fields: Record<string, string | number | null | undefined>) => {
+      if (!planId) return;
+
+      // フィールドをマージ（start_time + end_time が短時間に両方変わる場合に対応）
+      pendingFieldsRef.current = { ...pendingFieldsRef.current, ...fields };
+
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = setTimeout(() => {
+        const data = pendingFieldsRef.current;
+        pendingFieldsRef.current = {};
+        updatePlan.mutate({ id: planId, data });
+      }, 500);
+    },
+    [planId, updatePlan],
+  );
+
+  // デバウンスタイマーのクリーンアップ
+  useEffect(() => {
+    return () => {
+      // アンマウント時に未送信の変更をフラッシュ
+      if (saveTimerRef.current) {
+        clearTimeout(saveTimerRef.current);
+        const data = pendingFieldsRef.current;
+        if (planId && Object.keys(data).length > 0) {
+          pendingFieldsRef.current = {};
+          updatePlan.mutate({ id: planId, data });
+        }
+      }
+    };
+  }, [planId, updatePlan]);
 
   // Initialize state from plan data
   useEffect(() => {
@@ -173,28 +207,27 @@ export function useInspectorTimeState({
     (date: Date | undefined) => {
       setScheduleDate(date);
 
-      // ローカルにバッファリング（Google Calendar準拠: 閉じる時に保存）
       if (date && startTime && endTime) {
         const [startHours, startMinutes] = startTime.split(':').map(Number);
         const [endHours, endMinutes] = endTime.split(':').map(Number);
 
-        addPendingChange({
+        debouncedSave({
           start_time: localTimeToUTCISO(date, startHours ?? 0, startMinutes ?? 0, timezone),
           end_time: localTimeToUTCISO(date, endHours ?? 0, endMinutes ?? 0, timezone),
         });
       } else if (date && startTime) {
         const [hours, minutes] = startTime.split(':').map(Number);
-        addPendingChange({
+        debouncedSave({
           start_time: localTimeToUTCISO(date, hours ?? 0, minutes ?? 0, timezone),
         });
       } else if (date && endTime) {
         const [hours, minutes] = endTime.split(':').map(Number);
-        addPendingChange({
+        debouncedSave({
           end_time: localTimeToUTCISO(date, hours ?? 0, minutes ?? 0, timezone),
         });
       }
     },
-    [startTime, endTime, addPendingChange, timezone],
+    [startTime, endTime, debouncedSave, timezone],
   );
 
   const handleStartTimeChange = useCallback(
@@ -213,12 +246,12 @@ export function useInspectorTimeState({
         return;
       }
 
-      // 通常モード → ローカルにバッファリング
-      if (isoValue) {
-        addPendingChange({ start_time: isoValue });
+      // 通常モード → デバウンス即時保存（重複時はブロック）
+      if (isoValue && !timeConflictError) {
+        debouncedSave({ start_time: isoValue });
       }
     },
-    [scheduleDate, recurringEdit, addPendingChange, timezone],
+    [scheduleDate, recurringEdit, debouncedSave, timezone, timeConflictError],
   );
 
   const handleEndTimeChange = useCallback(
@@ -237,12 +270,12 @@ export function useInspectorTimeState({
         return;
       }
 
-      // 通常モード → ローカルにバッファリング
-      if (isoValue) {
-        addPendingChange({ end_time: isoValue });
+      // 通常モード → デバウンス即時保存（重複時はブロック）
+      if (isoValue && !timeConflictError) {
+        debouncedSave({ end_time: isoValue });
       }
     },
-    [scheduleDate, recurringEdit, addPendingChange, timezone],
+    [scheduleDate, recurringEdit, debouncedSave, timezone, timeConflictError],
   );
 
   // Reminder handler

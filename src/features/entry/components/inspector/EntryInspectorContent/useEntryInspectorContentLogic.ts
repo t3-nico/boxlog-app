@@ -5,10 +5,10 @@
  *
  * 責務を3つのサブフックに分割:
  * - useInspectorTagState: タグ状態管理
- * - useInspectorTimeState: 時間・スケジュール状態管理
- * - useInspectorSaveClose: 保存・閉じるロジック
+ * - useInspectorTimeState: 時間・スケジュール状態管理（デバウンス即時保存）
+ * - useInspectorSaveClose: 閉じるロジック（タグ保存のみ）
  *
- * ドラフトモードなし（即DB保存 + edit mode）。
+ * 全フィールドはデバウンス即時保存。pendingChangesバッファなし。
  */
 
 import { useCallback, useEffect, useRef } from 'react';
@@ -31,23 +31,16 @@ import { useInspectorSaveClose } from './useInspectorSaveClose';
 import { useInspectorTagState } from './useInspectorTagState';
 import { useInspectorTimeState } from './useInspectorTimeState';
 
-// スコープダイアログを表示するフィールド（日付・時間）
-// title/descriptionは即座に保存（Googleカレンダー準拠）
+// 繰り返しインスタンスでスコープダイアログを表示するフィールド
 const SCOPE_DIALOG_FIELDS = ['start_time', 'end_time'] as const;
 
-// 即座にDB保存するフィールド（title/description）
-const IMMEDIATE_SAVE_FIELDS = ['title', 'description'] as const;
-
 export function useEntryInspectorContentLogic() {
-  // 自動保存デバウンス用タイマー（Activityノイズ防止）
+  // title/description のデバウンス保存用タイマー
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const entryId = useEntryInspectorStore((state) => state.entryId);
   const instanceDate = useEntryInspectorStore((state) => state.instanceDate);
   const closeInspector = useEntryInspectorStore((state) => state.closeInspector);
-  const addPendingChange = useEntryInspectorStore((state) => state.addPendingChange);
-  const clearPendingChanges = useEntryInspectorStore((state) => state.clearPendingChanges);
-  const pendingChanges = useEntryInspectorStore((state) => state.pendingChanges);
 
   const getCache = useEntryCacheStore((state) => state.getCache);
   const { applyDelete } = useRecurringScopeMutations();
@@ -82,18 +75,6 @@ export function useEntryInspectorContentLogic() {
       }
     };
   }, []);
-
-  // 未保存の変更がある場合、beforeunload警告を表示
-  useEffect(() => {
-    if (!pendingChanges) return;
-
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      e.preventDefault();
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [pendingChanges]);
 
   const { data: planData } = useEntry(entryId!, {
     includeTags: true,
@@ -146,42 +127,26 @@ export function useEntryInspectorContentLogic() {
     plan,
     planId: entryId,
     recurringEdit,
-    addPendingChange,
     updatePlan,
   });
 
-  // --- サブフック: 保存・閉じるロジック ---
+  // --- サブフック: 閉じるロジック ---
   const { saveAndClose, cancelAndClose, hasPendingChanges } = useInspectorSaveClose({
     planId: entryId,
     hasTagChanges,
     selectedTagIdRef,
     originalTagIdRef,
     setEntryTags: setEntryTags as unknown as (planId: string, tagIds: string[]) => Promise<void>,
-    updatePlan,
     closeInspector,
-    pendingChanges: pendingChanges as Record<string, string | number | null | undefined> | null,
-    clearPendingChanges,
     timeConflictError,
   });
 
-  // 繰り返しインスタンス対応のautoSave
+  // デバウンス即時保存（title/description用 + 繰り返しインスタンスのスコープダイアログ）
   const autoSave = useCallback(
-    async (field: string, value: string | undefined) => {
+    (field: string, value: string | undefined) => {
       const currentEntryId = useEntryInspectorStore.getState().entryId;
 
-      if (
-        currentEntryId &&
-        IMMEDIATE_SAVE_FIELDS.includes(field as (typeof IMMEDIATE_SAVE_FIELDS)[number])
-      ) {
-        if (autoSaveTimerRef.current) {
-          clearTimeout(autoSaveTimerRef.current);
-        }
-        autoSaveTimerRef.current = setTimeout(() => {
-          updatePlan.mutate({ id: currentEntryId, data: { [field]: value } });
-        }, 500);
-        return;
-      }
-
+      // 繰り返しインスタンスの時間フィールド → スコープダイアログ
       if (
         recurringEdit.isRecurringInstance &&
         SCOPE_DIALOG_FIELDS.includes(field as (typeof SCOPE_DIALOG_FIELDS)[number])
@@ -192,9 +157,18 @@ export function useEntryInspectorContentLogic() {
         );
         return;
       }
-      addPendingChange({ [field]: value });
+
+      // 全フィールド共通: デバウンス500msで即時保存
+      if (currentEntryId) {
+        if (autoSaveTimerRef.current) {
+          clearTimeout(autoSaveTimerRef.current);
+        }
+        autoSaveTimerRef.current = setTimeout(() => {
+          updatePlan.mutate({ id: currentEntryId, data: { [field]: value } });
+        }, 500);
+      }
     },
-    [addPendingChange, recurringEdit, updatePlan],
+    [recurringEdit, updatePlan],
   );
 
   // 繰り返しプラン削除確認ハンドラー

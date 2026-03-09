@@ -14,6 +14,7 @@ import {
   InspectorDetailsLayout,
   InspectorTagRow,
   InspectorTimeSection,
+  TimeConflictAlert,
 } from '@/core/components/inspector';
 import { useTranslations } from 'next-intl';
 
@@ -99,6 +100,11 @@ export const EntryInspectorDetailsTab = memo(function EntryInspectorDetailsTab({
     <InspectorDetailsLayout
       tagRow={
         <InspectorTagRow tagId={selectedTagId} onTagChange={onTagChange} onDelete={onDelete} />
+      }
+      alert={
+        timeConflictError ? (
+          <TimeConflictAlert message={t('calendar.toast.conflictDescription')} />
+        ) : undefined
       }
       schedule={
         <InspectorTimeSection

@@ -27,7 +27,6 @@ export { useEntryCacheStore } from '@/stores/useEntryCacheStore';
 export { useEntryClipboardStore } from '@/stores/useEntryClipboardStore';
 export type { ClipboardEntry, LastClickedPosition } from '@/stores/useEntryClipboardStore';
 export { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
-export type { PendingChanges } from '@/stores/useEntryInspectorStore';
 
 // =============================================================================
 // Hooks
