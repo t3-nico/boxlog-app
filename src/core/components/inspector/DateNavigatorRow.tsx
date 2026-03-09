@@ -17,6 +17,8 @@ interface DateNavigatorRowProps {
   selectedDate: Date | undefined;
   onDateChange: (date: Date | undefined) => void;
   disabled?: boolean;
+  /** 選択可能な最小日付 */
+  minDate?: Date | undefined;
 }
 
 export function DateNavigatorRow({
@@ -24,6 +26,8 @@ export function DateNavigatorRow({
   icon: Icon,
   selectedDate,
   onDateChange,
+  disabled = false,
+  minDate,
 }: DateNavigatorRowProps) {
   const t = useTranslations();
 
@@ -38,6 +42,8 @@ export function DateNavigatorRow({
           selectedDate={selectedDate}
           onDateChange={onDateChange}
           placeholder={t('common.schedule.datePlaceholder')}
+          disabled={disabled}
+          minDate={minDate}
         />
       </div>
     </div>

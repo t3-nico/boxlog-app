@@ -69,6 +69,10 @@ export function useDragHandler({
     ) => {
       if (e.button !== 0) return;
 
+      // 過去ブロックのドラッグを防御的にブロック（PlanCard側でも制御済み）
+      const event = events.find((ev) => ev.id === eventId);
+      if (event?.entryState === 'past') return;
+
       e.preventDefault();
       e.stopPropagation();
 
@@ -125,7 +129,7 @@ export function useDragHandler({
         isOverlapping: false,
       });
     },
-    [viewMode, displayDates, dragDataRef, setDragState],
+    [events, viewMode, displayDates, dragDataRef, setDragState],
   );
 
   // ドラッグ処理
@@ -176,14 +180,15 @@ export function useDragHandler({
 
       updateTimeDisplay(dragData.dragElement || null, previewStartTime, previewEndTime, timezone);
 
+      // 未来→過去への移動を禁止（ブロック全体が過去になるドロップ先は不可）
+      const now = new Date();
+      const wouldBePast = previewEndTime <= now;
+
       // クライアント側で重複チェック（全イベントを使用して別日への移動もチェック）
       const eventsToCheck = allEventsForOverlapCheck ?? events;
-      const isOverlapping = checkClientSideOverlap(
-        eventsToCheck,
-        dragData.eventId,
-        previewStartTime,
-        previewEndTime,
-      );
+      const isOverlapping =
+        wouldBePast ||
+        checkClientSideOverlap(eventsToCheck, dragData.eventId, previewStartTime, previewEndTime);
 
       // ゴースト要素のスタイルを重複状態に応じて更新
       updateDragElementOverlapStyle(dragData.dragElement || null, isOverlapping);
@@ -224,6 +229,8 @@ export function useDragHandler({
           hourHeight,
         );
         const newEndTime = new Date(newStartTime.getTime() + durationMs);
+        // 未来→過去への移動を拒否
+        if (newEndTime <= new Date()) return;
         eventUpdateHandler(eventId, { startTime: newStartTime, endTime: newEndTime });
       }
     },
@@ -331,6 +338,11 @@ export function useDragHandler({
       }
 
       const newEndTime = new Date(newStartTime.getTime() + durationMs);
+
+      // 未来→過去への移動を拒否（ブロック全体が過去になるドロップ先は不可）
+      if (newEndTime <= new Date()) {
+        return false;
+      }
 
       if (newEndTime <= newStartTime) {
         newEndTime.setTime(newStartTime.getTime() + 60 * 60 * 1000);

@@ -21,6 +21,10 @@ interface DatePickerPopoverProps {
   popoverZIndex?: string;
   /** アイコンを表示するか（デフォルト: false） */
   showIcon?: boolean;
+  /** 無効化 */
+  disabled?: boolean;
+  /** 選択可能な最小日付 */
+  minDate?: Date | undefined;
 }
 
 /**
@@ -37,6 +41,8 @@ export function DatePickerPopover({
   placeholder,
   popoverZIndex = 'z-overlay-popover',
   showIcon = false,
+  disabled = false,
+  minDate,
 }: DatePickerPopoverProps) {
   const t = useTranslations();
   const { formatDate } = useDateFormat();
@@ -48,7 +54,8 @@ export function DatePickerPopover({
       popoverTrigger={
         <button
           type="button"
-          className="text-muted-foreground data-[state=selected]:text-foreground hover:bg-state-hover focus-visible:ring-ring inline-flex h-8 items-center gap-2 rounded-lg px-2 text-sm tabular-nums transition-colors focus-visible:ring-2 focus-visible:outline-none"
+          disabled={disabled}
+          className="text-muted-foreground data-[state=selected]:text-foreground hover:bg-state-hover focus-visible:ring-ring inline-flex h-8 items-center gap-2 rounded-lg px-2 text-sm tabular-nums transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
           data-state={selectedDate ? 'selected' : undefined}
           aria-label={
             selectedDate
@@ -64,6 +71,7 @@ export function DatePickerPopover({
       onDateSelect={onDateChange}
       popoverAlign="start"
       popoverZIndex={popoverZIndex}
+      minDate={minDate}
     />
   );
 }

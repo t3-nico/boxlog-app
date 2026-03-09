@@ -5,7 +5,7 @@
  * ステータスを手動管理せず、時間位置から自動判定する。
  * - upcoming: 未来の予定（リマインダー有効、編集自由）
  * - active: 現在進行中（時間調整可）
- * - past: 過去の記録（充実度入力可、自動確定）
+ * - past: 過去の記録（予定ロック、記録のみ編集可、移動・日付変更不可）
  */
 
 import type { EntryOrigin } from '@/core/types/entry';
@@ -67,6 +67,9 @@ export function isTimePast(time: string | Date, now?: Date): boolean {
  * unplanned エントリが未来に移動された場合のみ planned に遷移し、
  * 記録系フィールド（actual_start/end, fulfillment_score）をクリアする。
  * planned エントリは移動先に関わらず planned のまま。
+ *
+ * NOTE: 過去ブロックはドラッグ不可のため、past→past の遷移パスは到達不能。
+ * 関数は型安全性のため残す。
  */
 export function computeOriginTransition(
   currentOrigin: EntryOrigin,

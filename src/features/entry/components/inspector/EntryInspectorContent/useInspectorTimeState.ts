@@ -8,6 +8,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { localTimeToUTCISO, parseISOToUserTimezone } from '@/lib/date-utils';
+import { isEntryPast } from '@/lib/entry-status';
 import { api } from '@/lib/trpc';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
@@ -205,6 +206,9 @@ export function useInspectorTimeState({
   // スケジュール日変更ハンドラー（start_time/end_timeの日付部分）
   const handleScheduleDateChange = useCallback(
     (date: Date | undefined) => {
+      // 過去ブロックの予定変更をブロック（UI disabled と二重防御）
+      if (plan && isEntryPast(plan)) return;
+
       setScheduleDate(date);
 
       if (date && startTime && endTime) {
@@ -227,11 +231,14 @@ export function useInspectorTimeState({
         });
       }
     },
-    [startTime, endTime, debouncedSave, timezone],
+    [plan, startTime, endTime, debouncedSave, timezone],
   );
 
   const handleStartTimeChange = useCallback(
     (time: string) => {
+      // 過去ブロックの予定変更をブロック（UI disabled と二重防御）
+      if (plan && isEntryPast(plan)) return;
+
       const [hours, minutes] = time ? time.split(':').map(Number) : [0, 0];
       setStartTime(time);
 
@@ -251,11 +258,14 @@ export function useInspectorTimeState({
         debouncedSave({ start_time: isoValue });
       }
     },
-    [scheduleDate, recurringEdit, debouncedSave, timezone, timeConflictError],
+    [plan, scheduleDate, recurringEdit, debouncedSave, timezone, timeConflictError],
   );
 
   const handleEndTimeChange = useCallback(
     (time: string) => {
+      // 過去ブロックの予定変更をブロック（UI disabled と二重防御）
+      if (plan && isEntryPast(plan)) return;
+
       const [hours, minutes] = time ? time.split(':').map(Number) : [0, 0];
       setEndTime(time);
 
@@ -275,7 +285,7 @@ export function useInspectorTimeState({
         debouncedSave({ end_time: isoValue });
       }
     },
-    [scheduleDate, recurringEdit, debouncedSave, timezone, timeConflictError],
+    [plan, scheduleDate, recurringEdit, debouncedSave, timezone, timeConflictError],
   );
 
   // Reminder handler

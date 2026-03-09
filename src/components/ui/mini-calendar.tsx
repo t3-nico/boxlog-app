@@ -11,8 +11,10 @@ import {
   format,
   getMonth,
   getYear,
+  isBefore,
   isSameDay,
   isSameMonth,
+  startOfDay,
   startOfMonth,
   startOfWeek,
   subMonths,
@@ -50,6 +52,8 @@ export interface MiniCalendarProps {
   popoverZIndex?: string | undefined;
   /** 表示期間のハイライト範囲（WeekViewなどで現在表示中の期間をハイライト） */
   displayRange?: { start: Date; end: Date } | undefined;
+  /** 選択可能な最小日付（これより前の日付はグレーアウトして選択不可） */
+  minDate?: Date | undefined;
 }
 
 // 週の開始日に応じた曜日配列を取得する関数
@@ -123,6 +127,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
     allowClear = false,
     popoverZIndex,
     displayRange: _displayRange,
+    minDate,
   }) => {
     const locale = useLocale();
     const weekStartsOn = useCalendarSettingsStore((state) => state.weekStartsOn);
@@ -245,10 +250,11 @@ export const MiniCalendar = memo<MiniCalendarProps>(
         const isToday = isSameDay(date, today);
         const isSelected = selectedDate && isSameDay(date, selectedDate);
         const isCurrentMonth = isSameMonth(date, viewMonth);
+        const isDisabled = minDate ? isBefore(startOfDay(date), startOfDay(minDate)) : false;
 
-        return { isToday, isSelected, isCurrentMonth };
+        return { isToday, isSelected, isCurrentMonth, isDisabled };
       },
-      [selectedDate, viewMonth],
+      [selectedDate, viewMonth, minDate],
     );
 
     // ハイドレーション対策
@@ -337,24 +343,32 @@ export const MiniCalendar = memo<MiniCalendarProps>(
           {weeks.map((week, weekIndex) => (
             <div key={weekIndex} className="grid grid-cols-7">
               {week.map((date) => {
-                const { isToday, isSelected, isCurrentMonth } = getDayState(date);
+                const { isToday, isSelected, isCurrentMonth, isDisabled } = getDayState(date);
 
                 return (
                   <button
                     key={date.toISOString()}
                     type="button"
-                    onClick={() => handleDateClick(date)}
+                    onClick={() => !isDisabled && handleDateClick(date)}
+                    disabled={isDisabled}
                     className={cn(
                       // ベーススタイル - 高さ32px、幅はグリッドに委ねる
                       'flex h-8 items-center justify-center text-sm transition-colors',
+                      // 無効化（minDateより前）
+                      isDisabled && 'pointer-events-none opacity-30',
                       // 現在の月以外は薄く
-                      !isCurrentMonth && 'text-muted-foreground',
+                      !isCurrentMonth && !isDisabled && 'text-muted-foreground',
                       // ホバー（今日以外）
-                      !isToday && 'hover:bg-state-hover hover:rounded-lg',
+                      !isToday && !isDisabled && 'hover:bg-state-hover hover:rounded-lg',
                       // 今日: primary（ホバーの影響を受けない）
-                      isToday && 'bg-primary text-primary-foreground rounded-lg font-bold',
+                      isToday &&
+                        !isDisabled &&
+                        'bg-primary text-primary-foreground rounded-lg font-bold',
                       // 選択中（今日以外）
-                      isSelected && !isToday && 'bg-state-hover text-foreground rounded-lg',
+                      isSelected &&
+                        !isToday &&
+                        !isDisabled &&
+                        'bg-state-hover text-foreground rounded-lg',
                     )}
                   >
                     {format(date, 'd')}

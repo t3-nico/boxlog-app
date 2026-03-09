@@ -208,6 +208,10 @@ export function useResizeHandler({
     ) => {
       if (e.button !== 0) return;
 
+      // 過去ブロックのリサイズを防御的にブロック（PlanCard側でも制御済み）
+      const event = events.find((ev) => ev.id === eventId);
+      if (event?.entryState === 'past') return;
+
       const startPosition = { x: e.clientX, y: e.clientY };
 
       // リサイズ対象の要素を取得（視覚的フィードバック用）
@@ -244,7 +248,7 @@ export function useResizeHandler({
         isOverlapping: false,
       });
     },
-    [dragDataRef, setDragState],
+    [events, dragDataRef, setDragState],
   );
 
   return {
