@@ -16,7 +16,6 @@ interface UseSelectionEventsOptions {
   date: Date;
   disabled: boolean;
   defaultDuration: number;
-  hourHeight: number;
   containerRef: React.RefObject<HTMLDivElement | null>;
   onTimeRangeSelect?: ((selection: DateTimeSelection) => void) | undefined;
   onDoubleClick?: ((selection: DateTimeSelection) => void) | undefined;
@@ -38,7 +37,6 @@ export function useSelectionEvents({
   date,
   disabled,
   defaultDuration,
-  hourHeight,
   containerRef,
   onTimeRangeSelect,
   onDoubleClick: onDoubleClickProp,
@@ -53,6 +51,8 @@ export function useSelectionEvents({
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const touchStartPos = useRef<{ x: number; y: number } | null>(null);
   const touchStartTime = useRef<number | null>(null);
+  /** ドラッグ距離計算用の実際のマウスダウン/タッチ位置（コンテナ相対px） */
+  const dragStartPixelY = useRef<number | null>(null);
 
   // State
   const [isSelecting, setIsSelecting] = useState(false);
@@ -84,13 +84,14 @@ export function useSelectionEvents({
     setIsOverlapping(false);
     isDragging.current = false;
     lastSelectionRef.current = null;
+    dragStartPixelY.current = null;
     clearLongPressTimer();
   }, [clearLongPressTimer]);
 
-  // Handler: ダブルクリック
+  // Handler: ダブルクリック（左クリックのみ）
   const handleDoubleClick = useCallback(
     (e: React.MouseEvent) => {
-      if (disabled) return;
+      if (disabled || e.button !== 0) return;
 
       const target = e.target as HTMLElement;
       const eventBlock =
@@ -125,9 +126,12 @@ export function useSelectionEvents({
     [pixelsToTime, disabled, onDoubleClickProp, onTimeRangeSelect, date, defaultDuration],
   );
 
-  // Handler: マウスダウン
+  // Handler: マウスダウン（左クリックのみ）
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
+      // 右クリック等は無視（左クリックのみドラッグ選択を開始）
+      if (e.button !== 0) return;
+
       if (disabled) {
         e.preventDefault();
         e.stopPropagation();
@@ -144,6 +148,7 @@ export function useSelectionEvents({
 
       const rect = e.currentTarget.getBoundingClientRect();
       const y = e.clientY - rect.top;
+      dragStartPixelY.current = y;
 
       const startTime = pixelsToTime(y);
 
@@ -182,6 +187,7 @@ export function useSelectionEvents({
 
       const rect = e.currentTarget.getBoundingClientRect();
       const y = touch.clientY - rect.top;
+      dragStartPixelY.current = y;
       const startTime = pixelsToTime(y);
 
       clearLongPressTimer();
@@ -214,8 +220,9 @@ export function useSelectionEvents({
       const y = e.clientY - rect.top;
       const currentTime = pixelsToTime(y);
 
-      const startY = (selectionStart.hour * 60 + selectionStart.minute) * (hourHeight / 60);
-      const deltaY = Math.abs(y - startY);
+      // 実際のマウスダウン位置からの距離でドラッグ判定（グリッドスナップ位置ではなく）
+      const rawStartY = dragStartPixelY.current ?? y;
+      const deltaY = Math.abs(y - rawStartY);
       if (deltaY > DRAG_CONSTANTS.MIN_DRAG_DISTANCE) {
         isDragging.current = true;
         setShowSelectionPreview(true);
@@ -299,8 +306,9 @@ export function useSelectionEvents({
       const y = touch.clientY - rect.top;
       const currentTime = pixelsToTime(y);
 
-      const startY = (selectionStart.hour * 60 + selectionStart.minute) * (hourHeight / 60);
-      const deltaY = Math.abs(y - startY);
+      // 実際のタッチ開始位置からの距離でドラッグ判定（グリッドスナップ位置ではなく）
+      const rawStartY = dragStartPixelY.current ?? y;
+      const deltaY = Math.abs(y - rawStartY);
       if (deltaY > DRAG_CONSTANTS.MIN_DRAG_DISTANCE) {
         isDragging.current = true;
         setShowSelectionPreview(true);
@@ -451,7 +459,6 @@ export function useSelectionEvents({
     tap,
     checkOverlap,
     isOverlapping,
-    hourHeight,
     containerRef,
   ]);
 

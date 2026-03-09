@@ -120,7 +120,6 @@ export function useDragSelection({
     date,
     disabled,
     defaultDuration,
-    hourHeight,
     containerRef,
     onTimeRangeSelect,
     onDoubleClick: onDoubleClickProp,
