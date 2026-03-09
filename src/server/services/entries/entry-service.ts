@@ -20,6 +20,7 @@ import type {
   ListEntriesOptions,
   ServiceSupabaseClient,
   UpdateEntryOptions,
+  UpdateEntryResult,
 } from './types';
 
 /**
@@ -229,8 +230,11 @@ export class EntryService {
 
   /**
    * エントリを更新
+   *
+   * actual_start_time / actual_end_time の変更時は、隣接エントリの記録時間を
+   * 自動調整（auto-shrink）し、adjustedEntries に含めて返す。
    */
-  async update(options: UpdateEntryOptions): Promise<EntryRow> {
+  async update(options: UpdateEntryOptions): Promise<UpdateEntryResult> {
     const { userId, entryId, input, preventOverlappingEntries } = options;
 
     // 既存データを取得
@@ -291,7 +295,25 @@ export class EntryService {
       await this.trackChanges(entryId, userId, oldData, data);
     }
 
-    return data;
+    // actual_* 変更時: 隣接エントリの記録時間を自動調整
+    const typedInput = input as {
+      actual_start_time?: string | null;
+      actual_end_time?: string | null;
+    };
+    const hasActualTimeChange =
+      typedInput.actual_start_time !== undefined || typedInput.actual_end_time !== undefined;
+
+    if (hasActualTimeChange) {
+      const adjustedEntries = await this.autoShrinkNeighbors({
+        userId,
+        entryId,
+        actualStart: data.actual_start_time ?? data.start_time,
+        actualEnd: data.actual_end_time ?? data.end_time,
+      });
+      return { ...data, adjustedEntries };
+    }
+
+    return { ...data, adjustedEntries: [] };
   }
 
   /**
@@ -333,6 +355,76 @@ export class EntryService {
   // ========================================
   // プライベートメソッド
   // ========================================
+
+  /**
+   * 隣接エントリの記録時間を自動調整（auto-shrink）
+   *
+   * 記録時間は「事実の修正」なので、変更されたエントリ側が正として
+   * 隣接エントリの記録時間を引き戻す/押し出す。
+   *
+   * - 左隣（開始が自分より前、終了が自分の開始に食い込む）→ actual_end_time を引き戻す
+   * - 右隣（開始が自分の終了に食い込む、終了が自分より後）→ actual_start_time を押し出す
+   */
+  private async autoShrinkNeighbors(options: {
+    userId: string;
+    entryId: string;
+    actualStart: string | null;
+    actualEnd: string | null;
+  }): Promise<EntryRow[]> {
+    const { userId, entryId, actualStart, actualEnd } = options;
+    if (!actualStart || !actualEnd) return [];
+
+    const myStart = new Date(actualStart);
+    const myEnd = new Date(actualEnd);
+    if (isNaN(myStart.getTime()) || isNaN(myEnd.getTime())) return [];
+
+    // 同ユーザーの他エントリで時間データを持つものを取得
+    const { data: entries, error } = await this.supabase
+      .from('entries')
+      .select('id, start_time, end_time, actual_start_time, actual_end_time')
+      .eq('user_id', userId)
+      .neq('id', entryId)
+      .not('start_time', 'is', null);
+
+    if (error || !entries) return [];
+
+    const adjustments: Array<{ id: string; data: Record<string, string> }> = [];
+
+    for (const entry of entries) {
+      const nStart = new Date(entry.actual_start_time ?? entry.start_time ?? '');
+      const nEnd = new Date(entry.actual_end_time ?? entry.end_time ?? '');
+      if (isNaN(nStart.getTime()) || isNaN(nEnd.getTime())) continue;
+
+      // 左隣: 自分より前に始まり、終了が自分の開始に食い込む → 終了を引き戻す
+      if (nStart < myStart && nEnd > myStart && nEnd <= myEnd) {
+        adjustments.push({ id: entry.id, data: { actual_end_time: actualStart } });
+      }
+
+      // 右隣: 自分の範囲内に始まり、自分より後に終わる → 開始を押し出す
+      if (nStart >= myStart && nStart < myEnd && nEnd > myEnd) {
+        adjustments.push({ id: entry.id, data: { actual_start_time: actualEnd } });
+      }
+    }
+
+    if (adjustments.length === 0) return [];
+
+    const updatedEntries: EntryRow[] = [];
+    for (const adj of adjustments) {
+      const { data, error: updateError } = await this.supabase
+        .from('entries')
+        .update(adj.data)
+        .eq('id', adj.id)
+        .eq('user_id', userId)
+        .select()
+        .single();
+
+      if (!updateError && data) {
+        updatedEntries.push(data);
+      }
+    }
+
+    return updatedEntries;
+  }
 
   private async getEntryIdsByTagId(tagId: string): Promise<string[]> {
     const { data, error } = await this.supabase

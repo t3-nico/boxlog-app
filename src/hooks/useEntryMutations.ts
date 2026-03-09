@@ -243,24 +243,41 @@ export function useEntryMutations() {
 
       return { id, previousEntriesList, previousEntry };
     },
-    onSuccess: (updatedEntry, variables) => {
+    onSuccess: (result, variables) => {
       // サーバーから返ってきた最新データでキャッシュを更新
+      // adjustedEntries はキャッシュ操作用（リストに含めない）
+      const { adjustedEntries, ...updatedEntry } = result;
       type EntryListData = Awaited<ReturnType<typeof utils.entries.list.fetch>>;
       queryClient.setQueriesData<EntryListData>({ predicate: isEntriesListQuery }, (oldData) => {
         if (!oldData) return oldData;
-        const exists = oldData.some((entry) => entry.id === variables.id);
+
+        let updated = oldData;
+
+        // 自エントリのキャッシュを更新
+        const exists = updated.some((entry) => entry.id === variables.id);
         if (exists) {
-          return oldData.map((entry) => {
+          updated = updated.map((entry) => {
             if (entry.id === variables.id) {
               return { ...updatedEntry, tagId: entry.tagId ?? null };
             }
             return entry;
           });
+        } else if (updatedEntry.start_time) {
+          updated = [...updated, { ...updatedEntry, tagId: null }];
         }
-        if (updatedEntry.start_time) {
-          return [...oldData, { ...updatedEntry, tagId: null }];
+
+        // auto-shrink で調整された隣接エントリのキャッシュも更新
+        if (adjustedEntries.length > 0) {
+          updated = updated.map((entry) => {
+            const adjusted = adjustedEntries.find((a) => a.id === entry.id);
+            if (adjusted) {
+              return { ...entry, ...adjusted };
+            }
+            return entry;
+          });
         }
-        return oldData;
+
+        return updated;
       });
 
       // 自動保存（title、description、日時など）はtoast非表示

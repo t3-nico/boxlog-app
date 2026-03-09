@@ -289,8 +289,7 @@ export function useInspectorTimeState({
     [planId, updatePlan],
   );
 
-  // 記録時間変更ハンドラー（即座にmutate → 楽観的更新でカードに即反映）
-  // 隣の記録と重複する場合は自動縮小（記録は「事実の修正」なので周囲が調整される）
+  // 記録時間変更ハンドラー（即座にmutate → サーバー側で隣接auto-shrink）
   const handleActualStartChange = useCallback(
     (time: string | null) => {
       setActualStartTime(time);
@@ -305,46 +304,9 @@ export function useInspectorTimeState({
             )
           : null;
 
-      // 自動縮小: 開始を早めた場合、隣の記録の終了を引き戻す
-      if (isoValue && scheduleDate) {
-        const myEndISO = actualEndTime
-          ? localTimeToUTCISO(
-              scheduleDate,
-              ...(actualEndTime.split(':').map(Number) as [number, number]),
-              timezone,
-            )
-          : plan?.end_time;
-
-        if (myEndISO) {
-          const newStart = new Date(isoValue);
-          const myEnd = new Date(myEndISO);
-          const entries = utils.entries.list.getData();
-
-          if (entries) {
-            for (const entry of entries as Array<{
-              id: string;
-              start_time: string | null;
-              end_time: string | null;
-              actual_start_time: string | null;
-              actual_end_time: string | null;
-            }>) {
-              if (entry.id === planId) continue;
-              const nStart = new Date(entry.actual_start_time ?? entry.start_time ?? '');
-              const nEnd = new Date(entry.actual_end_time ?? entry.end_time ?? '');
-              if (isNaN(nStart.getTime()) || isNaN(nEnd.getTime())) continue;
-
-              // 隣が左側にいて終了がこちらの新開始に食い込む → 隣の終了を引き戻す
-              if (nStart < newStart && nEnd > newStart && nEnd <= myEnd) {
-                updatePlan.mutate({ id: entry.id, data: { actual_end_time: isoValue } });
-              }
-            }
-          }
-        }
-      }
-
       updatePlan.mutate({ id: planId, data: { actual_start_time: isoValue } });
     },
-    [planId, scheduleDate, updatePlan, timezone, actualEndTime, plan?.end_time, utils.entries.list],
+    [planId, scheduleDate, updatePlan, timezone],
   );
 
   const handleActualEndChange = useCallback(
@@ -361,54 +323,9 @@ export function useInspectorTimeState({
             )
           : null;
 
-      // 自動縮小: 終了を延ばした場合、隣の記録の開始を押し出す
-      if (isoValue && scheduleDate) {
-        const myStartISO = actualStartTime
-          ? localTimeToUTCISO(
-              scheduleDate,
-              ...(actualStartTime.split(':').map(Number) as [number, number]),
-              timezone,
-            )
-          : plan?.start_time;
-
-        if (myStartISO) {
-          const myStart = new Date(myStartISO);
-          const newEnd = new Date(isoValue);
-          const entries = utils.entries.list.getData();
-
-          if (entries) {
-            for (const entry of entries as Array<{
-              id: string;
-              start_time: string | null;
-              end_time: string | null;
-              actual_start_time: string | null;
-              actual_end_time: string | null;
-            }>) {
-              if (entry.id === planId) continue;
-              const nStart = new Date(entry.actual_start_time ?? entry.start_time ?? '');
-              const nEnd = new Date(entry.actual_end_time ?? entry.end_time ?? '');
-              if (isNaN(nStart.getTime()) || isNaN(nEnd.getTime())) continue;
-
-              // 隣が右側にいて開始がこちらの新終了に食い込む → 隣の開始を押し出す
-              if (nStart >= myStart && nStart < newEnd && nEnd > newEnd) {
-                updatePlan.mutate({ id: entry.id, data: { actual_start_time: isoValue } });
-              }
-            }
-          }
-        }
-      }
-
       updatePlan.mutate({ id: planId, data: { actual_end_time: isoValue } });
     },
-    [
-      planId,
-      scheduleDate,
-      updatePlan,
-      timezone,
-      actualStartTime,
-      plan?.start_time,
-      utils.entries.list,
-    ],
+    [planId, scheduleDate, updatePlan, timezone],
   );
 
   return {
