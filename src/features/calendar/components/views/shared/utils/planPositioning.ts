@@ -120,12 +120,12 @@ export function filterPlansByDate(plans: TimedPlan[], date: Date): TimedPlan[] {
 // --- 予定 vs 記録 差分オーバーレイ ---
 
 export interface ActualTimeDiffOverlay {
-  /** 上部: 開始差分 */
-  topKind: 'hatch' | 'none';
+  /** 上部: 開始差分（unexecuted=未実行で斜線, overtime=超過で左アクセント点線） */
+  topKind: 'unexecuted' | 'overtime' | 'none';
   topHeight: number; // px
 
-  /** 下部: 終了差分 */
-  bottomKind: 'hatch' | 'none';
+  /** 下部: 終了差分（unexecuted=未実行で斜線, overtime=超過で左アクセント点線） */
+  bottomKind: 'unexecuted' | 'overtime' | 'none';
   bottomHeight: number; // px
 
   /** カード位置の調整量 */
@@ -184,12 +184,12 @@ export function computeActualTimeDiffOverlay(
   let topShift = 0;
 
   if (startDiffMin > 0) {
-    // 実績が遅れて開始 → ハッチング（予定開始〜実績開始）
-    topKind = 'hatch';
+    // 実績が遅れて開始 → 未実行（斜線）
+    topKind = 'unexecuted';
     topHeight = minutesToPx(startDiffMin);
   } else if (startDiffMin < 0) {
-    // 実績が早く開始 → カードを上に拡張 + ハッチング
-    topKind = 'hatch';
+    // 実績が早く開始 → 超過（左アクセント点線）
+    topKind = 'overtime';
     topHeight = minutesToPx(startDiffMin);
     topShift = topHeight;
   }
@@ -201,12 +201,12 @@ export function computeActualTimeDiffOverlay(
   let heightDelta = topShift; // topShift分はすでに高さに追加
 
   if (endDiffMin < 0) {
-    // 実績が早く終了 → ハッチング（実績終了〜予定終了）
-    bottomKind = 'hatch';
+    // 実績が早く終了 → 未実行（斜線）
+    bottomKind = 'unexecuted';
     bottomHeight = minutesToPx(endDiffMin);
   } else if (endDiffMin > 0) {
-    // 実績が超過 → カードを下に拡張 + ハッチング
-    bottomKind = 'hatch';
+    // 実績が超過 → 超過（左アクセント点線）
+    bottomKind = 'overtime';
     bottomHeight = minutesToPx(endDiffMin);
     heightDelta += bottomHeight;
   }
