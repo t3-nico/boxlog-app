@@ -64,16 +64,6 @@ export { RecurringEditConfirmDialog } from './components/RecurringEditConfirmDia
 export type { RecurringEditScope } from './components/RecurringEditConfirmDialog';
 export { LoadingState } from './components/shared/LoadingState';
 export { PlanCreateTrigger } from './components/shared/PlanCreateTrigger';
-export {
-  RecurringIndicator,
-  RecurringIndicatorFromFlag,
-} from './components/shared/RecurringIndicator';
-export type {
-  RecurringIndicatorProps,
-  RecurringIndicatorSize,
-} from './components/shared/RecurringIndicator';
-export { ReminderSelect } from './components/shared/ReminderSelect';
-export { TimeSelect } from './components/shared/TimeSelect';
 
 // Inspector hooks
 export { useInspectorKeyboard } from './components/inspector/hooks';

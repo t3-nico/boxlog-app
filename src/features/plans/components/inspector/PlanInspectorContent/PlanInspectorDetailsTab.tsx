@@ -28,15 +28,14 @@ import type { EntryState } from '@/lib/entry-status';
 
 import { Bell, Repeat } from 'lucide-react';
 
+import { ReminderSelect } from '@/components/common/ReminderSelect';
+
 import { RecurrenceIconButton } from '../../shared/RecurrenceIconButton';
-import { ReminderSelect } from '../../shared/ReminderSelect';
 
 interface PlanInspectorDetailsTabProps {
   plan: EntryWithTags;
   /** ⋯ メニューの内容（InspectorTagRow に伝搬） */
   menuContent?: ReactNode;
-  /** フッター（保存バーなど） */
-  footer?: ReactNode;
   scheduleDate: Date | undefined;
   startTime: string;
   endTime: string;
@@ -67,7 +66,6 @@ interface PlanInspectorDetailsTabProps {
 export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
   plan,
   menuContent,
-  footer,
   scheduleDate,
   startTime,
   endTime,
@@ -100,7 +98,6 @@ export const PlanInspectorDetailsTab = memo(function PlanInspectorDetailsTab({
 
   return (
     <InspectorDetailsLayout
-      footer={footer}
       tagRow={
         <InspectorTagRow
           tagId={selectedTagId}
