@@ -16,7 +16,6 @@ import authMessages from '../messages/ja/auth.json';
 import avatarDropzoneMessages from '../messages/ja/avatarDropzone.json';
 import calendarMessages from '../messages/ja/calendar.json';
 import commonMessages from '../messages/ja/common.json';
-import dropzoneMessages from '../messages/ja/dropzone.json';
 import errorMessages from '../messages/ja/error.json';
 import legalMessages from '../messages/ja/legal.json';
 import navigationMessages from '../messages/ja/navigation.json';
@@ -32,7 +31,6 @@ const messages = {
   ...avatarDropzoneMessages,
   ...calendarMessages,
   ...commonMessages,
-  ...dropzoneMessages,
   ...errorMessages,
   ...legalMessages,
   ...navigationMessages,
