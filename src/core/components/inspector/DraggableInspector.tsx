@@ -107,7 +107,7 @@ export function DraggableInspector({ children, onClose, title }: DraggableInspec
         aria-modal="false"
         aria-label={title}
       >
-        {children}
+        <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
       </div>
     </>
   );

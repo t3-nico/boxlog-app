@@ -123,10 +123,14 @@ export function InspectorTimeSection({
   const effectiveActualEnd = actualEnd ?? plannedEnd;
 
   // 記録行の自動調整
+  // 注意: onActualEndChange を直接渡す（インラインコールバックだと毎回新しい参照になり、
+  // useAutoAdjustEndTime 内の useEffect が不要に再実行される）
+  const stableActualEndChange = useCallback(
+    (time: string) => onActualEndChange(time),
+    [onActualEndChange],
+  );
   const { handleStartTimeChange: autoActualStartChange, handleEndTimeChange: autoActualEndChange } =
-    useAutoAdjustEndTime(effectiveActualStart, effectiveActualEnd, (time: string) =>
-      onActualEndChange(time),
-    );
+    useAutoAdjustEndTime(effectiveActualStart, effectiveActualEnd, stableActualEndChange);
 
   const handleActualStartChange = (time: string) => {
     autoActualStartChange(time);
@@ -161,7 +165,7 @@ export function InspectorTimeSection({
   );
 
   return (
-    <div className="flex flex-col gap-2 py-4 pr-2 pl-4">
+    <div className="flex flex-col gap-2 px-4 py-4">
       {/* 日付 */}
       <DateNavigatorRow
         label={t('plan.inspector.time.date')}

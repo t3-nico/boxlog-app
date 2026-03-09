@@ -16,10 +16,10 @@ import { BaseLayout } from '@/components/layout/base-layout';
 import { Providers } from '@/components/providers';
 import { Toaster } from '@/components/ui/toast';
 import {
-  PlanDeleteConfirmDialog,
-  PlanInspector,
+  EntryDeleteConfirmDialog,
+  EntryInspector,
   RecurringEditConfirmDialog,
-} from '@/features/plans/components';
+} from '@/features/entry/components';
 
 import { ClientPageRenderer } from './_composition/ClientPageRenderer';
 
@@ -32,8 +32,8 @@ const AppLayout = async ({ children }: AppLayoutProps) => {
     <Providers>
       <BaseLayout>
         <ClientPageRenderer>{children}</ClientPageRenderer>
-        <PlanInspector />
-        <PlanDeleteConfirmDialog />
+        <EntryInspector />
+        <EntryDeleteConfirmDialog />
         <RecurringEditConfirmDialog />
         <Toaster />
       </BaseLayout>

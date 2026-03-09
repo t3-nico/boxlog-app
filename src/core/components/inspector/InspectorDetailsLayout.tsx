@@ -3,12 +3,11 @@
 /**
  * Inspector 詳細レイアウト
  *
- * - Row 0: タグ表示（カラードット + タグ名）
- * - Row 1: スケジュール選択
- * - Row 2: メモ（インラインテキストエリア）
- * - Row 3: オプションチップ群
+ * padding 一元管理:
+ * - Mobile: px-4 pt-3
+ * - PC (md+): px-6 pt-5
  *
- * セクション間は余白で区切る（線なし）
+ * 子コンポーネントは独自の水平 padding を持たない。
  */
 
 import type { ReactNode } from 'react';
@@ -24,17 +23,15 @@ export interface InspectorDetailsLayoutProps {
 
 export function InspectorDetailsLayout({ tagRow, schedule, options }: InspectorDetailsLayoutProps) {
   return (
-    <div className="md:pt-3">
+    <div className="px-4 pt-3 pb-4 md:px-6 md:pt-5 md:pb-6">
       {/* Row 0: タグ */}
       {tagRow}
 
-      {/* コンテンツグループ */}
-      <div className="bg-surface-inset mx-4 mt-3 mb-4 rounded-xl">{schedule}</div>
+      {/* スケジュールカード */}
+      <div className="bg-surface-inset mt-3 rounded-xl">{schedule}</div>
 
       {/* オプション */}
-      {options && (
-        <div className="flex flex-wrap items-center gap-1.5 px-5 pt-2 pb-5">{options}</div>
-      )}
+      {options && <div className="flex flex-wrap items-center gap-1.5 pt-2 pb-5">{options}</div>}
     </div>
   );
 }

@@ -70,7 +70,7 @@ function MockTagRow({
   dotClass?: string | undefined;
 }) {
   return (
-    <div className="flex items-center justify-between gap-2 px-4">
+    <div className="flex items-center justify-between gap-2">
       <button
         type="button"
         className="hover:bg-state-hover -mt-1 -ml-1.5 flex items-center gap-2 rounded-lg py-1 pr-2 pl-1.5 text-base font-semibold transition-colors"
