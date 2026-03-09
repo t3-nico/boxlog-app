@@ -273,6 +273,12 @@
       "description": {
         "maxLength": "説明は{max}文字以内で入力してください"
       },
+      "time": {
+        "endBeforeStart": "終了時間は開始時間より後にしてください"
+      },
+      "actualTime": {
+        "endBeforeStart": "終了時間は開始時間より後にしてください"
+      },
       "password": {
         "minLength": "パスワードは{min}文字以上で入力してください",
         "maxLength": "パスワードは{max}文字以内で入力してください",
