@@ -43,7 +43,6 @@ export const WeekGrid = ({
   onEventUpdate,
   onTimeRangeSelect,
   className,
-  onEmptyAreaContextMenu,
 }: WeekGridProps) => {
   const timezone = useCalendarSettingsStore((s) => s.timezone);
 
@@ -142,7 +141,6 @@ export const WeekGrid = ({
                 onPlanContextMenu={onEventContextMenu}
                 onPlanUpdate={handlePlanUpdate}
                 onTimeRangeSelect={onTimeRangeSelect}
-                onEmptyAreaContextMenu={onEmptyAreaContextMenu}
                 disabledPlanId={disabledPlanId}
                 className="h-full"
                 dayIndex={dayIndex}

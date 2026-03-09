@@ -26,9 +26,6 @@ export interface DayContentProps {
   eventStyles?: Record<string, CSSProperties> | undefined; // eventStylesはplanStylesのエイリアス（後方互換性のため）
   onPlanClick?: ((plan: CalendarEvent) => void) | undefined;
   onPlanContextMenu?: ((plan: CalendarEvent, mouseEvent: React.MouseEvent) => void) | undefined;
-  onEmptyAreaContextMenu?:
-    | ((date: Date, hour: number, minute: number, e: React.MouseEvent) => void)
-    | undefined;
   onPlanUpdate?: ((plan: CalendarEvent) => void) | undefined;
   onEventUpdate?:
     | ((

@@ -26,7 +26,6 @@ export const DayContent = ({
   eventStyles,
   onPlanClick,
   onPlanContextMenu,
-  onEmptyAreaContextMenu,
   onEventUpdate,
   onTimeRangeSelect,
   disabledPlanId,
@@ -104,7 +103,6 @@ export const DayContent = ({
         date={date}
         className="absolute inset-0"
         onTimeRangeSelect={onTimeRangeSelect}
-        onContextMenu={onEmptyAreaContextMenu}
         disabled={dragState.isPending || dragState.isDragging || dragState.isResizing}
         plans={events}
       >

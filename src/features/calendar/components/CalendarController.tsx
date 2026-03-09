@@ -15,14 +15,13 @@ import { useMemo } from 'react';
 import { useCalendar } from '../contexts/CalendarContext';
 import { useCalendarContextMenu } from '../hooks/useCalendarContextMenu';
 import { useCalendarKeyboard } from '../hooks/useCalendarKeyboard';
-import { useEmptyAreaContextMenu } from '../hooks/useEmptyAreaContextMenu';
 import { DnDProvider } from '../providers/DnDProvider';
 
 import { CalendarViewRenderer } from './controller/components';
 import { initializePreload } from './controller/utils';
 
 import { CalendarLayout } from './layout/CalendarLayout';
-import { EmptyAreaContextMenu, EventContextMenu, MobileTouchHint } from './views/shared/components';
+import { EventContextMenu, MobileTouchHint } from './views/shared/components';
 
 // 初回ロード時にビューをプリロード
 initializePreload();
@@ -74,14 +73,6 @@ export function CalendarController({
   const { contextMenuEvent, contextMenuPosition, handleEventContextMenu, handleCloseContextMenu } =
     useCalendarContextMenu();
 
-  // 空きエリアコンテキストメニュー管理
-  const {
-    emptyAreaMenuPosition,
-    clickedDateTime,
-    handleEmptyAreaContextMenu,
-    handleCloseEmptyAreaContextMenu,
-  } = useEmptyAreaContextMenu();
-
   // キーボードショートカット（ビューナビゲーション用）
   useCalendarKeyboard({
     viewType,
@@ -106,7 +97,6 @@ export function CalendarController({
       onUpdatePlan,
       onDeletePlan,
       onRestorePlan,
-      onEmptyAreaContextMenu: handleEmptyAreaContextMenu,
       onTimeRangeSelect,
       onViewChange,
       onNavigatePrev,
@@ -125,7 +115,6 @@ export function CalendarController({
       onUpdatePlan,
       onDeletePlan,
       onRestorePlan,
-      handleEmptyAreaContextMenu,
       onTimeRangeSelect,
       onViewChange,
       onNavigatePrev,
@@ -167,14 +156,6 @@ export function CalendarController({
           onDelete={onDeletePlanConfirm}
           onDuplicate={onDuplicatePlan}
           onCopy={onCopyPlan}
-        />
-      ) : null}
-
-      {emptyAreaMenuPosition && clickedDateTime ? (
-        <EmptyAreaContextMenu
-          position={emptyAreaMenuPosition}
-          clickedDateTime={clickedDateTime}
-          onClose={handleCloseEmptyAreaContextMenu}
         />
       ) : null}
 

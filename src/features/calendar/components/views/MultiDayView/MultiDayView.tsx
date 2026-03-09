@@ -45,7 +45,6 @@ export function MultiDayView({
   onNavigatePrev: _onNavigatePrev,
   onNavigateNext: _onNavigateNext,
   onNavigateToday: _onNavigateToday,
-  onEmptyAreaContextMenu,
 }: MultiDayViewProps) {
   const timezone = useCalendarSettingsStore((s) => s.timezone);
   const HOUR_HEIGHT = useResponsiveHourHeight();
@@ -138,7 +137,6 @@ export function MultiDayView({
                       : undefined
                   }
                   onTimeRangeSelect={onTimeRangeSelect}
-                  onEmptyAreaContextMenu={onEmptyAreaContextMenu}
                   disabledPlanId={disabledPlanId}
                   className="h-full"
                   dayIndex={dayIndex}

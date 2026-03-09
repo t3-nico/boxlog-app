@@ -51,9 +51,6 @@ export interface GridViewProps extends BaseViewProps {
     | undefined;
   onDeletePlan?: ((planId: string) => void) | undefined;
   onRestorePlan?: ((plan: CalendarEvent) => Promise<void>) | undefined;
-  onEmptyAreaContextMenu?:
-    | ((date: Date, hour: number, minute: number, e: React.MouseEvent) => void)
-    | undefined;
   onTimeRangeSelect?:
     | ((selection: {
         date: Date;

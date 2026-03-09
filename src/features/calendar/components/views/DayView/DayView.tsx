@@ -25,7 +25,6 @@ export const DayView = ({
   disabledPlanId,
   onPlanClick,
   onPlanContextMenu,
-  onEmptyAreaContextMenu,
   onUpdatePlan,
   onDeletePlan: _onDeletePlan,
   onRestorePlan: _onRestorePlan,
@@ -119,7 +118,6 @@ export const DayView = ({
             eventStyles={eventStyles}
             onPlanClick={onPlanClick}
             onPlanContextMenu={onPlanContextMenu}
-            onEmptyAreaContextMenu={onEmptyAreaContextMenu}
             onEventUpdate={handleEventTimeUpdate}
             onTimeRangeSelect={onTimeRangeSelect}
             disabledPlanId={disabledPlanId}

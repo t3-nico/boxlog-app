@@ -22,10 +22,6 @@ export interface CalendarDragSelectionProps {
   onTimeRangeSelect?: ((selection: DateTimeSelection) => void) | undefined;
   /** ダブルクリック専用ハンドラー（オプション、未指定時はonTimeRangeSelectが呼ばれる） */
   onDoubleClick?: ((selection: DateTimeSelection) => void) | undefined;
-  /** 空き領域の右クリックハンドラー */
-  onContextMenu?:
-    | ((date: Date, hour: number, minute: number, e: React.MouseEvent) => void)
-    | undefined;
   children?: React.ReactNode | undefined;
   /** ドラッグ選択を無効にする */
   disabled?: boolean | undefined;

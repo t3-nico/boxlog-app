@@ -26,7 +26,6 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
   onTimeClick,
   onEventClick,
   onEventContextMenu,
-  onEmptyAreaContextMenu,
   className = '',
 }) {
   const t = useTranslations('common.aria');
@@ -67,25 +66,6 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
     onTimeClick(date, hour, minute);
   };
 
-  // 空き領域の右クリックハンドラー
-  const handleContextMenu = (e: React.MouseEvent) => {
-    if (!onEmptyAreaContextMenu) return;
-
-    // PlanCard上の右クリックは無視（PlanCard側で処理）
-    const target = e.target as HTMLElement;
-    if (target.closest('[data-plan-card]')) return;
-
-    e.preventDefault();
-    const rect = e.currentTarget.getBoundingClientRect();
-    const y = e.clientY - rect.top;
-
-    // 時間計算（15分単位で丸める）
-    const totalMinutes = (y * 60) / hourHeight;
-    const hour = Math.floor(totalMinutes / 60);
-    const minute = Math.floor((totalMinutes % 60) / 15) * 15;
-    onEmptyAreaContextMenu(date, hour, minute, e);
-  };
-
   // カラムのスタイル
   const columnClasses = [
     'relative flex-1 min-w-0',
@@ -109,7 +89,6 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
       <div
         className="relative flex-1 cursor-pointer"
         onClick={handleTimeClick}
-        onContextMenu={handleContextMenu}
         style={{
           minHeight: `${columnHeight}px`,
         }}
@@ -126,6 +105,7 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
               key={plan.id}
               plan={plan}
               position={position} // undefinedでも大丈夫（PlanCard側で対応済み）
+              hourHeight={hourHeight}
               onClick={onEventClick}
               onContextMenu={onEventContextMenu}
             />

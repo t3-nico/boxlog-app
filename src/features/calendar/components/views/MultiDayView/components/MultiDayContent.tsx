@@ -29,9 +29,6 @@ interface MultiDayContentProps {
   onPlanContextMenu?: ((plan: CalendarEvent, e: React.MouseEvent) => void) | undefined;
   onPlanUpdate?: ((planId: string, updates: Partial<CalendarEvent>) => void) | undefined;
   onTimeRangeSelect?: ((selection: DateTimeSelection) => void) | undefined;
-  onEmptyAreaContextMenu?:
-    | ((date: Date, hour: number, minute: number, e: React.MouseEvent) => void)
-    | undefined;
   className?: string | undefined;
   dayIndex: number;
   displayDates?: Date[] | undefined;
@@ -48,7 +45,6 @@ export function MultiDayContent({
   onPlanContextMenu,
   onPlanUpdate,
   onTimeRangeSelect,
-  onEmptyAreaContextMenu,
   className,
   dayIndex,
   displayDates,
@@ -124,7 +120,6 @@ export function MultiDayContent({
         date={date}
         className="absolute inset-0"
         onTimeRangeSelect={onTimeRangeSelect}
-        onContextMenu={onEmptyAreaContextMenu}
         disabled={dragState.isPending || dragState.isDragging || dragState.isResizing}
         plans={allEventsForOverlapCheck ?? plans}
       >

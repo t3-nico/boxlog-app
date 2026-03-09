@@ -32,10 +32,6 @@ interface WeekContentProps {
   onPlanContextMenu?: ((plan: CalendarEvent, e: React.MouseEvent) => void) | undefined;
   onPlanUpdate?: ((planId: string, updates: Partial<CalendarEvent>) => void) | undefined;
   onTimeRangeSelect?: ((selection: import('../../shared').DateTimeSelection) => void) | undefined;
-  /** 空き領域の右クリックハンドラー */
-  onEmptyAreaContextMenu?:
-    | ((date: Date, hour: number, minute: number, e: React.MouseEvent) => void)
-    | undefined;
   className?: string | undefined;
   dayIndex: number; // 週内での日付インデックス（0-6）
   displayDates?: Date[] | undefined; // 週の全日付配列（日付間移動用）
@@ -52,7 +48,6 @@ export const WeekContent = React.memo(function WeekContent({
   onPlanContextMenu,
   onPlanUpdate,
   onTimeRangeSelect,
-  onEmptyAreaContextMenu,
   className,
   dayIndex,
   displayDates,
@@ -167,7 +162,6 @@ export const WeekContent = React.memo(function WeekContent({
           // DayViewと同じように直接DateTimeSelectionを渡す
           onTimeRangeSelect?.(selection);
         }}
-        onContextMenu={onEmptyAreaContextMenu}
         disabled={dragState.isPending || dragState.isDragging || dragState.isResizing}
         plans={allEventsForOverlapCheck ?? plans}
       >
