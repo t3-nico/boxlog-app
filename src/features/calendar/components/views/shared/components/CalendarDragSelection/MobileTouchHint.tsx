@@ -28,11 +28,7 @@ export const MobileTouchHint = memo(function MobileTouchHint({ className }: Mobi
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // モバイルでない場合は表示しない
-    if (!isMobile) {
-      setIsVisible(false);
-      return undefined;
-    }
+    if (!isMobile) return undefined;
 
     // localStorage から表示済みフラグを確認
     try {
@@ -68,7 +64,7 @@ export const MobileTouchHint = memo(function MobileTouchHint({ className }: Mobi
     return () => clearTimeout(timer);
   }, [isVisible, handleDismiss]);
 
-  if (!isVisible) return null;
+  if (!isVisible || !isMobile) return null;
 
   return (
     <div

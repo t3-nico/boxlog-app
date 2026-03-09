@@ -9,7 +9,7 @@
  * の2択をユーザーに選ばせる。
  */
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -46,14 +46,16 @@ export function TagDeleteStrategyDialog({
   const [targetTagId, setTargetTagId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // ダイアログが開くたびにリセット
-  useEffect(() => {
+  // ダイアログが開くたびにリセット（React推奨: レンダー中のstate調整）
+  const [prevOpen, setPrevOpen] = useState(open);
+  if (open !== prevOpen) {
+    setPrevOpen(open);
     if (open) {
       setStrategy('delete_entries');
       setTargetTagId(null);
       setSearchQuery('');
     }
-  }, [open]);
+  }
 
   const filteredTags = useMemo(() => {
     if (!searchQuery.trim()) return availableTags;
