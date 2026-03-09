@@ -217,8 +217,9 @@ describe('PlanCard', () => {
       render(<PlanCard plan={mockEvent} position={smallPosition} />);
 
       const eventBlock = screen.getByRole('group', { name: /entry: テストイベント/i });
-      // 高さ30px未満でもフォントは統一（text-sm）
-      expect(eventBlock.className).toContain('text-sm');
+      // text-smはカード本体（内部div）に適用される
+      const contentDiv = eventBlock.querySelector('.text-sm');
+      expect(contentDiv).toBeTruthy();
     });
 
     it('最小高さが保証される', () => {
