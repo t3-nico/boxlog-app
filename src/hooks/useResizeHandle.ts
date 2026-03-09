@@ -26,6 +26,7 @@ export function useResizeHandle({ initialPercent, onResizeEnd }: UseResizeHandle
   // initialPercent が外部（store hydration）から変わった場合に同期
   useEffect(() => {
     if (!isResizing) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Zustand store hydration後の外部prop同期
       setPercent(initialPercent);
     }
   }, [initialPercent, isResizing]);

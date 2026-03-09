@@ -59,7 +59,8 @@ export const CalendarDragSelection = ({
   return (
     <div
       ref={(node) => {
-        // 両方のrefを設定
+        // 両方のrefを設定（dnd-kit setNodeRef + 独自containerRef）
+        // eslint-disable-next-line react-hooks/immutability -- refコールバック内のdual-ref割り当てパターン
         (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
         setNodeRef(node);
       }}

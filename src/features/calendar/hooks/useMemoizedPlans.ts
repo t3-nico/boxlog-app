@@ -126,6 +126,7 @@ export function useMemoizedPlans(
       return cached;
     }
 
+    // eslint-disable-next-line react-hooks/purity -- キャッシュミス時のパフォーマンス計測用ref更新
     computationStartTime.current = performance.now();
 
     // 日付範囲でのフィルタリング

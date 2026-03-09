@@ -34,7 +34,9 @@ export function useInspectorTagState({ planId, planData }: UseInspectorTagStateP
   if (planId !== prevPlanId) {
     setPrevPlanId(planId);
     setSelectedTagId(null);
+    // eslint-disable-next-line react-hooks/refs -- React推奨のrender中state調整に伴うref同期
     selectedTagIdRef.current = null;
+    // eslint-disable-next-line react-hooks/refs
     originalTagIdRef.current = null;
     setHasTagChanges(false);
   }
@@ -52,7 +54,9 @@ export function useInspectorTagState({ planId, planData }: UseInspectorTagStateP
     if (!hasTagChanges && planData !== undefined) {
       const tagId = planData.tagId ?? null;
       setSelectedTagId(tagId);
+      // eslint-disable-next-line react-hooks/refs -- React推奨のrender中state調整に伴うref同期
       selectedTagIdRef.current = tagId;
+      // eslint-disable-next-line react-hooks/refs
       originalTagIdRef.current = tagId;
     }
   }

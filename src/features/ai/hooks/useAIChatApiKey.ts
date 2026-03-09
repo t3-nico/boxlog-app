@@ -76,8 +76,11 @@ export function useAIChatApiKey() {
   const transportKeyRef = useRef<string>('');
   const currentTransportKey = `${apiKey ?? 'free'}_${providerId}_${selectedModelId ?? ''}`;
 
+  // eslint-disable-next-line react-hooks/refs -- React推奨のrender中ref更新パターン（非直列化オブジェクトの遅延初期化）
   if (currentTransportKey !== transportKeyRef.current) {
+    // eslint-disable-next-line react-hooks/refs
     transportKeyRef.current = currentTransportKey;
+    // eslint-disable-next-line react-hooks/refs
     transportRef.current = apiKey
       ? new DefaultChatTransport<UIMessage>({
           api: '/api/chat',

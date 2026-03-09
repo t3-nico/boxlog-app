@@ -65,6 +65,7 @@ export function useInspectorTimeState({
       // スケジュール日と時間を設定（タイムゾーン対応）
       if (plan.start_time) {
         const date = parseISOToUserTimezone(plan.start_time, timezone);
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- planデータからのタイムゾーン変換結果を同期
         setScheduleDate(date);
         setStartTime(
           `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`,
@@ -137,6 +138,7 @@ export function useInspectorTimeState({
   // リアルタイム重複チェック: scheduleDate / startTime / endTime の変更を監視
   useEffect(() => {
     if (!scheduleDate || !startTime || !endTime || !planId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- tRPCキャッシュ参照を伴う重複チェック結果の反映
       setTimeConflictError(false);
       return;
     }

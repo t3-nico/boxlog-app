@@ -39,6 +39,8 @@ export function useAIChat() {
   const canSend = hasApiKey || (isFreeTier && !freeTierExhausted);
 
   // useChat hook（AI SDK v6）
+  // transportRefは再生成回避のため意図的にrender中に読み取り
+  /* eslint-disable react-hooks/refs */
   const {
     messages,
     sendMessage: chatSendMessage,
@@ -56,6 +58,7 @@ export function useAIChat() {
       }
     },
   });
+  /* eslint-enable react-hooks/refs */
 
   const isLoading = status === 'streaming' || status === 'submitted';
 

@@ -48,6 +48,7 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
   }, [close]);
 
   // 初期化前は常にfalse、初期化後はストアの値を使用
+  // eslint-disable-next-line react-hooks/refs -- useEffect初期化前のサイドバーフラッシュ防止ガード
   const sheetOpen = isInitializedRef.current ? isOpen : false;
 
   const pathname = usePathname();

@@ -97,6 +97,7 @@ export function RecurrenceDialog({
 
     // triggerRefがない場合は画面中央に表示
     if (!triggerRef?.current) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- ビューポート寸法に基づく位置計算は不可避
       setPosition({
         top: Math.max(16, (window.innerHeight - dialogHeight) / 2),
         left: Math.max(16, (window.innerWidth - dialogWidth) / 2),
