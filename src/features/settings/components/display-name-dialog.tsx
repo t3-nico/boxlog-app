@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { logger } from '@/lib/logger';
 import { createClient } from '@/lib/supabase/client';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { toast } from 'sonner';
@@ -61,13 +62,13 @@ export function DisplayNameDialog({ open, onOpenChange, currentName }: DisplayNa
         });
 
         if (authError) {
-          console.error('Auth metadata update error:', authError);
+          logger.error('Auth metadata update error:', authError);
         }
 
         toast.success(t('settings.account.profileUpdated'));
         onOpenChange(false);
       } catch (error) {
-        console.error('Display name update error:', error);
+        logger.error('Display name update error:', error);
         toast.error(t('common.errors.generic'));
       } finally {
         setIsLoading(false);

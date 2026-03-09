@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import QRCode from 'qrcode';
 
+import { logger } from '@/lib/logger';
 import { createClient } from '@/lib/supabase/client';
 
 interface MFAState {
@@ -76,7 +77,7 @@ export function useMFA(): UseMFAReturn {
         }
       }
     } catch (err) {
-      console.error('MFA status check error:', err);
+      logger.error('MFA status check error:', err);
     }
   }, [supabase]);
 
@@ -103,13 +104,13 @@ export function useMFA(): UseMFAReturn {
       const { error: insertError } = await supabase.from('mfa_recovery_codes').insert(codesForDb);
 
       if (insertError) {
-        console.error('Failed to save recovery codes:', insertError);
+        logger.error('Failed to save recovery codes:', insertError);
         return null;
       }
 
       return codes;
     } catch (err) {
-      console.error('Recovery code generation error:', err);
+      logger.error('Recovery code generation error:', err);
       return null;
     }
   }, [supabase]);
@@ -145,7 +146,7 @@ export function useMFA(): UseMFAReturn {
         throw new Error(t('common.errors.mfa.dataNotFound'));
       }
     } catch (err) {
-      console.error('MFA enrollment error:', err);
+      logger.error('MFA enrollment error:', err);
       const errorMessage = err instanceof Error ? err.message : t('common.errors.mfa.setupFailed');
       setError(errorMessage);
     } finally {
@@ -211,7 +212,7 @@ export function useMFA(): UseMFAReturn {
 
       await checkMFAStatus();
     } catch (err) {
-      console.error('MFA verification error:', err);
+      logger.error('MFA verification error:', err);
       const errorMessage =
         err instanceof Error ? err.message : t('common.errors.mfa.verificationFailed');
       setError(errorMessage);
@@ -286,7 +287,7 @@ export function useMFA(): UseMFAReturn {
 
       await checkMFAStatus();
     } catch (err) {
-      console.error('MFA disable error:', err);
+      logger.error('MFA disable error:', err);
       const errorMessage =
         err instanceof Error ? err.message : t('common.errors.mfa.disableGeneralFailed');
       setError(errorMessage);
@@ -324,7 +325,7 @@ export function useMFA(): UseMFAReturn {
         setError('リカバリーコードの生成に失敗しました');
       }
     } catch (err) {
-      console.error('Recovery code regeneration error:', err);
+      logger.error('Recovery code regeneration error:', err);
       setError('リカバリーコードの再生成に失敗しました');
     } finally {
       setIsLoading(false);

@@ -1,5 +1,7 @@
 import { useCallback, useState } from 'react';
 
+import { logger } from '@/lib/logger';
+
 // SSR対応の遅延初期化
 const getStoredHistory = (): string[] => {
   if (typeof window === 'undefined') return [];
@@ -8,7 +10,7 @@ const getStoredHistory = (): string[] => {
     try {
       return JSON.parse(stored);
     } catch (e) {
-      console.error('Failed to load search history', e);
+      logger.error('Failed to load search history', e);
     }
   }
   return [];

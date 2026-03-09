@@ -1,5 +1,7 @@
 import { getRequestConfig } from 'next-intl/server';
 
+import { logger } from '@/lib/logger';
+
 import { routing } from './routing';
 
 /**
@@ -33,7 +35,7 @@ async function loadMessages(locale: string): Promise<Record<string, unknown>> {
         const mod = await import(`../../messages/${locale}/${ns}.json`);
         return { namespace: ns, data: mod.default };
       } catch {
-        console.warn(`Failed to load namespace: ${ns} for locale: ${locale}`);
+        logger.warn(`Failed to load namespace: ${ns} for locale: ${locale}`);
         return { namespace: ns, data: {} };
       }
     }),

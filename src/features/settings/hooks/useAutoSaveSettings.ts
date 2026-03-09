@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 
 import { useDebouncedCallback } from '@/hooks/useDebounce';
 import { getErrorMessage } from '@/lib/errors';
+import { logger } from '@/lib/logger';
 
 interface UseAutoSaveSettingsOptions<T> {
   initialValues: T;
@@ -42,7 +43,7 @@ export function useAutoSaveSettings<T>({
       // 成功トースト
       toast.success(successMessage);
     } catch (error) {
-      console.error('Failed to save settings:', error);
+      logger.error('Failed to save settings:', error);
 
       // エラートースト
       toast.error(errorMessage, {

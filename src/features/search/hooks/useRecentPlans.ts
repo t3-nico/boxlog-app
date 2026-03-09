@@ -1,5 +1,7 @@
 import { useCallback, useState } from 'react';
 
+import { logger } from '@/lib/logger';
+
 const STORAGE_KEY = 'recent-plans';
 const MAX_RECENT_PLANS = 5;
 
@@ -17,7 +19,7 @@ const getStoredRecentPlans = (): RecentPlanEntry[] => {
     try {
       return JSON.parse(stored);
     } catch (e) {
-      console.error('Failed to load recent plans', e);
+      logger.error('Failed to load recent plans', e);
     }
   }
   return [];
