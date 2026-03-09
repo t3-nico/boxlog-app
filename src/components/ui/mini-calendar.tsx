@@ -131,18 +131,24 @@ export const MiniCalendar = memo<MiniCalendarProps>(
     const [viewMonth, setViewMonth] = useState(() => month ?? selectedDate ?? new Date());
 
     // 外部からmonth/selectedDateが変更された場合に同期（React推奨: レンダー中のstate調整）
+    // 注意: Date はオブジェクト参照なので !== ではなく isSameDay で比較する。
+    // 親が新しい Date インスタンスを渡すと参照比較で無限ループになるため。
     const [prevMonth, setPrevMonth] = useState(month);
     const [prevSelectedDate, setPrevSelectedDate] = useState(selectedDate);
-    if (month && month !== prevMonth) {
+    const monthChanged = month ? !prevMonth || !isSameDay(month, prevMonth) : month !== prevMonth;
+    const selectedDateChanged = selectedDate
+      ? !prevSelectedDate || !isSameDay(selectedDate, prevSelectedDate)
+      : selectedDate !== prevSelectedDate;
+    if (month && monthChanged) {
       setPrevMonth(month);
       setViewMonth(month);
-    } else if (month !== prevMonth) {
+    } else if (monthChanged) {
       setPrevMonth(month);
     }
-    if (selectedDate && selectedDate !== prevSelectedDate) {
+    if (selectedDate && selectedDateChanged) {
       setPrevSelectedDate(selectedDate);
       setViewMonth(selectedDate);
-    } else if (selectedDate !== prevSelectedDate) {
+    } else if (selectedDateChanged) {
       setPrevSelectedDate(selectedDate);
     }
 

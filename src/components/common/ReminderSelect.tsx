@@ -16,6 +16,7 @@ interface ReminderSelectProps {
   onChange: (value: number | null) => void;
   variant?: 'inspector' | 'compact' | 'button' | 'icon';
   disabled?: boolean;
+  className?: string;
 }
 
 /**
@@ -34,6 +35,7 @@ export function ReminderSelect({
   onChange,
   variant = 'inspector',
   disabled = false,
+  className,
 }: ReminderSelectProps) {
   const t = useTranslations();
   const [showPopover, setShowPopover] = useState(false);
@@ -73,15 +75,17 @@ export function ReminderSelect({
 
     if (variant === 'inspector') {
       return (
-        <Button
-          variant="ghost"
-          size="sm"
-          className={`h-8 px-2 text-sm ${hasReminder ? 'text-foreground' : 'text-muted-foreground'}`}
+        <button
           type="button"
           disabled={disabled}
+          className={cn(
+            'text-muted-foreground data-[state=selected]:text-foreground hover:bg-state-hover hover:text-foreground focus-visible:ring-ring inline-flex h-8 items-center gap-1 rounded-lg px-2 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50',
+            className,
+          )}
+          data-state={hasReminder ? 'selected' : undefined}
         >
-          {hasReminder ? getDisplayLabel() : t('common.reminder.label')}
-        </Button>
+          {hasReminder ? getDisplayLabel() : t('common.reminder.add')}
+        </button>
       );
     }
 

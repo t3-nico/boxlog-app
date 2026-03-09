@@ -33,11 +33,13 @@ export function DateNavigatorRow({
         {Icon && <Icon className="text-muted-foreground size-4 flex-shrink-0" />}
         <span className="text-muted-foreground text-sm">{label}</span>
       </div>
-      <DatePickerPopover
-        selectedDate={selectedDate}
-        onDateChange={onDateChange}
-        placeholder={t('common.schedule.datePlaceholder')}
-      />
+      <div className="-mr-2">
+        <DatePickerPopover
+          selectedDate={selectedDate}
+          onDateChange={onDateChange}
+          placeholder={t('common.schedule.datePlaceholder')}
+        />
+      </div>
     </div>
   );
 }

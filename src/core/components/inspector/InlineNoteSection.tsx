@@ -80,7 +80,7 @@ export function InlineNoteSection({
           {Icon && <Icon className="text-muted-foreground size-4 flex-shrink-0" />}
           <span className="text-muted-foreground text-sm">{label}</span>
         </div>
-        <span className="text-muted-foreground px-2 text-xs tabular-nums">
+        <span className="text-muted-foreground -mr-2 px-2 text-xs tabular-nums">
           {displayNote.length}/{maxLength}
         </span>
       </div>
@@ -96,7 +96,7 @@ export function InlineNoteSection({
         maxLength={maxLength}
         rows={1}
         style={{ overflowY: 'hidden' }}
-        className="bg-input text-foreground placeholder:text-muted-foreground surface-sunken focus-visible:ring-ring mr-2 max-h-20 min-h-8 resize-none rounded-lg border border-transparent px-4 py-2 text-sm leading-normal outline-none focus-visible:ring-2"
+        className="bg-input text-foreground placeholder:text-muted-foreground surface-sunken focus-visible:ring-ring max-h-20 min-h-8 resize-none rounded-lg border border-transparent px-4 py-2 text-sm leading-normal outline-none focus-visible:ring-2"
       />
     </div>
   );

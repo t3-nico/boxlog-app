@@ -113,7 +113,7 @@ export function InspectorTagRow({ tagId, onTagChange, menuContent }: InspectorTa
                 variant="ghost"
                 size="sm"
                 icon
-                className="-mr-1.5 focus-visible:ring-0"
+                className="-mr-2 focus-visible:ring-0"
                 aria-label={t('common.actions.options')}
               >
                 <MoreHorizontal className="size-5" />

@@ -159,7 +159,7 @@ export function InspectorTimeSection({
   );
 
   return (
-    <div className="flex flex-col gap-2 px-4 py-4">
+    <div className="flex flex-col gap-2 px-4 pt-2.5 pb-4">
       {/* 日付 */}
       <DateNavigatorRow
         label={t('plan.inspector.time.date')}
@@ -215,7 +215,7 @@ export function InspectorTimeSection({
           </div>
           <button
             type="button"
-            className="text-muted-foreground hover:text-foreground px-2 text-xs transition-colors"
+            className="text-muted-foreground hover:bg-state-hover hover:text-foreground -mr-2 rounded-lg px-2 py-1 text-xs transition-colors"
             onClick={() => {
               onActualStartChange(plannedStart);
               onActualEndChange(plannedEnd);
@@ -247,12 +247,6 @@ export function InspectorTimeSection({
         </div>
       )}
 
-      {/* 繰り返し */}
-      {recurrenceRow}
-
-      {/* 通知 */}
-      {reminderRow}
-
       {/* 充実度 */}
       {onFulfillmentChange && (
         <FulfillmentRow
@@ -262,6 +256,12 @@ export function InspectorTimeSection({
           disabled={disabled}
         />
       )}
+
+      {/* 繰り返し */}
+      {recurrenceRow}
+
+      {/* 通知 */}
+      {reminderRow}
 
       {/* メモ */}
       {onNoteChange && (

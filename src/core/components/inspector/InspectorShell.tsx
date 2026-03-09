@@ -15,8 +15,9 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { DraggableInspector } from './DraggableInspector';
 
 // モバイルDrawerのスナップポイント
-// Apple HIG準拠: medium(50%) → large(97% - セーフエリア考慮)
-const SNAP_POINTS = [0.5, 0.97] as const;
+// 初期75%: Inspectorの全コンテンツが一覧できる高さ
+// 全画面97%: セーフエリア考慮
+const SNAP_POINTS = [1] as const;
 
 interface InspectorShellProps {
   /** Inspectorが開いているか */
@@ -60,7 +61,6 @@ export function InspectorShell({
 
   // モバイルDrawerのスナップポイント状態
   const [snap, setSnap] = useState<number | string | null>(SNAP_POINTS[0]);
-  const isFullScreen = snap === SNAP_POINTS[1];
 
   if (!isOpen) return null;
 
@@ -76,14 +76,7 @@ export function InspectorShell({
         setActiveSnapPoint={setSnap}
         fadeFromIndex={1}
       >
-        <DrawerContent
-          className="bg-card z-modal flex flex-col gap-0 overflow-hidden p-0 [&>div:first-child]:hidden"
-          style={{
-            // 全画面時は角丸をなくす
-            borderTopLeftRadius: isFullScreen ? 0 : undefined,
-            borderTopRightRadius: isFullScreen ? 0 : undefined,
-          }}
-        >
+        <DrawerContent className="bg-card z-modal flex flex-col gap-0 overflow-hidden rounded-t-none p-0 [&>div:first-child]:hidden">
           <DrawerTitle className="sr-only">{title}</DrawerTitle>
 
           {/* ドラッグハンドル + メニュー（同じ行） */}
@@ -116,7 +109,7 @@ export function InspectorShell({
             </div>
           </div>
 
-          {children}
+          <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
         </DrawerContent>
       </Drawer>
     );

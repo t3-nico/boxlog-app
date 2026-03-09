@@ -2,10 +2,11 @@
 
 import { useState } from 'react';
 
-import { Check, Repeat } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
 
 import { RecurrenceDialog } from './RecurrenceDialog';
 
@@ -25,6 +26,7 @@ interface RecurrenceIconButtonProps {
   onRepeatTypeChange: (type: string) => void;
   onRecurrenceRuleChange: (rule: string | null) => void;
   disabled?: boolean;
+  className?: string;
 }
 
 /**
@@ -37,6 +39,7 @@ export function RecurrenceIconButton({
   onRepeatTypeChange,
   onRecurrenceRuleChange,
   disabled = false,
+  className,
 }: RecurrenceIconButtonProps) {
   const t = useTranslations();
   const [showPopover, setShowPopover] = useState(false);
@@ -64,7 +67,10 @@ export function RecurrenceIconButton({
           <button
             type="button"
             disabled={disabled}
-            className="text-muted-foreground data-[state=selected]:text-foreground hover:bg-state-hover hover:text-foreground focus-visible:ring-ring inline-flex h-8 items-center gap-1 rounded-lg px-2 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+            className={cn(
+              'text-muted-foreground data-[state=selected]:text-foreground hover:bg-state-hover hover:text-foreground focus-visible:ring-ring inline-flex h-8 items-center gap-1 rounded-lg px-2 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50',
+              className,
+            )}
             data-state={hasRecurrence ? 'selected' : undefined}
             aria-label={
               hasRecurrence
@@ -72,8 +78,7 @@ export function RecurrenceIconButton({
                 : t('plan.inspector.recurrence.setRepeat')
             }
           >
-            <Repeat className="size-4" />
-            {hasRecurrence && displayText}
+            {hasRecurrence ? displayText : t('common.recurrence.none')}
           </button>
         </PopoverTrigger>
 

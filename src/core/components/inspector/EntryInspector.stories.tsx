@@ -95,7 +95,7 @@ function MockTagRow({
 
       <button
         type="button"
-        className="text-muted-foreground hover:bg-state-hover flex size-8 items-center justify-center rounded-lg transition-colors"
+        className="text-muted-foreground hover:bg-state-hover -mr-2 flex size-8 items-center justify-center rounded-lg transition-colors"
         aria-label="Options"
       >
         <MoreHorizontal className="size-5" />
@@ -173,12 +173,14 @@ function InspectorContent({
                     {t('common.recurrence.label')}
                   </span>
                 </div>
-                <button
-                  type="button"
-                  className="text-muted-foreground hover:bg-state-hover flex h-8 items-center gap-1 rounded-lg px-2 text-sm transition-colors"
-                >
-                  {t('common.recurrence.none')}
-                </button>
+                <div className="-mr-2">
+                  <button
+                    type="button"
+                    className="text-muted-foreground hover:bg-state-hover inline-flex h-8 items-center gap-1 rounded-lg px-2 text-sm transition-colors"
+                  >
+                    {t('common.recurrence.none')}
+                  </button>
+                </div>
               </div>
             ) : undefined
           }
@@ -191,12 +193,14 @@ function InspectorContent({
                     {t('common.reminder.label')}
                   </span>
                 </div>
-                <button
-                  type="button"
-                  className="text-muted-foreground hover:bg-state-hover flex h-8 items-center gap-1 rounded-lg px-2 text-sm transition-colors"
-                >
-                  {t('common.reminder.none')}
-                </button>
+                <div className="-mr-2">
+                  <button
+                    type="button"
+                    className="text-muted-foreground hover:bg-state-hover inline-flex h-8 items-center gap-1 rounded-lg px-2 text-sm transition-colors"
+                  >
+                    {t('common.reminder.add')}
+                  </button>
+                </div>
               </div>
             ) : undefined
           }

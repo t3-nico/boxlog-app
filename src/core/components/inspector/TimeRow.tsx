@@ -50,7 +50,7 @@ export function TimeRow({
           {label}
         </span>
       </div>
-      <div className="flex items-center gap-1">
+      <div className="-mr-2 flex items-center gap-1">
         <ClockTimePicker
           value={startTime}
           onChange={onStartChange}
@@ -85,12 +85,12 @@ export function TimeRowPlaceholder({
   muted = false,
 }: TimeRowPlaceholderProps) {
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex min-h-8 items-center justify-between">
       <div className="flex items-center gap-2">
         {Icon && <Icon className="text-muted-foreground size-4 flex-shrink-0" />}
         <span className="text-muted-foreground text-sm">{label}</span>
       </div>
-      <span className={cn('text-muted-foreground px-2 text-sm', muted && 'opacity-60')}>
+      <span className={cn('text-muted-foreground -mr-2 px-2 text-sm', muted && 'opacity-60')}>
         {message}
       </span>
     </div>
