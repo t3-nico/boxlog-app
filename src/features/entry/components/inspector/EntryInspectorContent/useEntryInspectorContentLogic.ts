@@ -161,6 +161,7 @@ export function useEntryInspectorContentLogic() {
     closeInspector,
     pendingChanges: pendingChanges as Record<string, string | number | null | undefined> | null,
     clearPendingChanges,
+    timeConflictError,
   });
 
   // 繰り返しインスタンス対応のautoSave

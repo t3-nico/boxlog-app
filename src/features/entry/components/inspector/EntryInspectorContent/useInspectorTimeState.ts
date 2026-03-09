@@ -8,6 +8,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { localTimeToUTCISO, parseISOToUserTimezone } from '@/lib/date-utils';
+import { api } from '@/lib/trpc';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
 import type { EntryWithTags } from '@/core/types/entry';
@@ -40,6 +41,9 @@ export function useInspectorTimeState({
 }: UseInspectorTimeStateProps) {
   // ユーザーのタイムゾーン設定
   const timezone = useCalendarSettingsStore((state) => state.timezone);
+
+  // TanStack Query キャッシュアクセス（重複チェック用）
+  const utils = api.useUtils();
 
   // 時間重複エラー状態（視覚的フィードバック用）
   const [timeConflictError, setTimeConflictError] = useState(false);
@@ -130,11 +134,41 @@ export function useInspectorTimeState({
     }
   }, [plan]);
 
+  // リアルタイム重複チェック: scheduleDate / startTime / endTime の変更を監視
+  useEffect(() => {
+    if (!scheduleDate || !startTime || !endTime || !planId) {
+      setTimeConflictError(false);
+      return;
+    }
+
+    const [startH, startM] = startTime.split(':').map(Number);
+    const [endH, endM] = endTime.split(':').map(Number);
+    const startISO = localTimeToUTCISO(scheduleDate, startH ?? 0, startM ?? 0, timezone);
+    const endISO = localTimeToUTCISO(scheduleDate, endH ?? 0, endM ?? 0, timezone);
+
+    const entries = utils.entries.list.getData();
+    if (!entries) {
+      setTimeConflictError(false);
+      return;
+    }
+
+    const hasOverlap = entries.some(
+      (entry: { id: string; start_time: string | null; end_time: string | null }) => {
+        if (entry.id === planId) return false;
+        if (!entry.start_time || !entry.end_time) return false;
+        return (
+          new Date(entry.start_time) < new Date(endISO) &&
+          new Date(entry.end_time) > new Date(startISO)
+        );
+      },
+    );
+
+    setTimeConflictError(hasOverlap);
+  }, [scheduleDate, startTime, endTime, planId, timezone, utils.entries.list]);
+
   // スケジュール日変更ハンドラー（start_time/end_timeの日付部分）
   const handleScheduleDateChange = useCallback(
     (date: Date | undefined) => {
-      // 日付変更時に既存のエラーをクリア
-      setTimeConflictError(false);
       setScheduleDate(date);
 
       // ローカルにバッファリング（Google Calendar準拠: 閉じる時に保存）
@@ -163,8 +197,6 @@ export function useInspectorTimeState({
 
   const handleStartTimeChange = useCallback(
     (time: string) => {
-      setTimeConflictError(false);
-
       const [hours, minutes] = time ? time.split(':').map(Number) : [0, 0];
       setStartTime(time);
 
@@ -189,8 +221,6 @@ export function useInspectorTimeState({
 
   const handleEndTimeChange = useCallback(
     (time: string) => {
-      setTimeConflictError(false);
-
       const [hours, minutes] = time ? time.split(':').map(Number) : [0, 0];
       setEndTime(time);
 
@@ -225,6 +255,7 @@ export function useInspectorTimeState({
   );
 
   // 記録時間変更ハンドラー（即座にmutate → 楽観的更新でカードに即反映）
+  // 隣の記録と重複する場合は自動縮小（記録は「事実の修正」なので周囲が調整される）
   const handleActualStartChange = useCallback(
     (time: string | null) => {
       setActualStartTime(time);
@@ -238,9 +269,47 @@ export function useInspectorTimeState({
               timezone,
             )
           : null;
+
+      // 自動縮小: 開始を早めた場合、隣の記録の終了を引き戻す
+      if (isoValue && scheduleDate) {
+        const myEndISO = actualEndTime
+          ? localTimeToUTCISO(
+              scheduleDate,
+              ...(actualEndTime.split(':').map(Number) as [number, number]),
+              timezone,
+            )
+          : plan?.end_time;
+
+        if (myEndISO) {
+          const newStart = new Date(isoValue);
+          const myEnd = new Date(myEndISO);
+          const entries = utils.entries.list.getData();
+
+          if (entries) {
+            for (const entry of entries as Array<{
+              id: string;
+              start_time: string | null;
+              end_time: string | null;
+              actual_start_time: string | null;
+              actual_end_time: string | null;
+            }>) {
+              if (entry.id === planId) continue;
+              const nStart = new Date(entry.actual_start_time ?? entry.start_time ?? '');
+              const nEnd = new Date(entry.actual_end_time ?? entry.end_time ?? '');
+              if (isNaN(nStart.getTime()) || isNaN(nEnd.getTime())) continue;
+
+              // 隣が左側にいて終了がこちらの新開始に食い込む → 隣の終了を引き戻す
+              if (nStart < newStart && nEnd > newStart && nEnd <= myEnd) {
+                updatePlan.mutate({ id: entry.id, data: { actual_end_time: isoValue } });
+              }
+            }
+          }
+        }
+      }
+
       updatePlan.mutate({ id: planId, data: { actual_start_time: isoValue } });
     },
-    [planId, scheduleDate, updatePlan, timezone],
+    [planId, scheduleDate, updatePlan, timezone, actualEndTime, plan?.end_time, utils.entries.list],
   );
 
   const handleActualEndChange = useCallback(
@@ -256,9 +325,55 @@ export function useInspectorTimeState({
               timezone,
             )
           : null;
+
+      // 自動縮小: 終了を延ばした場合、隣の記録の開始を押し出す
+      if (isoValue && scheduleDate) {
+        const myStartISO = actualStartTime
+          ? localTimeToUTCISO(
+              scheduleDate,
+              ...(actualStartTime.split(':').map(Number) as [number, number]),
+              timezone,
+            )
+          : plan?.start_time;
+
+        if (myStartISO) {
+          const myStart = new Date(myStartISO);
+          const newEnd = new Date(isoValue);
+          const entries = utils.entries.list.getData();
+
+          if (entries) {
+            for (const entry of entries as Array<{
+              id: string;
+              start_time: string | null;
+              end_time: string | null;
+              actual_start_time: string | null;
+              actual_end_time: string | null;
+            }>) {
+              if (entry.id === planId) continue;
+              const nStart = new Date(entry.actual_start_time ?? entry.start_time ?? '');
+              const nEnd = new Date(entry.actual_end_time ?? entry.end_time ?? '');
+              if (isNaN(nStart.getTime()) || isNaN(nEnd.getTime())) continue;
+
+              // 隣が右側にいて開始がこちらの新終了に食い込む → 隣の開始を押し出す
+              if (nStart >= myStart && nStart < newEnd && nEnd > newEnd) {
+                updatePlan.mutate({ id: entry.id, data: { actual_start_time: isoValue } });
+              }
+            }
+          }
+        }
+      }
+
       updatePlan.mutate({ id: planId, data: { actual_end_time: isoValue } });
     },
-    [planId, scheduleDate, updatePlan, timezone],
+    [
+      planId,
+      scheduleDate,
+      updatePlan,
+      timezone,
+      actualStartTime,
+      plan?.start_time,
+      utils.entries.list,
+    ],
   );
 
   return {

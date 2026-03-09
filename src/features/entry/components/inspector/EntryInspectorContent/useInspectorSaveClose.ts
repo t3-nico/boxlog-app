@@ -30,6 +30,7 @@ interface UseInspectorSaveCloseProps {
   closeInspector: () => void;
   pendingChanges: Record<string, string | number | null | undefined> | null;
   clearPendingChanges: () => void;
+  timeConflictError: boolean;
 }
 
 export function useInspectorSaveClose({
@@ -42,6 +43,7 @@ export function useInspectorSaveClose({
   closeInspector,
   pendingChanges,
   clearPendingChanges,
+  timeConflictError,
 }: UseInspectorSaveCloseProps) {
   const t = useTranslations();
   const updateTagsInCache = useUpdateEntityTagsInCache('entries');
@@ -53,6 +55,9 @@ export function useInspectorSaveClose({
    * エラー時はtoastで通知。
    */
   const saveAndClose = useCallback(() => {
+    // 時間重複エラー中は保存をブロック
+    if (timeConflictError) return;
+
     const { entryId: currentEntryId, consumePendingChanges: consume } =
       useEntryInspectorStore.getState();
     const currentTagId = selectedTagIdRef.current;
@@ -85,7 +90,15 @@ export function useInspectorSaveClose({
         toast.error(t('plan.inspector.toast.tagsSaveFailed'));
       });
     }
-  }, [t, updatePlan, closeInspector, setEntryTags, hasTagChanges, selectedTagIdRef]);
+  }, [
+    t,
+    updatePlan,
+    closeInspector,
+    setEntryTags,
+    hasTagChanges,
+    selectedTagIdRef,
+    timeConflictError,
+  ]);
 
   /**
    * 変更を破棄してInspectorを閉じる（キャンセル）
