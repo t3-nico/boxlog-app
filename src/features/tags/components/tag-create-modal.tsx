@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { ActionFooter } from '@/components/ui/action-footer';
 import { Button } from '@/components/ui/button';
 import { COLOR_DISPLAY_NAMES, ColorPaletteMenuItems } from '@/components/ui/color-palette-picker';
 import {
@@ -354,7 +355,7 @@ export function TagCreateModal({
         </FieldGroup>
 
         {/* Footer */}
-        <div className="flex justify-end gap-2">
+        <ActionFooter>
           <Button
             variant="outline"
             onClick={onClose}
@@ -366,7 +367,7 @@ export function TagCreateModal({
           <Button onClick={handleSubmit} disabled={isLoading}>
             {isLoading ? t('common.actions.creating') : t('common.actions.create')}
           </Button>
-        </div>
+        </ActionFooter>
       </div>
     </div>
   );

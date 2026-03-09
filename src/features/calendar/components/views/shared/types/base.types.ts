@@ -3,9 +3,9 @@
  * 全カレンダービューで共通するプロパティ
  */
 
-// CalendarPlan, ViewDateRange を Source of Truth から直接エクスポート
-export type { CalendarPlan, ViewDateRange } from '../../../../types/calendar.types';
-import type { CalendarPlan, ViewDateRange } from '../../../../types/calendar.types';
+// CalendarEvent, ViewDateRange を Source of Truth から直接エクスポート
+export type { CalendarEvent, ViewDateRange } from '../../../../types/calendar.types';
+import type { CalendarEvent, ViewDateRange } from '../../../../types/calendar.types';
 
 export type CalendarViewType = 'day' | '3day' | '5day' | 'week' | 'agenda' | 'timesheet';
 
@@ -15,15 +15,15 @@ export type CalendarViewType = 'day' | '3day' | '5day' | 'week' | 'agenda' | 'ti
  */
 export interface BaseViewProps {
   // Core data
-  plans: CalendarPlan[];
+  plans: CalendarEvent[];
   currentDate: Date;
 
   // Display options
   className?: string | undefined;
 
   // Plan handlers（最小限）
-  onPlanClick?: ((plan: CalendarPlan) => void) | undefined;
-  onPlanContextMenu?: ((plan: CalendarPlan, mouseEvent: React.MouseEvent) => void) | undefined;
+  onPlanClick?: ((plan: CalendarEvent) => void) | undefined;
+  onPlanContextMenu?: ((plan: CalendarEvent, mouseEvent: React.MouseEvent) => void) | undefined;
 }
 
 /**
@@ -34,7 +34,7 @@ export interface GridViewProps extends BaseViewProps {
   // Core data
   dateRange: ViewDateRange;
   /** 全プラン（期限切れ未完了表示用、日付フィルタリング前） */
-  allPlans?: CalendarPlan[] | undefined;
+  allPlans?: CalendarEvent[] | undefined;
 
   // Display options
   showWeekends?: boolean | undefined;
@@ -45,15 +45,12 @@ export interface GridViewProps extends BaseViewProps {
   // Plan handlers（グリッド操作用）
   onUpdatePlan?:
     | ((
-        planIdOrPlan: string | CalendarPlan,
+        planIdOrPlan: string | CalendarEvent,
         updates?: { startTime: Date; endTime: Date },
       ) => void | Promise<void> | Promise<{ skipToast: true } | void>)
     | undefined;
   onDeletePlan?: ((planId: string) => void) | undefined;
-  onRestorePlan?: ((plan: CalendarPlan) => Promise<void>) | undefined;
-  onEmptyAreaContextMenu?:
-    | ((date: Date, hour: number, minute: number, e: React.MouseEvent) => void)
-    | undefined;
+  onRestorePlan?: ((plan: CalendarEvent) => Promise<void>) | undefined;
   onTimeRangeSelect?:
     | ((selection: {
         date: Date;
@@ -76,7 +73,7 @@ export interface GridViewProps extends BaseViewProps {
  * 4箇所で重複していた PlanPosition を統一
  */
 export interface BasePlanPosition {
-  plan: CalendarPlan;
+  plan: CalendarEvent;
   top: number;
   height: number;
   left: number;

@@ -1,7 +1,4 @@
-import type { CalendarEvent as CalendarPlan } from '@/core/types/calendar-event';
-
 export type { CalendarEvent } from '@/core/types/calendar-event';
-export type { CalendarPlan };
 
 export type MultiDayCount = 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 export type MultiDayViewType = `${MultiDayCount}day`;
@@ -39,8 +36,6 @@ export interface ViewSelectorProps {
   onChange: (view: CalendarViewType) => void;
 }
 
-// 後方互換性のためのエイリアス
-export type CalendarTicket = CalendarPlan;
 // ========================================
 // 新しいDB設計に対応した型定義
 // ========================================
@@ -77,10 +72,6 @@ export interface PlanInstance {
   createdAt: Date;
   updatedAt: Date;
 }
-
-// 後方互換性のためのエイリアス
-export type TicketInstance = PlanInstance;
-export type EventInstance = PlanInstance;
 
 /**
  * カレンダービュー状態
@@ -138,17 +129,9 @@ export interface CreatePlanInput {
   recurrence?: Omit<RecurrencePattern, 'id' | 'planId' | 'createdAt' | 'updatedAt'>;
 }
 
-// 後方互換性のためのエイリアス
-export type CreateTicketInput = CreatePlanInput;
-export type CreateEventInput = CreatePlanInput;
-
 export interface UpdatePlanInput extends Partial<CreatePlanInput> {
   id: string;
 }
-
-// 後方互換性のためのエイリアス
-export type UpdateTicketInput = UpdatePlanInput;
-export type UpdateEventInput = UpdatePlanInput;
 
 // フィルター条件
 export interface CalendarFilter {

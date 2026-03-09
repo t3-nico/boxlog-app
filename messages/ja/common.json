@@ -142,11 +142,17 @@
       "monthsAgo": "{count}ヶ月前",
       "justNow": "たった今",
       "minutesAgo": "{count}分前",
-      "hoursAgo": "{count}時間前"
+      "hoursAgo": "{count}時間前",
+      "now": "今",
+      "duration30m": "30分",
+      "duration1h": "1時間",
+      "duration1_5h": "1.5時間",
+      "duration2h": "2時間"
     },
     "reminder": {
       "label": "リマインダー",
-      "none": "なし",
+      "none": "通知しない",
+      "add": "通知を追加",
       "atStart": "開始時刻",
       "min5": "5分前",
       "min10": "10分前",
@@ -172,7 +178,7 @@
     },
     "recurrence": {
       "label": "繰り返し",
-      "none": "繰り返し",
+      "none": "繰り返さない",
       "daily": "毎日",
       "weekly": "毎週",
       "monthly": "毎月",

@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import type { CalendarPlan } from '../../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../../types/calendar.types';
 
 import { PlanCard } from './PlanCard';
 
@@ -36,7 +36,7 @@ vi.mock('@/hooks/useMediaQuery', () => ({
 }));
 
 describe('PlanCard', () => {
-  const mockEvent: CalendarPlan = {
+  const mockEvent: CalendarEvent = {
     id: 'event-1',
     title: 'テストイベント',
     description: 'テスト説明',
@@ -217,8 +217,9 @@ describe('PlanCard', () => {
       render(<PlanCard plan={mockEvent} position={smallPosition} />);
 
       const eventBlock = screen.getByRole('group', { name: /entry: テストイベント/i });
-      // 高さ30px未満でもフォントは統一（text-sm）
-      expect(eventBlock.className).toContain('text-sm');
+      // text-smはカード本体（内部div）に適用される
+      const contentDiv = eventBlock.querySelector('.text-sm');
+      expect(contentDiv).toBeTruthy();
     });
 
     it('最小高さが保証される', () => {

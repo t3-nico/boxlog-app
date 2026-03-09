@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
-  title: 'Tokens/Elevation',
+  title: 'Foundations/Elevation',
   parameters: {
     layout: 'fullscreen',
   },
@@ -95,6 +95,104 @@ export const AllElevations: Story = {
             <br />
             最前面要素
           </p>
+        </div>
+      </div>
+    </div>
+  ),
+};
+
+export const PhysicalLighting: Story = {
+  render: () => (
+    <div>
+      <h1 className="mb-6 text-2xl font-bold">Physical Lighting System</h1>
+      <p className="text-muted-foreground mb-8">
+        光源を上に固定し、微細なグラデーション・ハイライト・2層シャドウで奥行きを表現。
+        <br />
+        <span className="text-xs">
+          原則: ユーザーが気づかないこと。「なんかいい」は正解、「おしゃれ」は過剰。
+        </span>
+      </p>
+
+      <div className="grid grid-cols-2 gap-8 lg:grid-cols-4">
+        {/* Sunken */}
+        <div className="text-center">
+          <p className="text-muted-foreground mb-2 text-xs">Sunken</p>
+          <div className="flex h-28 items-center justify-center">
+            <div className="bg-input surface-sunken w-48 rounded-lg p-3">
+              <span className="text-muted-foreground text-sm">入力フィールド</span>
+            </div>
+          </div>
+          <code className="bg-container rounded px-2 py-1 text-xs">surface-sunken</code>
+          <p className="text-muted-foreground mt-2 text-xs">
+            input, textarea
+            <br />
+            凹み表現
+          </p>
+        </div>
+
+        {/* Flat */}
+        <div className="text-center">
+          <p className="text-muted-foreground mb-2 text-xs">Flat</p>
+          <div className="flex h-28 items-center justify-center">
+            <div className="bg-card surface-flat border-border size-24 rounded-lg border" />
+          </div>
+          <code className="bg-container rounded px-2 py-1 text-xs">surface-flat</code>
+          <p className="text-muted-foreground mt-2 text-xs">
+            Card, コンテンツ面
+            <br />
+            グラデーションのみ
+          </p>
+        </div>
+
+        {/* Raised */}
+        <div className="text-center">
+          <p className="text-muted-foreground mb-2 text-xs">Raised</p>
+          <div className="flex h-28 items-center justify-center">
+            <div className="bg-card surface-raised size-24 rounded-lg" />
+          </div>
+          <code className="bg-container rounded px-2 py-1 text-xs">surface-raised</code>
+          <p className="text-muted-foreground mt-2 text-xs">
+            dropdown, popover
+            <br />
+            ハイライト + 2層シャドウ
+          </p>
+        </div>
+
+        {/* Raised Heavy */}
+        <div className="text-center">
+          <p className="text-muted-foreground mb-2 text-xs">Raised Heavy</p>
+          <div className="flex h-28 items-center justify-center">
+            <div className="bg-card surface-raised-heavy size-24 rounded-lg" />
+          </div>
+          <code className="bg-container rounded px-2 py-1 text-xs">surface-raised-heavy</code>
+          <p className="text-muted-foreground mt-2 text-xs">
+            dialog, sheet, inspector
+            <br />
+            最大の浮き
+          </p>
+        </div>
+      </div>
+
+      {/* 比較セクション */}
+      <div className="mt-12">
+        <h2 className="mb-4 font-bold">Before / After 比較</h2>
+        <div className="grid grid-cols-2 gap-8">
+          <div>
+            <p className="text-muted-foreground mb-2 text-xs">Before（ベタ塗り + shadow-lg）</p>
+            <div className="bg-card border-border w-full rounded-2xl border p-6 shadow-lg">
+              <h3 className="mb-2 font-bold">カードタイトル</h3>
+              <p className="text-muted-foreground text-sm">フラットな背景色 + ドロップシャドウ</p>
+            </div>
+          </div>
+          <div>
+            <p className="text-muted-foreground mb-2 text-xs">After（surface-raised-heavy）</p>
+            <div className="bg-card surface-raised-heavy w-full rounded-2xl p-6">
+              <h3 className="mb-2 font-bold">カードタイトル</h3>
+              <p className="text-muted-foreground text-sm">
+                グラデーション + ハイライト + 2層シャドウ
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

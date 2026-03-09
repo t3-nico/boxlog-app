@@ -25,8 +25,8 @@ import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
 import { createEntryService } from '@/server/services/entries';
 import { handleServiceError } from '@/server/services/errors';
 
-import { removeUndefinedFields } from '../plans/utils';
 import { createActivityRouter } from '../shared/createActivityRouter';
+import { removeUndefinedFields } from '../shared/utils';
 
 // =============================================================================
 // Inline Schemas

@@ -14,12 +14,12 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { addHours, startOfHour } from 'date-fns';
 
 // Feature barrel imports（cross-feature依存はここに集約）
-import type { CalendarPlan, CalendarViewType, ViewDateRange } from '@/features/calendar';
+import type { CalendarEvent, CalendarViewType, ViewDateRange } from '@/features/calendar';
 import {
   useCalendarData,
+  useCalendarEventKeyboard,
   useCalendarHandlers,
   useCalendarNavigationHandlers,
-  useCalendarPlanKeyboard,
   usePlanContextActions,
   usePlanOperations,
   useRecurringPlanDrag,
@@ -52,8 +52,8 @@ export interface CalendarCompositionInput {
 export interface CalendarCompositionResult {
   // === Data ===
   viewDateRange: ViewDateRange;
-  filteredEvents: CalendarPlan[];
-  allCalendarPlans: CalendarPlan[];
+  filteredEvents: CalendarEvent[];
+  allCalendarEvents: CalendarEvent[];
 
   // === Settings ===
   showWeekends: boolean;
@@ -66,7 +66,7 @@ export interface CalendarCompositionResult {
   onAsideChange: (aside: AsideType) => void;
 
   // === Plan click handlers ===
-  onPlanClick: (plan: CalendarPlan) => void;
+  onPlanClick: (plan: CalendarEvent) => void;
   onTimeRangeSelect: (selection: {
     date: Date;
     startHour: number;
@@ -77,19 +77,18 @@ export interface CalendarCompositionResult {
 
   // === Plan CRUD ===
   onUpdatePlan: (
-    planIdOrPlan: string | CalendarPlan,
+    planIdOrPlan: string | CalendarEvent,
     updates?: { startTime: Date; endTime: Date },
   ) => void | Promise<void> | Promise<{ skipToast: true } | void>;
   onDeletePlan: (planId: string) => void;
-  onRestorePlan: (plan: CalendarPlan) => Promise<void>;
+  onRestorePlan: (plan: CalendarEvent) => Promise<void>;
 
   // === Context menu actions ===
-  onEditPlan: (plan: CalendarPlan) => void;
-  onDeletePlanConfirm: (plan: CalendarPlan) => void;
-  onDuplicatePlan: (plan: CalendarPlan) => void;
-  onCopyPlan: (plan: CalendarPlan) => void;
-  onCompletePlan: (plan: CalendarPlan) => void;
-  onCompleteWithRecord: (plan: CalendarPlan) => void;
+  onEditPlan: (plan: CalendarEvent) => void;
+  onDeletePlanConfirm: (plan: CalendarEvent) => void;
+  onDuplicatePlan: (plan: CalendarEvent) => void;
+  onCopyPlan: (plan: CalendarEvent) => void;
+  onCompleteWithRecord: (plan: CalendarEvent) => void;
 
   // === Navigation handlers ===
   onNavigate: (direction: 'prev' | 'next' | 'today') => void;
@@ -159,7 +158,7 @@ export function useCalendarComposition({
   // =========================================================================
   // Data Layer（plans + records + filtering）
   // =========================================================================
-  const { viewDateRange, filteredEvents, allCalendarPlans } = useCalendarData({
+  const { viewDateRange, filteredEvents, allCalendarEvents } = useCalendarData({
     viewType,
     currentDate,
   });
@@ -178,7 +177,7 @@ export function useCalendarComposition({
   // Recurring Plan Drag（ダイアログ付きドラッグ処理）
   // =========================================================================
   const { handleUpdatePlan } = useRecurringPlanDrag({
-    plans: allCalendarPlans,
+    plans: allCalendarEvents,
   });
 
   // =========================================================================
@@ -189,7 +188,6 @@ export function useCalendarComposition({
     handleEditPlan,
     handleDuplicatePlan,
     handleCopyPlan,
-    handleCompletePlan,
     handleCompleteWithRecord,
   } = usePlanContextActions();
 
@@ -270,7 +268,7 @@ export function useCalendarComposition({
     [deletePlan],
   );
 
-  useCalendarPlanKeyboard({
+  useCalendarEventKeyboard({
     enabled: true,
     onDeletePlan: deletePlanAsync,
     getSelectedPlanTitle,
@@ -295,7 +293,7 @@ export function useCalendarComposition({
       // Data
       viewDateRange,
       filteredEvents,
-      allCalendarPlans,
+      allCalendarEvents,
 
       // Settings
       showWeekends,
@@ -321,7 +319,6 @@ export function useCalendarComposition({
       onDeletePlanConfirm: handleDeletePlanConfirm,
       onDuplicatePlan: handleDuplicatePlan,
       onCopyPlan: handleCopyPlan,
-      onCompletePlan: handleCompletePlan,
       onCompleteWithRecord: handleCompleteWithRecord,
 
       // Navigation handlers
@@ -336,7 +333,7 @@ export function useCalendarComposition({
     [
       viewDateRange,
       filteredEvents,
-      allCalendarPlans,
+      allCalendarEvents,
       showWeekends,
       disabledPlanId,
       currentAside,
@@ -350,7 +347,6 @@ export function useCalendarComposition({
       handleDeletePlanConfirm,
       handleDuplicatePlan,
       handleCopyPlan,
-      handleCompletePlan,
       handleCompleteWithRecord,
       handleNavigate,
       handleViewChange,

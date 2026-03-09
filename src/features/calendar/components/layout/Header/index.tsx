@@ -180,7 +180,7 @@ export const CalendarHeader = ({
                   variant="ghost"
                   icon
                   className="-mr-4 size-8"
-                  onClick={() => onAsideChange('entries')}
+                  onClick={() => onAsideChange('chat')}
                   aria-label="Open aside"
                 >
                   <PanelRight className="size-4" />

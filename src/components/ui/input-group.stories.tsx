@@ -6,7 +6,7 @@ import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '
 import { HoverTooltip } from './tooltip';
 
 const meta = {
-  title: 'Components/InputGroup',
+  title: 'Recipes/InputGroup',
   component: InputGroup,
   tags: ['autodocs'],
   parameters: {

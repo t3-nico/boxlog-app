@@ -4,14 +4,8 @@ import { ArrowLeft, PanelRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
-import { SegmentedControl } from '@/components/ui/segmented-control';
 
-export type AsideType = 'none' | 'entries' | 'chat' | 'reflection';
-
-const asideOptions = [
-  { value: 'entries' as const, label: 'Entries' },
-  { value: 'chat' as const, label: 'Chat' },
-];
+export type AsideType = 'none' | 'chat' | 'reflection';
 
 interface AppAsideProps {
   asideType: AsideType;
@@ -23,7 +17,7 @@ interface AppAsideProps {
 /**
  * アプリケーション共通アサイドシェル
  *
- * 共通ヘッダー（AsideSwitcher + 閉じるボタン）を持ち、
+ * 共通ヘッダー（タイトル + 閉じるボタン）を持ち、
  * renderContent で各ページ固有のパネルコンテンツを注入する。
  */
 export function AppAside({ asideType, onAsideChange, renderContent }: AppAsideProps) {
@@ -36,11 +30,7 @@ export function AppAside({ asideType, onAsideChange, renderContent }: AppAsidePr
       {/* アサイドヘッダー（CalendarHeader h-12 px-4 py-2 + h-8 と同じ構造） */}
       <div className="h-12 shrink-0 px-4 py-2">
         <div className="flex h-8 items-center justify-between">
-          <SegmentedControl
-            options={asideOptions}
-            value={asideType as 'entries' | 'chat'}
-            onChange={onAsideChange}
-          />
+          <span className="text-sm font-medium">Chat</span>
           <Button
             variant="ghost"
             icon

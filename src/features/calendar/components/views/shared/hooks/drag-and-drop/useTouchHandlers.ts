@@ -8,7 +8,7 @@
 import { useCallback, useRef } from 'react';
 
 import { useHapticFeedback } from '@/hooks/useHapticFeedback';
-import type { CalendarPlan } from '../../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../../types/calendar.types';
 
 import type { DragDataRef, DragState } from './types';
 import {
@@ -22,8 +22,8 @@ interface UseTouchHandlersProps {
   dragState: DragState;
   setDragState: React.Dispatch<React.SetStateAction<DragState>>;
   dragDataRef: React.MutableRefObject<DragDataRef | null>;
-  eventsRef: React.MutableRefObject<CalendarPlan[]>;
-  eventClickHandlerRef: React.MutableRefObject<((plan: CalendarPlan) => void) | undefined>;
+  eventsRef: React.MutableRefObject<CalendarEvent[]>;
+  eventClickHandlerRef: React.MutableRefObject<((plan: CalendarEvent) => void) | undefined>;
   viewMode: string;
   displayDates: Date[] | undefined;
   disabledPlanId: string | null | undefined;
@@ -43,7 +43,7 @@ interface UseTouchHandlersProps {
     targetDateIndex: number | undefined;
     onOverlapError?: () => void;
   }) => Promise<boolean>;
-  startDrag: (eventId: string, plan: CalendarPlan, dateIndex: number) => void;
+  startDrag: (eventId: string, plan: CalendarEvent, dateIndex: number) => void;
   updateDrag: (update: { targetDateIndex: number | undefined; isDragging: boolean }) => void;
   endDrag: () => void;
 }

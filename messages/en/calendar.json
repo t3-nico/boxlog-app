@@ -100,14 +100,10 @@
       "enterEventTitle": "Enter event title",
       "reminderSet": "Reminder set",
       "noTitle": "(No title)",
-      "allDay": "All day",
-      "markComplete": "Mark as complete",
-      "markIncomplete": "Mark as incomplete"
+      "allDay": "All day"
     },
     "contextMenu": {
       "edit": "Edit",
-      "markComplete": "Mark as Complete",
-      "markIncomplete": "Mark as Incomplete",
       "completeWithRecord": "Complete & Copy Record",
       "duplicate": "Duplicate",
       "copy": "Copy",
@@ -232,19 +228,6 @@
       "searchPlaceholder": "Search tags...",
       "noResults": "No tags found",
       "createPlaceholder": "New tag name"
-    },
-    "statusBar": {
-      "noSchedule": "No schedule",
-      "openSchedule": "Open schedule",
-      "createNewPlan": "Create new plan",
-      "plan": "Plan",
-      "record": "Record",
-      "totalTimeTooltip": "Cumulative time up to today",
-      "chronotypeNotSet": "Chronotype not set",
-      "setupChronotype": "Set up chronotype",
-      "openProductivityZone": "Open productivity zone settings",
-      "remaining": "{hours}h {minutes}m left",
-      "remainingMinutes": "{minutes}m left"
     },
     "agenda": {
       "emptyTitle": "No upcoming events",

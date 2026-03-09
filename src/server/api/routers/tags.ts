@@ -208,6 +208,8 @@ export const tagsRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string().uuid(),
+        strategy: z.enum(['delete_entries', 'reassign']).optional(),
+        targetTagId: z.string().uuid().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -216,6 +218,8 @@ export const tagsRouter = createTRPCRouter({
         const deletedTag = await service.delete({
           userId: ctx.userId,
           tagId: input.id,
+          ...(input.strategy != null ? { strategy: input.strategy } : {}),
+          ...(input.targetTagId != null ? { targetTagId: input.targetTagId } : {}),
         });
 
         // サーバーサイドキャッシュを無効化
@@ -290,6 +294,8 @@ export const tagsRouter = createTRPCRouter({
     .input(
       z.object({
         prefix: z.string().min(1).max(50),
+        strategy: z.enum(['delete_entries', 'reassign']).optional(),
+        targetTagId: z.string().uuid().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -298,6 +304,8 @@ export const tagsRouter = createTRPCRouter({
         const result = await service.deleteGroup({
           userId: ctx.userId,
           prefix: input.prefix,
+          ...(input.strategy != null ? { strategy: input.strategy } : {}),
+          ...(input.targetTagId != null ? { targetTagId: input.targetTagId } : {}),
         });
 
         // サーバーサイドキャッシュを無効化

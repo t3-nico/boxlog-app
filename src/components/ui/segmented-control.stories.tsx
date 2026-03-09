@@ -6,7 +6,7 @@ import { SegmentedControl } from './segmented-control';
 
 /** セグメントコントロール。2〜4個の選択肢を横並びで表示し1つを選択するUI。 */
 const meta = {
-  title: 'Components/SegmentedControl',
+  title: 'Primitives/SegmentedControl',
   component: SegmentedControl,
   tags: ['autodocs'],
   parameters: {

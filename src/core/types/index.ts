@@ -1,4 +1,4 @@
-export type { CalendarEvent, CalendarPlan } from './calendar-event';
+export type { CalendarEvent } from './calendar-event';
+export * from './entry';
 export * from './grouping';
-export * from './plan';
 export * from './tag';

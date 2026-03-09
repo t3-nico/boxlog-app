@@ -2,7 +2,7 @@
  * CalendarDragSelection 型定義
  */
 
-import type { CalendarPlan } from '../../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../../types/calendar.types';
 
 export interface TimeRange {
   startHour: number;
@@ -22,15 +22,11 @@ export interface CalendarDragSelectionProps {
   onTimeRangeSelect?: ((selection: DateTimeSelection) => void) | undefined;
   /** ダブルクリック専用ハンドラー（オプション、未指定時はonTimeRangeSelectが呼ばれる） */
   onDoubleClick?: ((selection: DateTimeSelection) => void) | undefined;
-  /** 空き領域の右クリックハンドラー */
-  onContextMenu?:
-    | ((date: Date, hour: number, minute: number, e: React.MouseEvent) => void)
-    | undefined;
   children?: React.ReactNode | undefined;
   /** ドラッグ選択を無効にする */
   disabled?: boolean | undefined;
   /** 重複チェック用のプラン一覧 */
-  plans?: CalendarPlan[] | undefined;
+  plans?: CalendarEvent[] | undefined;
 }
 
 /** ドラッグ状態 */

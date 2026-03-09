@@ -1,18 +1,18 @@
 import { useCallback } from 'react';
 
-import type { CalendarPlan } from '../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../types/calendar.types';
 import { useCurrentPeriod, useDateUtilities, usePlansByDate } from '../../shared';
 
 export interface UseMultiDayViewOptions {
   centerDate: Date;
   dayCount: number;
-  events?: CalendarPlan[];
+  events?: CalendarEvent[];
   showWeekends?: boolean;
 }
 
 export interface UseMultiDayViewReturn {
   displayDates: Date[];
-  eventsByDate: Record<string, CalendarPlan[]>;
+  eventsByDate: Record<string, CalendarEvent[]>;
   centerIndex: number;
   todayIndex: number;
   isCurrentDay: boolean;

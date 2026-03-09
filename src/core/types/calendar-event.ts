@@ -12,10 +12,6 @@ export interface CalendarEvent {
   endDate: Date | null;
   status: 'open' | 'closed';
   color: string;
-  /** @deprecated entries統合後は不要 */
-  plan_number?: number | null | undefined;
-  /** @deprecated entries統合後は reviewed_at を使用 */
-  completed_at?: string | null | undefined;
   reminder_minutes?: number | null | undefined; // 通知タイミング（開始時刻の何分前か）
   /** タグID。1エントリ1タグ。タグの詳細情報はtags.listキャッシュから取得する。 */
   tagId?: string | null | undefined;
@@ -34,8 +30,11 @@ export interface CalendarEvent {
   entryState?: EntryState | undefined;
   /** 充実度スコア（1-3） */
   fulfillmentScore?: FulfillmentScore | null | undefined;
+  /** 実記録の開始時刻（actual_start_time から変換） */
+  actualStartDate?: Date | null | undefined;
+  /** 実記録の終了時刻（actual_end_time から変換） */
+  actualEndDate?: Date | null | undefined;
   // Optional properties used in various contexts
-  type?: 'event' | 'plan' | 'task' | 'record' | undefined; // UX用: plan=予定, record=記録
   userId?: string | undefined; // 所有者ID
   location?: string | undefined; // 場所
   url?: string | undefined; // 関連URL
@@ -44,17 +43,8 @@ export interface CalendarEvent {
   // 繰り返し例外情報
   isException?: boolean | undefined; // 例外インスタンスかどうか
   exceptionType?: 'modified' | 'cancelled' | 'moved' | undefined; // 例外タイプ
-  originalPlanId?: string | undefined; // 繰り返しインスタンスの親エントリID
+  originalEntryId?: string | undefined; // 繰り返しインスタンスの親エントリID
   instanceDate?: string | undefined; // インスタンス日付（YYYY-MM-DD）
-  /** @deprecated entries統合後はidを直接使用 */
-  recordId?: string | undefined;
-  /** @deprecated entries統合後は不要 */
-  linkedPlanId?: string | undefined;
-  /** @deprecated entries統合後は不要 */
-  linkedPlanTitle?: string | undefined;
   // ドラフト状態（未保存のプレビュー）
   isDraft?: boolean | undefined;
 }
-
-/** 後方互換性エイリアス */
-export type CalendarPlan = CalendarEvent;

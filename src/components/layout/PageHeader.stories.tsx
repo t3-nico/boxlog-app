@@ -6,7 +6,7 @@ import { PageHeader } from './PageHeader';
 
 /** PageHeader - 統合ページヘッダー */
 const meta = {
-  title: 'Components/Layout/PageHeader',
+  title: 'Primitives/Layout/PageHeader',
   parameters: {
     layout: 'padded',
   },
@@ -36,6 +36,14 @@ function PageHeaderWithTitle({ title }: { title: string }) {
 /** タイトル表示 */
 export const Default: Story = {
   render: () => <PageHeaderWithTitle title="Plans" />,
+};
+
+/** モバイル表示。viewport addon で md:hidden / hidden md:flex が自動切替。 */
+export const Mobile: Story = {
+  render: () => <PageHeaderWithTitle title="Plans" />,
+  globals: {
+    viewport: { value: 'mobile1' },
+  },
 };
 
 /** 全パターン一覧 */

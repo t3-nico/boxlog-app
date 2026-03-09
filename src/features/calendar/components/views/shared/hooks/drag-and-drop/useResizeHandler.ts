@@ -7,7 +7,7 @@ import { MS_PER_MINUTE } from '@/constants/time';
 import { logger } from '@/lib/logger';
 import { useTranslations } from 'next-intl';
 import useCalendarToast from '../../../../../lib/toast';
-import type { CalendarPlan } from '../../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../../types/calendar.types';
 
 import { HOUR_HEIGHT } from '../../constants/grid.constants';
 
@@ -17,9 +17,9 @@ import type { DragDataRef, DragState } from './types';
 import { checkClientSideOverlap, snapToQuarterHour, updateDragElementOverlapStyle } from './utils';
 
 interface UseResizeHandlerProps {
-  events: CalendarPlan[];
+  events: CalendarEvent[];
   /** 重複チェック用の全イベント（週ビューなど複数日表示時に使用） */
-  allEventsForOverlapCheck?: CalendarPlan[] | undefined;
+  allEventsForOverlapCheck?: CalendarEvent[] | undefined;
   eventUpdateHandler:
     | ((
         eventId: string,
@@ -139,7 +139,7 @@ export function useResizeHandler({
         return; // 更新をキャンセル
       }
 
-      const eventData: CalendarPlan = {
+      const eventData: CalendarEvent = {
         id: event.id,
         title: event.title || t('calendar.event.title'),
         description: event.description,
@@ -156,7 +156,7 @@ export function useResizeHandler({
         duration: Math.round(newDurationMs / MS_PER_MINUTE),
         isMultiDay: event.startDate.toDateString() !== newEndTime.toDateString(),
         isRecurring: false,
-        type: event.type,
+        origin: event.origin,
         userId: event.userId,
         location: event.location,
         url: event.url,

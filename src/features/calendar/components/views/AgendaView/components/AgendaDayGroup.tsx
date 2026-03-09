@@ -5,15 +5,15 @@ import { ja } from 'date-fns/locale';
 import { useLocale, useTranslations } from 'next-intl';
 
 import { cn } from '@/lib/utils';
-import type { CalendarPlan } from '../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../types/calendar.types';
 
 import { AgendaListItem } from './AgendaListItem';
 
 interface AgendaDayGroupProps {
   date: Date;
-  plans: CalendarPlan[];
-  onPlanClick?: ((plan: CalendarPlan) => void) | undefined;
-  onPlanContextMenu?: ((plan: CalendarPlan, mouseEvent: React.MouseEvent) => void) | undefined;
+  plans: CalendarEvent[];
+  onPlanClick?: ((plan: CalendarEvent) => void) | undefined;
+  onPlanContextMenu?: ((plan: CalendarEvent, mouseEvent: React.MouseEvent) => void) | undefined;
 }
 
 /**

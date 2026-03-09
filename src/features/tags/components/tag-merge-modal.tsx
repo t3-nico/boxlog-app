@@ -15,6 +15,7 @@ import { Search, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { TagRadioItem } from '@/components/tags/TagRadioItem';
+import { ActionFooter } from '@/components/ui/action-footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useHasMounted } from '@/hooks/useHasMounted';
@@ -302,7 +303,7 @@ export function TagMergeModal({ open, onClose, sourceTag, onMergeSuccess }: TagM
         )}
 
         {/* Footer */}
-        <div className="border-border flex justify-end gap-2 border-t px-4 py-3">
+        <ActionFooter className="border-border border-t px-4 py-3">
           <Button variant="outline" onClick={onClose} disabled={mergeTagMutation.isPending}>
             {t('common.actions.cancel')}
           </Button>
@@ -315,7 +316,7 @@ export function TagMergeModal({ open, onClose, sourceTag, onMergeSuccess }: TagM
               ? t('calendar.toast.saving')
               : t('calendar.filter.mergeTag.confirm')}
           </Button>
-        </div>
+        </ActionFooter>
       </div>
     </div>
   );

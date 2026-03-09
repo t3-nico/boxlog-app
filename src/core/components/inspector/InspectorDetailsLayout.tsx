@@ -3,12 +3,11 @@
 /**
  * Inspector 詳細レイアウト
  *
- * - Row 0: タグ表示（カラードット + タグ名）
- * - Row 1: スケジュール選択
- * - Row 2: メモ（インラインテキストエリア）
- * - Row 3: オプションチップ群
+ * padding 一元管理:
+ * - Mobile: px-4 pt-3
+ * - PC (md+): px-6 pt-5
  *
- * セクション間は余白で区切る（線なし）
+ * 子コンポーネントは独自の水平 padding を持たない。
  */
 
 import type { ReactNode } from 'react';
@@ -16,33 +15,23 @@ import type { ReactNode } from 'react';
 export interface InspectorDetailsLayoutProps {
   /** Row 0: タグ表示（カラードット + タグ名） */
   tagRow?: ReactNode;
-  /** Row 1: スケジュール選択コンポーネント */
+  /** Row 1: スケジュール + メモ等のコンテンツグループ */
   schedule: ReactNode;
-  /** Row 2: メモ（インラインテキストエリア） */
-  note?: ReactNode;
-  /** Row 3: オプションボタン群 */
-  options: ReactNode;
+  /** Row 2: オプションボタン群 */
+  options?: ReactNode;
 }
 
-export function InspectorDetailsLayout({
-  tagRow,
-  schedule,
-  note,
-  options,
-}: InspectorDetailsLayoutProps) {
+export function InspectorDetailsLayout({ tagRow, schedule, options }: InspectorDetailsLayoutProps) {
   return (
-    <div>
+    <div className="px-4 pt-3 pb-4 md:px-6 md:pt-5 md:pb-6">
       {/* Row 0: タグ */}
       {tagRow}
 
-      {/* Row 1: スケジュール */}
-      {schedule}
+      {/* スケジュールカード */}
+      <div className="bg-surface-inset mt-3 rounded-xl">{schedule}</div>
 
-      {/* Row 2: メモ */}
-      {note && <div className="px-6 py-2">{note}</div>}
-
-      {/* Row 3: オプション */}
-      <div className="flex flex-wrap items-center gap-1 px-4 pt-3 pb-6">{options}</div>
+      {/* オプション */}
+      {options && <div className="flex flex-wrap items-center gap-1.5 pt-2 pb-5">{options}</div>}
     </div>
   );
 }

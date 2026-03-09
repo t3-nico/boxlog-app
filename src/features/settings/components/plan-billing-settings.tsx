@@ -97,7 +97,7 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
       <SettingsCard
         title={t('settings.subscription.selectPlan')}
         actions={
-          <div className="bg-container flex gap-1 rounded-2xl p-1">
+          <div className="bg-surface-inset flex gap-1 rounded-2xl p-1">
             <Button
               variant={billingPeriod === 'month' ? 'primary' : 'ghost'}
               onClick={() => handlePeriodChange('month')}

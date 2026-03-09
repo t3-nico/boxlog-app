@@ -1,7 +1,7 @@
 /**
  * Entry → CalendarEvent 変換アダプター
  *
- * entries テーブル（plans + records 統合）のデータを
+ * entries テーブルのデータを
  * CalendarEvent（コア型）に変換して、カレンダービューに提供する。
  * 繰り返しエントリの展開も含む。
  */
@@ -10,23 +10,20 @@ import { MS_PER_MINUTE } from '@/constants/time';
 
 import type { CalendarEvent } from '@/core/types/calendar-event';
 import type { EntryWithTags } from '@/core/types/entry';
-import type { Plan } from '@/core/types/plan';
-import { getEntryState } from '@/lib/entry-status';
-import { encodeInstanceId } from '@/lib/instance-id';
 import {
   expandRecurrence,
-  isRecurringPlan,
+  isRecurringEntry,
+  type EntryInstanceException,
   type ExpandedOccurrence,
-  type PlanInstanceException,
-} from '@/lib/plan-recurrence';
+} from '@/lib/entry-recurrence';
+import { getEntryState } from '@/lib/entry-status';
+import { encodeInstanceId } from '@/lib/instance-id';
 
-export type { PlanInstanceException };
+export type { EntryInstanceException };
 
 /**
  * EntryをCalendarEvent型に変換（非繰り返し用）
  *
- * - origin='planned' → type='plan'（UX互換）
- * - origin='unplanned' → type='record'（UX互換）
  * - status は時間位置から自動判定
  * - title が空の場合はカレンダー側で「(無題)」表示
  */
@@ -37,6 +34,8 @@ export function entryToCalendarEvent(entry: EntryWithTags): CalendarEvent | null
 
   const startDate = new Date(entry.start_time);
   const endDate = new Date(entry.end_time);
+  const actualStartDate = entry.actual_start_time ? new Date(entry.actual_start_time) : null;
+  const actualEndDate = entry.actual_end_time ? new Date(entry.actual_end_time) : null;
   const createdAt = entry.created_at ? new Date(entry.created_at) : new Date();
   const updatedAt = entry.updated_at ? new Date(entry.updated_at) : new Date();
   const entryState = getEntryState(entry);
@@ -69,33 +68,8 @@ export function entryToCalendarEvent(entry: EntryWithTags): CalendarEvent | null
     origin: entry.origin,
     entryState,
     fulfillmentScore: entry.fulfillment_score,
-    type: entry.origin === 'planned' ? 'plan' : 'record',
-  };
-}
-
-/**
- * EntryWithTags → Plan互換オブジェクト（繰り返し展開用）
- *
- * expandRecurrence は Plan 型を期待するため、
- * Entry のフィールドを Plan 互換のオブジェクトに変換する。
- */
-function entryToPlanCompat(entry: EntryWithTags): Plan & { tagId?: string | null } {
-  return {
-    id: entry.id,
-    user_id: entry.user_id,
-    title: entry.title,
-    description: entry.description,
-    status: 'open', // entries には status がないため、常に open
-    start_time: entry.start_time,
-    end_time: entry.end_time,
-    recurrence_type: entry.recurrence_type,
-    recurrence_rule: entry.recurrence_rule,
-    recurrence_end_date: entry.recurrence_end_date,
-    reminder_minutes: entry.reminder_minutes,
-    completed_at: entry.reviewed_at, // Plan互換: reviewed_at → completed_at
-    created_at: entry.created_at,
-    updated_at: entry.updated_at,
-    tagId: entry.tagId,
+    actualStartDate,
+    actualEndDate,
   };
 }
 
@@ -163,12 +137,13 @@ function occurrenceToCalendarEvent(
     origin: baseEntry.origin,
     entryState,
     fulfillmentScore: baseEntry.fulfillment_score,
-    type: baseEntry.origin === 'planned' ? 'plan' : 'record',
     calendarId: baseEntry.id,
-    originalPlanId: baseEntry.id,
+    originalEntryId: baseEntry.id,
     instanceDate,
     isException: occurrence.isException,
     exceptionType: occurrence.exceptionType,
+    actualStartDate: null,
+    actualEndDate: null,
   };
 }
 
@@ -185,7 +160,7 @@ export function expandEntriesToCalendarEvents(
   entries: EntryWithTags[],
   rangeStart: Date,
   rangeEnd: Date,
-  exceptionsMap: Map<string, PlanInstanceException[]> = new Map(),
+  exceptionsMap: Map<string, EntryInstanceException[]> = new Map(),
 ): CalendarEvent[] {
   const result: CalendarEvent[] = [];
 
@@ -194,11 +169,10 @@ export function expandEntriesToCalendarEvents(
       continue;
     }
 
-    if (isRecurringPlan(entry)) {
+    if (isRecurringEntry(entry)) {
       // 繰り返しエントリを展開
-      const planCompat = entryToPlanCompat(entry);
       const exceptions = exceptionsMap.get(entry.id) ?? [];
-      const occurrences = expandRecurrence(planCompat, rangeStart, rangeEnd, exceptions);
+      const occurrences = expandRecurrence(entry, rangeStart, rangeEnd, exceptions);
 
       for (const occurrence of occurrences) {
         result.push(occurrenceToCalendarEvent(entry, occurrence));

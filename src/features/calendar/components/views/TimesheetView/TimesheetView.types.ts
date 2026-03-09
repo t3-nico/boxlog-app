@@ -1,4 +1,4 @@
-import type { CalendarPlan } from '../../../types/calendar.types';
+import type { CalendarEvent } from '../../../types/calendar.types';
 
 import type { BaseViewProps } from '../shared/types/base.types';
 
@@ -10,7 +10,7 @@ export interface TimesheetTagGroup {
   tagId: string | null;
   tagName: string;
   tagColor: string;
-  plans: CalendarPlan[];
+  plans: CalendarEvent[];
   /** 日別duration合計（分）。key: 'YYYY-MM-DD' */
   dailyTotals: Record<string, number>;
   /** 週合計（分） */

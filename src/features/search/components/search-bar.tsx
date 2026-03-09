@@ -40,7 +40,7 @@ interface SearchBarProps {
 export function SearchBar({
   className,
   placeholder = 'プランやタグを検索...',
-  types = ['plan', 'tag'],
+  types = ['entry', 'tag'],
   onResultSelect,
 }: SearchBarProps) {
   const [open, setOpen] = useState(false);
@@ -53,7 +53,7 @@ export function SearchBar({
 
   // Convert plans to displayable format
   const searchablePlans = useMemo(() => {
-    if (!types.includes('plan')) return [];
+    if (!types.includes('entry')) return [];
     return (plans as unknown as PlanFromAPI[]).map((plan) => {
       // tagIdsからタグ情報を解決
       const planTagIds = plan.tagIds ?? [];
@@ -119,7 +119,7 @@ export function SearchBar({
                   <CommandItem
                     key={plan.id}
                     value={`${plan.title} ${plan.description} ${plan.tags.map((t) => t.name).join(' ')}`}
-                    onSelect={() => handleSelect(plan.id, 'plan')}
+                    onSelect={() => handleSelect(plan.id, 'entry')}
                   >
                     <CheckSquare className="mr-2 h-4 w-4" />
                     <div className="flex flex-1 flex-col">

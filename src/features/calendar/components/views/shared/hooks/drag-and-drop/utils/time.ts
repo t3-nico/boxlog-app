@@ -1,5 +1,5 @@
 import { convertFromTimezone, formatInTimezone } from '@/lib/date/timezone';
-import type { CalendarPlan } from '../../../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../../../types/calendar.types';
 
 import { formatTimeRange } from '@/lib/date';
 import { HOUR_HEIGHT } from '../../../constants/grid.constants';
@@ -10,7 +10,7 @@ import type { DragDataRef } from '../types';
  * プレビュー時間を計算する
  */
 export function calculatePreviewTime(
-  events: CalendarPlan[],
+  events: CalendarEvent[],
   draggedEventId: string | null,
   _originalDateIndex: number | undefined,
   eventDuration: number | undefined,
@@ -118,11 +118,11 @@ export function calculateNewTime(
  * プラン期間を計算する
  */
 export function calculateEventDuration(
-  events: CalendarPlan[],
+  events: CalendarEvent[],
   eventId: string,
   dragDataRef: DragDataRef | null,
   hourHeight: number = HOUR_HEIGHT,
-): { event: CalendarPlan | undefined; durationMs: number } {
+): { event: CalendarEvent | undefined; durationMs: number } {
   const event = events.find((e) => e.id === eventId);
   let durationMs = 60 * 60 * 1000;
 

@@ -1,6 +1,7 @@
 import type { Preview } from '@storybook/react-vite';
 import { useDarkMode } from '@vueless/storybook-dark-mode';
 import { NextIntlClientProvider } from 'next-intl';
+import { MINIMAL_VIEWPORTS } from 'storybook/viewport';
 
 import '../src/styles/globals.css';
 import { DocsTemplate } from './DocsTemplate';
@@ -51,6 +52,11 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
+    viewport: {
+      options: {
+        ...MINIMAL_VIEWPORTS,
+      },
+    },
     backgrounds: {
       options: {},
       grid: {
@@ -64,7 +70,7 @@ const preview: Preview = {
     options: {
       storySort: {
         method: 'alphabetical',
-        order: ['Docs', 'Tokens', 'Components', 'Features', 'Patterns'],
+        order: ['Docs', 'Foundations', 'Primitives', 'Recipes', 'Features', 'Patterns'],
       },
     },
     darkMode: {

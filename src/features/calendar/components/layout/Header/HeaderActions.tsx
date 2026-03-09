@@ -1,6 +1,6 @@
 'use client';
 
-import { Download, MoreHorizontal, Settings, Upload } from 'lucide-react';
+import { Download, Settings, Upload } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
@@ -9,7 +9,6 @@ interface HeaderActionsProps {
   onSettings?: (() => void) | undefined;
   onExport?: (() => void) | undefined;
   onImport?: (() => void) | undefined;
-  onMore?: (() => void) | undefined;
   className?: string | undefined;
   compact?: boolean | undefined;
 }
@@ -22,7 +21,6 @@ export const HeaderActions = ({
   onSettings,
   onExport,
   onImport,
-  onMore,
   className,
   compact = false,
 }: HeaderActionsProps) => {
@@ -73,19 +71,6 @@ export const HeaderActions = ({
           aria-label={t('calendar.headerActions.import')}
         >
           <Upload className={iconSize} />
-        </button>
-      ) : null}
-
-      {/* その他 */}
-      {onMore != null ? (
-        <button
-          type="button"
-          onClick={onMore}
-          className={buttonClass}
-          title={t('calendar.headerActions.moreOptions')}
-          aria-label={t('calendar.headerActions.moreOptions')}
-        >
-          <MoreHorizontal className={iconSize} />
         </button>
       ) : null}
     </div>

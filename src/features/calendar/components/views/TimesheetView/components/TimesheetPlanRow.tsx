@@ -5,15 +5,15 @@ import { useCallback } from 'react';
 import { format, startOfDay } from 'date-fns';
 import { Clock } from 'lucide-react';
 
-import type { CalendarPlan } from '../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../types/calendar.types';
 
 import { useTagsMap } from '@/hooks/useTagsMap';
 import { formatMinutes } from '../hooks/useTimesheetData';
 
 interface TimesheetPlanRowProps {
-  plan: CalendarPlan;
+  plan: CalendarEvent;
   weekDates: Date[];
-  onPlanClick?: ((plan: CalendarPlan) => void) | undefined;
+  onPlanClick?: ((plan: CalendarEvent) => void) | undefined;
 }
 
 /**

@@ -6,7 +6,7 @@ import { format, startOfDay } from 'date-fns';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import type { CalendarPlan } from '../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../types/calendar.types';
 
 import { formatMinutes } from '../hooks/useTimesheetData';
 
@@ -17,7 +17,7 @@ import { TimesheetPlanRow } from './TimesheetPlanRow';
 interface TimesheetTagRowProps {
   group: TimesheetTagGroup;
   weekDates: Date[];
-  onPlanClick?: ((plan: CalendarPlan) => void) | undefined;
+  onPlanClick?: ((plan: CalendarEvent) => void) | undefined;
 }
 
 /**

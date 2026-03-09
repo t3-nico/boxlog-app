@@ -36,6 +36,7 @@ import { resolveTagColor } from '@/lib/tag-colors';
 import { cn } from '@/lib/utils';
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 
+import { TagDeleteStrategyDialog } from '@/components/common/TagDeleteStrategyDialog';
 import { TagRenameDialog } from '@/components/tags/TagRenameDialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
@@ -263,6 +264,7 @@ export function TagFlatList({
           <SortableTagItem
             key={info.tag.id}
             tag={info.tag}
+            allTags={tags}
             checked={visibleTagIds.has(info.tag.id)}
             count={tagCounts[info.tag.id] ?? 0}
             groupOptions={groupOptions}
@@ -288,6 +290,7 @@ export function TagFlatList({
 
 function SortableTagItem({
   tag,
+  allTags,
   checked,
   count,
   groupOptions,
@@ -306,6 +309,7 @@ function SortableTagItem({
   findTagByName,
 }: {
   tag: Tag;
+  allTags: Tag[];
   checked: boolean;
   count: number;
   groupOptions: GroupOption[];
@@ -426,14 +430,32 @@ function SortableTagItem({
     }
   }, [tag.id, groupChangeConflict, mergeTagMutation]);
 
-  // グループ削除ハンドラー
-  const handleConfirmDeleteGroup = useCallback(async () => {
-    try {
-      await deleteGroupMutation.mutateAsync({ prefix: currentGroup });
-    } finally {
-      setShowDeleteGroupDialog(false);
+  // グループ削除ハンドラー: エントリ0件なら即削除、1件以上ならダイアログ表示
+  const handleDeleteGroup = useCallback(() => {
+    if (groupCount === 0) {
+      deleteGroupMutation.mutate({ prefix: currentGroup });
+    } else {
+      setShowDeleteGroupDialog(true);
     }
-  }, [currentGroup, deleteGroupMutation]);
+  }, [currentGroup, groupCount, deleteGroupMutation]);
+
+  // グループ削除確認後のハンドラー（ストラテジー付き）
+  const handleConfirmDeleteGroup = useCallback(
+    async (strategy: 'delete_entries' | 'reassign', targetTagId?: string) => {
+      try {
+        await deleteGroupMutation.mutateAsync({ prefix: currentGroup, strategy, targetTagId });
+      } finally {
+        setShowDeleteGroupDialog(false);
+      }
+    },
+    [currentGroup, deleteGroupMutation],
+  );
+
+  // グループ削除ダイアログ用: グループ外のタグ一覧
+  const availableTagsForGroupReassign = useMemo(() => {
+    const groupIdSet = new Set(groupTagIds);
+    return allTags.filter((t) => !groupIdSet.has(t.id));
+  }, [allTags, groupTagIds]);
 
   // グループ色変更ハンドラー（グループ内全タグの色を一括更新）
   const handleGroupColorChange = useCallback(
@@ -481,7 +503,7 @@ function SortableTagItem({
             onAddTagToGroup={() => openTagCreateModal(currentGroup)}
             onRenameGroup={() => setShowGroupRenameDialog(true)}
             onUngroupTags={handleUngroupTags}
-            onDeleteGroup={() => setShowDeleteGroupDialog(true)}
+            onDeleteGroup={handleDeleteGroup}
           />
         )}
 
@@ -569,17 +591,15 @@ function SortableTagItem({
         />
       )}
 
-      {/* グループ削除確認ダイアログ */}
+      {/* グループ削除ストラテジーダイアログ */}
       {isFirstInGroup && (
-        <ConfirmDialog
+        <TagDeleteStrategyDialog
           open={showDeleteGroupDialog}
           onClose={() => setShowDeleteGroupDialog(false)}
           onConfirm={handleConfirmDeleteGroup}
-          title={t('calendar.filter.deleteGroup.title', { name: currentGroup })}
-          description={t('calendar.filter.deleteGroup.description', {
-            count: groupTagIds.length,
-          })}
-          variant="destructive"
+          tagName={currentGroup}
+          entryCount={groupCount}
+          availableTags={availableTagsForGroupReassign}
         />
       )}
 

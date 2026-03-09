@@ -85,10 +85,10 @@ const meta = {
 
 ## 命名規則（Storybook Sidebar）
 
-| プレフィックス | 対象                      | 例                       |
-| -------------- | ------------------------- | ------------------------ |
-| `Docs/`        | ドキュメント              | `Docs/Introduction`      |
-| `Tokens/`      | デザイントークン          | `Tokens/Colors`          |
-| `Patterns/`    | UIパターン                | `Patterns/Forms`         |
-| `Components/`  | UIコンポーネント          | `Components/Button`      |
-| `Features/`    | Feature固有コンポーネント | `Features/Tags/TagBadge` |
+| プレフィックス | 対象                      | 例                             |
+| -------------- | ------------------------- | ------------------------------ |
+| `Docs/`        | ドキュメント              | `Docs/Introduction`            |
+| `Tokens/`      | デザイントークン          | `Tokens/Colors`                |
+| `Patterns/`    | UIパターン                | `Patterns/Forms`               |
+| `Components/`  | UIコンポーネント          | `Components/Button`            |
+| `Features/`    | Feature固有コンポーネント | `Features/Tags/TagCreateModal` |

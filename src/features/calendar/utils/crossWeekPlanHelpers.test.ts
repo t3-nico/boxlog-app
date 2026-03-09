@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { CalendarPlan } from '../types/calendar.types';
+import type { CalendarEvent } from '../types/calendar.types';
 
 import {
   detectFridayToMondayPlans,
@@ -11,7 +11,7 @@ import {
 describe('crossWeekPlanHelpers', () => {
   describe('splitCrossWeekPlans', () => {
     it('単日プランはそのまま返す', () => {
-      const plans: CalendarPlan[] = [
+      const plans: CalendarEvent[] = [
         {
           id: 'plan-1',
           title: 'ミーティング',
@@ -39,7 +39,7 @@ describe('crossWeekPlanHelpers', () => {
     });
 
     it('複数日プランを分割する', () => {
-      const plans: CalendarPlan[] = [
+      const plans: CalendarEvent[] = [
         {
           id: 'plan-1',
           title: '長期プラン',
@@ -67,7 +67,7 @@ describe('crossWeekPlanHelpers', () => {
     });
 
     it('週末表示OFF時は土日をスキップする', () => {
-      const plans: CalendarPlan[] = [
+      const plans: CalendarEvent[] = [
         {
           id: 'plan-1',
           title: '金曜から月曜',
@@ -96,7 +96,7 @@ describe('crossWeekPlanHelpers', () => {
     });
 
     it('startDate/endDateがnullの場合はフルプランとして扱う', () => {
-      const plans: CalendarPlan[] = [
+      const plans: CalendarEvent[] = [
         {
           id: 'plan-1',
           title: 'プラン',
@@ -125,7 +125,7 @@ describe('crossWeekPlanHelpers', () => {
 
   describe('filterWeekendPlans', () => {
     it('週末（土日）のプランのみ返す', () => {
-      const plans: CalendarPlan[] = [
+      const plans: CalendarEvent[] = [
         {
           id: 'plan-1',
           title: '金曜プラン',
@@ -190,7 +190,7 @@ describe('crossWeekPlanHelpers', () => {
     });
 
     it('startDateがnullの場合は除外する', () => {
-      const plans: CalendarPlan[] = [
+      const plans: CalendarEvent[] = [
         {
           id: 'plan-1',
           title: 'プラン',
@@ -222,7 +222,7 @@ describe('crossWeekPlanHelpers', () => {
 
   describe('detectFridayToMondayPlans', () => {
     it('金曜から月曜にまたがるプランを検出する', () => {
-      const plans: CalendarPlan[] = [
+      const plans: CalendarEvent[] = [
         {
           id: 'plan-1',
           title: '金→月プラン',
@@ -264,7 +264,7 @@ describe('crossWeekPlanHelpers', () => {
     });
 
     it('startDate/endDateがnullの場合は除外する', () => {
-      const plans: CalendarPlan[] = [
+      const plans: CalendarEvent[] = [
         {
           id: 'plan-1',
           title: 'プラン',

@@ -3,22 +3,11 @@
  *
  * タグ機能の統一的なエントリーポイント。
  * 外部からのインポートはこのファイル経由で行う。
- *
- * @example
- * ```tsx
- * // 推奨: バレルファイル経由
- * import { TagBadge, useTags } from '@/features/tags'
- *
- * // 非推奨: 深いパス指定
- * import { TagBadge } from '@/features/tags/components/tag-badge'
- * import { useTags } from '@/features/tags/hooks'
- * ```
  */
 
 // Components
 export {
   GlobalTagCreateModal,
-  TagBadge,
   // Modals & Dialogs
   TagCreateModal,
 } from './components';

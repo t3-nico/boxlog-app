@@ -5,7 +5,7 @@ import { expect, userEvent, within } from 'storybook/test';
 import { Tabs, TabsContent, TabsList, TabsTrigger, UnderlineTabsTrigger } from './tabs';
 
 const meta = {
-  title: 'Components/Tabs',
+  title: 'Primitives/Tabs',
   component: Tabs,
   tags: ['autodocs'],
   parameters: {

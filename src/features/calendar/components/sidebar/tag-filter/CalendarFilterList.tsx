@@ -7,18 +7,17 @@ import { useTranslations } from 'next-intl';
 
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 
+import { TagDeleteStrategyDialog } from '@/components/common/TagDeleteStrategyDialog';
 import { SidebarSection } from '@/components/layout/SidebarSection';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { useTheme } from '@/contexts/theme-context';
 import { useDeleteTag } from '@/hooks/mutations/useTagMutations';
 import { useTagModalNavigation } from '@/hooks/useTagModalNavigation';
 import { useTags } from '@/hooks/useTagsQuery';
-import { useTagCacheStore } from '@/stores/useTagCacheStore';
-
-import { ConfirmDialog } from '@/components/ui/confirm-dialog';
-import { Skeleton } from '@/components/ui/skeleton';
 import { api } from '@/lib/trpc';
+import { useTagCacheStore } from '@/stores/useTagCacheStore';
 
 import { CreateTagButton } from './components/CreateTagButton';
 import { TagFlatList } from './components/TagFlatList';
@@ -67,22 +66,47 @@ export function CalendarFilterList() {
   const { openTagCreateModal: _openTagCreateModal } = useTagModalNavigation();
 
   // 削除確認ダイアログの状態
-  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<{
+    id: string;
+    name: string;
+    entryCount: number;
+  } | null>(null);
 
-  // 削除ハンドラー
-  const handleDeleteTag = useCallback((tagId: string, tagName: string) => {
-    setDeleteTarget({ id: tagId, name: tagName });
-  }, []);
+  // 削除ハンドラー: エントリ0件なら即削除、1件以上ならダイアログ表示
+  const handleDeleteTag = useCallback(
+    (tagId: string, tagName: string) => {
+      const entryCount = tagPlanCounts[tagId] ?? 0;
+      if (entryCount === 0) {
+        deleteTagMutation.mutate({ id: tagId });
+      } else {
+        setDeleteTarget({ id: tagId, name: tagName, entryCount });
+      }
+    },
+    [tagPlanCounts, deleteTagMutation],
+  );
 
-  // 削除確認後のハンドラー
-  const handleConfirmDelete = async () => {
+  // 削除確認後のハンドラー（ストラテジー付き）
+  const handleConfirmDelete = async (
+    strategy: 'delete_entries' | 'reassign',
+    targetTagId?: string,
+  ) => {
     if (!deleteTarget) return;
     try {
-      await deleteTagMutation.mutateAsync({ id: deleteTarget.id });
+      await deleteTagMutation.mutateAsync({
+        id: deleteTarget.id,
+        strategy,
+        targetTagId,
+      });
     } finally {
       setDeleteTarget(null);
     }
   };
+
+  // ダイアログに渡す付け替え先タグ一覧（削除対象を除外）
+  const availableTagsForReassign = useMemo(
+    () => (tags ?? []).filter((tag) => tag.id !== deleteTarget?.id),
+    [tags, deleteTarget?.id],
+  );
 
   return (
     <>
@@ -123,14 +147,14 @@ export function CalendarFilterList() {
         <SidebarUtilities />
       </div>
 
-      {/* タグ削除確認ダイアログ */}
-      <ConfirmDialog
+      {/* タグ削除ストラテジーダイアログ */}
+      <TagDeleteStrategyDialog
         open={deleteTarget !== null}
         onClose={() => setDeleteTarget(null)}
         onConfirm={handleConfirmDelete}
-        title={t('calendar.filter.deleteTag.title', { name: deleteTarget?.name ?? '' })}
-        description={t('calendar.filter.deleteTag.description')}
-        variant="destructive"
+        tagName={deleteTarget?.name ?? ''}
+        entryCount={deleteTarget?.entryCount ?? 0}
+        availableTags={availableTagsForReassign}
       />
     </>
   );

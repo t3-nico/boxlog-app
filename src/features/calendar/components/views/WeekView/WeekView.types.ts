@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 
-import type { BasePlanPosition, CalendarPlan, DateTimeSelection, GridViewProps } from '../shared';
+import type { BasePlanPosition, CalendarEvent, DateTimeSelection, GridViewProps } from '../shared';
 
 // WeekViewの固有Props（GridViewPropsを継承して時間グリッド機能を使用）
 export interface WeekViewProps extends GridViewProps {
@@ -10,19 +10,16 @@ export interface WeekViewProps extends GridViewProps {
 // WeekGridコンポーネントのProps
 export interface WeekGridProps {
   weekDates: Date[];
-  events: CalendarPlan[];
+  events: CalendarEvent[];
   /** 全プラン（期限切れ未完了表示用） */
-  allPlans?: CalendarPlan[] | undefined;
-  eventsByDate: Record<string, CalendarPlan[]>;
+  allPlans?: CalendarEvent[] | undefined;
+  eventsByDate: Record<string, CalendarEvent[]>;
   todayIndex: number;
   /** DnDを無効化するプランID（Inspector表示中のプランなど） */
   disabledPlanId?: string | null | undefined;
-  onEventClick?: ((plan: CalendarPlan) => void) | undefined;
-  onEventContextMenu?: ((plan: CalendarPlan, mouseEvent: React.MouseEvent) => void) | undefined;
-  onEmptyAreaContextMenu?:
-    | ((date: Date, hour: number, minute: number, e: React.MouseEvent) => void)
-    | undefined;
-  onEventUpdate?: ((plan: CalendarPlan) => void) | undefined;
+  onEventClick?: ((plan: CalendarEvent) => void) | undefined;
+  onEventContextMenu?: ((plan: CalendarEvent, mouseEvent: React.MouseEvent) => void) | undefined;
+  onEventUpdate?: ((plan: CalendarEvent) => void) | undefined;
   onTimeRangeSelect?: ((selection: DateTimeSelection) => void) | undefined;
   className?: string | undefined;
 }
@@ -30,15 +27,15 @@ export interface WeekGridProps {
 // useWeekViewフックのオプション
 export interface UseWeekViewOptions {
   startDate: Date;
-  events: CalendarPlan[];
+  events: CalendarEvent[];
   weekStartsOn?: 0 | 1 | 6;
-  onEventUpdate?: (plan: CalendarPlan) => void;
+  onEventUpdate?: (plan: CalendarEvent) => void;
 }
 
 // useWeekViewフックの返却値
 export interface UseWeekViewReturn {
   weekDates: Date[];
-  eventsByDate: Record<string, CalendarPlan[]>;
+  eventsByDate: Record<string, CalendarEvent[]>;
   todayIndex: number;
   scrollToNow: () => void;
   isCurrentWeek: boolean;
@@ -47,14 +44,14 @@ export interface UseWeekViewReturn {
 // useWeekPlansフックのオプション
 export interface UseWeekPlansOptions {
   weekDates: Date[];
-  events: CalendarPlan[];
+  events: CalendarEvent[];
   hourHeight?: number;
   timezone: string;
 }
 
 // useWeekPlansフックの返却値
 export interface UseWeekPlansReturn {
-  plansByDate: Record<string, CalendarPlan[]>;
+  plansByDate: Record<string, CalendarEvent[]>;
   planPositions: WeekPlanPosition[];
   maxConcurrentPlans: number;
 }
@@ -97,7 +94,7 @@ export interface WeekDateDisplay {
   dayNumber: number;
   isToday: boolean;
   isWeekend: boolean;
-  events: CalendarPlan[];
+  events: CalendarEvent[];
   eventCount: number;
 }
 

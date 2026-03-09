@@ -5,17 +5,17 @@ import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 describe('useCalendarFilterStore', () => {
   beforeEach(() => {
     useCalendarFilterStore.setState({
-      visibleTypes: { plan: true, record: true },
+      visibleTypes: { planned: true, unplanned: true },
       visibleTagIds: new Set<string>(),
       initialized: false,
     });
   });
 
   describe('初期状態', () => {
-    it('plan/record両方が表示', () => {
+    it('planned/unplanned両方が表示', () => {
       const state = useCalendarFilterStore.getState();
-      expect(state.visibleTypes.plan).toBe(true);
-      expect(state.visibleTypes.record).toBe(true);
+      expect(state.visibleTypes.planned).toBe(true);
+      expect(state.visibleTypes.unplanned).toBe(true);
     });
 
     it('未初期化状態', () => {
@@ -24,16 +24,16 @@ describe('useCalendarFilterStore', () => {
   });
 
   describe('toggleType', () => {
-    it('planを非表示にできる', () => {
-      useCalendarFilterStore.getState().toggleType('plan');
-      expect(useCalendarFilterStore.getState().visibleTypes.plan).toBe(false);
-      expect(useCalendarFilterStore.getState().visibleTypes.record).toBe(true);
+    it('plannedを非表示にできる', () => {
+      useCalendarFilterStore.getState().toggleType('planned');
+      expect(useCalendarFilterStore.getState().visibleTypes.planned).toBe(false);
+      expect(useCalendarFilterStore.getState().visibleTypes.unplanned).toBe(true);
     });
 
     it('2回トグルで元に戻る', () => {
-      useCalendarFilterStore.getState().toggleType('plan');
-      useCalendarFilterStore.getState().toggleType('plan');
-      expect(useCalendarFilterStore.getState().visibleTypes.plan).toBe(true);
+      useCalendarFilterStore.getState().toggleType('planned');
+      useCalendarFilterStore.getState().toggleType('planned');
+      expect(useCalendarFilterStore.getState().visibleTypes.planned).toBe(true);
     });
   });
 
@@ -157,9 +157,9 @@ describe('useCalendarFilterStore', () => {
 
   describe('クエリ系', () => {
     it('isTypeVisible', () => {
-      expect(useCalendarFilterStore.getState().isTypeVisible('plan')).toBe(true);
-      useCalendarFilterStore.getState().toggleType('plan');
-      expect(useCalendarFilterStore.getState().isTypeVisible('plan')).toBe(false);
+      expect(useCalendarFilterStore.getState().isTypeVisible('planned')).toBe(true);
+      useCalendarFilterStore.getState().toggleType('planned');
+      expect(useCalendarFilterStore.getState().isTypeVisible('planned')).toBe(false);
     });
 
     it('isTagVisible', () => {
@@ -194,13 +194,13 @@ describe('useCalendarFilterStore', () => {
       expect(useCalendarFilterStore.getState().matchesTagFilter('tag-99')).toBe(false);
     });
 
-    it('isPlanVisible: 種類＋タグの複合チェック', () => {
+    it('isEntryVisible: 起源＋タグの複合チェック', () => {
       useCalendarFilterStore.getState().showAllTags(['tag-1']);
-      expect(useCalendarFilterStore.getState().isPlanVisible('tag-1')).toBe(true);
+      expect(useCalendarFilterStore.getState().isEntryVisible('tag-1')).toBe(true);
 
-      // planを非表示
-      useCalendarFilterStore.getState().toggleType('plan');
-      expect(useCalendarFilterStore.getState().isPlanVisible('tag-1')).toBe(false);
+      // planned を非表示
+      useCalendarFilterStore.getState().toggleType('planned');
+      expect(useCalendarFilterStore.getState().isEntryVisible('tag-1')).toBe(false);
     });
   });
 });

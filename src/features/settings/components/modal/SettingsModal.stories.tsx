@@ -19,6 +19,7 @@ import { expect, userEvent, within } from 'storybook/test';
 import { openSettingsModal, useModalStore, type SettingsCategory } from '@/stores/useModalStore';
 import { SettingsCard } from '../SettingsCard';
 import { SettingRow } from '../fields/SettingRow';
+import { SettingsModalMobileView } from './SettingsModalMobileView';
 import { SettingsModalSidebar } from './SettingsModalSidebar';
 
 // ─────────────────────────────────────────────────────────
@@ -207,7 +208,7 @@ const MOCK_CONTENT: Record<SettingsCategory, React.ReactNode> = {
   'data-controls': (
     <>
       <SettingsCard title="データエクスポート">
-        <div className="bg-surface-container rounded-2xl p-4">
+        <div className="bg-surface-inset rounded-2xl p-4">
           <h4 className="mb-2 text-sm font-normal">エクスポート対象</h4>
           <ul className="text-muted-foreground grid grid-cols-2 gap-1 text-sm">
             <li>• プロフィール</li>
@@ -407,4 +408,31 @@ export const DataControls: Story = {
 /** Account カテゴリ */
 export const Account: Story = {
   render: () => <SettingsModalShell initialCategory="account" />,
+};
+
+// ─────────────────────────────────────────────────────────
+// Mobile Stories
+// ─────────────────────────────────────────────────────────
+
+function MobileSettingsShell({ initialCategory }: { initialCategory?: SettingsCategory }) {
+  useEffect(() => {
+    openSettingsModal(initialCategory ?? 'general');
+    return () => {
+      useModalStore.setState({ modal: null });
+    };
+  }, [initialCategory]);
+
+  return (
+    <div className="bg-background h-[100dvh]">
+      <SettingsModalMobileView />
+    </div>
+  );
+}
+
+/** モバイル表示。カテゴリリスト → 詳細のスタック遷移。viewport addon で自動切替。 */
+export const Mobile: Story = {
+  render: () => <MobileSettingsShell />,
+  globals: {
+    viewport: { value: 'mobile1' },
+  },
 };

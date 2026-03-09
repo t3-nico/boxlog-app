@@ -53,7 +53,7 @@ const DialogContent = ({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          'border-border bg-card text-card-foreground z-overlay-modal fixed top-[50%] left-[50%] grid translate-x-[-50%] translate-y-[-50%] gap-4 rounded-2xl border p-6 shadow-xl duration-200',
+          'bg-card surface-raised-heavy text-card-foreground z-overlay-modal fixed top-[50%] left-[50%] grid translate-x-[-50%] translate-y-[-50%] gap-4 rounded-2xl p-6 duration-200',
           // 横幅: min-wで最小幅を保証、max-wでビューポートを超えないように制限
           // max-wはclassNameで上書き可能（Storybook対応のためmin-w追加）
           !className?.includes('max-w-')

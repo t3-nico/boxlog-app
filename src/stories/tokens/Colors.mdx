@@ -1,27 +1,28 @@
 import { Meta } from '@storybook/blocks';
 
-<Meta title="Tokens/Colors" />
+<Meta title="Foundations/Colors" />
 
 # カラートークン
 
 tokens/colors.css のセマンティックトークン一覧。Tailwind クラス名でそのままコピペ可能。
 
 > **2層構造**: Primitives（原液） → Semantic（役割）。
-> Hue定数やNeutralスケールは [Tokens/Primitives](?path=/docs/tokens-primitives--docs) を参照。
+> Hue定数やNeutralスケールは [Foundations/Primitives](?path=/docs/foundations-primitives--docs) を参照。
 
 ---
 
-## Surface（背景色）
+## Surface（背景色・MD3準拠4段階）
 
-Material Design 3 / Apple HIG の共通原則に基づく意味ベース設計。
+Material Design 3 に基づく意味ベース設計。
 ダークモードでは高 elevation = 明るい（MD3 原則）。明度差は 3-6% で視認性を確保。
 
-| トークン | 用途 |
-|----------|------|
-| `bg-background` | ページ背景（基準レベル） |
-| `bg-container` | サイドバー、セクション（background より 6% 暗い） |
-| `bg-card` | カード、ダイアログ、ポップオーバー（container より 3% 暗い） |
-| `bg-overlay` | モーダル背景（半透明・MD3 scrim） |
+| トークン | MD3 | 用途 |
+|----------|-----|------|
+| `bg-background` | Surface | ページ背景（基準レベル） |
+| `bg-surface-inset` | Container Low | card内セクション（background より 3% 暗い） |
+| `bg-container` | Container | サイドバー、セクション（inset より 3% 暗い） |
+| `bg-card` | Container High | カード、ダイアログ、ポップオーバー（container より 3% 暗い） |
+| `bg-overlay` | — | モーダル背景（半透明・MD3 scrim） |
 
 ---
 
@@ -253,11 +254,11 @@ bg-state-active text-state-active-foreground
 ### Surface 階層を守る
 
 ```
-✅ background → container → card（親→子で暗くなる）
+✅ background → surface-inset → container → card（親→子で暗くなる）
 ❌ card → background → container（逆転）
 ```
 
-理由: MD3 原則に基づく視覚的階層。
+理由: MD3 原則に基づく視覚的階層。card内のセクションには `bg-surface-inset` を使用。
 
 ### 状態を色で表現
 

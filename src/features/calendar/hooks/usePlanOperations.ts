@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
 
+import { useEntryInstanceMutations } from '@/hooks/useEntryInstances';
 import { useEntryMutations } from '@/hooks/useEntryMutations';
-import { usePlanInstanceMutations } from '@/hooks/usePlanInstances';
 import { decodeInstanceId } from '@/lib/instance-id';
 import { logger } from '@/lib/logger';
 import { api } from '@/lib/trpc';
 
-import type { CalendarPlan } from '../types/calendar.types';
+import type { CalendarEvent } from '../types/calendar.types';
 
 /**
  * プラン操作（CRUD）を提供するフック
@@ -16,7 +16,7 @@ import type { CalendarPlan } from '../types/calendar.types';
 export const usePlanOperations = () => {
   const utils = api.useUtils();
   const { updateEntry, deleteEntry } = useEntryMutations();
-  const { createInstance } = usePlanInstanceMutations();
+  const { createInstance } = useEntryInstanceMutations();
 
   // プラン削除ハンドラー
   const handlePlanDelete = useCallback(
@@ -31,14 +31,14 @@ export const usePlanOperations = () => {
   );
 
   // プラン復元ハンドラー
-  const handlePlanRestore = useCallback(async (_plan: CalendarPlan) => {
+  const handlePlanRestore = useCallback(async (_plan: CalendarEvent) => {
     // noop - planにはソフトデリート機能がないため、復元は未実装
   }, []);
 
   // プラン更新ハンドラー（ドラッグ&ドロップ用）
   // 繰り返しインスタンスの場合はmoved/modified例外を作成
   const handleUpdatePlan = useCallback(
-    async (planIdOrPlan: string | CalendarPlan, updates?: { startTime: Date; endTime: Date }) => {
+    async (planIdOrPlan: string | CalendarEvent, updates?: { startTime: Date; endTime: Date }) => {
       try {
         // ドラッグ&ドロップからの呼び出し（planId + updates形式）
         if (typeof planIdOrPlan === 'string' && updates) {
@@ -51,14 +51,14 @@ export const usePlanOperations = () => {
             const isSameDate = decoded.instanceDate === newDate;
 
             logger.log('🔄 繰り返しインスタンスの移動:', {
-              parentPlanId: decoded.parentPlanId,
+              parentEntryId: decoded.parentEntryId,
               instanceDate: decoded.instanceDate,
               newDate,
               isSameDate,
             });
 
             await createInstance.mutateAsync({
-              entryId: decoded.parentPlanId,
+              entryId: decoded.parentEntryId,
               instanceDate: decoded.instanceDate,
               exceptionType: isSameDate ? 'modified' : 'moved',
               instanceStart: updates.startTime.toISOString(),
@@ -81,7 +81,7 @@ export const usePlanOperations = () => {
             });
           }
         }
-        // CalendarPlanオブジェクト形式
+        // CalendarEventオブジェクト形式
         else if (typeof planIdOrPlan === 'object') {
           const updatedPlan = planIdOrPlan;
 
@@ -99,15 +99,15 @@ export const usePlanOperations = () => {
             const newDate = updatedPlan.startDate.toISOString().slice(0, 10);
             const isSameDate = decoded.instanceDate === newDate;
 
-            logger.log('🔄 繰り返しインスタンスの移動 (CalendarPlan形式):', {
-              parentPlanId: decoded.parentPlanId,
+            logger.log('🔄 繰り返しインスタンスの移動 (CalendarEvent形式):', {
+              parentEntryId: decoded.parentEntryId,
               instanceDate: decoded.instanceDate,
               newDate,
               isSameDate,
             });
 
             await createInstance.mutateAsync({
-              entryId: decoded.parentPlanId,
+              entryId: decoded.parentEntryId,
               instanceDate: decoded.instanceDate,
               exceptionType: isSameDate ? 'modified' : 'moved',
               instanceStart: updatedPlan.startDate.toISOString(),
@@ -119,7 +119,7 @@ export const usePlanOperations = () => {
             utils.entries.getInstances.invalidate();
           } else {
             // 通常プランの更新
-            logger.log('🔧 プラン更新 (CalendarPlan形式):', {
+            logger.log('🔧 プラン更新 (CalendarEvent形式):', {
               planId: updatedPlan.id,
               newStartDate: updatedPlan.startDate.toISOString(),
               newEndDate: updatedPlan.endDate?.toISOString(),

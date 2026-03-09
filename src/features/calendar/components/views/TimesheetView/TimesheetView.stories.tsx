@@ -3,7 +3,7 @@ import { fn } from 'storybook/test';
 
 import { eachDayOfInterval, endOfWeek, startOfWeek } from 'date-fns';
 
-import type { CalendarPlan } from '../../../types/calendar.types';
+import type { CalendarEvent } from '../../../types/calendar.types';
 
 import { TimesheetGrid } from './components/TimesheetGrid';
 
@@ -57,7 +57,7 @@ function dateKey(dayOffset: number): string {
 // Mock Data
 // ─────────────────────────────────────────────────────────
 
-const basePlan: CalendarPlan = {
+const basePlan: CalendarEvent = {
   id: '',
   title: '',
   startDate: null,
@@ -71,12 +71,12 @@ const basePlan: CalendarPlan = {
   duration: 60,
   isMultiDay: false,
   isRecurring: false,
-  type: 'plan',
+  origin: 'planned',
 };
 
 function makePlan(
-  overrides: Partial<CalendarPlan> & { id: string; title: string; dayOffset: number },
-): CalendarPlan {
+  overrides: Partial<CalendarEvent> & { id: string; title: string; dayOffset: number },
+): CalendarEvent {
   const start = makeDate(overrides.dayOffset, 10);
   const end = makeDate(overrides.dayOffset, 11);
   return {
@@ -105,14 +105,14 @@ const recordMeeting = makePlan({
   title: 'ミーティング',
   dayOffset: 0,
   duration: 30,
-  type: 'record',
+  origin: 'unplanned',
 });
 const recordDocs = makePlan({
   id: 'r2',
   title: 'ドキュメント作成',
   dayOffset: 2,
   duration: 45,
-  type: 'record',
+  origin: 'unplanned',
 });
 const planMisc = makePlan({ id: 'p6', title: '雑務', dayOffset: 0, duration: 30 });
 

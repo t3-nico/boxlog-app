@@ -5,7 +5,7 @@ import { Button } from './button';
 import { HoverTooltip } from './tooltip';
 
 const meta = {
-  title: 'Components/Tooltip',
+  title: 'Primitives/Tooltip',
   component: HoverTooltip,
   tags: ['autodocs'],
   parameters: {

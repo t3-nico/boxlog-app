@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 
 import { cn } from '@/lib/utils';
 
-import type { CalendarPlan } from '../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../types/calendar.types';
 
 import type { TimesheetData } from '../TimesheetView.types';
 
@@ -14,7 +14,7 @@ import { TimesheetTotalRow } from './TimesheetTotalRow';
 
 interface TimesheetGridProps {
   data: TimesheetData;
-  onPlanClick?: ((plan: CalendarPlan) => void) | undefined;
+  onPlanClick?: ((plan: CalendarEvent) => void) | undefined;
 }
 
 /**

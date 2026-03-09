@@ -45,7 +45,6 @@ export const WeekView = ({
   disabledPlanId,
   onPlanClick,
   onPlanContextMenu,
-  onEmptyAreaContextMenu,
   onUpdatePlan,
   onTimeRangeSelect,
 }: WeekViewProps) => {
@@ -83,7 +82,6 @@ export const WeekView = ({
         disabledPlanId={disabledPlanId}
         onEventClick={onPlanClick}
         onEventContextMenu={onPlanContextMenu}
-        onEmptyAreaContextMenu={onEmptyAreaContextMenu}
         onEventUpdate={onUpdatePlan}
         onTimeRangeSelect={onTimeRangeSelect}
         className={className}

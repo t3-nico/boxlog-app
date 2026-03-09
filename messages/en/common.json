@@ -142,11 +142,17 @@
       "monthsAgo": "{count, plural, one {1 month ago} other {# months ago}}",
       "justNow": "just now",
       "minutesAgo": "{count, plural, one {1 min ago} other {# min ago}}",
-      "hoursAgo": "{count, plural, one {1h ago} other {#h ago}}"
+      "hoursAgo": "{count, plural, one {1h ago} other {#h ago}}",
+      "now": "Now",
+      "duration30m": "30m",
+      "duration1h": "1h",
+      "duration1_5h": "1.5h",
+      "duration2h": "2h"
     },
     "reminder": {
       "label": "Reminder",
-      "none": "None",
+      "none": "No reminder",
+      "add": "Add reminder",
       "atStart": "At start time",
       "min5": "5 minutes before",
       "min10": "10 minutes before",
@@ -172,7 +178,7 @@
     },
     "recurrence": {
       "label": "Repeat",
-      "none": "Repeat",
+      "none": "Don't repeat",
       "daily": "Daily",
       "weekly": "Weekly",
       "monthly": "Monthly",

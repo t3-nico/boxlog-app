@@ -2,33 +2,23 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-import {
-  Calendar,
-  CheckCircle2,
-  ClipboardCopy,
-  Copy,
-  Edit2,
-  Link,
-  Tag,
-  Trash2,
-} from 'lucide-react';
+import { Calendar, ClipboardCopy, Copy, Edit2, Link, Tag, Trash2 } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
-import type { CalendarPlan } from '../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../types/calendar.types';
 
 interface PlanContextMenuProps {
-  plan: CalendarPlan;
+  plan: CalendarEvent;
   position: { x: number; y: number };
   onClose: () => void;
-  onEdit?: (plan: CalendarPlan) => void;
-  onDelete?: (plan: CalendarPlan) => void;
-  onDuplicate?: (plan: CalendarPlan) => void;
-  onCopy?: (plan: CalendarPlan) => void;
-  onComplete?: (plan: CalendarPlan) => void;
-  onCopyLink?: (plan: CalendarPlan) => void;
-  onAddTag?: (plan: CalendarPlan) => void;
-  onMoveToDate?: (plan: CalendarPlan) => void;
+  onEdit?: (plan: CalendarEvent) => void;
+  onDelete?: (plan: CalendarEvent) => void;
+  onDuplicate?: (plan: CalendarEvent) => void;
+  onCopy?: (plan: CalendarEvent) => void;
+  onCopyLink?: (plan: CalendarEvent) => void;
+  onAddTag?: (plan: CalendarEvent) => void;
+  onMoveToDate?: (plan: CalendarEvent) => void;
 }
 
 export const EventContextMenu = ({
@@ -39,7 +29,6 @@ export const EventContextMenu = ({
   onDelete,
   onDuplicate,
   onCopy,
-  onComplete,
   onCopyLink,
   onAddTag,
   onMoveToDate,
@@ -101,22 +90,12 @@ export const EventContextMenu = ({
     onClose();
   };
 
-  const isCompleted = plan.entryState === 'past';
-
   const menuItems = [
     {
       icon: Edit2,
       label: t('calendar.contextMenu.edit'),
       action: () => onEdit?.(plan),
       available: !!onEdit,
-    },
-    {
-      icon: CheckCircle2,
-      label: isCompleted
-        ? t('calendar.contextMenu.markIncomplete')
-        : t('calendar.contextMenu.markComplete'),
-      action: () => onComplete?.(plan),
-      available: !!onComplete,
     },
     {
       icon: Copy,

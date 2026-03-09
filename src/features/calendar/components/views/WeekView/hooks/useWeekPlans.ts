@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { isSameDay } from 'date-fns';
 
-import type { CalendarPlan } from '../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../types/calendar.types';
 import { applyTimezoneToDisplayDates } from '../../../../utils/planDataAdapter';
 
 import { getDateKey, isValidEvent, sortEventsByDateKeys } from '../../shared';
@@ -31,7 +31,7 @@ export function useWeekPlans({
 
   // プランを日付ごとにグループ化（displayStartDateで判定）
   const plansByDate = useMemo(() => {
-    const grouped: Record<string, CalendarPlan[]> = {};
+    const grouped: Record<string, CalendarEvent[]> = {};
 
     // 各日付のキーを初期化
     weekDates.forEach((date) => {
@@ -169,7 +169,7 @@ export function useWeekPlans({
  * プランの重なりを検出して列配置を計算
  */
 function calculatePlanColumns(
-  plans: CalendarPlan[],
+  plans: CalendarEvent[],
 ): Array<{ column: number; totalColumns: number }> {
   if (plans.length === 0) return [];
 

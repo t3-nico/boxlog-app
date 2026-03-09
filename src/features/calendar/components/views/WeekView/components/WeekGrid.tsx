@@ -43,7 +43,6 @@ export const WeekGrid = ({
   onEventUpdate,
   onTimeRangeSelect,
   className,
-  onEmptyAreaContextMenu,
 }: WeekGridProps) => {
   const timezone = useCalendarSettingsStore((s) => s.timezone);
 
@@ -54,7 +53,7 @@ export const WeekGrid = ({
   const handlePlanUpdate = React.useCallback(
     async (
       planId: string,
-      updates: Partial<import('@/features/calendar/types/calendar.types').CalendarPlan>,
+      updates: Partial<import('@/features/calendar/types/calendar.types').CalendarEvent>,
     ) => {
       if (!onEventUpdate) return;
       const plan = events.find((e) => e.id === planId);
@@ -142,7 +141,6 @@ export const WeekGrid = ({
                 onPlanContextMenu={onEventContextMenu}
                 onPlanUpdate={handlePlanUpdate}
                 onTimeRangeSelect={onTimeRangeSelect}
-                onEmptyAreaContextMenu={onEmptyAreaContextMenu}
                 disabledPlanId={disabledPlanId}
                 className="h-full"
                 dayIndex={dayIndex}

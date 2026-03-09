@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 const meta = {
-  title: 'Tokens/States',
+  title: 'Foundations/States',
   parameters: {
     layout: 'fullscreen',
   },

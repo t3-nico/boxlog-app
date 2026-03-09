@@ -3,14 +3,11 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
-import { type AsideType } from '@/components/layout/AppAside';
-import { SegmentedControl } from '@/components/ui/segmented-control';
-
 import { CompactDateNavigator, DateNavigator } from './DateNavigator';
 import { HeaderActions } from './HeaderActions';
 import { ViewSwitcher } from './ViewSwitcher';
 
-/** カレンダーヘッダーのサブコンポーネント（ViewSwitcher, DateNavigator, HeaderActions, AsideSwitcher）。 */
+/** カレンダーヘッダーのサブコンポーネント（ViewSwitcher, DateNavigator, HeaderActions）。 */
 const meta = {
   title: 'Features/Calendar/Header',
   parameters: {
@@ -32,22 +29,6 @@ function ViewSwitcherExample({
   const [current, setCurrent] =
     useState<import('@/features/calendar/types/calendar.types').CalendarViewType>(initial);
   return <ViewSwitcher currentView={current} onChange={setCurrent} />;
-}
-
-const asideOptions = [
-  { value: 'entries' as const, label: 'Entries' },
-  { value: 'chat' as const, label: 'Chat' },
-];
-
-function AsideSwitcherExample() {
-  const [aside, setAside] = useState<AsideType>('none');
-  return (
-    <SegmentedControl
-      options={asideOptions}
-      value={aside as 'entries' | 'chat'}
-      onChange={setAside}
-    />
-  );
 }
 
 // ---------------------------------------------------------------------------
@@ -98,21 +79,14 @@ export const DateNavigatorPatterns: Story = {
   },
 };
 
-/** ヘッダーアクションボタン群。設定・エクスポート・インポート・その他。 */
+/** ヘッダーアクションボタン群。設定・エクスポート・インポート。 */
 export const HeaderActionsAll: Story = {
-  render: () => <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} onMore={fn()} />,
+  render: () => <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} />,
 };
 
 /** コンパクトモード。アイコンサイズが小さくなる。 */
 export const HeaderActionsCompact: Story = {
-  render: () => (
-    <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} onMore={fn()} compact />
-  ),
-};
-
-/** アサイド切替セグメントコントロール。None/Plan/Record/Stats。 */
-export const AsideSwitcherDefault: Story = {
-  render: () => <AsideSwitcherExample />,
+  render: () => <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} compact />,
 };
 
 /** 全パターン一覧。 */
@@ -125,9 +99,21 @@ export const AllPatterns: Story = {
         <CompactDateNavigator onNavigate={fn()} />
         <DateNavigator onNavigate={fn()} showArrows={false} />
       </div>
-      <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} onMore={fn()} />
-      <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} onMore={fn()} compact />
-      <AsideSwitcherExample />
+      <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} />
+      <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} compact />
     </div>
   ),
+};
+
+/** モバイルレイアウト。コンパクト日付ナビ + コンパクトアクション。viewport addon で自動切替。 */
+export const MobileLayout: Story = {
+  render: () => (
+    <div className="flex items-center justify-between gap-2">
+      <CompactDateNavigator onNavigate={fn()} />
+      <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} compact />
+    </div>
+  ),
+  globals: {
+    viewport: { value: 'mobile1' },
+  },
 };

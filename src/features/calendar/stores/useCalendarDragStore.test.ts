@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import type { CalendarPlan } from '../types/calendar.types';
+import type { CalendarEvent } from '../types/calendar.types';
 import type { DragEntryData } from './useCalendarDragStore';
 
 import { useCalendarDragStore } from './useCalendarDragStore';
 
-const mockCalendarPlan: CalendarPlan = {
+const mockCalendarEvent: CalendarEvent = {
   id: 'plan-1',
   title: 'テストプラン',
   startDate: new Date('2026-02-21T10:00:00'),
@@ -42,12 +42,12 @@ describe('useCalendarDragStore', () => {
 
   describe('startDrag (カレンダー内)', () => {
     it('カレンダー内ドラッグを開始できる', () => {
-      useCalendarDragStore.getState().startDrag('plan-1', mockCalendarPlan, 2);
+      useCalendarDragStore.getState().startDrag('plan-1', mockCalendarEvent, 2);
       const state = useCalendarDragStore.getState();
       expect(state.isDragging).toBe(true);
       expect(state.dragSource).toBe('calendar');
       expect(state.draggedPlanId).toBe('plan-1');
-      expect(state.draggedPlan).toEqual(mockCalendarPlan);
+      expect(state.draggedPlan).toEqual(mockCalendarEvent);
       expect(state.draggedPlanData).toBeNull();
       expect(state.originalDateIndex).toBe(2);
       expect(state.targetDateIndex).toBe(2);
@@ -69,7 +69,7 @@ describe('useCalendarDragStore', () => {
 
   describe('updateDrag', () => {
     it('ドラッグ中の状態を部分更新できる', () => {
-      useCalendarDragStore.getState().startDrag('plan-1', mockCalendarPlan, 0);
+      useCalendarDragStore.getState().startDrag('plan-1', mockCalendarEvent, 0);
       useCalendarDragStore.getState().updateDrag({ targetDateIndex: 3 });
       expect(useCalendarDragStore.getState().targetDateIndex).toBe(3);
       // 他のフィールドは維持
@@ -79,7 +79,7 @@ describe('useCalendarDragStore', () => {
 
   describe('endDrag', () => {
     it('ドラッグ状態を初期化できる', () => {
-      useCalendarDragStore.getState().startDrag('plan-1', mockCalendarPlan, 2);
+      useCalendarDragStore.getState().startDrag('plan-1', mockCalendarEvent, 2);
       useCalendarDragStore.getState().endDrag();
       const state = useCalendarDragStore.getState();
       expect(state.isDragging).toBe(false);
@@ -90,7 +90,7 @@ describe('useCalendarDragStore', () => {
 
   describe('setTargetDateIndex', () => {
     it('ターゲット日付を更新できる', () => {
-      useCalendarDragStore.getState().startDrag('plan-1', mockCalendarPlan, 0);
+      useCalendarDragStore.getState().startDrag('plan-1', mockCalendarEvent, 0);
       useCalendarDragStore.getState().setTargetDateIndex(5);
       expect(useCalendarDragStore.getState().targetDateIndex).toBe(5);
     });

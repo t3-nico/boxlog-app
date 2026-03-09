@@ -4,12 +4,12 @@ import { useEffect, useRef } from 'react';
 
 import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { logger } from '@/lib/logger';
+import { useEntryClipboardStore } from '@/stores/useEntryClipboardStore';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { openDeleteConfirm } from '@/stores/useModalStore';
-import { usePlanClipboardStore } from '@/stores/usePlanClipboardStore';
 import { toast } from 'sonner';
 
-interface UseCalendarPlanKeyboardOptions {
+interface UseCalendarEventKeyboardOptions {
   /** ショートカットを有効にするか */
   enabled?: boolean;
   /** 現在選択中（Inspector表示中）のプランを削除する関数 */
@@ -46,7 +46,7 @@ interface UseCalendarPlanKeyboardOptions {
  * ```tsx
  * const { deletePlan } = usePlanMutations()
  *
- * useCalendarPlanKeyboard({
+ * useCalendarEventKeyboard({
  *   enabled: true,
  *   onDeletePlan: (planId) => deletePlan.mutate({ id: planId }),
  *   getInitialPlanData: () => ({
@@ -56,14 +56,14 @@ interface UseCalendarPlanKeyboardOptions {
  * })
  * ```
  */
-export function useCalendarPlanKeyboard({
+export function useCalendarEventKeyboard({
   enabled = true,
   onDeletePlan,
   getSelectedPlanTitle,
   getInitialPlanData,
   getSelectedPlanForCopy,
   getPasteDateForKeyboard,
-}: UseCalendarPlanKeyboardOptions) {
+}: UseCalendarEventKeyboardOptions) {
   const { isOpen, entryId, openInspector, closeInspector } = useEntryInspectorStore();
   const { createEntry } = useEntryMutations();
 
@@ -136,7 +136,7 @@ export function useCalendarPlanKeyboard({
           const planData = getSelectedPlanForCopyRef.current?.();
           if (planData) {
             e.preventDefault();
-            usePlanClipboardStore.getState().copyPlan(planData);
+            useEntryClipboardStore.getState().copyEntry(planData);
             toast.success('コピーしました');
           }
         }
@@ -145,9 +145,9 @@ export function useCalendarPlanKeyboard({
 
       // Cmd/Ctrl + V: ペースト（Googleカレンダー互換: 最後にクリックした日付へ、時刻はコピー元）
       if ((e.key === 'v' || e.key === 'V') && (e.metaKey || e.ctrlKey)) {
-        const clipboard = usePlanClipboardStore.getState();
-        const copiedPlan = clipboard.copiedPlan;
-        if (copiedPlan) {
+        const clipboard = useEntryClipboardStore.getState();
+        const copiedEntry = clipboard.copiedEntry;
+        if (copiedEntry) {
           e.preventDefault();
 
           // 最後にクリックした日付があればその日付へ、なければデフォルト
@@ -157,16 +157,16 @@ export function useCalendarPlanKeyboard({
 
           // 時刻は常にコピー元の時刻を使用
           const startTime = new Date(targetDate);
-          startTime.setHours(copiedPlan.startHour, copiedPlan.startMinute, 0, 0);
+          startTime.setHours(copiedEntry.startHour, copiedEntry.startMinute, 0, 0);
 
           const endTime = new Date(startTime);
-          endTime.setMinutes(endTime.getMinutes() + copiedPlan.duration);
+          endTime.setMinutes(endTime.getMinutes() + copiedEntry.duration);
 
           // 即DB作成 → Inspector edit mode で開く
           createEntryRef.current
             .mutateAsync({
-              title: copiedPlan.title,
-              description: copiedPlan.description ?? undefined,
+              title: copiedEntry.title,
+              description: copiedEntry.description ?? undefined,
               start_time: startTime.toISOString(),
               end_time: endTime.toISOString(),
             })

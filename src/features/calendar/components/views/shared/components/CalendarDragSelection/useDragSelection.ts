@@ -15,7 +15,7 @@ import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
 import { HOUR_HEIGHT } from '../../constants/grid.constants';
 
-import type { CalendarPlan } from '../../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../../types/calendar.types';
 import type { DateTimeSelection, TimeRange } from './types';
 import { useSelectionEvents } from './useSelectionEvents';
 
@@ -25,7 +25,7 @@ interface UseDragSelectionOptions {
   onTimeRangeSelect?: ((selection: DateTimeSelection) => void) | undefined;
   onDoubleClick?: ((selection: DateTimeSelection) => void) | undefined;
   /** 重複チェック用のプラン一覧 */
-  plans?: CalendarPlan[] | undefined;
+  plans?: CalendarEvent[] | undefined;
   /** 1時間あたりの高さ（px） */
   hourHeight?: number | undefined;
 }
@@ -120,7 +120,6 @@ export function useDragSelection({
     date,
     disabled,
     defaultDuration,
-    hourHeight,
     containerRef,
     onTimeRangeSelect,
     onDoubleClick: onDoubleClickProp,

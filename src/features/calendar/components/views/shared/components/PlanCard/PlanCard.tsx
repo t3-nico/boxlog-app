@@ -16,8 +16,9 @@ import { useTagsMap } from '@/hooks/useTagsMap';
 import { cn } from '@/lib/utils';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 
-import { MIN_EVENT_HEIGHT, Z_INDEX } from '../../constants/grid.constants';
+import { HOUR_HEIGHT, MIN_EVENT_HEIGHT, Z_INDEX } from '../../constants/grid.constants';
 import type { PlanCardProps } from '../../types/plan.types';
+import { computeActualTimeDiffOverlay } from '../../utils/planPositioning';
 
 import { PlanCardContent } from './PlanCardContent';
 
@@ -36,6 +37,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   className = '',
   style = {},
   previewTime = null,
+  hourHeight: hourHeightProp,
 }) {
   const t = useTranslations();
   const isMobile = useMediaQuery(MEDIA_QUERIES.mobile);
@@ -51,6 +53,12 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   // ドラフト（未保存プレビュー）かどうか判定
   const isDraft = plan.isDraft === true;
 
+  // 予定 vs 記録の差分オーバーレイ
+  const overlay = useMemo(
+    () => computeActualTimeDiffOverlay(plan, hourHeightProp ?? HOUR_HEIGHT),
+    [plan, hourHeightProp],
+  );
+
   // positionが未定義の場合のデフォルト値
   const safePosition = useMemo(
     () =>
@@ -63,23 +71,31 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     [position],
   );
 
-  // 動的スタイルを計算
+  // hourHeightProp がある = DayColumn（グリッド相対配置）→ 位置調整を適用
+  // hourHeightProp がない = WeekContent等（ラッパー相対配置）→ 位置調整は不要
+  const applyPositionAdjust = hourHeightProp !== undefined;
+
+  // 左アクセントの幅（モバイル: 2px、デスクトップ: 3px）
+  const accentWidth = isMobile ? 2 : 3;
+
+  // 動的スタイルを計算（overlay.topShift/heightDelta でカード位置を調整）
   const dynamicStyle: React.CSSProperties = useMemo(
     () => ({
       position: 'absolute' as const,
-      top: `${safePosition.top}px`,
+      top: `${safePosition.top - (applyPositionAdjust ? overlay.topShift : 0)}px`,
       left: `${safePosition.left}%`,
       width: `calc(${safePosition.width}% - 8px)`,
-      height: `${Math.max(safePosition.height, MIN_EVENT_HEIGHT)}px`,
+      height: `${Math.max(safePosition.height + (applyPositionAdjust ? overlay.heightDelta : 0), MIN_EVENT_HEIGHT)}px`,
       zIndex: isSelected || isDragging ? Z_INDEX.DRAGGING : Z_INDEX.EVENTS,
       cursor: isDragging ? 'grabbing' : 'pointer',
-      // タグカラーを左ボーダーと背景に反映
-      borderLeftColor: accentColor,
-      backgroundColor: accentTint,
       ...style,
     }),
-    [safePosition, isSelected, isDragging, accentColor, accentTint, style],
+    [safePosition, overlay, applyPositionAdjust, isSelected, isDragging, style],
   );
+
+  // 左アクセントの点線パターン（unplanned または超過部分で使用）
+  const dashedAccentGradient = `repeating-linear-gradient(to bottom, ${accentColor} 0px, ${accentColor} 5px, transparent 5px, transparent 9px)`;
+  const isUnplannedDashed = plan.origin === 'unplanned';
 
   // アンカー位置の設定（Inspector 配置用）
   const setAnchorRect = useEntryInspectorStore((s) => s.setAnchorRect);
@@ -189,9 +205,9 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isDragging, onDragEnd, plan]);
 
-  // CSSクラス（統一Entryデザイン: 左ボーダー + 右角丸）
+  // CSSクラス（統一Entryデザイン: 左アクセント + 右角丸）
   const planCardClasses = cn(
-    'relative overflow-hidden',
+    'relative flex rounded-r-lg',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
     // Draft: state-selected オーバーレイ
     isDraft &&
@@ -206,11 +222,6 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     isSelected && 'ring-2 ring-primary',
     'text-foreground',
     isDraft ? 'cursor-default' : isDragging ? 'cursor-grabbing' : 'cursor-pointer',
-    // 統一デザイン: 左ボーダーアクセント + 右角丸（unplanned は点線）
-    isMobile
-      ? 'px-2 pt-2 text-xs flex items-start gap-1 border-l-2 rounded-r'
-      : 'p-2 text-sm border-l-[3px] rounded-r-lg',
-    plan.origin === 'unplanned' && 'border-dashed',
     className,
   );
 
@@ -236,35 +247,113 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         isDraft ? `draft: ${tag?.name ?? plan.title}` : `entry: ${tag?.name ?? plan.title}`
       }
     >
-      <PlanCardContent
-        plan={plan}
-        tagName={tag?.name ?? null}
-        isCompact={safePosition.height < 40}
-        showTime={safePosition.height >= 30}
-        previewTime={previewTime}
-        isMobile={isMobile}
-      />
+      {/* 左アクセントストリップ（実体要素：超過部分だけ点線に切替可） */}
+      <div
+        className="relative shrink-0"
+        style={{
+          width: `${accentWidth}px`,
+          backgroundColor: isUnplannedDashed ? undefined : accentColor,
+          backgroundImage: isUnplannedDashed ? dashedAccentGradient : undefined,
+        }}
+      >
+        {/* 超過で上に拡張 → その区間だけ点線 */}
+        {overlay.topKind === 'overtime' && !isUnplannedDashed && (
+          <div
+            className="absolute top-0 right-0 left-0"
+            style={{
+              height: `${overlay.topHeight}px`,
+              backgroundColor: 'var(--background)',
+              backgroundImage: dashedAccentGradient,
+            }}
+          />
+        )}
+        {/* 超過で下に拡張 → その区間だけ点線 */}
+        {overlay.bottomKind === 'overtime' && !isUnplannedDashed && (
+          <div
+            className="absolute right-0 bottom-0 left-0"
+            style={{
+              height: `${overlay.bottomHeight}px`,
+              backgroundColor: 'var(--background)',
+              backgroundImage: dashedAccentGradient,
+            }}
+          />
+        )}
+      </div>
 
-      {/* 下端リサイズハンドル（Draft は未保存なので非表示） */}
-      {!isDraft && (
-        <div
-          className="focus:ring-ring absolute right-0 bottom-0 left-0 cursor-ns-resize focus:ring-2 focus:ring-offset-1 focus:outline-none"
-          role="slider"
-          tabIndex={0}
-          aria-label="Resize entry duration"
-          aria-orientation="vertical"
-          aria-valuenow={safePosition.height}
-          aria-valuemin={20}
-          aria-valuemax={480}
-          onMouseDown={handleBottomResizeMouseDown}
-          onKeyDown={handleResizeKeyDown}
-          style={{
-            height: '8px',
-            zIndex: 10,
-          }}
-          title={t('calendar.event.adjustEndTime')}
+      {/* カード本体（overflow-hidden でハッチング/フェードをクリップ） */}
+      <div
+        className={cn(
+          'relative min-w-0 flex-1 overflow-hidden rounded-r-lg',
+          isMobile ? 'flex items-start gap-1 px-2 pt-2 text-xs' : 'p-2 text-sm',
+        )}
+        style={{ backgroundColor: accentTint }}
+      >
+        <PlanCardContent
+          plan={plan}
+          tagName={tag?.name ?? null}
+          isCompact={safePosition.height < 40}
+          showTime={safePosition.height >= 30}
+          previewTime={previewTime}
+          isMobile={isMobile}
         />
-      )}
+
+        {/* 予定 vs 記録: 上部 — 未実行は控えめな斜線 */}
+        {overlay.topKind === 'unexecuted' && (
+          <div
+            aria-hidden="true"
+            className="pattern-hatch pointer-events-none absolute top-0 right-0 left-0"
+            style={{ height: `${overlay.topHeight}px` }}
+          />
+        )}
+
+        {/* 予定 vs 記録: 上部超過の境界線 */}
+        {overlay.topKind === 'overtime' && (
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute right-0 left-0 border-b border-dashed border-current/25"
+            style={{ top: `${overlay.topHeight}px` }}
+          />
+        )}
+
+        {/* 予定 vs 記録: 下部 — 未実行は控えめな斜線 */}
+        {overlay.bottomKind === 'unexecuted' && (
+          <div
+            aria-hidden="true"
+            className="pattern-hatch pointer-events-none absolute right-0 bottom-0 left-0"
+            style={{ height: `${overlay.bottomHeight}px` }}
+          />
+        )}
+
+        {/* 予定 vs 記録: 下部超過の境界線 */}
+        {overlay.bottomKind === 'overtime' && (
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute right-0 left-0 border-t border-dashed border-current/25"
+            style={{ bottom: `${overlay.bottomHeight}px` }}
+          />
+        )}
+
+        {/* 下端リサイズハンドル（Draft は未保存なので非表示） */}
+        {!isDraft && (
+          <div
+            className="focus:ring-ring absolute right-0 bottom-0 left-0 cursor-ns-resize focus:ring-2 focus:ring-offset-1 focus:outline-none"
+            role="slider"
+            tabIndex={0}
+            aria-label="Resize entry duration"
+            aria-orientation="vertical"
+            aria-valuenow={safePosition.height}
+            aria-valuemin={20}
+            aria-valuemax={480}
+            onMouseDown={handleBottomResizeMouseDown}
+            onKeyDown={handleResizeKeyDown}
+            style={{
+              height: '8px',
+              zIndex: 10,
+            }}
+            title={t('calendar.event.adjustEndTime')}
+          />
+        )}
+      </div>
     </div>
   );
 });

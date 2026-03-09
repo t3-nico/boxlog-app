@@ -2,18 +2,17 @@
  * カレンダー表示フィルターストア
  *
  * Googleカレンダーの「マイカレンダー」のように、
- * 種類（Plan/Record）やタグでカレンダー上の表示/非表示を切り替える
+ * 起源（planned/unplanned）やタグでカレンダー上の表示/非表示を切り替える
  */
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-/** アイテムの種類 */
-export type ItemType = 'plan' | 'record';
+import type { EntryOrigin } from '@/core/types/entry';
 
 export interface CalendarFilterState {
-  /** 種類ごとの表示設定（デフォルト: すべて表示） */
-  visibleTypes: Record<ItemType, boolean>;
+  /** 起源ごとの表示設定（デフォルト: すべて表示） */
+  visibleTypes: Record<EntryOrigin, boolean>;
 
   /** タグIDごとの表示設定（デフォルト: すべて表示） */
   visibleTagIds: Set<string>;
@@ -23,8 +22,8 @@ export interface CalendarFilterState {
 }
 
 export interface CalendarFilterActions {
-  /** 種類の表示切替 */
-  toggleType: (type: ItemType) => void;
+  /** 起源の表示切替 */
+  toggleType: (origin: EntryOrigin) => void;
 
   /** タグの表示切替 */
   toggleTag: (tagId: string) => void;
@@ -56,8 +55,8 @@ export interface CalendarFilterActions {
   /** 指定タグだけ表示（グループ用） */
   showOnlyGroupTags: (tagIds: string[]) => void;
 
-  /** 種類が表示中かチェック */
-  isTypeVisible: (type: ItemType) => boolean;
+  /** 起源が表示中かチェック */
+  isTypeVisible: (origin: EntryOrigin) => boolean;
 
   /** タグが表示中かチェック */
   isTagVisible: (tagId: string) => boolean;
@@ -65,18 +64,18 @@ export interface CalendarFilterActions {
   /** グループ内のタグの表示状態を取得（all: 全ON, none: 全OFF, some: 一部） */
   getGroupVisibility: (tagIds: string[]) => 'all' | 'none' | 'some';
 
-  /** タグフィルタに一致するかチェック（種類は無視） */
+  /** タグフィルタに一致するかチェック（起源は無視） */
   matchesTagFilter: (tagId: string | null) => boolean;
 
-  /** エントリが表示対象かチェック（種類とタグの両方） */
-  isPlanVisible: (tagId: string | null) => boolean;
+  /** エントリが表示対象かチェック（起源とタグの両方） */
+  isEntryVisible: (tagId: string | null) => boolean;
 }
 
 type CalendarFilterStore = CalendarFilterState & CalendarFilterActions;
 
 // シリアライズ済みの状態型
 interface SerializedCalendarFilterState {
-  visibleTypes: Record<ItemType, boolean>;
+  visibleTypes: Record<EntryOrigin, boolean>;
   visibleTagIds: string[];
   initialized: boolean;
 }
@@ -98,18 +97,18 @@ export const useCalendarFilterStore = create<CalendarFilterStore>()(
     (set, get) => ({
       // 初期状態
       visibleTypes: {
-        plan: true,
-        record: true,
+        planned: true,
+        unplanned: true,
       },
       visibleTagIds: new Set<string>(),
       initialized: false,
 
       // アクション
-      toggleType: (type) =>
+      toggleType: (origin) =>
         set((state) => ({
           visibleTypes: {
             ...state.visibleTypes,
-            [type]: !state.visibleTypes[type],
+            [origin]: !state.visibleTypes[origin],
           },
         })),
 
@@ -199,7 +198,7 @@ export const useCalendarFilterStore = create<CalendarFilterStore>()(
           visibleTagIds: new Set(tagIds),
         })),
 
-      isTypeVisible: (type) => get().visibleTypes[type],
+      isTypeVisible: (origin) => get().visibleTypes[origin],
 
       isTagVisible: (tagId) => get().visibleTagIds.has(tagId),
 
@@ -223,11 +222,11 @@ export const useCalendarFilterStore = create<CalendarFilterStore>()(
         return state.visibleTagIds.has(tagId);
       },
 
-      isPlanVisible: (tagId) => {
+      isEntryVisible: (tagId) => {
         const state = get();
 
-        // 種類チェック
-        if (!state.visibleTypes.plan) {
+        // 起源チェック（planned が非表示なら false）
+        if (!state.visibleTypes.planned) {
           return false;
         }
 
@@ -239,7 +238,8 @@ export const useCalendarFilterStore = create<CalendarFilterStore>()(
       // バージョンを上げるとlocalStorageがリセットされる
       // v2: visibleTagIds競合問題の修正に伴いリセット
       // v3: showUntagged削除、matchesTagFilter/isPlanVisible単一タグ対応
-      version: 3,
+      // v4: ItemType ('plan'|'record') → EntryOrigin ('planned'|'unplanned') に変更
+      version: 4,
       storage: {
         getItem: (name) => {
           const str = localStorage.getItem(name);
@@ -261,9 +261,9 @@ export const useCalendarFilterStore = create<CalendarFilterStore>()(
       },
       // バージョンマイグレーション: 古いバージョンからの移行時はリセット
       migrate: (persistedState, version) => {
-        if (version < 3) {
+        if (version < 4) {
           return {
-            visibleTypes: { plan: true, record: true },
+            visibleTypes: { planned: true, unplanned: true },
             visibleTagIds: new Set<string>(),
             initialized: false,
           } as unknown as CalendarFilterStore;

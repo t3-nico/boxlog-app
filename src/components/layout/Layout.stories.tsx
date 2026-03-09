@@ -20,7 +20,6 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
  * | `mobile-layout.tsx` | モバイル用シングルカラム構成（Sheet Sidebar） |
  * | `main-content-wrapper.tsx` | `<main>` 要素のラッパー |
  * | `PageHeader.tsx` | 非カレンダーページ用の共通ヘッダー |
- * | `status-bar/` | 画面下部のステータスバー |
  *
  * ### Aside / Sidebar はここに置かない
  *
@@ -37,7 +36,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
  *
  * | Storybookパス | 物理ディレクトリ | 備考 |
  * |---|---|---|
- * | `Components/Layout/*` | `src/components/layout/` | このディレクトリ |
+ * | `Primitives/Layout/*` | `src/components/layout/` | このディレクトリ |
  * | `Features/Aside/*` | `src/features/navigation/components/aside/` | feature層のAside |
  * | `Features/Sidebar/*` | `src/features/navigation/components/sidebar/` | feature層のSidebar |
  *
@@ -45,7 +44,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
  * 各コンポーネントの依存関係に基づいて物理配置を決定している。
  */
 const meta = {
-  title: 'Components/Layout/Overview',
+  title: 'Primitives/Layout/Overview',
   parameters: {
     layout: 'padded',
   },
@@ -106,21 +105,6 @@ export const Structure: Story = {
               </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* StatusBar */}
-      <div>
-        <p className="text-muted-foreground mb-2 text-xs font-medium">StatusBar</p>
-        <div className="bg-surface-container border-border flex h-7 items-center justify-between rounded border px-3">
-          <div className="text-muted-foreground flex items-center gap-3 text-[10px]">
-            <span>ScheduleStatusItem</span>
-            <span>TotalTimeStatusItem</span>
-          </div>
-          <div className="text-muted-foreground text-[10px]">ChronotypeStatusItem</div>
-        </div>
-        <div className="text-muted-foreground/50 mt-1 text-[10px]">
-          components/layout/status-bar/
         </div>
       </div>
 

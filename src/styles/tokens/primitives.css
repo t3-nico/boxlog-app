@@ -30,6 +30,7 @@
    * Surface階層、テキスト階層の基盤
    * ============================================ */
   --neutral-99: oklch(0.99 0 0);     /* 最明 */
+  --neutral-96: oklch(0.96 0 0);
   --neutral-95: oklch(0.95 0 0);
   --neutral-93: oklch(0.93 0 0);
   --neutral-92: oklch(0.9219 0 0);
@@ -39,6 +40,7 @@
   --neutral-25: oklch(0.25 0 0);
   --neutral-24: oklch(0.24 0 0);
   --neutral-18: oklch(0.18 0 0);
+  --neutral-16: oklch(0.16 0 0);
   --neutral-15: oklch(0.15 0 0);
   --neutral-12: oklch(0.12 0 0);
 

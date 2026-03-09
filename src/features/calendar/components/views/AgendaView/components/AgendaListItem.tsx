@@ -9,12 +9,12 @@ import { useDateFormat } from '@/hooks/useDateFormat';
 import { useTagsMap } from '@/hooks/useTagsMap';
 import { cn } from '@/lib/utils';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
-import type { CalendarPlan } from '../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../types/calendar.types';
 
 interface AgendaListItemProps {
-  plan: CalendarPlan;
-  onClick?: ((plan: CalendarPlan) => void) | undefined;
-  onContextMenu?: ((plan: CalendarPlan, mouseEvent: React.MouseEvent) => void) | undefined;
+  plan: CalendarEvent;
+  onClick?: ((plan: CalendarEvent) => void) | undefined;
+  onContextMenu?: ((plan: CalendarEvent, mouseEvent: React.MouseEvent) => void) | undefined;
 }
 
 /**

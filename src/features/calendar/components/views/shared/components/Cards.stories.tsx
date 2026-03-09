@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import type { CalendarPlan } from '../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../types/calendar.types';
 
 import { DragSelectionPreview } from './CalendarDragSelection/DragSelectionPreview';
 import { PlanCard } from './PlanCard/PlanCard';
@@ -30,7 +30,7 @@ function Slot({ children, height = 72 }: { children: React.ReactNode; height?: n
   );
 }
 
-const baseEntry: CalendarPlan = {
+const baseEntry: CalendarEvent = {
   id: 'entry-1',
   title: 'チームミーティング',
   description: '週次の進捗確認',

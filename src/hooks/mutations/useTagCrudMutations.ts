@@ -193,6 +193,7 @@ export function useDeleteTag() {
       void utils.tags.list.invalidate();
       void utils.tags.getById.invalidate({ id: input.id });
       void utils.entries.list.invalidate();
+      void utils.entries.getTagStats.invalidate();
     },
   });
 }

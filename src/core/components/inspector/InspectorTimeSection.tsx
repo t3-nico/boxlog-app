@@ -3,36 +3,38 @@
 /**
  * Inspector 時間セクション（組み立て役）
  *
- * DateNavigatorRow + TimeRow × 2 + TimeProgressBar + TimeConflictAlert を
+ * DateNavigatorRow + TimeRow × 2 + 差分バッジ + TimeConflictAlert を
  * 3パターン（upcoming+planned, past+planned, past+unplanned）に応じて組み立てる。
- *
- * TimeComparisonSection の後継（同じ props interface）。
  */
 
+import type { ReactNode } from 'react';
+
+import { Calendar, Clock, Play, StickyNote } from 'lucide-react';
 import { useMemo } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import type { EntryOrigin } from '@/core/types/entry';
+import type { EntryOrigin, FulfillmentScore } from '@/core/types/entry';
 import { useAutoAdjustEndTime } from '@/hooks/useAutoAdjustEndTime';
 import type { EntryState } from '@/lib/entry-status';
-import { computeDuration, formatDurationDisplay } from '@/lib/time-utils';
+import { computeDuration } from '@/lib/time-utils';
+import { cn } from '@/lib/utils';
 
 import { DateNavigatorRow } from './DateNavigatorRow';
+import { FulfillmentRow } from './FulfillmentRow';
+import { InlineNoteSection } from './InlineNoteSection';
 import { TimeConflictAlert } from './TimeConflictAlert';
 import { TimeProgressBar } from './TimeProgressBar';
 import { TimeRow, TimeRowPlaceholder } from './TimeRow';
 
-/**
- * 差分（分）を ±Xh Ym 形式にフォーマット
- */
+/** 差分（分）を "+15m" / "±0" / "-10m" 形式にフォーマット */
 function formatDiffDisplay(diffMinutes: number): string {
-  if (diffMinutes === 0) return '';
-  const sign = diffMinutes > 0 ? '+' : '−';
+  if (diffMinutes === 0) return '±0';
   const abs = Math.abs(diffMinutes);
+  const sign = diffMinutes > 0 ? '+' : '-';
   const h = Math.floor(abs / 60);
   const m = abs % 60;
-  if (h > 0 && m > 0) return `${sign}${h}h${m}m`;
+  if (h > 0 && m > 0) return `${sign}${h}h ${m}m`;
   if (h > 0) return `${sign}${h}h`;
   return `${sign}${m}m`;
 }
@@ -56,6 +58,16 @@ interface InspectorTimeSectionProps {
   origin?: EntryOrigin;
   timeConflictError?: boolean;
   disabled?: boolean;
+  // 充実度
+  fulfillmentScore?: FulfillmentScore | null | undefined;
+  onFulfillmentChange?: ((score: FulfillmentScore | null) => void) | undefined;
+  // メモ
+  note?: string | undefined;
+  onNoteChange?: ((text: string) => void) | undefined;
+  notePlaceholder?: string | undefined;
+  // 繰り返し・通知（ReactNode スロット）
+  recurrenceRow?: ReactNode;
+  reminderRow?: ReactNode;
 }
 
 export function InspectorTimeSection({
@@ -73,6 +85,13 @@ export function InspectorTimeSection({
   origin = 'planned',
   timeConflictError = false,
   disabled = false,
+  fulfillmentScore,
+  onFulfillmentChange,
+  note,
+  onNoteChange,
+  notePlaceholder,
+  recurrenceRow,
+  reminderRow,
 }: InspectorTimeSectionProps) {
   const t = useTranslations();
 
@@ -101,19 +120,12 @@ export function InspectorTimeSection({
   const effectiveActualStart = actualStart ?? plannedStart;
   const effectiveActualEnd = actualEnd ?? plannedEnd;
 
-  // 記録行の自動調整
-  const { handleStartTimeChange: autoActualStartChange, handleEndTimeChange: autoActualEndChange } =
-    useAutoAdjustEndTime(effectiveActualStart, effectiveActualEnd, (time: string) =>
-      onActualEndChange(time),
-    );
-
+  // 記録行は連動なし（開始を変えても終了はそのまま）
   const handleActualStartChange = (time: string) => {
-    autoActualStartChange(time);
     onActualStartChange(time);
   };
 
   const handleActualEndChange = (time: string) => {
-    autoActualEndChange(time);
     onActualEndChange(time);
   };
 
@@ -127,25 +139,20 @@ export function InspectorTimeSection({
     [effectiveActualStart, effectiveActualEnd],
   );
 
-  const plannedDurationDisplay = useMemo(
-    () => formatDurationDisplay(plannedDuration),
-    [plannedDuration],
-  );
-  const actualDurationDisplay = useMemo(
-    () => formatDurationDisplay(actualDuration),
-    [actualDuration],
-  );
-
-  // 差分（記録が明示的に設定されている場合のみ、planned エントリのみ）
   const hasActualTime = actualStart !== null || actualEnd !== null;
-  const diffMinutes = hasActualTime && !isUnplanned ? actualDuration - plannedDuration : 0;
-  const diffDisplay = formatDiffDisplay(diffMinutes);
+
+  // 差分計算（予定 vs 記録）
+  const diffMinutes = useMemo(
+    () => actualDuration - plannedDuration,
+    [actualDuration, plannedDuration],
+  );
 
   return (
-    <div className="flex flex-col gap-1 px-6 py-2">
+    <div className="flex flex-col gap-2 px-4 pt-2.5 pb-4">
       {/* 日付 */}
       <DateNavigatorRow
         label={t('plan.inspector.time.date')}
+        icon={Calendar}
         selectedDate={selectedDate}
         onDateChange={onDateChange}
         disabled={disabled}
@@ -155,19 +162,20 @@ export function InspectorTimeSection({
       {isPlannedRowDisabled ? (
         <TimeRowPlaceholder
           label={t('plan.inspector.time.planned')}
+          icon={Clock}
           message={t('plan.inspector.time.noPlanned')}
           muted
         />
       ) : (
         <TimeRow
           label={t('plan.inspector.time.planned')}
+          icon={Clock}
           startTime={plannedStart}
           endTime={plannedEnd}
           onStartChange={handlePlannedStartChange}
           onEndChange={handlePlannedEndChange}
           disabled={disabled}
           hasError={timeConflictError}
-          durationDisplay={plannedDurationDisplay}
         />
       )}
 
@@ -175,43 +183,66 @@ export function InspectorTimeSection({
       {showActualPlaceholder ? (
         <TimeRowPlaceholder
           label={t('plan.inspector.time.actual')}
+          icon={Play}
           message={t('plan.inspector.time.sameAsPlanned')}
         />
-      ) : hasActualTime || isUnplanned ? (
+      ) : (
         <TimeRow
           label={t('plan.inspector.time.actual')}
+          icon={Play}
           startTime={effectiveActualStart}
           endTime={effectiveActualEnd}
           onStartChange={handleActualStartChange}
           onEndChange={handleActualEndChange}
           disabled={disabled}
-          durationDisplay={actualDurationDisplay}
-          diffDisplay={diffDisplay || undefined}
-          diffType={diffMinutes < 0 ? 'under' : 'over'}
         />
-      ) : (
-        <div className="flex items-center gap-1">
-          <span className="text-muted-foreground w-8 flex-shrink-0 text-xs">
-            {t('plan.inspector.time.actual')}
-          </span>
-          <button
-            type="button"
-            className="text-muted-foreground hover:text-foreground text-xs transition-colors"
-            onClick={() => {
-              onActualStartChange(plannedStart);
-              onActualEndChange(plannedEnd);
-            }}
+      )}
+
+      {/* 予定 vs 記録の差分（プログレスバー + バッジ） */}
+      {(hasActualTime || entryState !== 'upcoming') && plannedDuration > 0 && !isUnplanned && (
+        <div className="flex items-center gap-2">
+          <div className="flex-1">
+            <TimeProgressBar plannedMinutes={plannedDuration} actualMinutes={actualDuration} />
+          </div>
+          <span
+            className={cn(
+              'shrink-0 rounded-md px-1.5 py-0.5 text-xs font-medium tabular-nums',
+              diffMinutes > 0
+                ? 'bg-warning/15 text-warning'
+                : diffMinutes < 0
+                  ? 'bg-destructive/15 text-destructive'
+                  : 'bg-success/15 text-success',
+            )}
           >
-            {t('plan.inspector.time.sameAsPlanned')}
-          </button>
+            {formatDiffDisplay(diffMinutes)}
+          </span>
         </div>
       )}
 
-      {/* プログレスバー */}
-      {!isUnplanned && !showActualPlaceholder && hasActualTime && (
-        <div className="px-8">
-          <TimeProgressBar plannedMinutes={plannedDuration} actualMinutes={actualDuration} />
-        </div>
+      {/* 充実度 */}
+      {onFulfillmentChange && (
+        <FulfillmentRow
+          label={t('plan.inspector.time.fulfillment')}
+          score={fulfillmentScore ?? null}
+          onScoreChange={onFulfillmentChange}
+          disabled={disabled}
+        />
+      )}
+
+      {/* 繰り返し・通知（記録のみのエントリでは非表示） */}
+      {!isUnplanned && recurrenceRow}
+      {!isUnplanned && reminderRow}
+
+      {/* メモ */}
+      {onNoteChange && (
+        <InlineNoteSection
+          label={t('plan.inspector.note.label')}
+          icon={StickyNote}
+          note={note ?? ''}
+          onNoteChange={onNoteChange}
+          placeholder={notePlaceholder}
+          disabled={disabled}
+        />
       )}
 
       {/* 時間重複エラー */}

@@ -3,7 +3,7 @@
 import { Repeat } from 'lucide-react';
 
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { configToReadable, ruleToConfig } from '@/lib/plan-rrule';
+import { configToReadable, ruleToConfig } from '@/lib/rrule';
 import { cn } from '@/lib/utils';
 import { useLocale } from 'next-intl';
 
@@ -123,7 +123,7 @@ export function RecurringIndicator({
 
 /**
  * isRecurring フラグから表示するかどうかを判定するヘルパー
- * CalendarPlan型で使用
+ * CalendarEvent型で使用
  */
 export function RecurringIndicatorFromFlag({
   isRecurring,

@@ -8,20 +8,13 @@
  * 右側に ⋯ メニューを配置。
  */
 
-import type { ReactNode } from 'react';
 import { useCallback, useRef, useState } from 'react';
 
-import { ChevronDown, MoreHorizontal, Plus } from 'lucide-react';
+import { ChevronDown, Plus, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
 import { TagQuickSelector } from '@/components/tags/TagQuickSelector';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { getTagColorClasses } from '@/config/ui/colors';
 import { useCreateTag } from '@/hooks/mutations/useTagCrudMutations';
 import { useTagsMap } from '@/hooks/useTagsMap';
@@ -31,11 +24,11 @@ import { cn } from '@/lib/utils';
 interface InspectorTagRowProps {
   tagId: string | null;
   onTagChange: (tagId: string | null) => void;
-  /** ⋯ ドロップダウンメニューの内容 */
-  menuContent?: ReactNode;
+  /** 削除ボタンのコールバック */
+  onDelete?: (() => void) | undefined;
 }
 
-export function InspectorTagRow({ tagId, onTagChange, menuContent }: InspectorTagRowProps) {
+export function InspectorTagRow({ tagId, onTagChange, onDelete }: InspectorTagRowProps) {
   const t = useTranslations();
   const { getTagById } = useTagsMap();
   const [selectorOpen, setSelectorOpen] = useState(false);
@@ -76,53 +69,45 @@ export function InspectorTagRow({ tagId, onTagChange, menuContent }: InspectorTa
 
   return (
     <>
-      <div className="flex items-center justify-between gap-2 px-6 pt-6 pb-2">
+      <div className="flex items-center justify-between gap-2">
         <button
           ref={buttonRef}
           type="button"
           onClick={() => setSelectorOpen(true)}
-          className="hover:bg-state-hover -ml-2 flex items-center gap-2.5 rounded-lg py-1 pr-2 pl-2 text-xl font-bold transition-colors"
+          className="hover:bg-state-hover -mt-1 -ml-1.5 flex items-center gap-2 rounded-lg py-1 pr-2 pl-1.5 text-base font-semibold transition-colors"
           aria-label={tag ? `${t('common.tags.change')}: ${tag.name}` : t('common.tags.add')}
         >
           {tag ? (
             <>
               <span
                 className={cn(
-                  'inline-block size-4 flex-shrink-0 rounded-full',
+                  'inline-block size-2.5 flex-shrink-0 rounded-full',
                   colorClasses?.dot ?? 'bg-muted-foreground',
                 )}
                 aria-hidden
               />
               <span className="text-foreground">{tag.name}</span>
-              <ChevronDown className="text-muted-foreground size-5 flex-shrink-0" aria-hidden />
+              <ChevronDown className="text-muted-foreground size-4 flex-shrink-0" aria-hidden />
             </>
           ) : (
             <>
-              <Plus className="text-muted-foreground size-4 flex-shrink-0" aria-hidden />
+              <Plus className="text-muted-foreground size-3.5 flex-shrink-0" aria-hidden />
               <span className="text-muted-foreground">{t('common.tags.add')}</span>
-              <ChevronDown className="text-muted-foreground size-5 flex-shrink-0" aria-hidden />
+              <ChevronDown className="text-muted-foreground size-4 flex-shrink-0" aria-hidden />
             </>
           )}
         </button>
 
-        {/* 右側: メニュー */}
-        {menuContent && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                icon
-                className="-mr-2 focus-visible:ring-0"
-                aria-label={t('common.actions.options')}
-              >
-                <MoreHorizontal className="size-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              {menuContent}
-            </DropdownMenuContent>
-          </DropdownMenu>
+        {/* 右側: 削除 */}
+        {onDelete && (
+          <button
+            type="button"
+            onClick={onDelete}
+            className="text-muted-foreground hover:bg-state-hover -mr-2 flex size-8 items-center justify-center rounded-lg transition-colors"
+            aria-label={t('common.actions.delete')}
+          >
+            <Trash2 className="size-4" />
+          </button>
         )}
       </div>
 

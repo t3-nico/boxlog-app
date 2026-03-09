@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { ActionFooter } from '@/components/ui/action-footer';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useDialogKeyboard } from '@/hooks/useDialogKeyboard';
@@ -117,7 +118,7 @@ export function RecurringEditConfirmDialog() {
         </RadioGroup>
 
         {/* Footer */}
-        <div className="flex justify-end gap-2">
+        <ActionFooter>
           <Button variant="outline" onClick={closeDialog} disabled={isProcessing}>
             {t('common.actions.cancel')}
           </Button>
@@ -132,7 +133,7 @@ export function RecurringEditConfirmDialog() {
                 ? t('common.confirm.recurring.apply')
                 : t('common.actions.delete')}
           </Button>
-        </div>
+        </ActionFooter>
       </div>
     </div>
   );

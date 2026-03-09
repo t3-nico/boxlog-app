@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader } from './card';
 import { Skeleton } from './skeleton';
 
 const meta = {
-  title: 'Components/Skeleton',
+  title: 'Primitives/Skeleton',
   component: Skeleton,
   tags: ['autodocs'],
   parameters: {

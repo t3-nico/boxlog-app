@@ -7,8 +7,10 @@ import { useTranslations } from 'next-intl';
 
 import { Popover, PopoverAnchor, PopoverContent } from '@/components/ui/popover';
 import { computeDuration, formatDurationDisplay } from '@/lib/time-utils';
+import { cn } from '@/lib/utils';
 
 export type TimeIconType = 'clock' | 'flag';
+export type TimeQuickActions = 'start' | 'end';
 
 /**
  * 15分刻みの時刻オプションを生成（00:00 ~ 23:45）
@@ -23,6 +25,29 @@ function generateTimeOptions(): string[] {
     }
   }
   return options;
+}
+
+/**
+ * 現在時刻を15分刻みに丸め（ceil）
+ */
+function roundToNext15(): string {
+  const now = new Date();
+  const minutes = now.getHours() * 60 + now.getMinutes();
+  const rounded = Math.ceil(minutes / 15) * 15;
+  const h = Math.floor(rounded / 60) % 24;
+  const m = rounded % 60;
+  return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+}
+
+/**
+ * 時刻文字列に分数を加算
+ */
+function addMinutesToTime(time: string, minutesToAdd: number): string {
+  const [h, m] = time.split(':').map(Number);
+  const total = h! * 60 + m! + minutesToAdd;
+  const newH = Math.floor(total / 60) % 24;
+  const newM = total % 60;
+  return `${newH.toString().padStart(2, '0')}:${newM.toString().padStart(2, '0')}`;
 }
 
 /**
@@ -89,6 +114,8 @@ interface TimeSelectProps {
   iconType?: TimeIconType;
   /** ドロップダウン内に duration を表示するか（minTime からの経過時間） */
   showDurationInMenu?: boolean;
+  /** クイックアクション表示（start: 現在時刻ベース, end: プリセットDuration） */
+  quickActions?: TimeQuickActions | undefined;
 }
 
 /**
@@ -105,6 +132,7 @@ export function TimeSelect({
   showIcon = false,
   iconType = 'clock',
   showDurationInMenu = false,
+  quickActions,
 }: TimeSelectProps) {
   const t = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
@@ -348,6 +376,14 @@ export function TimeSelect({
     setSkipFilter(false); // 選択後はフィルタリングを有効化
   };
 
+  const handleQuickAction = (time: string) => {
+    onChange(time);
+    setInputValue(time);
+    setIsOpen(false);
+    setHighlightedIndex(-1);
+    setError('');
+  };
+
   return (
     <div>
       <Popover open={isOpen} onOpenChange={handleOpenChange} modal={false}>
@@ -384,8 +420,9 @@ export function TimeSelect({
               onFocus={handleInputFocus}
               disabled={disabled}
               placeholder="--:--"
-              className={`flex h-8 rounded-lg bg-transparent text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
-                showIcon ? 'w-auto' : 'w-14 px-2 text-center'
+              size={5}
+              className={`flex h-8 rounded-lg bg-transparent text-sm tabular-nums outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
+                showIcon ? 'w-auto' : 'px-2 text-right'
               } ${value ? 'text-foreground' : 'text-muted-foreground'} ${error || hasError ? 'text-destructive' : ''}`}
             />
             {error && (
@@ -402,15 +439,65 @@ export function TimeSelect({
             align="start"
             sideOffset={4}
             style={{
-              width: showDurationInMenu && minTime ? '140px' : '80px',
+              width: showDurationInMenu && minTime ? '180px' : '120px',
             }}
             onOpenAutoFocus={(e) => e.preventDefault()}
           >
+            {quickActions === 'start' && (
+              <div className="border-border flex flex-wrap gap-1.5 border-b px-3 py-2.5">
+                {[
+                  { label: t('common.time.now'), time: roundToNext15() },
+                  { label: '+30m', time: addMinutesToTime(roundToNext15(), 30) },
+                  { label: '+1h', time: addMinutesToTime(roundToNext15(), 60) },
+                ].map(({ label, time }) => (
+                  <button
+                    key={label}
+                    type="button"
+                    className={cn(
+                      'rounded-full px-3 py-1 text-xs font-medium transition-colors',
+                      value === time
+                        ? 'bg-state-active text-state-active-foreground'
+                        : 'bg-secondary text-secondary-foreground hover:bg-secondary-hover',
+                    )}
+                    onClick={() => handleQuickAction(time)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
+            {quickActions === 'end' && minTime && (
+              <div className="border-border flex flex-wrap gap-1.5 border-b px-3 py-2.5">
+                {[
+                  { label: t('common.time.duration30m'), minutes: 30 },
+                  { label: t('common.time.duration1h'), minutes: 60 },
+                  { label: t('common.time.duration1_5h'), minutes: 90 },
+                  { label: t('common.time.duration2h'), minutes: 120 },
+                ].map(({ label, minutes }) => {
+                  const time = addMinutesToTime(minTime, minutes);
+                  return (
+                    <button
+                      key={minutes}
+                      type="button"
+                      className={cn(
+                        'rounded-full px-3 py-1 text-xs font-medium transition-colors',
+                        value === time
+                          ? 'bg-state-active text-state-active-foreground'
+                          : 'bg-secondary text-secondary-foreground hover:bg-secondary-hover',
+                      )}
+                      onClick={() => handleQuickAction(time)}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
             <div
               id="time-listbox"
               ref={listRef}
               role="listbox"
-              className="scrollbar-thin max-h-52 overflow-y-auto overscroll-contain p-2"
+              className="scrollbar-thin max-h-52 overflow-y-auto overscroll-contain px-1 py-1"
               style={{
                 scrollbarColor:
                   'color-mix(in oklch, var(--color-muted-foreground) 30%, transparent) transparent',
@@ -424,13 +511,14 @@ export function TimeSelect({
                   role="option"
                   aria-selected={option === value}
                   type="button"
-                  className={`hover:bg-state-hover w-full rounded px-2 py-1 text-left text-sm ${
+                  className={cn(
+                    'hover:bg-state-hover w-full rounded-md px-3 py-1.5 text-left text-sm transition-colors',
                     index === highlightedIndex
                       ? 'bg-state-selected'
                       : option === value
-                        ? 'bg-state-hover'
-                        : ''
-                  }`}
+                        ? 'bg-state-active/10 text-state-active-foreground font-medium'
+                        : '',
+                  )}
                   style={{ scrollSnapAlign: 'center' }}
                   onClick={() => handleOptionClick(option)}
                   onMouseEnter={() => setHighlightedIndex(index)}

@@ -4,16 +4,18 @@
  * ============================================ */
 @theme inline {
   /* ============================================
-   * Surface トークン（GAFA準拠・3段階）
-   * background: ページ背景
-   * container: サイドバー、セクション
-   * card: カード、ダイアログ、ポップオーバー
-   * overlay: モーダル背景（半透明・MD3 scrim）
+   * Surface トークン（MD3準拠・4段階）
+   * background:     ページ背景（MD3 Surface）
+   * surface-inset:  card内セクション（MD3 Surface Container Low）
+   * container:      サイドバー、セクション（MD3 Surface Container）
+   * card:           カード、ダイアログ、ポップオーバー（MD3 Surface Container High）
+   * overlay:        モーダル背景（半透明・MD3 scrim）
    * ============================================ */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
+  --color-surface-inset: var(--surface-inset);
   --color-container: var(--container);
   --color-surface-container: var(--container);  /* 後方互換: bg-surface-container（70箇所で使用） */
   --color-overlay: var(--overlay);
@@ -62,6 +64,11 @@
   --shadow-color: oklch(0 0 0 / 15%);
   --shadow-color-heavy: oklch(0 0 0 / 20%);
 
+  /* Physical Lighting — 合成シャドウ */
+  --shadow-elevation-sunken: var(--elevation-sunken);
+  --shadow-elevation-raised: var(--elevation-raised);
+  --shadow-elevation-raised-heavy: var(--elevation-raised-heavy);
+
   /* ============================================
    * Tag Colors — Base（borders / dots / accents）
    * 使用例: bg-tag-blue, border-tag-red
@@ -101,8 +108,8 @@
   --color-chronotype-winddown: var(--chronotype-winddown);
 
   /* ============================================
-   * Chronotype Tints（タイムライン背景用）
-   * 不透明度ルールの例外: base色とは L/C が異なるためalpha込みで個別定義
+   * Chronotype Tints（タイムライン背景用、solid）
+   * tag-tint同様にsolid色。surface体系の隙間(background↔surface-inset)に位置。
    * 使用例: bg-chronotype-tint-peak
    * ============================================ */
   --color-chronotype-tint-warmup: var(--chronotype-tint-warmup);

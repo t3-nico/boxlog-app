@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { CalendarPlan } from '../types/calendar.types';
+import type { CalendarEvent } from '../types/calendar.types';
 
 /** パネルドラッグ用のエントリデータ（最小型） */
 export interface DragEntryData {
@@ -26,7 +26,7 @@ export interface CalendarDragState {
   /** ドラッグ中のプランID */
   draggedPlanId: string | null;
   /** ドラッグ中のプランデータ（カレンダー内ドラッグ用） */
-  draggedPlan: CalendarPlan | null;
+  draggedPlan: CalendarEvent | null;
   /** ドラッグ中のプランデータ（パネルドラッグ用） */
   draggedPlanData: DragEntryData | null;
   /** 元の日付インデックス */
@@ -43,7 +43,7 @@ export interface CalendarDragState {
 
 interface CalendarDragActions {
   /** カレンダー内ドラッグ開始 */
-  startDrag: (planId: string, plan: CalendarPlan, dateIndex: number) => void;
+  startDrag: (planId: string, plan: CalendarEvent, dateIndex: number) => void;
   /** パネルからのドラッグ開始 */
   startPanelDrag: (plan: DragEntryData) => void;
   /** ドラッグ中の状態更新 */

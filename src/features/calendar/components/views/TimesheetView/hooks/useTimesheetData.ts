@@ -5,7 +5,7 @@ import { eachDayOfInterval, endOfWeek, format, startOfDay, startOfWeek } from 'd
 import { getTagColorClasses } from '@/config/ui/colors';
 import { useTagsMap } from '@/hooks/useTagsMap';
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
-import type { CalendarPlan } from '../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../types/calendar.types';
 
 import type { TimesheetData, TimesheetTagGroup } from '../TimesheetView.types';
 
@@ -14,7 +14,7 @@ import type { TimesheetData, TimesheetTagGroup } from '../TimesheetView.types';
  *
  * 表示中のタグのみグループを作成（非表示タグのグループは生成しない）
  */
-export function useTimesheetData(plans: CalendarPlan[], currentDate: Date): TimesheetData {
+export function useTimesheetData(plans: CalendarEvent[], currentDate: Date): TimesheetData {
   const { getTagById } = useTagsMap();
   const visibleTagIds = useCalendarFilterStore((state) => state.visibleTagIds);
 
@@ -29,7 +29,7 @@ export function useTimesheetData(plans: CalendarPlan[], currentDate: Date): Time
     const dateKey = (date: Date) => format(startOfDay(date), 'yyyy-MM-dd');
 
     // プランを全タグIDでグルーピング（複数タグ → 複数グループに登場）
-    const groupMap = new Map<string | null, CalendarPlan[]>();
+    const groupMap = new Map<string | null, CalendarEvent[]>();
 
     for (const plan of plans) {
       // startDate がないプランはスキップ

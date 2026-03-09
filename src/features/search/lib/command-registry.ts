@@ -128,7 +128,7 @@ interface CommandActions {
   openTagCreateModal: () => void;
   navigateToSettings: () => void;
   toggleTheme: () => void;
-  openAside: (aside: 'entries' | 'chat' | 'reflection') => void;
+  openAside: (aside: 'chat' | 'reflection') => void;
 }
 
 // Default commands that are always available
@@ -155,16 +155,15 @@ export const registerDefaultCommands = (actions: CommandActions) => {
       action: () => router.push('/calendar/day'),
     },
     {
-      id: 'nav:plan',
-      title: 'プランを開く',
-      description: 'プランパネルを表示',
+      id: 'nav:chat',
+      title: 'チャットを開く',
+      description: 'AIチャットパネルを表示',
       category: 'navigation',
-      icon: 'check-square',
+      icon: 'message-square',
       shortcut: ['G', 'P'],
-      keywords: ['plan', 'board', 'kanban', 'タスク', '一覧', 'プラン', 'entries'],
+      keywords: ['chat', 'ai', 'チャット'],
       action: () => {
-        router.push('/calendar/day');
-        openAside('entries');
+        openAside('chat');
       },
     },
     {

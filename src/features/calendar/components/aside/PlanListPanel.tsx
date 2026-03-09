@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 
 import { useEntries } from '@/hooks/useEntries';
 import { useTagsMap } from '@/hooks/useTagsMap';
-import { groupItems } from '@/lib/plan-grouping';
+import { groupItems } from '@/lib/entry-grouping';
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { usePanelDrag } from '../../hooks/usePanelDrag';
@@ -48,7 +48,7 @@ export function PlanListPanel() {
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
 
   // カレンダーフィルター（タグ）
-  const isPlanVisible = useCalendarFilterStore((s) => s.isPlanVisible);
+  const isEntryVisible = useCalendarFilterStore((s) => s.isEntryVisible);
 
   // Inspector
   const openInspector = useEntryInspectorStore((s) => s.openInspector);
@@ -81,13 +81,13 @@ export function PlanListPanel() {
       }
 
       // タグフィルター
-      if (!isPlanVisible(plan.tagId ?? null)) {
+      if (!isEntryVisible(plan.tagId ?? null)) {
         return false;
       }
 
       return true;
     });
-  }, [plans, isPlanVisible, scheduleFilter]);
+  }, [plans, isEntryVisible, scheduleFilter]);
 
   // グルーピング
   const groupedPlans = useMemo(() => {

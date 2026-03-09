@@ -1,27 +1,27 @@
 /**
  * プラン関連の型定義
  *
- * NOTE: CalendarPlan は @/features/calendar/types/calendar.types から直接インポートすること
+ * NOTE: CalendarEvent は @/features/calendar/types/calendar.types から直接インポートすること
  */
 
-import type { CalendarPlan } from '../../../../types/calendar.types';
+import type { CalendarEvent } from '../../../../types/calendar.types';
 
 // 時間指定プラン（start/endを持つプラン）
-// CalendarPlanの startDate/endDate を start/end に変換した型
-export type TimedPlan = CalendarPlan & {
+// CalendarEventの startDate/endDate を start/end に変換した型
+export type TimedPlan = CalendarEvent & {
   start: Date; // startDateのエイリアス
   end: Date; // endDateのエイリアス
   isReadOnly?: boolean;
 };
 
 export interface PlanCardProps {
-  plan: CalendarPlan;
+  plan: CalendarEvent;
   position?: PlanCardPosition | undefined;
-  onClick?: ((plan: CalendarPlan) => void) | undefined;
-  onContextMenu?: ((plan: CalendarPlan, e: React.MouseEvent) => void) | undefined;
+  onClick?: ((plan: CalendarEvent) => void) | undefined;
+  onContextMenu?: ((plan: CalendarEvent, e: React.MouseEvent) => void) | undefined;
   onDragStart?:
     | ((
-        plan: CalendarPlan,
+        plan: CalendarEvent,
         mouseEvent: React.MouseEvent,
         position: { top: number; left: number; width: number; height: number },
       ) => void)
@@ -29,21 +29,21 @@ export interface PlanCardProps {
   /** モバイル用タッチ開始ハンドラー */
   onTouchStart?:
     | ((
-        plan: CalendarPlan,
+        plan: CalendarEvent,
         touchEvent: React.TouchEvent,
         position: { top: number; left: number; width: number; height: number },
       ) => void)
     | undefined;
-  onDragEnd?: ((plan: CalendarPlan) => void) | undefined;
+  onDragEnd?: ((plan: CalendarEvent) => void) | undefined;
   onResizeStart?:
     | ((
-        plan: CalendarPlan,
+        plan: CalendarEvent,
         direction: 'top' | 'bottom',
         mouseEvent: React.MouseEvent,
         position: { top: number; left: number; width: number; height: number },
       ) => void)
     | undefined;
-  onResizeEnd?: ((plan: CalendarPlan) => void) | undefined;
+  onResizeEnd?: ((plan: CalendarEvent) => void) | undefined;
   isDragging?: boolean | undefined;
   isSelected?: boolean | undefined;
   isResizing?: boolean | undefined;
@@ -52,6 +52,8 @@ export interface PlanCardProps {
   className?: string | undefined;
   style?: React.CSSProperties | undefined;
   previewTime?: ({ start: Date; end: Date } | null) | undefined;
+  /** グリッドの1時間あたりの高さ（px）。予定vs記録の差分オーバーレイ計算に使用 */
+  hourHeight?: number | undefined;
 }
 
 export interface PlanCardPosition {
@@ -63,22 +65,22 @@ export interface PlanCardPosition {
 }
 
 export interface PlanGroup {
-  plans: CalendarPlan[];
+  plans: CalendarEvent[];
   columns: PlanColumn[];
 }
 
 export interface PlanColumn {
-  plans: CalendarPlan[];
+  plans: CalendarEvent[];
   columnIndex: number;
   totalColumns: number;
 }
 
 export type PlanInteractionHandler = {
-  onClick?: (plan: CalendarPlan) => void;
-  onContextMenu?: (plan: CalendarPlan, e: React.MouseEvent) => void;
-  onDragStart?: (plan: CalendarPlan) => void;
-  onDragEnd?: (plan: CalendarPlan) => void;
-  onDragOver?: (plan: CalendarPlan, date: Date, time: Date) => void;
-  onDrop?: (plan: CalendarPlan, date: Date, time: Date) => void;
-  onResize?: (plan: CalendarPlan, newStart: Date, newEnd: Date) => void;
+  onClick?: (plan: CalendarEvent) => void;
+  onContextMenu?: (plan: CalendarEvent, e: React.MouseEvent) => void;
+  onDragStart?: (plan: CalendarEvent) => void;
+  onDragEnd?: (plan: CalendarEvent) => void;
+  onDragOver?: (plan: CalendarEvent, date: Date, time: Date) => void;
+  onDrop?: (plan: CalendarEvent, date: Date, time: Date) => void;
+  onResize?: (plan: CalendarEvent, newStart: Date, newEnd: Date) => void;
 };

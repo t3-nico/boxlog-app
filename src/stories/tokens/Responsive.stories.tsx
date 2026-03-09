@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { CheckCircle, XCircle } from 'lucide-react';
 
 const meta = {
-  title: 'Tokens/Responsive',
+  title: 'Foundations/Responsive',
   parameters: {
     layout: 'fullscreen',
   },
