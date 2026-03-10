@@ -7,7 +7,7 @@ describe('useStatsFilterStore', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-03-10T12:00:00.000Z'));
     useStatsFilterStore.setState({
-      selectedTagId: null,
+      activeTab: 'overview',
       granularity: 'week',
       currentDate: new Date(),
     });
@@ -18,8 +18,8 @@ describe('useStatsFilterStore', () => {
   });
 
   describe('初期状態', () => {
-    it('selectedTagIdがnull', () => {
-      expect(useStatsFilterStore.getState().selectedTagId).toBeNull();
+    it('activeTabがoverview', () => {
+      expect(useStatsFilterStore.getState().activeTab).toBe('overview');
     });
 
     it('granularityがweek', () => {
@@ -27,16 +27,16 @@ describe('useStatsFilterStore', () => {
     });
   });
 
-  describe('setSelectedTag', () => {
-    it('タグIDを設定できる', () => {
-      useStatsFilterStore.getState().setSelectedTag('tag-1');
-      expect(useStatsFilterStore.getState().selectedTagId).toBe('tag-1');
+  describe('setActiveTab', () => {
+    it('insightsに切り替えできる', () => {
+      useStatsFilterStore.getState().setActiveTab('insights');
+      expect(useStatsFilterStore.getState().activeTab).toBe('insights');
     });
 
-    it('nullで全タグ表示に戻せる', () => {
-      useStatsFilterStore.getState().setSelectedTag('tag-1');
-      useStatsFilterStore.getState().setSelectedTag(null);
-      expect(useStatsFilterStore.getState().selectedTagId).toBeNull();
+    it('overviewに戻せる', () => {
+      useStatsFilterStore.getState().setActiveTab('insights');
+      useStatsFilterStore.getState().setActiveTab('overview');
+      expect(useStatsFilterStore.getState().activeTab).toBe('overview');
     });
   });
 
@@ -100,16 +100,16 @@ describe('useStatsFilterStore', () => {
   });
 
   describe('状態の独立性', () => {
-    it('setGranularityがselectedTagIdに影響しない', () => {
-      useStatsFilterStore.getState().setSelectedTag('tag-1');
+    it('setActiveTabがgranularityに影響しない', () => {
       useStatsFilterStore.getState().setGranularity('month');
-      expect(useStatsFilterStore.getState().selectedTagId).toBe('tag-1');
+      useStatsFilterStore.getState().setActiveTab('insights');
+      expect(useStatsFilterStore.getState().granularity).toBe('month');
     });
 
-    it('setSelectedTagがgranularityに影響しない', () => {
+    it('setGranularityがactiveTabに影響しない', () => {
+      useStatsFilterStore.getState().setActiveTab('insights');
       useStatsFilterStore.getState().setGranularity('month');
-      useStatsFilterStore.getState().setSelectedTag('tag-1');
-      expect(useStatsFilterStore.getState().granularity).toBe('month');
+      expect(useStatsFilterStore.getState().activeTab).toBe('insights');
     });
   });
 });
