@@ -2,8 +2,8 @@
 export { CalendarLayout } from './CalendarLayout';
 
 // Header components (ページ全体の共通ヘッダー)
+export { DateNavigator } from '@/core/components/DateNavigator';
 export { CalendarHeader } from './Header';
-export { DateNavigator } from './Header/DateNavigator';
 export { DateRangeDisplay } from './Header/DateRangeDisplay';
 export { HeaderActions } from './Header/HeaderActions';
 export { ViewSwitcher } from './Header/ViewSwitcher';

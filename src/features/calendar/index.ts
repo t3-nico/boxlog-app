@@ -13,9 +13,9 @@ export { CalendarController } from './components/CalendarController';
 // =============================================================================
 // Layout Components
 // =============================================================================
+export { DateNavigator } from '@/core/components/DateNavigator';
 export { CalendarLayout } from './components/layout/CalendarLayout';
 export { CalendarHeader } from './components/layout/Header';
-export { DateNavigator } from './components/layout/Header/DateNavigator';
 export { DateRangeDisplay } from './components/layout/Header/DateRangeDisplay';
 export { HeaderActions } from './components/layout/Header/HeaderActions';
 export { ViewSwitcher } from './components/layout/Header/ViewSwitcher';

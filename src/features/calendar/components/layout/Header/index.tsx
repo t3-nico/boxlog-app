@@ -14,7 +14,7 @@ import { useLayoutStore } from '@/stores/useLayoutStore';
 import type { CalendarViewType } from '../../../types/calendar.types';
 
 import type { AsideType } from '@/components/layout/AppAside';
-import { DateNavigator } from './DateNavigator';
+import { DateNavigator } from '@/core/components/DateNavigator';
 import { DateRangeDisplay } from './DateRangeDisplay';
 import { HeaderActions } from './HeaderActions';
 import { ViewSwitcher } from './ViewSwitcher';

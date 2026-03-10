@@ -8,7 +8,7 @@ export type * from './DateDisplay.types';
 
 // ヘッダー関連の共有コンポーネント（ビュー専用）
 // ページ全体のヘッダー機能は layout/Header/ を使用
-export { CompactDateNavigator, DateNavigator } from '../../../layout/Header/DateNavigator';
-export type { NavigationDirection } from '../../../layout/Header/DateNavigator';
+export { CompactDateNavigator, DateNavigator } from '@/core/components/DateNavigator';
+export type { NavigationDirection } from '@/core/components/DateNavigator';
 export { CompactDateDisplay, DateRangeDisplay } from '../../../layout/Header/DateRangeDisplay';
 export { ViewSwitcher } from '../../../layout/Header/ViewSwitcher';

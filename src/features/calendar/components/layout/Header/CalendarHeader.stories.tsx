@@ -3,7 +3,7 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
-import { CompactDateNavigator, DateNavigator } from './DateNavigator';
+import { CompactDateNavigator, DateNavigator } from '@/core/components/DateNavigator';
 import { HeaderActions } from './HeaderActions';
 import { ViewSwitcher } from './ViewSwitcher';
 
