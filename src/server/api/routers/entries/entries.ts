@@ -1,9 +1,8 @@
 /**
  * Entries Core Router
  *
- * CRUD, bulk operations, instances, recurrence, tags, activities
+ * CRUD, bulk operations, instances, recurrence, tags
  *
- * 旧8サブルーター (crud, bulk, instances, recurrence, tags, activities) を統合。
  * 統計系は statistics.ts に分離。
  */
 
@@ -19,13 +18,10 @@ import {
   getEntryByIdSchema,
   updateEntrySchema,
 } from '@/schemas/entries';
-import type { GetEntryActivitiesInput } from '@/schemas/entries/activity';
-import { createEntryActivitySchema, getEntryActivitiesSchema } from '@/schemas/entries/activity';
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
 import { createEntryService } from '@/server/services/entries';
 import { handleServiceError } from '@/server/services/errors';
 
-import { createActivityRouter } from '../shared/createActivityRouter';
 import { removeUndefinedFields } from '../shared/utils';
 
 // =============================================================================
@@ -48,20 +44,6 @@ const entryTagInputSchema = z.object({
 const setTagsInputSchema = z.object({
   entryId: z.string().uuid(),
   tagIds: z.array(z.string().uuid()).max(50),
-});
-
-// =============================================================================
-// Activities (factory-generated)
-// =============================================================================
-
-const _activitiesRouter = createActivityRouter<GetEntryActivitiesInput>({
-  entityName: 'Entry',
-  entityIdField: 'entry_id',
-  entityTable: 'entries',
-  activitiesTable: 'entry_activities',
-  listSchema: getEntryActivitiesSchema,
-  createSchema: createEntryActivitySchema,
-  protectedProcedure,
 });
 
 // =============================================================================
@@ -550,7 +532,7 @@ export const entriesCoreRouter = createTRPCRouter({
 
     const { data: tag, error: tagError } = await supabase
       .from('tags')
-      .select('id, name')
+      .select('id')
       .eq('id', tagId)
       .eq('user_id', userId)
       .single();
@@ -558,14 +540,6 @@ export const entriesCoreRouter = createTRPCRouter({
     if (tagError || !tag) {
       throw new TRPCError({ code: 'NOT_FOUND', message: 'タグが見つかりません' });
     }
-
-    const { data: existingRelation } = await supabase
-      .from('entry_tags')
-      .select('entry_id')
-      .eq('entry_id', entryId)
-      .eq('tag_id', tagId)
-      .eq('user_id', userId)
-      .maybeSingle();
 
     const { error } = await supabase
       .from('entry_tags')
@@ -578,16 +552,6 @@ export const entriesCoreRouter = createTRPCRouter({
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: `タグの追加に失敗しました: ${error.message}`,
-      });
-    }
-
-    if (!existingRelation) {
-      await supabase.from('entry_activities').insert({
-        entry_id: entryId,
-        user_id: userId,
-        action_type: 'tag_added',
-        field_name: 'tag',
-        new_value: tag.name,
       });
     }
 
@@ -610,13 +574,6 @@ export const entriesCoreRouter = createTRPCRouter({
       throw new TRPCError({ code: 'NOT_FOUND', message: 'エントリが見つかりません' });
     }
 
-    const { data: tag } = await supabase
-      .from('tags')
-      .select('name')
-      .eq('id', tagId)
-      .eq('user_id', userId)
-      .single();
-
     const { error, count } = await supabase
       .from('entry_tags')
       .delete()
@@ -628,16 +585,6 @@ export const entriesCoreRouter = createTRPCRouter({
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: `タグの削除に失敗しました: ${error.message}`,
-      });
-    }
-
-    if ((count ?? 0) > 0 && tag) {
-      await supabase.from('entry_activities').insert({
-        entry_id: entryId,
-        user_id: userId,
-        action_type: 'tag_removed',
-        field_name: 'tag',
-        old_value: tag.name,
       });
     }
 
@@ -660,21 +607,11 @@ export const entriesCoreRouter = createTRPCRouter({
       throw new TRPCError({ code: 'NOT_FOUND', message: 'エントリが見つかりません' });
     }
 
-    // 既存タグID取得
-    const { data: existingRelations } = await supabase
-      .from('entry_tags')
-      .select('tag_id')
-      .eq('entry_id', entryId)
-      .eq('user_id', userId);
-
-    const existingTagIds = new Set(existingRelations?.map((r) => r.tag_id) ?? []);
-
     // タグの所有権チェック
-    let validTagsMap = new Map<string, string>();
     if (tagIds.length > 0) {
       const { data: validTags, error: tagsError } = await supabase
         .from('tags')
-        .select('id, name')
+        .select('id')
         .in('id', tagIds)
         .eq('user_id', userId);
 
@@ -686,25 +623,6 @@ export const entriesCoreRouter = createTRPCRouter({
       }
       if (!validTags || validTags.length !== tagIds.length) {
         throw new TRPCError({ code: 'BAD_REQUEST', message: '無効なタグIDが含まれています' });
-      }
-      validTagsMap = new Map(validTags.map((t) => [t.id, t.name]));
-    }
-
-    const addedTagIds = tagIds.filter((id) => !existingTagIds.has(id));
-    const newTagIdSet = new Set(tagIds);
-    const removedTagIds = [...existingTagIds].filter((id) => !newTagIdSet.has(id));
-
-    // 削除されるタグ名を取得
-    let removedTagsMap = new Map<string, string>();
-    if (removedTagIds.length > 0) {
-      const { data: removedTags } = await supabase
-        .from('tags')
-        .select('id, name')
-        .in('id', removedTagIds)
-        .eq('user_id', userId);
-
-      if (removedTags) {
-        removedTagsMap = new Map(removedTags.map((t) => [t.id, t.name]));
       }
     }
 
@@ -738,37 +656,6 @@ export const entriesCoreRouter = createTRPCRouter({
       }
     }
 
-    // アクティビティ記録
-    if (addedTagIds.length > 0) {
-      await supabase.from('entry_activities').insert(
-        addedTagIds.map((tagId) => ({
-          entry_id: entryId,
-          user_id: userId,
-          action_type: 'tag_added' as const,
-          field_name: 'tag',
-          new_value: validTagsMap.get(tagId) ?? tagId,
-        })),
-      );
-    }
-    if (removedTagIds.length > 0) {
-      await supabase.from('entry_activities').insert(
-        removedTagIds.map((tagId) => ({
-          entry_id: entryId,
-          user_id: userId,
-          action_type: 'tag_removed' as const,
-          field_name: 'tag',
-          old_value: removedTagsMap.get(tagId) ?? tagId,
-        })),
-      );
-    }
-
     return { success: true, count: tagIds.length };
   }),
-
-  // ---------------------------------------------------------------------------
-  // Activities (factory-generated procedures)
-  // ---------------------------------------------------------------------------
-
-  activities: _activitiesRouter.list,
-  createActivity: _activitiesRouter.create,
 });

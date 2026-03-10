@@ -222,9 +222,6 @@ export class EntryService {
       throw new EntryServiceError('CREATE_FAILED', `Failed to create entry: ${error.message}`);
     }
 
-    // アクティビティ記録
-    await this.recordActivity(data.id, userId, 'created');
-
     return data;
   }
 
@@ -290,11 +287,6 @@ export class EntryService {
       throw new EntryServiceError('UPDATE_FAILED', `Failed to update entry: ${error.message}`);
     }
 
-    // 変更追跡
-    if (oldData) {
-      await this.trackChanges(entryId, userId, oldData, data);
-    }
-
     // actual_* 変更時: 隣接エントリの記録時間を自動調整
     const typedInput = input as {
       actual_start_time?: string | null;
@@ -321,23 +313,6 @@ export class EntryService {
    */
   async delete(options: DeleteEntryOptions): Promise<{ success: boolean }> {
     const { userId, entryId } = options;
-
-    // エントリ情報を取得（アクティビティ記録用）
-    const { data: entry } = await this.supabase
-      .from('entries')
-      .select('title')
-      .eq('id', entryId)
-      .eq('user_id', userId)
-      .single();
-
-    // アクティビティ記録（削除前）
-    await this.supabase.from('entry_activities').insert({
-      entry_id: entryId,
-      user_id: userId,
-      action_type: 'deleted',
-      field_name: 'title',
-      old_value: entry?.title ?? '',
-    });
 
     const { error } = await this.supabase
       .from('entries')
@@ -515,24 +490,6 @@ export class EntryService {
       .single();
 
     return data;
-  }
-
-  private async recordActivity(entryId: string, userId: string, actionType: string): Promise<void> {
-    await this.supabase.from('entry_activities').insert({
-      entry_id: entryId,
-      user_id: userId,
-      action_type: actionType,
-    });
-  }
-
-  private async trackChanges(
-    entryId: string,
-    userId: string,
-    oldData: EntryRow,
-    newData: EntryRow,
-  ): Promise<void> {
-    const { trackEntryChanges } = await import('@/server/utils/activity-tracker');
-    await trackEntryChanges(this.supabase, entryId, userId, oldData, newData);
   }
 }
 
