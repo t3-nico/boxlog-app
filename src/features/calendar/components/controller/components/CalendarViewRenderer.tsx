@@ -25,12 +25,6 @@ const MultiDayView = React.lazy(() =>
     default: module.MultiDayView,
   })),
 );
-const TimesheetView = React.lazy(() =>
-  import('@/features/calendar/components/views/TimesheetView').then((module) => ({
-    default: module.TimesheetView,
-  })),
-);
-
 interface CalendarViewRendererProps {
   viewType: CalendarViewType;
   /** GridViewPropsを渡す（showWeekendsは含まれる） */
@@ -50,15 +44,6 @@ export const CalendarViewRenderer = React.memo(function CalendarViewRenderer({
 }: CalendarViewRendererProps) {
   // LCP改善: ビューをメモ化して不要な再生成を防止
   const viewContent = useMemo(() => {
-    // BaseViewPropsを抽出（GridViewPropsの一部）
-    const baseProps = {
-      plans: commonProps.plans,
-      currentDate: commonProps.currentDate,
-      className: commonProps.className,
-      onPlanClick: commonProps.onPlanClick,
-      onPlanContextMenu: commonProps.onPlanContextMenu,
-    };
-
     if (isMultiDayView(viewType)) {
       return (
         <Suspense fallback={<CalendarViewSkeleton />}>
@@ -78,12 +63,6 @@ export const CalendarViewRenderer = React.memo(function CalendarViewRenderer({
         return (
           <Suspense fallback={<CalendarViewSkeleton />}>
             <WeekView {...commonProps} />
-          </Suspense>
-        );
-      case 'timesheet':
-        return (
-          <Suspense fallback={<CalendarViewSkeleton />}>
-            <TimesheetView {...baseProps} />
           </Suspense>
         );
       default:

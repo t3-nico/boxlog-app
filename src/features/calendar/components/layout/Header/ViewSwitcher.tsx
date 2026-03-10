@@ -38,7 +38,6 @@ interface MainViewOption {
 const MAIN_VIEW_OPTIONS: MainViewOption[] = [
   { value: 'day', labelKey: 'calendar.views.day', shortcut: 'D' },
   { value: 'week', labelKey: 'calendar.views.week', shortcut: 'W' },
-  { value: 'timesheet', labelKey: 'calendar.views.timesheet', shortcut: 'T' },
 ];
 
 const DAY_COUNTS = [2, 3, 4, 5, 6, 7, 8, 9] as const;

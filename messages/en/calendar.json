@@ -25,7 +25,6 @@
       "density_default": "Default",
       "density_spacious": "Spacious",
       "generalSettings": "General settings",
-      "timesheet": "Timesheet",
       "stats": "Stats"
     },
     "mobile": {
@@ -251,13 +250,6 @@
       "periodYear": "Year",
       "periodAll": "All",
       "thisYear": "This year"
-    },
-    "timesheet": {
-      "emptyTitle": "No entries this week",
-      "emptyDescription": "Plans and records will appear here",
-      "tag": "Tag",
-      "total": "Total",
-      "untagged": "Untagged"
     },
     "collapsedSection": {
       "expandLabel": "Expand {timeRange}"

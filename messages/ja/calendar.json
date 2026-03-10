@@ -25,7 +25,6 @@
       "density_default": "標準",
       "density_spacious": "ゆったり",
       "generalSettings": "一般設定",
-      "timesheet": "タイムシート",
       "stats": "統計"
     },
     "mobile": {
@@ -251,13 +250,6 @@
       "periodYear": "年",
       "periodAll": "全期間",
       "thisYear": "今年"
-    },
-    "timesheet": {
-      "emptyTitle": "今週のエントリはありません",
-      "emptyDescription": "プランとレコードがここに表示されます",
-      "tag": "タグ",
-      "total": "合計",
-      "untagged": "タグなし"
     },
     "collapsedSection": {
       "expandLabel": "{timeRange} を展開"

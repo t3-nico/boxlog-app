@@ -36,7 +36,7 @@ function extractViewFromPathname(pathname: string): CalendarViewType {
   // query string を除去
   const clean = lastSegment.split('?')[0] ?? '';
 
-  if (['day', 'week', 'timesheet'].includes(clean)) {
+  if (['day', 'week'].includes(clean)) {
     return clean as CalendarViewType;
   }
   const match = clean.match(/^(\d+)day$/);
