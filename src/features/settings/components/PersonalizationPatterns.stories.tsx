@@ -494,7 +494,7 @@ function AIStyleDemo() {
 // ─────────────────────────────────────────────────────────
 
 const meta = {
-  title: 'Features/Settings/PersonalizationSettings',
+  title: 'Features/Settings/PersonalizationPatterns',
   parameters: {
     layout: 'padded',
   },

@@ -221,7 +221,7 @@ function TimezoneListReference() {
 // ─────────────────────────────────────────────────────────
 
 const meta = {
-  title: 'Features/Settings/CalendarSettings',
+  title: 'Features/Settings/CalendarSettingsPatterns',
   parameters: {
     layout: 'padded',
   },
