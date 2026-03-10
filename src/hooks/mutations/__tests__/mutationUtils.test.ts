@@ -99,7 +99,6 @@ describe('mutationUtils', () => {
         entries: {
           list: { invalidate: vi.fn() },
           getById: { invalidate: vi.fn() },
-          getCumulativeTime: { invalidate: vi.fn() },
         },
       };
 
@@ -108,7 +107,6 @@ describe('mutationUtils', () => {
       expect(mockUtils.entries.list.invalidate).toHaveBeenCalledWith(undefined, {
         refetchType: 'active',
       });
-      expect(mockUtils.entries.getCumulativeTime.invalidate).toHaveBeenCalled();
     });
 
     it('entityId 指定時に個別キャッシュも無効化する', async () => {
@@ -116,7 +114,6 @@ describe('mutationUtils', () => {
         entries: {
           list: { invalidate: vi.fn() },
           getById: { invalidate: vi.fn() },
-          getCumulativeTime: { invalidate: vi.fn() },
         },
       };
 
@@ -134,7 +131,6 @@ describe('mutationUtils', () => {
       const mockUtils = {
         entries: {
           list: { invalidate: vi.fn() },
-          getCumulativeTime: { invalidate: vi.fn() },
         },
       };
 

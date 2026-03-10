@@ -86,7 +86,4 @@ export async function invalidateEntityCaches(
   if (entityId) {
     await utils[entityName].getById.invalidate({ id: entityId }, { refetchType });
   }
-
-  // 累積時間も無効化
-  await utils.entries.getCumulativeTime.invalidate();
 }

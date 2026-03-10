@@ -157,7 +157,6 @@ export function useEntryMutations() {
     },
     onSettled: () => {
       void utils.entries.list.invalidate();
-      void utils.entries.getCumulativeTime.invalidate();
     },
   });
 
@@ -300,7 +299,6 @@ export function useEntryMutations() {
     onSettled: async () => {
       setIsMutating(false);
       void utils.entries.list.invalidate();
-      void utils.entries.getCumulativeTime.invalidate();
     },
   });
 
@@ -383,7 +381,6 @@ export function useEntryMutations() {
       setTimeout(() => {
         setIsMutating(false);
       }, 500);
-      void utils.entries.getCumulativeTime.invalidate();
     },
   });
 
@@ -426,7 +423,6 @@ export function useEntryMutations() {
     },
     onSettled: () => {
       setIsMutating(false);
-      void utils.entries.getCumulativeTime.invalidate();
     },
   });
 
@@ -458,7 +454,6 @@ export function useEntryMutations() {
     },
     onSettled: () => {
       setIsMutating(false);
-      void utils.entries.getCumulativeTime.invalidate();
     },
   });
 

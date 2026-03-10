@@ -35,8 +35,7 @@ export const useEntryRealtime = createRealtimeHook({
       void utils.entries.getById.invalidate({ id: recordId });
     }
 
-    // 累計時間・繰り返しインスタンスも無効化
-    void utils.entries.getCumulativeTime.invalidate();
+    // 繰り返しインスタンスも無効化
     void utils.entries.getInstances.invalidate();
   },
 });

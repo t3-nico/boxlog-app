@@ -16,7 +16,6 @@ export async function prefetchStatsData() {
   };
 
   await Promise.all([
-    helpers.entries.getStreak.prefetch(),
     helpers.entries.getDailyHours.prefetch({ year: now.getFullYear() }),
     helpers.entries.getTimeByTag.prefetch(dateRange),
     helpers.entries.getHourlyDistribution.prefetch(dateRange),
