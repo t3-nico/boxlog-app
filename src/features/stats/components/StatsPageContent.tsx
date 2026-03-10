@@ -10,11 +10,16 @@ import { MobileMenuButton } from '@/components/layout/MobileMenuButton';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { HoverTooltip } from '@/components/ui/tooltip';
+import { DateNavigator } from '@/core/components/DateNavigator';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useResizeHandle } from '@/hooks/useResizeHandle';
 import { cn } from '@/lib/utils';
 import { useLayoutStore } from '@/stores/useLayoutStore';
 
+import type { StatsGranularity } from '../stores/useStatsFilterStore';
+import { useStatsFilterStore } from '../stores/useStatsFilterStore';
+import { StatsDateDisplay } from './layout/StatsDateDisplay';
+import { StatsGranularitySelector } from './layout/StatsGranularitySelector';
 import { StatsView } from './StatsView';
 
 interface StatsPageContentProps {
@@ -23,6 +28,13 @@ interface StatsPageContentProps {
   /** ヘッダー右側のカスタムスロット（PageSwitcher など） */
   headerSlot?: React.ReactNode;
 }
+
+const TODAY_LABEL_KEYS: Record<StatsGranularity, string> = {
+  day: 'common.time.today',
+  week: 'common.time.thisWeek',
+  month: 'common.time.thisMonth',
+  year: 'calendar.stats.thisYear',
+};
 
 /**
  * Stats ページのクライアントエントリポイント
@@ -52,6 +64,14 @@ export function StatsPageContent({ renderAsideContent, headerSlot }: StatsPageCo
     onResizeEnd: setAsideSize,
   });
 
+  // Stats ナビゲーション
+  const granularity = useStatsFilterStore((s) => s.granularity);
+  const currentDate = useStatsFilterStore((s) => s.currentDate);
+  const setGranularity = useStatsFilterStore((s) => s.setGranularity);
+  const navigate = useStatsFilterStore((s) => s.navigate);
+
+  const todayLabel = t(TODAY_LABEL_KEYS[granularity]);
+
   return (
     <div
       ref={containerRef}
@@ -61,43 +81,61 @@ export function StatsPageContent({ renderAsideContent, headerSlot }: StatsPageCo
         {/* 左カラム: ヘッダー + Stats コンテンツ */}
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           {/* ヘッダー（CalendarHeader と同じ h-12） */}
-          <header className="relative flex h-12 shrink-0 items-center justify-between px-4 py-2">
-            {/* 左側 */}
-            <div className="flex items-center gap-2">
-              {!isSidebarOpen && (
-                <HoverTooltip content={t('sidebar.openSidebar')} side="bottom">
-                  <Button
-                    variant="ghost"
-                    icon
-                    className="hidden size-8 md:flex"
-                    onClick={openSidebar}
-                    aria-label={t('sidebar.openSidebar')}
-                  >
-                    <PanelLeft className="size-4" />
-                  </Button>
-                </HoverTooltip>
-              )}
-              <MobileMenuButton className="md:hidden" />
-              <h1 className="text-lg leading-8 font-bold">{t('calendar.views.stats')}</h1>
-            </div>
+          <header className="bg-background relative h-12 px-4 py-2">
+            <div className="flex h-8 items-center justify-between">
+              {/* 左側: メニュー + 日付表示 + コントロール群 */}
+              <div className="flex items-center gap-2">
+                {/* サイドバー開くボタン（PCのみ、サイドバーが閉じている時のみ表示） */}
+                {!isSidebarOpen && (
+                  <HoverTooltip content={t('sidebar.openSidebar')} side="bottom">
+                    <Button
+                      variant="ghost"
+                      icon
+                      className="hidden size-8 md:flex"
+                      onClick={openSidebar}
+                      aria-label={t('sidebar.openSidebar')}
+                    >
+                      <PanelLeft className="size-4" />
+                    </Button>
+                  </HoverTooltip>
+                )}
+                <MobileMenuButton className="md:hidden" />
 
-            {/* 右側: 検索 + ページ切替 + アサイドトグル */}
-            <div className="hidden items-center gap-2 md:flex">
-              <HeaderUtilities />
-              {headerSlot}
-              {!showAside && (
-                <HoverTooltip content={t('calendar.aside.open')} side="bottom">
-                  <Button
-                    variant="ghost"
-                    icon
-                    className="size-8"
-                    onClick={() => setCurrentAside('chat')}
-                    aria-label={t('calendar.aside.open')}
-                  >
-                    <PanelRight className="size-4" />
-                  </Button>
-                </HoverTooltip>
-              )}
+                {/* 日付コンテキスト表示 */}
+                <StatsDateDisplay currentDate={currentDate} granularity={granularity} />
+
+                {/* コントロール群 - PC のみ */}
+                <div className="ml-2 hidden items-center md:flex">
+                  {/* 日付ナビゲーション（< 今週 >） */}
+                  <DateNavigator onNavigate={navigate} todayLabel={todayLabel} arrowSize="md" />
+
+                  {/* 粒度セレクター [日|週|月|年] */}
+                  <StatsGranularitySelector
+                    className="ml-4"
+                    granularity={granularity}
+                    onGranularityChange={setGranularity}
+                  />
+                </div>
+              </div>
+
+              {/* 右側: 検索 + ページ切替 + アサイドトグル */}
+              <div className="hidden items-center gap-2 md:flex">
+                <HeaderUtilities />
+                {headerSlot}
+                {!showAside && (
+                  <HoverTooltip content={t('calendar.aside.open')} side="bottom">
+                    <Button
+                      variant="ghost"
+                      icon
+                      className="size-8"
+                      onClick={() => setCurrentAside('chat')}
+                      aria-label={t('calendar.aside.open')}
+                    >
+                      <PanelRight className="size-4" />
+                    </Button>
+                  </HoverTooltip>
+                )}
+              </div>
             </div>
           </header>
 

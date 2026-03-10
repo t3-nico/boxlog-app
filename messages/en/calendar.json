@@ -252,10 +252,12 @@
       "noTagData": "No tag data for this period",
       "emptyTitle": "No data this week",
       "emptyDescription": "Add plans and records to see your progress",
+      "periodDay": "Day",
       "periodWeek": "Week",
       "periodMonth": "Month",
       "periodYear": "Year",
-      "periodAll": "All"
+      "periodAll": "All",
+      "thisYear": "This year"
     },
     "timesheet": {
       "emptyTitle": "No entries this week",

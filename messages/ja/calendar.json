@@ -252,10 +252,12 @@
       "noTagData": "この期間のタグデータがありません",
       "emptyTitle": "今週のデータがありません",
       "emptyDescription": "プランとレコードを追加して進捗を確認しましょう",
+      "periodDay": "日",
       "periodWeek": "週",
       "periodMonth": "月",
       "periodYear": "年",
-      "periodAll": "全期間"
+      "periodAll": "全期間",
+      "thisYear": "今年"
     },
     "timesheet": {
       "emptyTitle": "今週のエントリはありません",
