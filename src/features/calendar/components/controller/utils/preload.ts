@@ -4,7 +4,6 @@ export const preloadCalendarViews = () => {
   import('@/features/calendar/components/views/DayView');
   import('@/features/calendar/components/views/WeekView');
   import('@/features/calendar/components/views/MultiDayView');
-  import('@/features/calendar/components/views/AgendaView');
 };
 
 // クライアントサイドでのみ実行

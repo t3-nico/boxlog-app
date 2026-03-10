@@ -12,7 +12,7 @@ import { getTodayIndex } from '../utils/dateHelpers';
 export interface UseCurrentPeriodOptions {
   dates: Date[];
   referenceDate?: Date | undefined; // 基準日（デフォルト: 今日）
-  periodType: 'day' | 'week' | 'threeday' | 'fiveday' | 'multiday' | 'agenda';
+  periodType: 'day' | 'week' | 'threeday' | 'fiveday' | 'multiday';
   weekStartsOn?: 0 | 1 | 6 | undefined; // 週の開始日
 }
 
@@ -57,7 +57,6 @@ export function useCurrentPeriod({
       case 'threeday':
       case 'fiveday':
       case 'multiday':
-      case 'agenda':
         // 日付範囲チェック：今日がdates配列の期間内にある
         return dates.some((date) => isSameDay(date, today));
 

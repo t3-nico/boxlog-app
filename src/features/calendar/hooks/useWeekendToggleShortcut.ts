@@ -121,18 +121,12 @@ function showToggleFeedback(newState: boolean) {
   }, 2000);
 }
 
-import { getTranslation } from '../lib/toast/get-translation';
-
-const CALENDAR_ACCESSIBILITY_KEYS = {
-  TOGGLE_WEEKEND: 'calendar.accessibility.toggleWeekend',
-} as const;
-
 /**
  * ショートカットキーのヘルプ情報
  */
 export const WEEKEND_TOGGLE_SHORTCUT_HELP = {
   key: 'Cmd/Ctrl + W',
-  description: getTranslation(CALENDAR_ACCESSIBILITY_KEYS.TOGGLE_WEEKEND),
+  description: 'Toggle Weekend Display',
   mac: '⌘W',
   windows: 'Ctrl+W',
 } as const;

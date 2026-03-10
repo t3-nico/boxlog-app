@@ -3,6 +3,7 @@
  * /api/trpc/* エンドポイントの処理
  */
 
+import { logger } from '@/lib/logger';
 import { appRouter } from '@/server/api/root';
 import { createTRPCContext } from '@/server/api/trpc';
 import { createNextApiHandler } from '@trpc/server/adapters/next';
@@ -15,7 +16,7 @@ export default createNextApiHandler({
   createContext: createTRPCContext,
   onError: ({ error, type, path, input, ctx }) => {
     // エラーログの出力
-    console.error('tRPC Error:', {
+    logger.error('tRPC Error:', {
       type,
       path,
       error: error.message,

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Calendar, Clock, FileText, Search, Settings, Tag, User, X } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 
@@ -12,7 +12,6 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
 } from '@/components/ui/command';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -64,13 +63,8 @@ export const Overview: Story = {
                   <td className="py-3">常時表示</td>
                 </tr>
                 <tr className="border-border border-b">
-                  <td className="py-3 font-bold">オートコンプリート</td>
-                  <td className="py-3">入力補完、候補表示</td>
-                  <td className="py-3">入力時</td>
-                </tr>
-                <tr className="border-border border-b">
-                  <td className="py-3 font-bold">コマンドパレット</td>
-                  <td className="py-3">アプリ全体の検索・操作</td>
+                  <td className="py-3 font-bold">グローバル検索</td>
+                  <td className="py-3">タグ一覧 + ブロック検索</td>
                   <td className="py-3">⌘K</td>
                 </tr>
                 <tr>
@@ -124,94 +118,34 @@ export const Overview: Story = {
           </pre>
         </section>
 
-        {/* オートコンプリート */}
+        {/* グローバル検索 */}
         <section className="bg-card border-border rounded-xl border p-6">
-          <h2 className="mb-4 text-lg font-bold">オートコンプリート</h2>
+          <h2 className="mb-4 text-lg font-bold">グローバル検索（⌘K）</h2>
           <p className="text-muted-foreground mb-4 text-sm">
-            入力に応じて候補を表示。Commandコンポーネントを使用。
+            タグとブロックを横断検索。空状態ではタグ一覧、入力時はタグ名+メモで検索。
           </p>
 
-          <div className="max-w-md">
-            <AutocompleteSearch />
-          </div>
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-muted-foreground mb-3 text-sm font-bold">空状態（タグ一覧）</h3>
+              <GlobalSearchEmpty />
+            </div>
 
-          <pre className="bg-container mt-4 overflow-x-auto rounded-lg p-4 text-xs">
-            {`<Popover open={open}>
-  <PopoverTrigger asChild>
-    <Input value={query} onChange={...} />
-  </PopoverTrigger>
-  <PopoverContent>
-    <Command>
-      <CommandList>
-        <CommandGroup heading="候補">
-          <CommandItem>結果1</CommandItem>
-        </CommandGroup>
-      </CommandList>
-    </Command>
-  </PopoverContent>
-</Popover>`}
-          </pre>
-        </section>
-
-        {/* コマンドパレット */}
-        <section className="bg-card border-border rounded-xl border p-6">
-          <h2 className="mb-4 text-lg font-bold">コマンドパレット</h2>
-          <p className="text-muted-foreground mb-4 text-sm">
-            アプリ全体の検索・操作。⌘K で起動。カテゴリ分けで整理。
-          </p>
-
-          <div className="border-border max-w-lg overflow-hidden rounded-lg border">
-            <Command className="border-0">
-              <CommandInput placeholder="検索またはコマンドを入力..." />
-              <CommandList>
-                <CommandEmpty>結果が見つかりません</CommandEmpty>
-                <CommandGroup heading="最近のアイテム">
-                  <CommandItem>
-                    <Clock className="mr-2 size-4" />
-                    プロジェクトA
-                  </CommandItem>
-                  <CommandItem>
-                    <Clock className="mr-2 size-4" />
-                    週次レポート
-                  </CommandItem>
-                </CommandGroup>
-                <CommandSeparator />
-                <CommandGroup heading="アクション">
-                  <CommandItem>
-                    <FileText className="mr-2 size-4" />
-                    新規プロジェクト
-                  </CommandItem>
-                  <CommandItem>
-                    <Tag className="mr-2 size-4" />
-                    タグを追加
-                  </CommandItem>
-                  <CommandItem>
-                    <Calendar className="mr-2 size-4" />
-                    予定を作成
-                  </CommandItem>
-                </CommandGroup>
-                <CommandSeparator />
-                <CommandGroup heading="設定">
-                  <CommandItem>
-                    <User className="mr-2 size-4" />
-                    プロフィール
-                  </CommandItem>
-                  <CommandItem>
-                    <Settings className="mr-2 size-4" />
-                    設定
-                  </CommandItem>
-                </CommandGroup>
-              </CommandList>
-            </Command>
+            <div>
+              <h3 className="text-muted-foreground mb-3 text-sm font-bold">
+                検索結果（タグ + ブロック）
+              </h3>
+              <GlobalSearchWithResults />
+            </div>
           </div>
 
           <div className="bg-container mt-4 rounded-lg p-4">
-            <h3 className="mb-2 text-sm font-bold">構成ルール</h3>
+            <h3 className="mb-2 text-sm font-bold">動作ルール</h3>
             <ul className="text-muted-foreground space-y-1 text-xs">
-              <li>最近のアイテムを最上部に</li>
-              <li>アクションはアイコン付きで</li>
-              <li>カテゴリはセパレーターで区切る</li>
-              <li>空結果時はメッセージを表示</li>
+              <li>空状態 → タグ一覧（カラードット + タグ名）</li>
+              <li>入力時 → タグ名マッチ + ブロックのメモ検索</li>
+              <li>タグ選択 → showOnlyTag でフィルター適用</li>
+              <li>ブロック選択 → カレンダーでその日に遷移 + Inspector表示</li>
             </ul>
           </div>
         </section>
@@ -295,18 +229,18 @@ export const Overview: Story = {
               <h3 className="font-bold">Do</h3>
               <ul className="text-muted-foreground space-y-1 text-sm">
                 <li>検索アイコンを左に配置</li>
-                <li>デバウンスで過剰なリクエスト防止</li>
-                <li>最近の検索を表示</li>
+                <li>空状態でタグ一覧を即表示</li>
                 <li>検索結果をハイライト</li>
+                <li>ブロックにタグカラー + 日時を表示</li>
               </ul>
             </div>
             <div className="border-destructive space-y-2 border-l-4 pl-4">
               <h3 className="font-bold">Don&apos;t</h3>
               <ul className="text-muted-foreground space-y-1 text-sm">
-                <li>Enterを押すまで検索しない</li>
-                <li>結果0件でエラー表示</li>
-                <li>候補が多すぎる（10件以下推奨）</li>
-                <li>検索中のフィードバックなし</li>
+                <li>コマンドパレット（操作がほぼない）</li>
+                <li>検索履歴（タグ履歴と重複）</li>
+                <li>ブロック一覧（カレンダーと重複）</li>
+                <li>候補が多すぎる（20件以下推奨）</li>
               </ul>
             </div>
           </div>
@@ -341,59 +275,90 @@ function SearchWithClear() {
   );
 }
 
-function AutocompleteSearch() {
-  const [open, setOpen] = useState(true);
-  const [query, setQuery] = useState('');
-  const suggestions = [
-    'プロジェクトA',
-    'プロジェクトB',
-    'プロジェクトC',
-    'タスク管理',
-    'タイムトラッキング',
+function GlobalSearchEmpty() {
+  const tags = [
+    { name: 'Dev:API', color: 'bg-tag-green' },
+    { name: 'Dev:Frontend', color: 'bg-tag-green' },
+    { name: 'Design', color: 'bg-tag-blue' },
+    { name: 'Meeting', color: 'bg-tag-purple' },
+    { name: 'Learning', color: 'bg-tag-orange' },
   ];
-  const filtered = suggestions.filter((s) => s.toLowerCase().includes(query.toLowerCase()));
 
   return (
-    <Popover open={open && query.length > 0}>
-      <PopoverTrigger asChild>
-        <div className="relative">
-          <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
-          <Input
-            placeholder="検索..."
-            className="pl-9"
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              setOpen(true);
-            }}
-            onFocus={() => setOpen(true)}
-          />
-        </div>
-      </PopoverTrigger>
-      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
-        <Command>
-          <CommandList>
-            {filtered.length === 0 ? (
-              <CommandEmpty>結果が見つかりません</CommandEmpty>
-            ) : (
-              <CommandGroup>
-                {filtered.map((item) => (
-                  <CommandItem
-                    key={item}
-                    onSelect={() => {
-                      setQuery(item);
-                      setOpen(false);
-                    }}
-                  >
-                    {item}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            )}
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+    <div className="border-border max-w-lg overflow-hidden rounded-lg border">
+      <Command className="border-0">
+        <CommandInput placeholder="Search..." />
+        <CommandList>
+          <CommandGroup heading="Tags">
+            {tags.map((tag) => (
+              <CommandItem key={tag.name} className="flex items-center gap-2">
+                <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${tag.color}`} />
+                <span>{tag.name}</span>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </CommandList>
+      </Command>
+    </div>
+  );
+}
+
+function GlobalSearchWithResults() {
+  const tags = [{ name: 'Dev:API', color: 'bg-tag-green' }];
+
+  const blocks = [
+    {
+      id: '1',
+      tagName: 'Dev:API',
+      tagColor: 'bg-tag-green',
+      date: '3/6',
+      time: '9:00 - 10:30',
+      description: 'Refactored auth API endpoints',
+    },
+    {
+      id: '2',
+      tagName: 'Dev:API',
+      tagColor: 'bg-tag-green',
+      date: '3/5',
+      time: '14:00 - 16:00',
+      description: 'API design notes',
+    },
+  ];
+
+  return (
+    <div className="border-border max-w-lg overflow-hidden rounded-lg border">
+      <Command className="border-0">
+        <CommandInput placeholder="Search..." value="API" />
+        <CommandList>
+          <CommandEmpty>No results found</CommandEmpty>
+          <CommandGroup heading="Tags">
+            {tags.map((tag) => (
+              <CommandItem key={tag.name} className="flex items-center gap-2">
+                <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${tag.color}`} />
+                <span>
+                  <mark className="bg-state-active text-state-active-foreground rounded">API</mark>
+                </span>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+          <CommandGroup heading="Blocks">
+            {blocks.map((block) => (
+              <CommandItem key={block.id} value={block.id} className="flex items-center gap-2">
+                <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${block.tagColor}`} />
+                <div className="flex min-w-0 flex-1 flex-col">
+                  <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
+                    <span className="font-medium">{block.tagName}</span>
+                    <span>{block.date}</span>
+                    <span>{block.time}</span>
+                  </div>
+                  <span className="truncate text-sm">{block.description}</span>
+                </div>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </CommandList>
+      </Command>
+    </div>
   );
 }
 

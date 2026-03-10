@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 
 export function useAnimationPerformance() {
   const frameCount = useRef(0);
+  // eslint-disable-next-line react-hooks/purity -- FPS計測のベースライン取得（useRef初期値）
   const lastTime = useRef(performance.now());
   const [fps, setFps] = useState(60);
 

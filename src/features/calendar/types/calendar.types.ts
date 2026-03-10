@@ -2,7 +2,7 @@ export type { CalendarEvent } from '@/core/types/calendar-event';
 
 export type MultiDayCount = 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 export type MultiDayViewType = `${MultiDayCount}day`;
-export type CalendarViewType = 'day' | 'week' | 'agenda' | 'timesheet' | MultiDayViewType;
+export type CalendarViewType = 'day' | 'week' | MultiDayViewType;
 
 /** MultiDayView（2day〜9day）かどうかを判定 */
 export function isMultiDayView(view: CalendarViewType): view is MultiDayViewType {
@@ -22,13 +22,6 @@ export interface ViewDateRange {
   start: Date;
   end: Date;
   days: Date[];
-}
-
-export interface CalendarHeaderProps {
-  viewType: CalendarViewType;
-  currentDate: Date;
-  onNavigate: (direction: 'prev' | 'next' | 'today') => void;
-  onViewChange: (view: CalendarViewType) => void;
 }
 
 export interface ViewSelectorProps {

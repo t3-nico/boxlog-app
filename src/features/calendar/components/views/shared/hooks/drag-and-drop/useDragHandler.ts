@@ -6,7 +6,7 @@ import { useCallback } from 'react';
 import { MS_PER_MINUTE } from '@/constants/time';
 import { logger } from '@/lib/logger';
 import { useTranslations } from 'next-intl';
-import useCalendarToast from '../../../../../lib/toast';
+import { toast } from 'sonner';
 import type { CalendarEvent } from '../../../../../types/calendar.types';
 
 import type { DragDataRef, DragState } from './types';
@@ -57,7 +57,6 @@ export function useDragHandler({
   setDragState,
 }: UseDragHandlerProps) {
   const t = useTranslations();
-  const calendarToast = useCalendarToast();
 
   // ドラッグ開始
   const handleMouseDown = useCallback(
@@ -68,6 +67,10 @@ export function useDragHandler({
       dateIndex: number = 0,
     ) => {
       if (e.button !== 0) return;
+
+      // 過去ブロックのドラッグを防御的にブロック（PlanCard側でも制御済み）
+      const event = events.find((ev) => ev.id === eventId);
+      if (event?.entryState === 'past') return;
 
       e.preventDefault();
       e.stopPropagation();
@@ -125,7 +128,7 @@ export function useDragHandler({
         isOverlapping: false,
       });
     },
-    [viewMode, displayDates, dragDataRef, setDragState],
+    [events, viewMode, displayDates, dragDataRef, setDragState],
   );
 
   // ドラッグ処理
@@ -176,14 +179,15 @@ export function useDragHandler({
 
       updateTimeDisplay(dragData.dragElement || null, previewStartTime, previewEndTime, timezone);
 
+      // 未来→過去への移動を禁止（ブロック全体が過去になるドロップ先は不可）
+      const now = new Date();
+      const wouldBePast = previewEndTime <= now;
+
       // クライアント側で重複チェック（全イベントを使用して別日への移動もチェック）
       const eventsToCheck = allEventsForOverlapCheck ?? events;
-      const isOverlapping = checkClientSideOverlap(
-        eventsToCheck,
-        dragData.eventId,
-        previewStartTime,
-        previewEndTime,
-      );
+      const isOverlapping =
+        wouldBePast ||
+        checkClientSideOverlap(eventsToCheck, dragData.eventId, previewStartTime, previewEndTime);
 
       // ゴースト要素のスタイルを重複状態に応じて更新
       updateDragElementOverlapStyle(dragData.dragElement || null, isOverlapping);
@@ -224,6 +228,8 @@ export function useDragHandler({
           hourHeight,
         );
         const newEndTime = new Date(newStartTime.getTime() + durationMs);
+        // 未来→過去への移動を拒否
+        if (newEndTime <= new Date()) return;
         eventUpdateHandler(eventId, { startTime: newStartTime, endTime: newEndTime });
       }
     },
@@ -284,30 +290,36 @@ export function useDragHandler({
       if (promise && typeof promise.then === 'function') {
         promise
           .then(() => {
-            calendarToast.eventMoved(eventData, newStartTime, {
-              undoAction: async () => {
-                try {
-                  const originalEndTime = new Date(previousStartTime.getTime() + durationMs);
-                  await eventUpdateHandler!(dragDataRef.current!.eventId, {
-                    startTime: previousStartTime,
-                    endTime: originalEndTime,
-                  });
-                  calendarToast.success(t('calendar.event.undoMove'));
-                } catch {
-                  calendarToast.error(t('calendar.event.undoFailed'));
-                }
+            toast.success(t('calendar.event.moved'), {
+              description: `「${eventData.title}」`,
+              action: {
+                label: t('common.undo'),
+                onClick: async () => {
+                  try {
+                    const originalEndTime = new Date(previousStartTime.getTime() + durationMs);
+                    await eventUpdateHandler!(dragDataRef.current!.eventId, {
+                      startTime: previousStartTime,
+                      endTime: originalEndTime,
+                    });
+                    toast.success(t('calendar.event.undoMove'));
+                  } catch {
+                    toast.error(t('calendar.event.undoFailed'));
+                  }
+                },
               },
             });
           })
           .catch((error: unknown) => {
             logger.error('Failed to update event time:', error);
-            calendarToast.error(t('calendar.event.moveFailed'));
+            toast.error(t('calendar.event.moveFailed'));
           });
       } else {
-        calendarToast.eventMoved(eventData, newStartTime);
+        toast.success(t('calendar.event.moved'), {
+          description: `「${eventData.title}」`,
+        });
       }
     },
-    [date, calendarToast, eventUpdateHandler, dragDataRef, t],
+    [date, eventUpdateHandler, dragDataRef, t],
   );
 
   // プラン更新処理を実行する
@@ -332,6 +344,11 @@ export function useDragHandler({
 
       const newEndTime = new Date(newStartTime.getTime() + durationMs);
 
+      // 未来→過去への移動を拒否（ブロック全体が過去になるドロップ先は不可）
+      if (newEndTime <= new Date()) {
+        return false;
+      }
+
       if (newEndTime <= newStartTime) {
         newEndTime.setTime(newStartTime.getTime() + 60 * 60 * 1000);
       }
@@ -355,12 +372,12 @@ export function useDragHandler({
         // TIME_OVERLAPエラー（重複防止）の場合はtoastなし（スナップバックで対応）
         const errorMessage = error instanceof Error ? error.message : '';
         if (!errorMessage.includes('TIME_OVERLAP') && !errorMessage.includes('既に')) {
-          calendarToast.error(t('calendar.event.moveFailed'));
+          toast.error(t('calendar.event.moveFailed'));
         }
         return false; // エラー時はスナップバック必要
       }
     },
-    [eventUpdateHandler, events, dragDataRef, handleEventUpdateToast, calendarToast, t, hourHeight],
+    [eventUpdateHandler, events, dragDataRef, handleEventUpdateToast, t, hourHeight],
   );
 
   return {

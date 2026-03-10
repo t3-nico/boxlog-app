@@ -8,6 +8,7 @@
  */
 
 import { Check, Copy } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { memo, useCallback, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -55,17 +56,18 @@ function getAssistantText(message: UIMessage): string {
  */
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
+  const t = useTranslations();
 
   const handleCopy = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
-      toast.success('Copied to clipboard');
+      toast.success(t('common.toast.copied'));
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast.error('Failed to copy');
+      toast.error(t('common.toast.copyFailed'));
     }
-  }, [text]);
+  }, [text, t]);
 
   return (
     <MessageActions className="mt-1 opacity-0 transition-opacity group-hover/assistant:opacity-100">

@@ -27,16 +27,13 @@ const LoadingIcon = () => <Loader2 className="size-5 animate-spin" />;
  * - 閉じるボタン: 常時表示
  * - Undoボタン: 右配置
  *
- * @see {@link @/lib/toast} 推奨API
- *
  * @example
  * ```tsx
- * import { showToast } from '@/lib/toast';
+ * import { toast } from 'sonner';
  *
- * showToast.error('エラーが発生しました');
- * showToast.withUndo({
- *   title: '削除しました',
- *   onUndo: () => restoreItem(),
+ * toast.error('エラーが発生しました');
+ * toast.success('削除しました', {
+ *   action: { label: '元に戻す', onClick: () => restoreItem() },
  * });
  * ```
  */

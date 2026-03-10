@@ -16,8 +16,36 @@ export const recurrenceTypeSchema = z.enum([
 // 充実度スコア（3段階: 1=微妙, 2=普通, 3=良い）
 export const fulfillmentScoreSchema = z.number().int().min(1).max(3);
 
-// Entry 作成スキーマ
-export const createEntrySchema = z.object({
+// 時間順序の検証（end >= start）
+const timeOrderRefine = <T extends Record<string, unknown>>(data: T, ctx: z.RefinementCtx) => {
+  const d = data as {
+    start_time?: string | null;
+    end_time?: string | null;
+    actual_start_time?: string | null;
+    actual_end_time?: string | null;
+  };
+  if (d.start_time && d.end_time) {
+    if (new Date(d.end_time) < new Date(d.start_time)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'validation.time.endBeforeStart',
+        path: ['end_time'],
+      });
+    }
+  }
+  if (d.actual_start_time && d.actual_end_time) {
+    if (new Date(d.actual_end_time) < new Date(d.actual_start_time)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'validation.actualTime.endBeforeStart',
+        path: ['actual_end_time'],
+      });
+    }
+  }
+};
+
+// Entry 基底オブジェクト（.partial() を使うために分離）
+const baseEntrySchema = z.object({
   title: z.string().max(200, 'validation.title.maxLength'),
   description: z.string().max(10000, 'validation.description.maxLength').optional(),
   origin: entryOriginSchema.optional(), // 省略時はサーバー側で時間位置から判定
@@ -33,8 +61,11 @@ export const createEntrySchema = z.object({
   reminder_minutes: z.number().int().min(0).nullable().optional(),
 });
 
+// Entry 作成スキーマ
+export const createEntrySchema = baseEntrySchema.superRefine(timeOrderRefine);
+
 // Entry 更新スキーマ
-export const updateEntrySchema = createEntrySchema.partial();
+export const updateEntrySchema = baseEntrySchema.partial().superRefine(timeOrderRefine);
 
 // Entry ID スキーマ
 export const entryIdSchema = z.object({

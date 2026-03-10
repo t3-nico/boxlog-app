@@ -9,12 +9,11 @@
  * - ドラフトモードなし（即DB保存 + edit mode）
  */
 
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import type { EntryOrigin, FulfillmentScore } from '@/core/types/entry';
 import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { getEntryState } from '@/lib/entry-status';
-import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 
 import { EntryInspectorDetailsTab } from './EntryInspectorDetailsTab';
 import { useEntryInspectorContentLogic } from './useEntryInspectorContentLogic';
@@ -42,15 +41,7 @@ export function EntryInspectorContent() {
     updatePlan,
     handleDelete,
     getCache,
-    saveAndClose,
   } = useEntryInspectorContentLogic();
-
-  // closeWithSave をストアに登録（PlanInspector の handleClose から呼べるようにする）
-  const setCloseWithSave = useEntryInspectorStore((s) => s.setCloseWithSave);
-  useEffect(() => {
-    setCloseWithSave(saveAndClose);
-    return () => setCloseWithSave(null);
-  }, [saveAndClose, setCloseWithSave]);
 
   // エントリの時間位置ベース状態（upcoming/active/past）
   const entryState = useMemo(() => {

@@ -1,22 +1,60 @@
 import { create } from 'zustand';
 
-/** 累積チャートの期間フィルター */
-export type StatsPeriod = 'week' | 'month' | 'year' | 'all';
+import { addDays, addMonths, addWeeks } from '@/lib/date/core';
+
+/** Stats の表示粒度 */
+export type StatsGranularity = 'day' | 'week' | 'month' | 'year';
 
 interface StatsFilterState {
   /** 選択中のタグID（null = 全タグ表示） */
   selectedTagId: string | null;
-  /** 選択中の期間フィルター */
-  period: StatsPeriod;
+  /** 表示粒度 */
+  granularity: StatsGranularity;
+  /** ナビゲーション基準日 */
+  currentDate: Date;
   /** タグを選択（ドリルダウン） */
   setSelectedTag: (tagId: string | null) => void;
-  /** 期間を変更 */
-  setPeriod: (period: StatsPeriod) => void;
+  /** 粒度を変更 */
+  setGranularity: (granularity: StatsGranularity) => void;
+  /** 基準日を設定 */
+  setCurrentDate: (date: Date) => void;
+  /** 前後・今日へナビゲーション */
+  navigate: (direction: 'prev' | 'next' | 'today') => void;
 }
 
-export const useStatsFilterStore = create<StatsFilterState>((set) => ({
+function navigateDate(
+  currentDate: Date,
+  granularity: StatsGranularity,
+  direction: 'prev' | 'next' | 'today',
+): Date {
+  if (direction === 'today') return new Date();
+
+  const delta = direction === 'next' ? 1 : -1;
+
+  switch (granularity) {
+    case 'day':
+      return addDays(currentDate, delta);
+    case 'week':
+      return addWeeks(currentDate, delta);
+    case 'month':
+      return addMonths(currentDate, delta);
+    case 'year': {
+      const result = new Date(currentDate);
+      result.setFullYear(result.getFullYear() + delta);
+      return result;
+    }
+  }
+}
+
+export const useStatsFilterStore = create<StatsFilterState>((set, get) => ({
   selectedTagId: null,
-  period: 'all',
+  granularity: 'week',
+  currentDate: new Date(),
   setSelectedTag: (tagId) => set({ selectedTagId: tagId }),
-  setPeriod: (period) => set({ period }),
+  setGranularity: (granularity) => set({ granularity }),
+  setCurrentDate: (date) => set({ currentDate: date }),
+  navigate: (direction) => {
+    const { currentDate, granularity } = get();
+    set({ currentDate: navigateDate(currentDate, granularity, direction) });
+  },
 }));

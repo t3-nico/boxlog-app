@@ -54,17 +54,12 @@ export const useScrollableCalendar = ({
 
   // アクティブビューの更新
   useEffect(() => {
-    if (viewMode !== 'agenda') {
-      setLastActiveView(viewMode as CalendarViewModeForScroll);
-    }
+    setLastActiveView(viewMode as CalendarViewModeForScroll);
   }, [viewMode, setLastActiveView]);
 
   // 初期スクロール位置の設定（保存された位置を優先、なければ現在時刻を中央に）
   useEffect(() => {
     if (!scrollContainerRef.current || hasRestoredScroll.current) return;
-
-    // viewModeが有効なタイプの場合のみ処理
-    if (viewMode === 'agenda') return;
 
     const savedPosition = getScrollPosition(viewMode as CalendarViewModeForScroll);
 
@@ -108,10 +103,8 @@ export const useScrollableCalendar = ({
       onScrollPositionChange(scrollTop);
     }
 
-    // スクロール位置をストアに保存（agendaビュー以外）
-    if (viewMode !== 'agenda') {
-      setScrollPosition(viewMode as CalendarViewModeForScroll, scrollTop);
-    }
+    // スクロール位置をストアに保存
+    setScrollPosition(viewMode as CalendarViewModeForScroll, scrollTop);
 
     if (scrollTimeoutRef.current) {
       clearTimeout(scrollTimeoutRef.current);

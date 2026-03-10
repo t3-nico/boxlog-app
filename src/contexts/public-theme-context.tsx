@@ -96,6 +96,7 @@ export const PublicThemeProvider = ({ children }: PublicThemeProviderProps) => {
     }
 
     root.classList.add(newResolvedTheme);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- matchMediaによるテーマ解決はブラウザAPI依存
     setResolvedTheme(newResolvedTheme);
     applyColorScheme(colorScheme);
   }, [theme, colorScheme]);

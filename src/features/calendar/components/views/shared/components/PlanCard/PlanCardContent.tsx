@@ -20,7 +20,6 @@ interface PlanCardContentProps {
   showTime?: boolean;
   timeFormat?: '12h' | '24h';
   previewTime?: { start: Date; end: Date } | null; // ドラッグ中のプレビュー時間
-  isMobile?: boolean; // モバイル表示（Googleカレンダー風シンプル表示）
 }
 
 // Helper function: Parse plan start date
@@ -46,7 +45,6 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
   showTime = true,
   timeFormat = '24h',
   previewTime = null,
-  isMobile = false,
 }) {
   const t = useTranslations();
 
@@ -56,15 +54,6 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
 
   // 表示テキスト: タグ名 or フォールバック
   const displayLabel = tagName || t('common.tags.add');
-
-  // モバイル表示: Googleカレンダー風のシンプルな表示
-  if (isMobile) {
-    return (
-      <span className="text-foreground min-w-0 flex-1 truncate text-xs leading-tight font-normal">
-        {displayLabel}
-      </span>
-    );
-  }
 
   if (isCompact) {
     // コンパクト表示：タグ名のみ

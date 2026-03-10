@@ -29,7 +29,9 @@
     "skipToMainContent": "メインコンテンツへスキップ",
     "createNewEvent": "新しいイベントを作成",
     "toast": {
-      "eventDeleted": "予定を削除しました"
+      "eventDeleted": "予定を削除しました",
+      "copied": "コピーしました",
+      "copyFailed": "コピーに失敗しました"
     },
     "selectedCount": "{count}件選択中",
     "moreActions": "その他のアクション",
@@ -142,12 +144,7 @@
       "monthsAgo": "{count}ヶ月前",
       "justNow": "たった今",
       "minutesAgo": "{count}分前",
-      "hoursAgo": "{count}時間前",
-      "now": "今",
-      "duration30m": "30分",
-      "duration1h": "1時間",
-      "duration1_5h": "1.5時間",
-      "duration2h": "2時間"
+      "hoursAgo": "{count}時間前"
     },
     "reminder": {
       "label": "リマインダー",
@@ -277,6 +274,12 @@
       },
       "description": {
         "maxLength": "説明は{max}文字以内で入力してください"
+      },
+      "time": {
+        "endBeforeStart": "終了時間は開始時間より後にしてください"
+      },
+      "actualTime": {
+        "endBeforeStart": "終了時間は開始時間より後にしてください"
       },
       "password": {
         "minLength": "パスワードは{min}文字以上で入力してください",

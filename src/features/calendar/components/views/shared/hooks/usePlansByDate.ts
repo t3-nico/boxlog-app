@@ -14,7 +14,7 @@ import { sortAgendaEventsByDateKeys, sortEventsByDateKeys } from '../utils/planS
 export interface UsePlansByDateOptions {
   dates: Date[];
   plans: CalendarEvent[];
-  sortType?: 'standard' | 'agenda'; // agenda = 終日プラン優先
+  sortType?: 'standard' | 'agenda';
 }
 
 export interface UsePlansByDateReturn {
@@ -28,10 +28,10 @@ export interface UsePlansByDateReturn {
  *
  * @description
  * 以前は各ビューで80-90行の重複ロジックがあったが、これで統一
- * - WeekView, ThreeDayView, FiveDayView, AgendaView で共通使用
+ * - WeekView, ThreeDayView, FiveDayView で共通使用
  * - マルチデイプラン対応
  * - 無効プランの自動フィルタリング
- * - 時刻ソート（標準 or Agenda用）
+ * - 時刻ソート
  */
 export function usePlansByDate({
   dates,

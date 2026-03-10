@@ -46,6 +46,7 @@ export function useSessionMonitor(): SessionMonitorState {
   const [remainingTime, setRemainingTime] = useState(SESSION_CONFIG.idleTimeout);
   const [idleTime, setIdleTime] = useState(0);
 
+  // eslint-disable-next-line react-hooks/purity -- useRef初期値でマウント時刻を取得（1回限り）
   const lastActivityRef = useRef<number>(Date.now());
   const checkIntervalRef = useRef<NodeJS.Timeout | null>(null);
 

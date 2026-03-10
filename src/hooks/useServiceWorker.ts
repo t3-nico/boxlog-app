@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
+import { logger } from '@/lib/logger';
+
 export interface ServiceWorkerState {
   /** Service Workerがサポートされているか */
   isSupported: boolean;
@@ -101,7 +103,7 @@ export function useServiceWorker(): UseServiceWorkerResult {
           60 * 60 * 1000,
         );
       } catch (error) {
-        console.error('[SW] Registration failed:', error);
+        logger.error('[SW] Registration failed:', error);
         setState((prev) => ({
           ...prev,
           isRegistering: false,

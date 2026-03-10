@@ -6,7 +6,6 @@ const mockUtils = {
   entries: {
     list: { invalidate: vi.fn() },
     getById: { invalidate: vi.fn() },
-    getCumulativeTime: { invalidate: vi.fn() },
     getInstances: { invalidate: vi.fn() },
   },
 };
@@ -96,7 +95,6 @@ describe('useEntryRealtime', () => {
 
     expect(mockUtils.entries.list.invalidate).toHaveBeenCalled();
     expect(mockUtils.entries.getById.invalidate).toHaveBeenCalledWith({ id: 'entry-1' });
-    expect(mockUtils.entries.getCumulativeTime.invalidate).toHaveBeenCalled();
     expect(mockUtils.entries.getInstances.invalidate).toHaveBeenCalled();
   });
 

@@ -65,6 +65,13 @@ export interface UpdateEntryOptions {
 }
 
 /**
+ * エントリ更新の結果（auto-shrink された隣接エントリを含む）
+ */
+export interface UpdateEntryResult extends EntryRow {
+  adjustedEntries: EntryRow[];
+}
+
+/**
  * エントリ削除のオプション
  */
 export interface DeleteEntryOptions {

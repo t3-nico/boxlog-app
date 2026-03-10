@@ -60,7 +60,9 @@ export function useRecurringEntryEdit({
   if (planId !== prevPlanId) {
     setPrevPlanId(planId);
     setPendingChanges({});
+    // eslint-disable-next-line react-hooks/refs -- React推奨のrender中state調整に伴うref同期
     pendingChangesRef.current = {};
+    // eslint-disable-next-line react-hooks/refs
     pendingFieldRef.current = null;
   }
 

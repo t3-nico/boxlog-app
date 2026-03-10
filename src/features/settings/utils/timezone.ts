@@ -3,6 +3,8 @@
  * ユーザー設定とブラウザ自動検出に対応
  */
 
+import { logger } from '@/lib/logger';
+
 // サポートするタイムゾーンの定義
 export const SUPPORTED_TIMEZONES = [
   {
@@ -70,7 +72,7 @@ export const getBrowserTimezone = (): string => {
   try {
     return Intl.DateTimeFormat().resolvedOptions().timeZone;
   } catch (error) {
-    console.warn('Failed to detect browser timezone:', error);
+    logger.warn('Failed to detect browser timezone:', error);
     return 'Asia/Tokyo'; // fallback
   }
 };
@@ -84,7 +86,7 @@ export const getUserTimezone = (): string | null => {
   try {
     return localStorage.getItem('user-timezone');
   } catch (error) {
-    console.warn('Failed to get timezone from localStorage:', error);
+    logger.warn('Failed to get timezone from localStorage:', error);
     return null;
   }
 };
@@ -106,7 +108,7 @@ export const setUserTimezone = (timezone: string): void => {
     // Notify other components of timezone change
     window.dispatchEvent(new CustomEvent(TIMEZONE_CHANGE_EVENT, { detail: { timezone } }));
   } catch (error) {
-    console.error('Failed to save timezone setting:', error);
+    logger.error('Failed to save timezone setting:', error);
   }
 };
 
@@ -196,7 +198,7 @@ export const getTimezoneOffset = (timezone: string): number => {
 
     return offsetMinutes;
   } catch (error) {
-    console.error(`Failed to calculate timezone offset for ${timezone}:`, error);
+    logger.error(`Failed to calculate timezone offset for ${timezone}:`, error);
     // フォールバック: 既知のタイムゾーンの固定値
     const knownOffsets: { [key: string]: number } = {
       'Asia/Tokyo': 540, // UTC+9
@@ -253,7 +255,7 @@ export const utcToUserTimezone = (utcDate: Date): Date => {
 
     return convertedDate;
   } catch (error) {
-    console.error(`UTC to timezone conversion error (${timezone}):`, error);
+    logger.error(`UTC to timezone conversion error (${timezone}):`, error);
     // フォールバック: 元の日付をそのまま返す
     return new Date(utcDate);
   }
@@ -324,7 +326,7 @@ export const userTimezoneToUtc = (localDate: Date): Date => {
 
     return utcDate;
   } catch (error) {
-    console.error(`Timezone to UTC conversion error (${timezone}):`, error);
+    logger.error(`Timezone to UTC conversion error (${timezone}):`, error);
     // フォールバック: 元の日付をそのまま返す
     return new Date(localDate);
   }
@@ -431,7 +433,7 @@ export const getCalendarTimezoneLabel = (): string => {
       return `UTC${sign}${hours}:${minutes.toString().padStart(2, '0')}`;
     }
   } catch (error) {
-    console.error('Timezone label generation error:', error);
+    logger.error('Timezone label generation error:', error);
     // フォールバック: 既知のオフセットを使用
     const knownOffsets: { [key: string]: string } = {
       'Asia/Tokyo': 'UTC+9',
@@ -485,7 +487,7 @@ export const getCurrentTimeInUserTimezone = (): Date => {
     const timeString = now.toLocaleString('sv-SE', { timeZone: timezone });
     return new Date(timeString);
   } catch (error) {
-    console.error(`Failed to get time for timezone ${timezone}:`, error);
+    logger.error(`Failed to get time for timezone ${timezone}:`, error);
     // フォールバック: UTC時刻をオフセット計算で変換
     const utcTime = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
     return utcToUserTimezone(utcTime);

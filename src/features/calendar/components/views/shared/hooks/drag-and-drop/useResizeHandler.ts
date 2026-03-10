@@ -6,7 +6,7 @@ import { useCallback } from 'react';
 import { MS_PER_MINUTE } from '@/constants/time';
 import { logger } from '@/lib/logger';
 import { useTranslations } from 'next-intl';
-import useCalendarToast from '../../../../../lib/toast';
+import { toast } from 'sonner';
 import type { CalendarEvent } from '../../../../../types/calendar.types';
 
 import { HOUR_HEIGHT } from '../../constants/grid.constants';
@@ -41,7 +41,6 @@ export function useResizeHandler({
   hourHeight = HOUR_HEIGHT,
 }: UseResizeHandlerProps) {
   const t = useTranslations();
-  const calendarToast = useCalendarToast();
   const { error: hapticError } = useHapticFeedback();
 
   // 重複チェック用のイベント一覧
@@ -173,29 +172,33 @@ export function useResizeHandler({
         if (promise && typeof promise.then === 'function') {
           promise
             .then(() => {
-              calendarToast.eventUpdated(eventData);
+              toast.success(t('calendar.event.updated'), {
+                description: `「${eventData.title}」`,
+              });
             })
             .catch((error: unknown) => {
               logger.error('Failed to resize event:', error);
               // TIME_OVERLAPエラー（重複防止）の場合はtoastなし
               const errorMessage = error instanceof Error ? error.message : '';
               if (!errorMessage.includes('TIME_OVERLAP') && !errorMessage.includes('既に')) {
-                calendarToast.error(t('calendar.event.resizeFailed'));
+                toast.error(t('calendar.event.resizeFailed'));
               }
             });
         } else {
-          calendarToast.eventUpdated(eventData);
+          toast.success(t('calendar.event.updated'), {
+            description: `「${eventData.title}」`,
+          });
         }
       } catch (error) {
         logger.error('Failed to resize event:', error);
         // TIME_OVERLAPエラー（重複防止）の場合はtoastなし
         const errorMessage = error instanceof Error ? error.message : '';
         if (!errorMessage.includes('TIME_OVERLAP') && !errorMessage.includes('既に')) {
-          calendarToast.error(t('calendar.event.resizeFailed'));
+          toast.error(t('calendar.event.resizeFailed'));
         }
       }
     },
-    [events, allEvents, eventUpdateHandler, dragDataRef, calendarToast, hapticError, t, hourHeight],
+    [events, allEvents, eventUpdateHandler, dragDataRef, hapticError, t, hourHeight],
   );
 
   // リサイズ開始（下端リサイズのみ）
@@ -207,6 +210,10 @@ export function useResizeHandler({
       originalPosition: { top: number; left: number; width: number; height: number },
     ) => {
       if (e.button !== 0) return;
+
+      // 過去ブロックのリサイズを防御的にブロック（PlanCard側でも制御済み）
+      const event = events.find((ev) => ev.id === eventId);
+      if (event?.entryState === 'past') return;
 
       const startPosition = { x: e.clientX, y: e.clientY };
 
@@ -244,7 +251,7 @@ export function useResizeHandler({
         isOverlapping: false,
       });
     },
-    [dragDataRef, setDragState],
+    [events, dragDataRef, setDragState],
   );
 
   return {

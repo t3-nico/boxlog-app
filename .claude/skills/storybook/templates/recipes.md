@@ -152,6 +152,19 @@ Recipes の AllPatterns はバリエーション比較のため**横並び + ラ
 </div>
 ```
 
+## 時間制約（Time waits for no one）
+
+Inspector Story を作る際、`entryState` に応じた制約を必ず反映する。
+詳細: `.claude/rules/temporal-constraints.md`
+
+| entryState | 予定時間         | 日付変更            | 記録時間         | 充実度 | メモ   |
+| ---------- | ---------------- | ------------------- | ---------------- | ------ | ------ |
+| `upcoming` | 編集可           | 可（minDate=today） | プレースホルダー | 非表示 | 編集可 |
+| `active`   | 編集可           | 可（minDate=today） | 編集可           | 編集可 | 編集可 |
+| `past`     | ロック(disabled) | 不可(disabled)      | 編集可           | 編集可 | 編集可 |
+
+Story でこの制約を確認できるよう、`PastPlanned` は予定行がグレー表示になることを示す。
+
 ## 参考実装
 
 - `src/core/components/inspector/EntryInspector.stories.tsx` — Interactive Wrapper + Mock の実例

@@ -1,30 +1,11 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-import type { FulfillmentScore, RecurrenceType } from '@/core/types/entry';
-
 /**
  * Entry Inspector 状態管理
  *
- * entries テーブルに対応。ドラフトモードなし（即DB保存 + edit mode）。
+ * entries テーブルに対応。全フィールドはデバウンス即時保存。
  */
-
-/**
- * 未保存の変更（Google Calendar準拠: 閉じる時に保存）
- * Note: undefined は「このフィールドを変更しない」を意味する
- */
-export interface PendingChanges {
-  title?: string;
-  description?: string;
-  start_time?: string | null;
-  end_time?: string | null;
-  actual_start_time?: string | null;
-  actual_end_time?: string | null;
-  reminder_minutes?: number | null;
-  recurrence_type?: RecurrenceType | null;
-  recurrence_rule?: string | null;
-  fulfillment_score?: FulfillmentScore | null;
-}
 
 /** Inspector ポップオーバーのアンカー位置 */
 export interface AnchorRect {
@@ -46,8 +27,6 @@ interface EntryInspectorState {
   entryId: string | null;
   /** 繰り返しエントリの特定インスタンス日付（YYYY-MM-DD形式） */
   instanceDate: string | null;
-  /** 未保存の変更（Google Calendar準拠: 閉じる時に一括保存） */
-  pendingChanges: PendingChanges | null;
   /** クリックされた要素の位置（Inspector の配置に使用） */
   anchorRect: AnchorRect | null;
 }
@@ -67,15 +46,6 @@ interface EntryInspectorActions {
   closeInspector: () => void;
   /** アンカー位置を設定（PlanCard クリック時に呼ぶ） */
   setAnchorRect: (rect: AnchorRect) => void;
-  /** 未保存の変更を追加（Google Calendar準拠） */
-  addPendingChange: (changes: Partial<PendingChanges>) => void;
-  /** 未保存の変更をクリア */
-  clearPendingChanges: () => void;
-  /** 未保存の変更を取得してクリア（保存前に呼ぶ） */
-  consumePendingChanges: () => PendingChanges | null;
-  /** PlanInspectorContent が saveAndClose を登録。PlanInspector の handleClose から呼ぶ */
-  closeWithSave: (() => void) | null;
-  setCloseWithSave: (handler: (() => void) | null) => void;
 }
 
 /**
@@ -85,13 +55,11 @@ type EntryInspectorStore = EntryInspectorState & EntryInspectorActions;
 
 export const useEntryInspectorStore = create<EntryInspectorStore>()(
   devtools(
-    (set, get) => ({
+    (set) => ({
       isOpen: false,
       entryId: null,
       instanceDate: null,
-      pendingChanges: null,
       anchorRect: null,
-      closeWithSave: null,
 
       openInspector: (entryId, options) =>
         set(
@@ -99,7 +67,6 @@ export const useEntryInspectorStore = create<EntryInspectorStore>()(
             isOpen: true,
             entryId,
             instanceDate: options?.instanceDate ?? null,
-            pendingChanges: null,
           },
           false,
           'openInspector',
@@ -115,7 +82,6 @@ export const useEntryInspectorStore = create<EntryInspectorStore>()(
             isOpen: false,
             entryId: null,
             instanceDate: null,
-            pendingChanges: null,
             anchorRect: null,
           },
           false,
@@ -124,29 +90,6 @@ export const useEntryInspectorStore = create<EntryInspectorStore>()(
       },
 
       setAnchorRect: (rect) => set({ anchorRect: rect }, false, 'setAnchorRect'),
-
-      addPendingChange: (changes) =>
-        set(
-          (state) => ({
-            pendingChanges: state.pendingChanges
-              ? { ...state.pendingChanges, ...changes }
-              : changes,
-          }),
-          false,
-          'addPendingChange',
-        ),
-
-      clearPendingChanges: () => set({ pendingChanges: null }, false, 'clearPendingChanges'),
-
-      consumePendingChanges: () => {
-        const { pendingChanges } = get();
-        if (pendingChanges) {
-          set({ pendingChanges: null }, false, 'consumePendingChanges');
-        }
-        return pendingChanges;
-      },
-
-      setCloseWithSave: (handler) => set({ closeWithSave: handler }, false, 'setCloseWithSave'),
     }),
     { name: 'entry-inspector-store' },
   ),

@@ -33,7 +33,6 @@ interface GroupHeaderProps {
   label: string;
   checked: boolean;
   indeterminate: boolean;
-  count: number;
   collapsed: boolean;
   displayColor: string;
   onCheckedChange: () => void;
@@ -49,13 +48,12 @@ interface GroupHeaderProps {
 /**
  * コロン記法グループのヘッダー行
  *
- * シェブロン（展開/折りたたみ） + チェックボックス + プレフィックス名 + メニュー + 件数
+ * シェブロン（展開/折りたたみ） + チェックボックス + プレフィックス名 + メニュー
  */
 export function GroupHeader({
   label,
   checked,
   indeterminate,
-  count,
   collapsed,
   displayColor,
   onCheckedChange,
@@ -182,9 +180,6 @@ export function GroupHeader({
           )}
         </DropdownMenuContent>
       </DropdownMenu>
-
-      {/* Count（右端） */}
-      <span className="text-muted-foreground ml-1 shrink-0 pr-2 text-xs tabular-nums">{count}</span>
     </div>
   );
 }

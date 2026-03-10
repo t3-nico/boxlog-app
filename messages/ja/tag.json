@@ -261,7 +261,8 @@
       "colorChangeFailed": "カラーの変更に失敗しました",
       "groupDeleted": "グループ「{name}」を削除しました",
       "groupDeleteFailed": "グループの削除に失敗しました",
-      "groupCreateFailed": "グループの作成に失敗しました"
+      "groupCreateFailed": "グループの作成に失敗しました",
+      "deleted": "タグ「{name}」を削除しました"
     },
     "inspector": {
       "newTag": "新規タグ",

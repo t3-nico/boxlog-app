@@ -5,7 +5,7 @@
  * /calendar/day, /calendar/week 等のネスト構造に対応。
  */
 
-const CALENDAR_VIEWS = ['day', 'week', 'agenda', 'timesheet'];
+const CALENDAR_VIEWS = ['day', 'week'];
 
 /**
  * ロケールを除いたパスがカレンダービューかどうかを判定

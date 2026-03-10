@@ -35,6 +35,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { logger } from '@/lib/logger';
 import { createClient } from '@/lib/supabase/client';
 import { useLocale, useTranslations } from 'next-intl';
 import { toast } from 'sonner';
@@ -61,7 +62,7 @@ export function NavUser({
       router.push('/auth/login');
       router.refresh();
     } catch (error) {
-      console.error('Logout error:', error);
+      logger.error('Logout error:', error);
       toast.error(t('navUser.logoutFailed'));
     } finally {
       setIsLoggingOut(false);

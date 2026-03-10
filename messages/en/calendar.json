@@ -15,7 +15,6 @@
       "2week": "2-Week",
       "month": "Month",
       "list": "List",
-      "agenda": "Agenda",
       "multiday": "{count} Days",
       "daysSubmenu": "Days",
       "viewSettings": "View settings",
@@ -26,7 +25,6 @@
       "density_default": "Default",
       "density_spacious": "Spacious",
       "generalSettings": "General settings",
-      "timesheet": "Timesheet",
       "stats": "Stats"
     },
     "mobile": {
@@ -229,12 +227,6 @@
       "noResults": "No tags found",
       "createPlaceholder": "New tag name"
     },
-    "agenda": {
-      "emptyTitle": "No upcoming events",
-      "emptyDescription": "Create a new event in the calendar",
-      "noItems": "No items",
-      "noDate": "No Date"
-    },
     "stats": {
       "progress": "Progress",
       "today": "Today",
@@ -252,17 +244,12 @@
       "noTagData": "No tag data for this period",
       "emptyTitle": "No data this week",
       "emptyDescription": "Add plans and records to see your progress",
+      "periodDay": "Day",
       "periodWeek": "Week",
       "periodMonth": "Month",
       "periodYear": "Year",
-      "periodAll": "All"
-    },
-    "timesheet": {
-      "emptyTitle": "No entries this week",
-      "emptyDescription": "Plans and records will appear here",
-      "tag": "Tag",
-      "total": "Total",
-      "untagged": "Untagged"
+      "periodAll": "All",
+      "thisYear": "This year"
     },
     "collapsedSection": {
       "expandLabel": "Expand {timeRange}"

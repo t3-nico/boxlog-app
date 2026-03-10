@@ -13,25 +13,14 @@ export { CalendarController } from './components/CalendarController';
 // =============================================================================
 // Layout Components
 // =============================================================================
+export { DateNavigator } from '@/core/components/DateNavigator';
 export { CalendarLayout } from './components/layout/CalendarLayout';
-export { CalendarHeader } from './components/layout/Header';
-export { DateNavigator } from './components/layout/Header/DateNavigator';
 export { DateRangeDisplay } from './components/layout/Header/DateRangeDisplay';
-export { HeaderActions } from './components/layout/Header/HeaderActions';
 export { ViewSwitcher } from './components/layout/Header/ViewSwitcher';
-
-// Mobile Layout
-export { MobileDrawer } from './components/layout/MobileLayout/MobileDrawer';
-export type { DrawerMenuItem } from './components/layout/MobileLayout/MobileDrawer';
-export { MobileHeader } from './components/layout/MobileLayout/MobileHeader';
-export type { MobileNavigationDirection } from './components/layout/MobileLayout/MobileHeader';
-export { MobileNavigation } from './components/layout/MobileLayout/MobileNavigation';
-export type { MobileNavItem } from './components/layout/MobileLayout/MobileNavigation';
 
 // =============================================================================
 // View Components
 // =============================================================================
-export { AgendaView } from './components/views/AgendaView';
 export { DayView } from './components/views/DayView';
 export { MultiDayView } from './components/views/MultiDayView';
 export { WeekView } from './components/views/WeekView';
@@ -49,7 +38,6 @@ export { getMultiDayCount, isMultiDayView } from './types/calendar.types';
 export type {
   CalendarEvent,
   CalendarFilter,
-  CalendarHeaderProps,
   CalendarViewProps,
   CalendarViewState,
   CalendarViewType,

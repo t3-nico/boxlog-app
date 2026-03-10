@@ -14,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { logger } from '@/lib/logger';
 import { createClient } from '@/lib/supabase/client';
 import { deleteAvatar, uploadAvatar } from '@/lib/supabase/storage';
 import { useAuthStore } from '@/stores/useAuthStore';
@@ -58,7 +59,7 @@ export function AvatarChangeDialog({ open, onOpenChange }: AvatarChangeDialogPro
           data: { avatar_url: publicUrl },
         });
       } catch (error) {
-        console.error('Avatar upload error:', error);
+        logger.error('Avatar upload error:', error);
         throw error;
       } finally {
         setIsUploading(false);
@@ -88,7 +89,7 @@ export function AvatarChangeDialog({ open, onOpenChange }: AvatarChangeDialogPro
         data: { avatar_url: null },
       });
     } catch (error) {
-      console.error('Avatar delete error:', error);
+      logger.error('Avatar delete error:', error);
       throw error;
     } finally {
       setIsUploading(false);

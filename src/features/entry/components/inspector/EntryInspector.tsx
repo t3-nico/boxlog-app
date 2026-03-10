@@ -1,16 +1,14 @@
 'use client';
 
-import { Copy, ExternalLink, Link, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Suspense, useCallback } from 'react';
 
-import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { InspectorContent, InspectorShell } from '@/core/components/inspector';
 import { useInspectorKeyboard } from './hooks';
 
 import type { EntryWithTags } from '@/core/types/entry';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
-import { openDeleteConfirm, useModalStore } from '@/stores/useModalStore';
+import { useModalStore } from '@/stores/useModalStore';
 import { useEntry } from '../../hooks/useEntry';
 
 import { useInspectorURLSync } from '../../hooks/useInspectorURLSync';
@@ -37,7 +35,6 @@ export function EntryInspector() {
   const isOpen = useEntryInspectorStore((state) => state.isOpen);
   const planId = useEntryInspectorStore((state) => state.entryId);
   const closeInspector = useEntryInspectorStore((state) => state.closeInspector);
-  const clearPendingChanges = useEntryInspectorStore((state) => state.clearPendingChanges);
 
   const { data: planData, isLoading } = useEntry(planId!, {
     includeTags: true,
@@ -46,28 +43,17 @@ export function EntryInspector() {
   const plan: EntryWithTags | null = (planData ?? null) as EntryWithTags | null;
 
   // 繰り返しダイアログが開いている間はInspectorを閉じない
-  // ×ボタン/ESC/外側クリック = saveAndClose（Google Calendar方式）
-  // 注意: closeWithSave はストアからgetState()で取得する（購読しない）。
-  // 購読するとEntryInspectorContent→setCloseWithSave→EntryInspector再レンダー→
-  // EntryInspectorContent再レンダー…の無限ループが発生する。
+  // 全フィールドはデバウンス即時保存のため、閉じる = ただの closeInspector()
   const handleClose = useCallback(() => {
     const modal = useModalStore.getState().modal;
     if (modal?.type === 'recurringEdit') return;
-
-    const closeWithSave = useEntryInspectorStore.getState().closeWithSave;
-    if (closeWithSave) {
-      closeWithSave();
-    } else {
-      clearPendingChanges();
-      closeInspector();
-    }
-  }, [closeInspector, clearPendingChanges]);
+    closeInspector();
+  }, [closeInspector]);
 
   // ナビゲーション
   const { hasPrevious, hasNext, goToPrevious, goToNext } = useInspectorNavigation(planId);
 
-  // 削除
-  const { deletePlan } = useInspectorAutoSave({ planId, plan });
+  useInspectorAutoSave({ planId, plan });
 
   // キーボードショートカット
   useInspectorKeyboard({
@@ -78,53 +64,6 @@ export function EntryInspector() {
     onPrevious: goToPrevious,
     onNext: goToNext,
   });
-
-  // モバイル用メニューアクション
-  const handleCopyLink = useCallback(() => {
-    if (planId) {
-      const url = `${window.location.origin}/plans/${planId}`;
-      navigator.clipboard.writeText(url);
-    }
-  }, [planId]);
-
-  const handleOpenInNewTab = useCallback(() => {
-    if (planId) window.open(`/plans/${planId}`, '_blank');
-  }, [planId]);
-
-  const handleDelete = useCallback(() => {
-    if (!planId) return;
-    openDeleteConfirm(planId, plan?.title ?? null, async () => {
-      await deletePlan.mutateAsync({ id: planId });
-      closeInspector();
-    });
-  }, [planId, plan?.title, deletePlan, closeInspector]);
-
-  // モバイル用メニューコンテンツ（簡略版）
-  const mobileMenuContent = (
-    <>
-      <DropdownMenuItem onClick={handleCopyLink}>
-        <Link className="size-4" />
-        {t('plan.inspector.menu.copyLink')}
-      </DropdownMenuItem>
-      <DropdownMenuItem onClick={handleOpenInNewTab}>
-        <ExternalLink className="size-4" />
-        {t('plan.inspector.menu.openNewTab')}
-      </DropdownMenuItem>
-      <DropdownMenuItem
-        onClick={() => {
-          if (planId) navigator.clipboard.writeText(planId);
-        }}
-      >
-        <Copy className="size-4" />
-        {t('plan.inspector.menu.copyId')}
-      </DropdownMenuItem>
-      <DropdownMenuSeparator />
-      <DropdownMenuItem onClick={handleDelete} variant="destructive">
-        <Trash2 className="size-4" />
-        {t('common.actions.delete')}
-      </DropdownMenuItem>
-    </>
-  );
 
   return (
     <>
@@ -137,7 +76,6 @@ export function EntryInspector() {
         isOpen={isOpen}
         onClose={handleClose}
         title={plan?.title || t('plan.inspector.noTitle')}
-        mobileMenuContent={mobileMenuContent}
       >
         <InspectorContent
           isLoading={isLoading}

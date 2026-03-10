@@ -7,11 +7,11 @@
 export type { CalendarEvent, ViewDateRange } from '../../../../types/calendar.types';
 import type { CalendarEvent, ViewDateRange } from '../../../../types/calendar.types';
 
-export type CalendarViewType = 'day' | '3day' | '5day' | 'week' | 'agenda' | 'timesheet';
+export type CalendarViewType = 'day' | '3day' | '5day' | 'week';
 
 /**
  * 全ビューで共通する最小限のプロパティ
- * AgendaViewなどリスト表示ビュー向け
+ * リスト表示ビュー向け
  */
 export interface BaseViewProps {
   // Core data

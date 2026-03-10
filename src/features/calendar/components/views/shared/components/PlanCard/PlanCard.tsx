@@ -52,6 +52,8 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
 
   // ドラフト（未保存プレビュー）かどうか判定
   const isDraft = plan.isDraft === true;
+  // 過去ブロックはドラッグ・リサイズ不可（Time waits for no one）
+  const isPast = plan.entryState === 'past';
 
   // 予定 vs 記録の差分オーバーレイ
   const overlay = useMemo(
@@ -129,7 +131,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
-      if (isDraft) return;
+      if (isDraft || isPast) return;
       if (e.button === 0) {
         onDragStart?.(plan, e, {
           top: safePosition.top,
@@ -139,12 +141,12 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         });
       }
     },
-    [isDraft, onDragStart, plan, safePosition],
+    [isDraft, isPast, onDragStart, plan, safePosition],
   );
 
   const handleTouchStart = useCallback(
     (e: React.TouchEvent) => {
-      if (isDraft) return;
+      if (isDraft || isPast) return;
       onTouchStart?.(plan, e, {
         top: safePosition.top,
         left: safePosition.left,
@@ -152,7 +154,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         height: safePosition.height,
       });
     },
-    [isDraft, onTouchStart, plan, safePosition],
+    [isDraft, isPast, onTouchStart, plan, safePosition],
   );
 
   const handleMouseUp = useCallback(() => {
@@ -221,7 +223,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       'after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:transition-colors hover:after:bg-state-hover',
     isSelected && 'ring-2 ring-primary',
     'text-foreground',
-    isDraft ? 'cursor-default' : isDragging ? 'cursor-grabbing' : 'cursor-pointer',
+    isDraft || isPast ? 'cursor-default' : isDragging ? 'cursor-grabbing' : 'cursor-pointer',
     className,
   );
 
@@ -294,7 +296,6 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
           isCompact={safePosition.height < 40}
           showTime={safePosition.height >= 30}
           previewTime={previewTime}
-          isMobile={isMobile}
         />
 
         {/* 予定 vs 記録: 上部 — 未実行は控えめな斜線 */}
@@ -333,8 +334,8 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
           />
         )}
 
-        {/* 下端リサイズハンドル（Draft は未保存なので非表示） */}
-        {!isDraft && (
+        {/* 下端リサイズハンドル（Draft/Past は非表示） */}
+        {!isDraft && !isPast && (
           <div
             className="focus:ring-ring absolute right-0 bottom-0 left-0 cursor-ns-resize focus:ring-2 focus:ring-offset-1 focus:outline-none"
             role="slider"

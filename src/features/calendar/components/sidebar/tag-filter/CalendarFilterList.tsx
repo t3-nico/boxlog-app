@@ -2,17 +2,13 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Moon, Sun } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 
 import { TagDeleteStrategyDialog } from '@/components/common/TagDeleteStrategyDialog';
 import { SidebarSection } from '@/components/layout/SidebarSection';
-import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { HoverTooltip } from '@/components/ui/tooltip';
-import { useTheme } from '@/contexts/theme-context';
 import { useDeleteTag } from '@/hooks/mutations/useTagMutations';
 import { useTagModalNavigation } from '@/hooks/useTagModalNavigation';
 import { useTags } from '@/hooks/useTagsQuery';
@@ -142,9 +138,6 @@ export function CalendarFilterList() {
             </div>
           )}
         </SidebarSection>
-
-        {/* Stats + テーマ切替 */}
-        <SidebarUtilities />
       </div>
 
       {/* タグ削除ストラテジーダイアログ */}
@@ -157,35 +150,5 @@ export function CalendarFilterList() {
         availableTags={availableTagsForReassign}
       />
     </>
-  );
-}
-
-/** テーマ切替ユーティリティ */
-function SidebarUtilities() {
-  const t = useTranslations();
-  const { resolvedTheme, setTheme } = useTheme();
-
-  const handleThemeToggle = useCallback(() => {
-    setTheme(resolvedTheme === 'light' ? 'dark' : 'light');
-  }, [resolvedTheme, setTheme]);
-
-  return (
-    <div className="flex items-center gap-1 px-2 py-2">
-      <HoverTooltip content={resolvedTheme === 'light' ? 'Dark mode' : 'Light mode'} side="right">
-        <Button
-          variant="ghost"
-          icon
-          className="size-8"
-          onClick={handleThemeToggle}
-          aria-label={t('sidebar.theme')}
-        >
-          {resolvedTheme === 'light' ? (
-            <Moon className="size-4" aria-hidden="true" />
-          ) : (
-            <Sun className="size-4" aria-hidden="true" />
-          )}
-        </Button>
-      </HoverTooltip>
-    </div>
   );
 }

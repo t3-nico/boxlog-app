@@ -1,9 +1,11 @@
 import { useCallback, useRef, useState } from 'react';
 
+import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
 import { useDebouncedCallback } from '@/hooks/useDebounce';
 import { getErrorMessage } from '@/lib/errors';
+import { logger } from '@/lib/logger';
 
 interface UseAutoSaveSettingsOptions<T> {
   initialValues: T;
@@ -17,11 +19,10 @@ export function useAutoSaveSettings<T>({
   initialValues,
   onSave,
   debounceMs = 1000, // 1秒後に自動保存
-  // Note: デフォルト値はフォールバック用。実際の使用時は各コンポーネントで
-  // t('settings.common.saved') と t('settings.common.saveFailed') を渡してください
-  successMessage = '設定を保存しました',
-  errorMessage = '保存に失敗しました',
+  successMessage,
+  errorMessage,
 }: UseAutoSaveSettingsOptions<T>) {
+  const t = useTranslations();
   const [values, setValues] = useState<T>(initialValues);
   const [isSaving, setIsSaving] = useState(false);
   const lastSavedValues = useRef<T>(initialValues);
@@ -40,12 +41,12 @@ export function useAutoSaveSettings<T>({
       lastSavedValues.current = newValues;
 
       // 成功トースト
-      toast.success(successMessage);
+      toast.success(successMessage ?? t('settings.common.saved'));
     } catch (error) {
-      console.error('Failed to save settings:', error);
+      logger.error('Failed to save settings:', error);
 
       // エラートースト
-      toast.error(errorMessage, {
+      toast.error(errorMessage ?? t('settings.common.saveFailed'), {
         description: getErrorMessage(error),
       });
     } finally {

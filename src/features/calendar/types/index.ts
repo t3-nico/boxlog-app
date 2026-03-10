@@ -4,7 +4,6 @@
 
 // カレンダービュー関連
 export type {
-  CalendarHeaderProps,
   CalendarViewProps,
   CalendarViewType,
   ViewDateRange,

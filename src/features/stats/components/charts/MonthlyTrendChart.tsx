@@ -30,8 +30,8 @@ function formatHours(hours: number): string {
 }
 
 export function MonthlyTrendChart() {
-  const period = useStatsFilterStore((s) => s.period);
-  const months = useMemo(() => computeMonthCount(period), [period]);
+  const granularity = useStatsFilterStore((s) => s.granularity);
+  const months = useMemo(() => computeMonthCount(granularity), [granularity]);
   const queryInput = months ? { months } : undefined;
   const { data, isPending } = api.entries.getMonthlyTrend.useQuery(queryInput);
 

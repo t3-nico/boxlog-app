@@ -7,6 +7,7 @@ import { logger } from '@/lib/logger';
 import { useEntryClipboardStore } from '@/stores/useEntryClipboardStore';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { openDeleteConfirm } from '@/stores/useModalStore';
+import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
 interface UseCalendarEventKeyboardOptions {
@@ -64,6 +65,7 @@ export function useCalendarEventKeyboard({
   getSelectedPlanForCopy,
   getPasteDateForKeyboard,
 }: UseCalendarEventKeyboardOptions) {
+  const t = useTranslations();
   const { isOpen, entryId, openInspector, closeInspector } = useEntryInspectorStore();
   const { createEntry } = useEntryMutations();
 
@@ -137,7 +139,7 @@ export function useCalendarEventKeyboard({
           if (planData) {
             e.preventDefault();
             useEntryClipboardStore.getState().copyEntry(planData);
-            toast.success('コピーしました');
+            toast.success(t('common.toast.copied'));
           }
         }
         return;
@@ -210,5 +212,5 @@ export function useCalendarEventKeyboard({
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [enabled, isOpen, entryId, openInspector, closeInspector]);
+  }, [enabled, isOpen, entryId, openInspector, closeInspector, t]);
 }

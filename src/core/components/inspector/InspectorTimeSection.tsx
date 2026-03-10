@@ -3,7 +3,7 @@
 /**
  * Inspector 時間セクション（組み立て役）
  *
- * DateNavigatorRow + TimeRow × 2 + 差分バッジ + TimeConflictAlert を
+ * DateNavigatorRow + TimeRow × 2 + 差分バッジを
  * 3パターン（upcoming+planned, past+planned, past+unplanned）に応じて組み立てる。
  */
 
@@ -23,7 +23,6 @@ import { cn } from '@/lib/utils';
 import { DateNavigatorRow } from './DateNavigatorRow';
 import { FulfillmentRow } from './FulfillmentRow';
 import { InlineNoteSection } from './InlineNoteSection';
-import { TimeConflictAlert } from './TimeConflictAlert';
 import { TimeProgressBar } from './TimeProgressBar';
 import { TimeRow, TimeRowPlaceholder } from './TimeRow';
 
@@ -97,8 +96,15 @@ export function InspectorTimeSection({
 
   // 3パターンのレンダリング制御
   const isUnplanned = origin === 'unplanned';
+  const isPast = entryState === 'past';
   const isPlannedRowDisabled = isUnplanned;
   const showActualPlaceholder = entryState === 'upcoming' && !isUnplanned;
+
+  // 過去ブロック: 予定ロック（Time waits for no one）
+  const isPlanLocked = isPast || disabled;
+  // 未来/進行中ブロック: 過去の日付への移動を防止
+  const today = useMemo(() => new Date(), []);
+  const dateMinDate = isPast ? undefined : today;
 
   // 予定行の自動調整
   const {
@@ -149,13 +155,14 @@ export function InspectorTimeSection({
 
   return (
     <div className="flex flex-col gap-2 px-4 pt-2.5 pb-4">
-      {/* 日付 */}
+      {/* 日付（過去ブロック: disabled / 未来ブロック: minDate=today） */}
       <DateNavigatorRow
         label={t('plan.inspector.time.date')}
         icon={Calendar}
         selectedDate={selectedDate}
         onDateChange={onDateChange}
-        disabled={disabled}
+        disabled={isPlanLocked}
+        minDate={dateMinDate}
       />
 
       {/* 予定行 */}
@@ -174,7 +181,7 @@ export function InspectorTimeSection({
           endTime={plannedEnd}
           onStartChange={handlePlannedStartChange}
           onEndChange={handlePlannedEndChange}
-          disabled={disabled}
+          disabled={isPlanLocked}
           hasError={timeConflictError}
         />
       )}
@@ -244,9 +251,6 @@ export function InspectorTimeSection({
           disabled={disabled}
         />
       )}
-
-      {/* 時間重複エラー */}
-      {timeConflictError && <TimeConflictAlert message={t('calendar.toast.conflictDescription')} />}
     </div>
   );
 }

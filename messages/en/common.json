@@ -29,7 +29,9 @@
     "skipToMainContent": "Skip to main content",
     "createNewEvent": "Create new event",
     "toast": {
-      "eventDeleted": "Event deleted"
+      "eventDeleted": "Event deleted",
+      "copied": "Copied to clipboard",
+      "copyFailed": "Failed to copy"
     },
     "selectedCount": "{count, plural, one {1 selected} other {# selected}}",
     "moreActions": "More actions",
@@ -142,12 +144,7 @@
       "monthsAgo": "{count, plural, one {1 month ago} other {# months ago}}",
       "justNow": "just now",
       "minutesAgo": "{count, plural, one {1 min ago} other {# min ago}}",
-      "hoursAgo": "{count, plural, one {1h ago} other {#h ago}}",
-      "now": "Now",
-      "duration30m": "30m",
-      "duration1h": "1h",
-      "duration1_5h": "1.5h",
-      "duration2h": "2h"
+      "hoursAgo": "{count, plural, one {1h ago} other {#h ago}}"
     },
     "reminder": {
       "label": "Reminder",
@@ -277,6 +274,12 @@
       },
       "description": {
         "maxLength": "Description must be {max} characters or less"
+      },
+      "time": {
+        "endBeforeStart": "End time must be after start time"
+      },
+      "actualTime": {
+        "endBeforeStart": "End time must be after start time"
       },
       "password": {
         "minLength": "Password must be at least {min} characters",

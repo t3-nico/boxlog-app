@@ -157,7 +157,6 @@ export function useEntryMutations() {
     },
     onSettled: () => {
       void utils.entries.list.invalidate();
-      void utils.entries.getCumulativeTime.invalidate();
     },
   });
 
@@ -243,24 +242,41 @@ export function useEntryMutations() {
 
       return { id, previousEntriesList, previousEntry };
     },
-    onSuccess: (updatedEntry, variables) => {
+    onSuccess: (result, variables) => {
       // サーバーから返ってきた最新データでキャッシュを更新
+      // adjustedEntries はキャッシュ操作用（リストに含めない）
+      const { adjustedEntries, ...updatedEntry } = result;
       type EntryListData = Awaited<ReturnType<typeof utils.entries.list.fetch>>;
       queryClient.setQueriesData<EntryListData>({ predicate: isEntriesListQuery }, (oldData) => {
         if (!oldData) return oldData;
-        const exists = oldData.some((entry) => entry.id === variables.id);
+
+        let updated = oldData;
+
+        // 自エントリのキャッシュを更新
+        const exists = updated.some((entry) => entry.id === variables.id);
         if (exists) {
-          return oldData.map((entry) => {
+          updated = updated.map((entry) => {
             if (entry.id === variables.id) {
               return { ...updatedEntry, tagId: entry.tagId ?? null };
             }
             return entry;
           });
+        } else if (updatedEntry.start_time) {
+          updated = [...updated, { ...updatedEntry, tagId: null }];
         }
-        if (updatedEntry.start_time) {
-          return [...oldData, { ...updatedEntry, tagId: null }];
+
+        // auto-shrink で調整された隣接エントリのキャッシュも更新
+        if (adjustedEntries.length > 0) {
+          updated = updated.map((entry) => {
+            const adjusted = adjustedEntries.find((a) => a.id === entry.id);
+            if (adjusted) {
+              return { ...entry, ...adjusted };
+            }
+            return entry;
+          });
         }
-        return oldData;
+
+        return updated;
       });
 
       // 自動保存（title、description、日時など）はtoast非表示
@@ -280,14 +296,9 @@ export function useEntryMutations() {
         utils.entries.getById.setData({ id: context.id }, context.previousEntry);
       }
     },
-    onSettled: async (_data, _error, variables) => {
+    onSettled: async () => {
       setIsMutating(false);
-
-      // start_time 変更時はキャッシュを無効化して正確な日付フィルタ結果を保証
-      if (variables?.data.start_time !== undefined) {
-        void utils.entries.list.invalidate();
-      }
-      void utils.entries.getCumulativeTime.invalidate();
+      void utils.entries.list.invalidate();
     },
   });
 
@@ -370,7 +381,6 @@ export function useEntryMutations() {
       setTimeout(() => {
         setIsMutating(false);
       }, 500);
-      void utils.entries.getCumulativeTime.invalidate();
     },
   });
 
@@ -413,7 +423,6 @@ export function useEntryMutations() {
     },
     onSettled: () => {
       setIsMutating(false);
-      void utils.entries.getCumulativeTime.invalidate();
     },
   });
 
@@ -445,7 +454,6 @@ export function useEntryMutations() {
     },
     onSettled: () => {
       setIsMutating(false);
-      void utils.entries.getCumulativeTime.invalidate();
     },
   });
 

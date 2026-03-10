@@ -91,6 +91,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   useEffect(() => {
     if (dbSettings && !isPending) {
       if (dbSettings.theme) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- 非同期DB設定の反映はuseEffect内でのみ可能
         setThemeState(dbSettings.theme);
       }
       if (dbSettings.colorScheme) {
@@ -147,6 +148,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     // Apply theme
     root.classList.add(newResolvedTheme);
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- matchMediaによるテーマ解決はブラウザAPI依存
     setResolvedTheme(newResolvedTheme);
 
     // Apply color scheme CSS variables

@@ -1,104 +1,102 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { computeDateRange, computeMonthCount } from './computeDateRange';
+import { computeMonthCount, computeStatsDateRange } from './computeDateRange';
 
-describe('computeDateRange', () => {
+describe('computeStatsDateRange', () => {
   beforeEach(() => {
-    // 固定日時: 2026-02-15T12:00:00.000Z
     vi.useFakeTimers();
-    vi.setSystemTime(new Date('2026-02-15T12:00:00.000Z'));
+    vi.setSystemTime(new Date('2026-03-10T12:00:00.000Z'));
   });
 
   afterEach(() => {
     vi.useRealTimers();
   });
 
-  describe('period = "all"', () => {
-    it('startDate/endDateがundefinedを返す', () => {
-      const result = computeDateRange('all');
+  describe('granularity = "day"', () => {
+    it('その日の00:00:00〜23:59:59を返す', () => {
+      const result = computeStatsDateRange(new Date(), 'day');
+      const start = new Date(result.startDate);
+      const end = new Date(result.endDate);
 
-      expect(result.startDate).toBeUndefined();
-      expect(result.endDate).toBeUndefined();
-    });
-  });
-
-  describe('period = "week"', () => {
-    it('過去7日の範囲を返す', () => {
-      const result = computeDateRange('week');
-
-      expect(result.startDate).toBeDefined();
-      expect(result.endDate).toBeDefined();
-
-      const start = new Date(result.startDate!);
-      const end = new Date(result.endDate!);
-
-      // startは7日前の00:00:00
-      expect(start.getFullYear()).toBe(2026);
-      expect(start.getMonth()).toBe(1); // February
-      expect(start.getDate()).toBe(8);
+      expect(start.getDate()).toBe(10);
       expect(start.getHours()).toBe(0);
       expect(start.getMinutes()).toBe(0);
       expect(start.getSeconds()).toBe(0);
 
-      // endは現在時刻
-      expect(end.toISOString()).toBe('2026-02-15T12:00:00.000Z');
+      expect(end.getDate()).toBe(10);
+      expect(end.getHours()).toBe(23);
+      expect(end.getMinutes()).toBe(59);
+      expect(end.getSeconds()).toBe(59);
     });
   });
 
-  describe('period = "month"', () => {
-    it('過去30日の範囲を返す', () => {
-      const result = computeDateRange('month');
+  describe('granularity = "week"', () => {
+    it('月曜〜日曜の範囲を返す', () => {
+      const result = computeStatsDateRange(new Date(), 'week');
+      const start = new Date(result.startDate);
+      const end = new Date(result.endDate);
 
-      const start = new Date(result.startDate!);
-      const end = new Date(result.endDate!);
-
-      // startは30日前の00:00:00
-      expect(start.getDate()).toBe(16); // Jan 16
-      expect(start.getMonth()).toBe(0); // January
+      // 2026-03-10 は火曜なので、月曜 = 3/9
+      expect(start.getDate()).toBe(9);
+      expect(start.getDay()).toBe(1); // Monday
       expect(start.getHours()).toBe(0);
 
-      expect(end.toISOString()).toBe('2026-02-15T12:00:00.000Z');
+      // 日曜 = 3/15
+      expect(end.getDate()).toBe(15);
+      expect(end.getDay()).toBe(0); // Sunday
+      expect(end.getHours()).toBe(23);
     });
   });
 
-  describe('period = "year"', () => {
-    it('過去365日の範囲を返す', () => {
-      const result = computeDateRange('year');
+  describe('granularity = "month"', () => {
+    it('月の1日〜末日の範囲を返す', () => {
+      const result = computeStatsDateRange(new Date(), 'month');
+      const start = new Date(result.startDate);
+      const end = new Date(result.endDate);
 
-      const start = new Date(result.startDate!);
-      const end = new Date(result.endDate!);
-
-      // startは365日前の00:00:00
-      expect(start.getFullYear()).toBe(2025);
+      expect(start.getDate()).toBe(1);
+      expect(start.getMonth()).toBe(2); // March
       expect(start.getHours()).toBe(0);
 
-      expect(end.toISOString()).toBe('2026-02-15T12:00:00.000Z');
+      expect(end.getDate()).toBe(31); // March has 31 days
+      expect(end.getMonth()).toBe(2);
+      expect(end.getHours()).toBe(23);
     });
   });
 
-  it('startDateのミリ秒が0にリセットされる', () => {
-    const result = computeDateRange('week');
-    const start = new Date(result.startDate!);
+  describe('granularity = "year"', () => {
+    it('1月1日〜12月31日の範囲を返す', () => {
+      const result = computeStatsDateRange(new Date(), 'year');
+      const start = new Date(result.startDate);
+      const end = new Date(result.endDate);
 
-    expect(start.getMilliseconds()).toBe(0);
-    expect(start.getSeconds()).toBe(0);
+      expect(start.getFullYear()).toBe(2026);
+      expect(start.getMonth()).toBe(0);
+      expect(start.getDate()).toBe(1);
+      expect(start.getHours()).toBe(0);
+
+      expect(end.getFullYear()).toBe(2026);
+      expect(end.getMonth()).toBe(11);
+      expect(end.getDate()).toBe(31);
+      expect(end.getHours()).toBe(23);
+    });
   });
 });
 
 describe('computeMonthCount', () => {
-  it('weekは1を返す', () => {
-    expect(computeMonthCount('week')).toBe(1);
+  it('dayは1を返す', () => {
+    expect(computeMonthCount('day')).toBe(1);
   });
 
-  it('monthは3を返す', () => {
-    expect(computeMonthCount('month')).toBe(3);
+  it('weekは3を返す', () => {
+    expect(computeMonthCount('week')).toBe(3);
   });
 
-  it('yearは12を返す', () => {
-    expect(computeMonthCount('year')).toBe(12);
+  it('monthは12を返す', () => {
+    expect(computeMonthCount('month')).toBe(12);
   });
 
-  it('allはundefinedを返す', () => {
-    expect(computeMonthCount('all')).toBeUndefined();
+  it('yearはundefinedを返す', () => {
+    expect(computeMonthCount('year')).toBeUndefined();
   });
 });

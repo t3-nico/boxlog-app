@@ -261,7 +261,8 @@
       "colorChangeFailed": "Failed to change color",
       "groupDeleted": "Deleted group \"{name}\"",
       "groupDeleteFailed": "Failed to delete group",
-      "groupCreateFailed": "Failed to create group"
+      "groupCreateFailed": "Failed to create group",
+      "deleted": "Tag \"{name}\" deleted"
     },
     "inspector": {
       "newTag": "New Tag",

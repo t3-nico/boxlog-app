@@ -1,10 +1,9 @@
 'use client';
 
 /**
- * Inspector の保存・閉じるロジックを管理するフック
- * saveAndClose, cancelAndClose, hasPendingChanges
+ * Inspector の閉じるロジックを管理するフック
  *
- * ドラフトモードなし — edit mode のみ。
+ * 全フィールドはデバウンス即時保存のため、閉じる時はタグ保存のみ。
  */
 
 import { useTranslations } from 'next-intl';
@@ -13,23 +12,13 @@ import { toast } from 'sonner';
 
 import { useUpdateEntityTagsInCache } from '@/hooks/useUpdateEntityTagsInCache';
 
-import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
-
 interface UseInspectorSaveCloseProps {
   planId: string | null;
   hasTagChanges: boolean;
   selectedTagIdRef: React.RefObject<string | null>;
   originalTagIdRef: React.RefObject<string | null>;
   setEntryTags: (planId: string, tagIds: string[]) => Promise<void>;
-  updatePlan: {
-    mutateAsync: (args: {
-      id: string;
-      data: Record<string, string | number | null | undefined>;
-    }) => Promise<unknown>;
-  };
   closeInspector: () => void;
-  pendingChanges: Record<string, string | number | null | undefined> | null;
-  clearPendingChanges: () => void;
   timeConflictError: boolean;
 }
 
@@ -39,73 +28,44 @@ export function useInspectorSaveClose({
   selectedTagIdRef,
   originalTagIdRef,
   setEntryTags,
-  updatePlan,
   closeInspector,
-  pendingChanges,
-  clearPendingChanges,
   timeConflictError,
 }: UseInspectorSaveCloseProps) {
   const t = useTranslations();
   const updateTagsInCache = useUpdateEntityTagsInCache('entries');
 
   /**
-   * Inspectorを即座に閉じ、保存処理はバックグラウンドで実行
+   * Inspectorを閉じる（タグ変更があればバックグラウンドで保存）
    *
-   * 楽観的更新でキャッシュは反映済みのため、サーバー応答を待たずに閉じる。
-   * エラー時はtoastで通知。
+   * 時間・タイトル等は既にデバウンス即時保存済み。
+   * タグだけ閉じる時にサーバー保存する。
    */
   const saveAndClose = useCallback(() => {
-    // 時間重複エラー中は保存をブロック
+    // 時間重複エラー中は閉じない
     if (timeConflictError) return;
 
-    const { entryId: currentEntryId, consumePendingChanges: consume } =
-      useEntryInspectorStore.getState();
     const currentTagId = selectedTagIdRef.current;
     const currentHasTagChanges = hasTagChanges;
+    const currentEntryId = planId;
 
     // 即座に閉じる
     closeInspector();
 
-    // バックグラウンドで保存（pending changes + タグ）
-    const changes = consume();
-
-    if (changes && currentEntryId && Object.keys(changes).length > 0) {
-      updatePlan
-        .mutateAsync({
-          id: currentEntryId,
-          data: changes as Record<string, string | number | null | undefined>,
-        })
-        .catch((error: unknown) => {
-          const errorMessage = error instanceof Error ? error.message : '';
-          if (errorMessage.includes('TIME_OVERLAP') || errorMessage.includes('既に')) {
-            toast.error(t('plan.inspector.toast.timeOverlap'));
-          } else {
-            toast.error(t('plan.inspector.toast.saveFailed'));
-          }
-        });
-    }
-
+    // タグだけバックグラウンド保存
     if (currentHasTagChanges && currentEntryId) {
       setEntryTags(currentEntryId, currentTagId ? [currentTagId] : []).catch(() => {
         toast.error(t('plan.inspector.toast.tagsSaveFailed'));
       });
     }
-  }, [
-    t,
-    updatePlan,
-    closeInspector,
-    setEntryTags,
-    hasTagChanges,
-    selectedTagIdRef,
-    timeConflictError,
-  ]);
+  }, [t, closeInspector, setEntryTags, hasTagChanges, selectedTagIdRef, planId, timeConflictError]);
 
   /**
    * 変更を破棄してInspectorを閉じる（キャンセル）
+   *
+   * デバウンス即時保存のため、既に保存された変更は元に戻せない。
+   * タグ変更のみキャッシュをロールバックする。
    */
   const cancelAndClose = useCallback(() => {
-    clearPendingChanges();
-
     // タグ変更があった場合はキャッシュを元に戻す
     if (hasTagChanges && planId) {
       const originalTagId = originalTagIdRef.current;
@@ -113,18 +73,10 @@ export function useInspectorSaveClose({
     }
 
     closeInspector();
-  }, [
-    clearPendingChanges,
-    closeInspector,
-    planId,
-    updateTagsInCache,
-    hasTagChanges,
-    originalTagIdRef,
-  ]);
+  }, [closeInspector, planId, updateTagsInCache, hasTagChanges, originalTagIdRef]);
 
-  // 未保存の変更があるか判定（タグ変更も含む）
-  const hasPendingChanges =
-    (pendingChanges && Object.keys(pendingChanges).length > 0) || hasTagChanges;
+  // タグ変更のみ追跡
+  const hasPendingChanges = hasTagChanges;
 
   return {
     saveAndClose,
