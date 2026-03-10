@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
 
 import {
@@ -14,9 +13,10 @@ import {
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { useEntries } from '@/hooks/useEntries';
 import { useTags } from '@/hooks/useTagsQuery';
-import { formatDateISO, formatDateShort, formatTimeRange } from '@/lib/date/format';
+import { formatDateShort, formatTimeRange } from '@/lib/date/format';
 import { getTagColorClasses } from '@/lib/tag-colors';
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
+import { useCalendarNavigationStore } from '@/stores/useCalendarNavigationStore';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
@@ -28,7 +28,6 @@ interface GlobalSearchModalProps {
 }
 
 export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
-  const router = useRouter();
   const [query, setQuery] = useState('');
 
   // Data - only fetch when modal is open
@@ -38,6 +37,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
   // Actions
   const openInspector = useEntryInspectorStore((s) => s.openInspector);
   const showOnlyTag = useCalendarFilterStore((s) => s.showOnlyTag);
+  const navigateTo = useCalendarNavigationStore((s) => s.navigateTo);
 
   // Reset query when modal closes
   const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
@@ -94,12 +94,11 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
     (entryId: string, startTime: string | null) => {
       onClose();
       if (startTime) {
-        const date = new Date(startTime);
-        router.push(`/calendar/day?date=${formatDateISO(date)}`);
+        navigateTo(new Date(startTime));
       }
       openInspector(entryId);
     },
-    [onClose, router, openInspector],
+    [onClose, navigateTo, openInspector],
   );
 
   return (

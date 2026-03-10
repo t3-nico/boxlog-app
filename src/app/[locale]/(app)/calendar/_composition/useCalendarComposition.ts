@@ -26,6 +26,7 @@ import {
   useWeekendToggleShortcut,
 } from '@/features/calendar';
 import { useNotifications } from '@/features/notifications';
+import { useCalendarNavigationStore } from '@/stores/useCalendarNavigationStore';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { useLayoutStore, type AsideType } from '@/stores/useLayoutStore';
 
@@ -210,6 +211,19 @@ export function useCalendarComposition({
     navigateToDate,
     changeView,
   });
+
+  // =========================================================================
+  // External Navigation（検索等からの日付ナビゲーション要求を処理）
+  // =========================================================================
+  const pendingDate = useCalendarNavigationStore((s) => s.pendingDate);
+  const clearPending = useCalendarNavigationStore((s) => s.clearPending);
+
+  useEffect(() => {
+    if (pendingDate) {
+      navigateToDate(pendingDate);
+      clearPending();
+    }
+  }, [pendingDate, navigateToDate, clearPending]);
 
   // =========================================================================
   // Weekend Toggle Shortcut
