@@ -29,7 +29,9 @@
     "skipToMainContent": "Skip to main content",
     "createNewEvent": "Create new event",
     "toast": {
-      "eventDeleted": "Event deleted"
+      "eventDeleted": "Event deleted",
+      "copied": "Copied to clipboard",
+      "copyFailed": "Failed to copy"
     },
     "selectedCount": "{count, plural, one {1 selected} other {# selected}}",
     "moreActions": "More actions",

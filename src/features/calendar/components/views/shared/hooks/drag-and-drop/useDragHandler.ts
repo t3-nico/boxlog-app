@@ -6,7 +6,7 @@ import { useCallback } from 'react';
 import { MS_PER_MINUTE } from '@/constants/time';
 import { logger } from '@/lib/logger';
 import { useTranslations } from 'next-intl';
-import useCalendarToast from '../../../../../lib/toast';
+import { toast } from 'sonner';
 import type { CalendarEvent } from '../../../../../types/calendar.types';
 
 import type { DragDataRef, DragState } from './types';
@@ -57,7 +57,6 @@ export function useDragHandler({
   setDragState,
 }: UseDragHandlerProps) {
   const t = useTranslations();
-  const calendarToast = useCalendarToast();
 
   // ドラッグ開始
   const handleMouseDown = useCallback(
@@ -291,30 +290,36 @@ export function useDragHandler({
       if (promise && typeof promise.then === 'function') {
         promise
           .then(() => {
-            calendarToast.eventMoved(eventData, newStartTime, {
-              undoAction: async () => {
-                try {
-                  const originalEndTime = new Date(previousStartTime.getTime() + durationMs);
-                  await eventUpdateHandler!(dragDataRef.current!.eventId, {
-                    startTime: previousStartTime,
-                    endTime: originalEndTime,
-                  });
-                  calendarToast.success(t('calendar.event.undoMove'));
-                } catch {
-                  calendarToast.error(t('calendar.event.undoFailed'));
-                }
+            toast.success(t('calendar.event.moved'), {
+              description: `「${eventData.title}」`,
+              action: {
+                label: t('common.undo'),
+                onClick: async () => {
+                  try {
+                    const originalEndTime = new Date(previousStartTime.getTime() + durationMs);
+                    await eventUpdateHandler!(dragDataRef.current!.eventId, {
+                      startTime: previousStartTime,
+                      endTime: originalEndTime,
+                    });
+                    toast.success(t('calendar.event.undoMove'));
+                  } catch {
+                    toast.error(t('calendar.event.undoFailed'));
+                  }
+                },
               },
             });
           })
           .catch((error: unknown) => {
             logger.error('Failed to update event time:', error);
-            calendarToast.error(t('calendar.event.moveFailed'));
+            toast.error(t('calendar.event.moveFailed'));
           });
       } else {
-        calendarToast.eventMoved(eventData, newStartTime);
+        toast.success(t('calendar.event.moved'), {
+          description: `「${eventData.title}」`,
+        });
       }
     },
-    [date, calendarToast, eventUpdateHandler, dragDataRef, t],
+    [date, eventUpdateHandler, dragDataRef, t],
   );
 
   // プラン更新処理を実行する
@@ -367,12 +372,12 @@ export function useDragHandler({
         // TIME_OVERLAPエラー（重複防止）の場合はtoastなし（スナップバックで対応）
         const errorMessage = error instanceof Error ? error.message : '';
         if (!errorMessage.includes('TIME_OVERLAP') && !errorMessage.includes('既に')) {
-          calendarToast.error(t('calendar.event.moveFailed'));
+          toast.error(t('calendar.event.moveFailed'));
         }
         return false; // エラー時はスナップバック必要
       }
     },
-    [eventUpdateHandler, events, dragDataRef, handleEventUpdateToast, calendarToast, t, hourHeight],
+    [eventUpdateHandler, events, dragDataRef, handleEventUpdateToast, t, hourHeight],
   );
 
   return {

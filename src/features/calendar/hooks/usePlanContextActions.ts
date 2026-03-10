@@ -13,10 +13,12 @@ import {
   openRecurringEditConfirm,
   type RecurringEditScope,
 } from '@/stores/useModalStore';
+import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import type { CalendarEvent } from '../types/calendar.types';
 
 export function usePlanContextActions() {
+  const t = useTranslations();
   const openInspector = useEntryInspectorStore((s) => s.openInspector);
   const { deleteEntry, createEntry } = useEntryMutations();
   const { applyDelete } = useRecurringScopeMutations();
@@ -99,25 +101,28 @@ export function usePlanContextActions() {
     [createEntry, openInspector],
   );
 
-  const handleCopyPlan = useCallback((plan: CalendarEvent) => {
-    const startHour = plan.startDate?.getHours() ?? 0;
-    const startMinute = plan.startDate?.getMinutes() ?? 0;
-    const duration =
-      plan.endDate && plan.startDate
-        ? (plan.endDate.getTime() - plan.startDate.getTime()) / 60000
-        : 60;
+  const handleCopyPlan = useCallback(
+    (plan: CalendarEvent) => {
+      const startHour = plan.startDate?.getHours() ?? 0;
+      const startMinute = plan.startDate?.getMinutes() ?? 0;
+      const duration =
+        plan.endDate && plan.startDate
+          ? (plan.endDate.getTime() - plan.startDate.getTime()) / 60000
+          : 60;
 
-    useEntryClipboardStore.getState().copyEntry({
-      title: plan.title,
-      description: plan.description ?? null,
-      duration,
-      startHour,
-      startMinute,
-      tagId: plan.tagId,
-    });
+      useEntryClipboardStore.getState().copyEntry({
+        title: plan.title,
+        description: plan.description ?? null,
+        duration,
+        startHour,
+        startMinute,
+        tagId: plan.tagId,
+      });
 
-    toast.success('コピーしました');
-  }, []);
+      toast.success(t('common.toast.copied'));
+    },
+    [t],
+  );
 
   /**
    * コピーしたプランをペースト

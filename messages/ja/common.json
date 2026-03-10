@@ -29,7 +29,9 @@
     "skipToMainContent": "メインコンテンツへスキップ",
     "createNewEvent": "新しいイベントを作成",
     "toast": {
-      "eventDeleted": "予定を削除しました"
+      "eventDeleted": "予定を削除しました",
+      "copied": "コピーしました",
+      "copyFailed": "コピーに失敗しました"
     },
     "selectedCount": "{count}件選択中",
     "moreActions": "その他のアクション",

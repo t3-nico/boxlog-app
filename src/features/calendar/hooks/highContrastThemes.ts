@@ -2,8 +2,6 @@
  * ハイコントラストテーマ定義・CSS生成・ユーティリティ
  */
 
-import { getTranslation } from '../lib/toast/get-translation';
-
 export interface HighContrastColors {
   background: string;
   foreground: string;
@@ -25,15 +23,10 @@ export interface ContrastTheme {
   wcagAAA: boolean;
 }
 
-// 翻訳キーを追加
-const CALENDAR_ACCESSIBILITY_KEYS = {
-  STANDARD_CONTRAST: 'calendar.accessibility.standardContrast',
-} as const;
-
 // WCAG AAA準拠のハイコントラストカラーテーマ
 export const HIGH_CONTRAST_THEMES: Record<string, ContrastTheme> = {
   default: {
-    name: getTranslation(CALENDAR_ACCESSIBILITY_KEYS.STANDARD_CONTRAST),
+    name: 'Standard Contrast',
     wcagAAA: false,
     colors: {
       background: '#ffffff',
