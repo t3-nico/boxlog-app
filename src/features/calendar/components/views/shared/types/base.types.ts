@@ -11,7 +11,7 @@ export type CalendarViewType = 'day' | '3day' | '5day' | 'week' | 'timesheet';
 
 /**
  * 全ビューで共通する最小限のプロパティ
- * AgendaViewなどリスト表示ビュー向け
+ * リスト表示ビュー向け
  */
 export interface BaseViewProps {
   // Core data

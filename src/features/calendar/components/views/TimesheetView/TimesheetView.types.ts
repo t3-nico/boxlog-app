@@ -2,7 +2,7 @@ import type { CalendarEvent } from '../../../types/calendar.types';
 
 import type { BaseViewProps } from '../shared/types/base.types';
 
-/** TimesheetView のプロパティ（AgendaView と同パターン） */
+/** TimesheetView のプロパティ */
 export type TimesheetViewProps = BaseViewProps;
 
 /** タグごとのグループ */

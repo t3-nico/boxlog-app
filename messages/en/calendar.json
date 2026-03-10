@@ -15,7 +15,6 @@
       "2week": "2-Week",
       "month": "Month",
       "list": "List",
-      "agenda": "Agenda",
       "multiday": "{count} Days",
       "daysSubmenu": "Days",
       "viewSettings": "View settings",
@@ -228,12 +227,6 @@
       "searchPlaceholder": "Search tags...",
       "noResults": "No tags found",
       "createPlaceholder": "New tag name"
-    },
-    "agenda": {
-      "emptyTitle": "No upcoming events",
-      "emptyDescription": "Create a new event in the calendar",
-      "noItems": "No items",
-      "noDate": "No Date"
     },
     "stats": {
       "progress": "Progress",

@@ -15,7 +15,6 @@
       "2week": "2週",
       "month": "月",
       "list": "リスト",
-      "agenda": "アジェンダ",
       "multiday": "{count}日間",
       "daysSubmenu": "日数",
       "viewSettings": "ビューの設定",
@@ -228,12 +227,6 @@
       "searchPlaceholder": "タグを検索...",
       "noResults": "タグが見つかりません",
       "createPlaceholder": "新しいタグ名"
-    },
-    "agenda": {
-      "emptyTitle": "今後の予定はありません",
-      "emptyDescription": "カレンダーで新しい予定を作成してください",
-      "noItems": "予定なし",
-      "noDate": "日付なし"
     },
     "stats": {
       "progress": "進捗",

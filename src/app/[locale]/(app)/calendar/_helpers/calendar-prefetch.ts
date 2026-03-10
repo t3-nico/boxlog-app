@@ -3,7 +3,7 @@ import { calculateViewDateRange } from '@/features/calendar';
 import { createServerHelpers, dehydrate } from '@/lib/trpc/server';
 
 /**
- * カレンダービュー用 prefetch（day/week/agenda/timesheet/Nday）
+ * カレンダービュー用 prefetch（day/week/timesheet/Nday）
  *
  * ビュータイプに応じた日付範囲でプランデータを事前取得し、
  * クライアントでのデータ取得を高速化する。
