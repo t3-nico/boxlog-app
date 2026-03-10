@@ -21,7 +21,6 @@ export { ViewSwitcher } from './components/layout/Header/ViewSwitcher';
 // =============================================================================
 // View Components
 // =============================================================================
-export { AgendaView } from './components/views/AgendaView';
 export { DayView } from './components/views/DayView';
 export { MultiDayView } from './components/views/MultiDayView';
 export { WeekView } from './components/views/WeekView';

@@ -35,18 +35,18 @@
       "updateFailed": "Failed to update",
       "deleted": "Deleted",
       "deleteFailed": "Failed to delete: {error}",
-      "bulkUpdated": "{count} plans updated",
+      "bulkUpdated": "{count, plural, one {1 item} other {# items}} updated",
       "bulkUpdateFailed": "Failed to bulk update: {error}",
-      "bulkDeleted": "{count} plans deleted",
+      "bulkDeleted": "{count, plural, one {1 item} other {# items}} deleted",
       "bulkDeleteFailed": "Failed to bulk delete: {error}",
       "tagsAdded": "Tags added",
       "tagsAddFailed": "Failed to add tags: {error}",
       "statusChanged": "Status changed to {status}",
-      "statusChangedCount": "Status changed for {count} plans",
+      "statusChangedCount": "Status changed for {count, plural, one {1 item} other {# items}}",
       "statusChangeFailed": "Failed to change status",
-      "archivedCount": "{count} plans archived",
+      "archivedCount": "{count, plural, one {1 item} other {# items}} archived",
       "archiveFailed": "Failed to archive",
-      "deletedCount": "{count} plans deleted"
+      "deletedCount": "{count, plural, one {1 item} other {# items}} deleted"
     },
     "open": "Open",
     "delete": {

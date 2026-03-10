@@ -33,7 +33,7 @@ export function InspectorTagRow({ tagId, onTagChange, onDelete }: InspectorTagRo
   const { getTagById } = useTagsMap();
   const [selectorOpen, setSelectorOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const createTagMutation = useCreateTag();
+  const createTagMutation = useCreateTag({ showToast: false });
 
   const tag = tagId ? getTagById(tagId) : undefined;
   const colorClasses = tag ? getTagColorClasses(tag.color) : null;
@@ -58,7 +58,7 @@ export function InspectorTagRow({ tagId, onTagChange, onDelete }: InspectorTagRo
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
         if (message.includes('duplicate') || message.includes('already exists')) {
-          toast.error(t('tags.form.duplicateName'));
+          toast.error(t('tags.errors.duplicateName'));
         } else {
           toast.error(t('tags.errors.createFailed'));
         }

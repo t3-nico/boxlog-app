@@ -8,7 +8,6 @@ import {
   Check,
   ChevronDown,
   ChevronRight,
-  List,
   type LucideIcon,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -29,7 +28,6 @@ interface MainViewOption {
 const MAIN_VIEW_OPTIONS: MainViewOption[] = [
   { value: 'day', labelKey: 'calendar.views.day', shortcut: 'D', icon: CalendarDays },
   { value: 'week', labelKey: 'calendar.views.week', shortcut: 'W', icon: CalendarRange },
-  { value: 'agenda', labelKey: 'calendar.views.agenda', shortcut: 'A', icon: List },
 ];
 
 const DAY_COUNTS = [2, 3, 4, 5, 6, 7, 8, 9] as const;

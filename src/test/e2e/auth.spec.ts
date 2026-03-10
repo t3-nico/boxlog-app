@@ -150,7 +150,7 @@ test.describe('Auth: ログイン', () => {
       await submitButton.click();
 
       // アプリページに遷移
-      await page.waitForURL(/\/(day|week|agenda|timesheet|stats)/i, { timeout: 15000 });
+      await page.waitForURL(/\/(day|week|timesheet|stats)/i, { timeout: 15000 });
       await expect(page).toHaveTitle(/Dayopt/);
     });
 
@@ -230,7 +230,7 @@ test.describe('Auth: リダイレクト', () => {
       await passwordInput.fill(process.env.TEST_USER_PASSWORD!);
       await submitButton.click();
 
-      await page.waitForURL(/\/(day|week|agenda|timesheet|stats)/i, { timeout: 15000 });
+      await page.waitForURL(/\/(day|week|timesheet|stats)/i, { timeout: 15000 });
     });
   });
 });

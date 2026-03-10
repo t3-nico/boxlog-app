@@ -6,7 +6,6 @@ import type { CalendarViewType } from '../../../types/calendar.types';
 import { getMultiDayCount, isMultiDayView } from '../../../types/calendar.types';
 import type { GridViewProps } from '../../views/shared/types/base.types';
 
-import { AgendaViewSkeleton } from './AgendaViewSkeleton';
 import { CalendarViewSkeleton } from './CalendarViewSkeleton';
 
 // 遅延ロード: カレンダービューコンポーネントは大きいため、使用時のみロード（絶対パスで指定）
@@ -24,11 +23,6 @@ const WeekView = React.lazy(() =>
 const MultiDayView = React.lazy(() =>
   import('@/features/calendar/components/views/MultiDayView').then((module) => ({
     default: module.MultiDayView,
-  })),
-);
-const AgendaView = React.lazy(() =>
-  import('@/features/calendar/components/views/AgendaView').then((module) => ({
-    default: module.AgendaView,
   })),
 );
 const TimesheetView = React.lazy(() =>
@@ -56,7 +50,7 @@ export const CalendarViewRenderer = React.memo(function CalendarViewRenderer({
 }: CalendarViewRendererProps) {
   // LCP改善: ビューをメモ化して不要な再生成を防止
   const viewContent = useMemo(() => {
-    // AgendaView用のBaseViewPropsを抽出（GridViewPropsの一部）
+    // BaseViewPropsを抽出（GridViewPropsの一部）
     const baseProps = {
       plans: commonProps.plans,
       currentDate: commonProps.currentDate,
@@ -86,15 +80,9 @@ export const CalendarViewRenderer = React.memo(function CalendarViewRenderer({
             <WeekView {...commonProps} />
           </Suspense>
         );
-      case 'agenda':
-        return (
-          <Suspense fallback={<AgendaViewSkeleton />}>
-            <AgendaView {...baseProps} />
-          </Suspense>
-        );
       case 'timesheet':
         return (
-          <Suspense fallback={<AgendaViewSkeleton />}>
+          <Suspense fallback={<CalendarViewSkeleton />}>
             <TimesheetView {...baseProps} />
           </Suspense>
         );

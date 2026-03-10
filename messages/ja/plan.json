@@ -35,18 +35,18 @@
       "updateFailed": "更新に失敗しました",
       "deleted": "削除しました",
       "deleteFailed": "削除に失敗しました: {error}",
-      "bulkUpdated": "{count}件のプランを更新しました",
+      "bulkUpdated": "{count}件を更新しました",
       "bulkUpdateFailed": "一括更新に失敗しました: {error}",
-      "bulkDeleted": "{count}件のプランを削除しました",
+      "bulkDeleted": "{count}件を削除しました",
       "bulkDeleteFailed": "一括削除に失敗しました: {error}",
       "tagsAdded": "タグを追加しました",
       "tagsAddFailed": "タグの追加に失敗しました: {error}",
       "statusChanged": "ステータスを{status}に変更しました",
-      "statusChangedCount": "{count}件のプランのステータスを変更しました",
+      "statusChangedCount": "{count}件のステータスを変更しました",
       "statusChangeFailed": "ステータスの変更に失敗しました",
-      "archivedCount": "{count}件のプランをアーカイブしました",
+      "archivedCount": "{count}件をアーカイブしました",
       "archiveFailed": "アーカイブに失敗しました",
-      "deletedCount": "{count}件のプランを削除しました"
+      "deletedCount": "{count}件を削除しました"
     },
     "open": "開く",
     "delete": {

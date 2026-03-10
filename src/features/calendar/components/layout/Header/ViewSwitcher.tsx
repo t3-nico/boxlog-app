@@ -38,7 +38,6 @@ interface MainViewOption {
 const MAIN_VIEW_OPTIONS: MainViewOption[] = [
   { value: 'day', labelKey: 'calendar.views.day', shortcut: 'D' },
   { value: 'week', labelKey: 'calendar.views.week', shortcut: 'W' },
-  { value: 'agenda', labelKey: 'calendar.views.agenda', shortcut: 'A' },
   { value: 'timesheet', labelKey: 'calendar.views.timesheet', shortcut: 'T' },
 ];
 

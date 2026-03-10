@@ -9,11 +9,10 @@ import { addDays, startOfWeek, subDays } from '@/lib/date';
 
 export interface UseDateUtilitiesOptions {
   referenceDate: Date;
-  viewType: 'week' | 'threeday' | 'fiveday' | 'multiday' | 'agenda';
+  viewType: 'week' | 'threeday' | 'fiveday' | 'multiday';
   weekStartsOn?: 0 | 1 | 6;
   showWeekends?: boolean;
   dayCount?: number; // multiday用の表示日数（2-9）
-  agendaDays?: number; // AgendaView用の表示日数
 }
 
 export interface UseDateUtilitiesReturn {
@@ -33,7 +32,6 @@ export interface UseDateUtilitiesReturn {
  * - MultiDayView(3day): 中央日±1日の3日間
  * - MultiDayView(5day): 中央日±2日の5日間
  * - MultiDayView: 中央日±floor(dayCount/2)日のN日間（2-9日）
- * - AgendaView: 指定日数分の連続日付
  */
 /**
  * N日間の日付配列を生成（中央日基準、週末非表示対応）
@@ -86,7 +84,6 @@ export function useDateUtilities({
   weekStartsOn = 0,
   showWeekends = true,
   dayCount,
-  agendaDays = 30,
 }: UseDateUtilitiesOptions): UseDateUtilitiesReturn {
   const dates = useMemo(() => {
     // Step 1: 各ビューに応じた完全な日付配列を生成
@@ -113,14 +110,6 @@ export function useDateUtilities({
           break;
         }
 
-        case 'agenda': {
-          // referenceDate から指定日数分の連続日付
-          fullDates = Array.from({ length: agendaDays }, (_, index) =>
-            addDays(referenceDate, index),
-          );
-          break;
-        }
-
         default:
           fullDates = [referenceDate];
       }
@@ -141,7 +130,7 @@ export function useDateUtilities({
     }
 
     return fullDates;
-  }, [referenceDate, viewType, weekStartsOn, showWeekends, dayCount, agendaDays]);
+  }, [referenceDate, viewType, weekStartsOn, showWeekends, dayCount]);
 
   const startDate = useMemo(() => dates[0]!, [dates]);
   const endDate = useMemo(() => dates[dates.length - 1]!, [dates]);

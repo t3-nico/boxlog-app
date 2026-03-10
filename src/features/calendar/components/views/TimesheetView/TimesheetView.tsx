@@ -26,7 +26,7 @@ export function TimesheetView({ plans, currentDate, className, onPlanClick }: Ti
   const hasAnyPlans = data.tagGroups.length > 0;
 
   return (
-    <CalendarViewAnimation viewType="agenda">
+    <CalendarViewAnimation viewType="timesheet">
       <div className={cn('bg-background flex min-h-0 flex-1 flex-col', className)}>
         <div className="flex-1 overflow-y-auto">
           {hasAnyPlans ? (

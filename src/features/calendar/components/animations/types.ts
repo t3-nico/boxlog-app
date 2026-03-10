@@ -8,8 +8,7 @@ export type CalendarView =
   | '5day'
   | 'week'
   | 'week-no-weekend'
-  | 'schedule'
-  | 'agenda';
+  | 'schedule';
 
 // 方向の定義
 export type SlideDirection = 'left' | 'right' | 'up' | 'down';

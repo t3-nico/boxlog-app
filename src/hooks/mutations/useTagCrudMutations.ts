@@ -27,7 +27,8 @@ interface TrpcTagUpdateInput {
 export type UpdateTagInput = TrpcTagUpdateInput;
 
 // タグ作成フック（楽観的更新付き）
-export function useCreateTag() {
+// showToast: false でインラインタグ作成時のtoast重複を防止
+export function useCreateTag({ showToast = true }: { showToast?: boolean } = {}) {
   const utils = trpc.useUtils();
   const t = useTranslations('tags');
   const incrementMutation = useTagCacheStore((state) => state.incrementMutation);
@@ -71,12 +72,12 @@ export function useCreateTag() {
       filterStore.removeTag(context.tempId);
       filterStore.initializeWithTags([result.id]);
 
-      toast.success(t('toast.created', { name: result.name }));
+      if (showToast) toast.success(t('toast.created', { name: result.name }));
     },
     onError: (_err, _input, context) => {
       context?.listSnapshot?.restore();
       if (context?.tempId) useCalendarFilterStore.getState().removeTag(context.tempId);
-      toast.error(t('toast.createFailed'));
+      if (showToast) toast.error(t('toast.createFailed'));
     },
     onSettled: () => {
       decrementMutation();
@@ -180,7 +181,7 @@ export function useDeleteTag() {
     },
     onSuccess: (_data, _input, context) => {
       if (context?.deletedTagName) {
-        toast.success(t('page.tagDeleted', { name: context.deletedTagName }));
+        toast.success(t('toast.deleted', { name: context.deletedTagName }));
       }
     },
     onError: (_err, _input, context) => {

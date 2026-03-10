@@ -40,7 +40,7 @@ export function InlineTagPalette({ hourHeight, date }: InlineTagPaletteProps) {
   const t = useTranslations('tags');
 
   const { createEntry, bulkAddTags } = useEntryMutations();
-  const createTagMutation = useCreateTag();
+  const createTagMutation = useCreateTag({ showToast: false });
   const [isCreating, setIsCreating] = useState(false);
   const highlightRef = useRef<HTMLDivElement>(null);
 
@@ -122,9 +122,9 @@ export function InlineTagPalette({ hourHeight, date }: InlineTagPaletteProps) {
         setIsCreating(false);
         const message = err instanceof Error ? err.message : String(err);
         if (message.includes('GROUP_NAME_CONFLICT') || message.includes('group_conflict')) {
-          toast.error(t('form.groupNameConflict'));
+          toast.error(t('errors.groupNameConflict'));
         } else if (message.includes('duplicate') || message.includes('already exists')) {
-          toast.error(t('form.duplicateName'));
+          toast.error(t('errors.duplicateName'));
         } else {
           toast.error(t('errors.createFailed'));
         }
