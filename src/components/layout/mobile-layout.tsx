@@ -3,10 +3,10 @@
 import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useRef } from 'react';
 
-import { PageHeader } from '@/components/layout/PageHeader';
+import { AppHeader } from '@/components/layout/AppHeader';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { isCalendarViewPath } from '@/features/calendar';
-import { AppSidebar } from '@/features/navigation';
+import { AppSidebar, usePageTitleStore } from '@/features/navigation';
 import { useLayoutStore } from '@/stores/useLayoutStore';
 
 import { MainContentWrapper } from './main-content-wrapper';
@@ -35,6 +35,7 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
   const isOpen = useLayoutStore((state) => state.sidebarOpen);
   const toggle = useLayoutStore((state) => state.toggleSidebar);
   const close = useLayoutStore((state) => state.closeSidebar);
+  const title = usePageTitleStore((state) => state.title);
 
   // モバイルでの初期表示時にサイドバーを閉じる
   // デスクトップとストアを共有しているため、初期状態がtrueになる問題を解決
@@ -77,8 +78,12 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
 
       {/* PageHeader + Main Content */}
       <div className="flex h-full flex-1 flex-col">
-        {/* PageHeader（Calendar/Statsは独自ヘッダーを持つため非表示） */}
-        {!hasOwnHeader && <PageHeader />}
+        {/* AppHeader（Calendar/Statsは独自ヘッダーを持つため非表示） */}
+        {!hasOwnHeader && (
+          <AppHeader>
+            {title && <h1 className="truncate text-lg leading-8 font-bold">{title}</h1>}
+          </AppHeader>
+        )}
 
         {/* Main Content */}
         <MainContentWrapper>{children}</MainContentWrapper>

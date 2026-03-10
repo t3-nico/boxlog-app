@@ -134,7 +134,6 @@ export function CalendarController({
         currentDate={currentDate}
         onNavigate={onNavigate}
         onViewChange={onViewChange}
-        showHeaderActions={false}
         onDateSelect={onDateSelect}
         displayRange={{
           start: viewDateRange.start,

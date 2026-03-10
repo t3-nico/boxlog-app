@@ -1,15 +1,8 @@
 'use client';
 
-import { MoreHorizontal } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 
-import { Button } from '@/components/ui/button';
 import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 import { DraggableInspector } from './DraggableInspector';
@@ -28,8 +21,6 @@ interface InspectorShellProps {
   title: string;
   /** コンテンツ */
   children: ReactNode;
-  /** モバイル用メニューコンテンツ（ドラッグハンドル行に表示） */
-  mobileMenuContent?: ReactNode;
 }
 
 /**
@@ -50,13 +41,7 @@ interface InspectorShellProps {
  * </InspectorShell>
  * ```
  */
-export function InspectorShell({
-  isOpen,
-  onClose,
-  title,
-  children,
-  mobileMenuContent,
-}: InspectorShellProps) {
+export function InspectorShell({ isOpen, onClose, title, children }: InspectorShellProps) {
   const isMobile = useMediaQuery('(max-width: 767px)');
 
   // モバイルDrawerのスナップポイント状態
@@ -79,34 +64,9 @@ export function InspectorShell({
         <DrawerContent className="bg-card z-modal flex flex-col gap-0 overflow-hidden rounded-t-none p-0 [&>div:first-child]:hidden">
           <DrawerTitle className="sr-only">{title}</DrawerTitle>
 
-          {/* ドラッグハンドル + メニュー（同じ行） */}
-          <div className="flex h-10 shrink-0 items-center justify-between px-2 pt-2">
-            {/* 左側スペーサー */}
-            <div className="w-10" />
-
-            {/* 中央: ドラッグハンドル */}
+          {/* ドラッグハンドル */}
+          <div className="flex h-10 shrink-0 items-center justify-center px-2 pt-2">
             <div className="bg-border h-1.5 w-12 rounded-full" />
-
-            {/* 右側: メニュー */}
-            <div className="flex w-10 justify-end">
-              {mobileMenuContent && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      icon
-                      className="size-10 focus-visible:ring-0"
-                      aria-label="オプション"
-                    >
-                      <MoreHorizontal className="size-5" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56">
-                    {mobileMenuContent}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
-            </div>
           </div>
 
           <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>

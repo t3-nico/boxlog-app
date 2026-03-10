@@ -15,18 +15,8 @@ export { CalendarController } from './components/CalendarController';
 // =============================================================================
 export { DateNavigator } from '@/core/components/DateNavigator';
 export { CalendarLayout } from './components/layout/CalendarLayout';
-export { CalendarHeader } from './components/layout/Header';
 export { DateRangeDisplay } from './components/layout/Header/DateRangeDisplay';
-export { HeaderActions } from './components/layout/Header/HeaderActions';
 export { ViewSwitcher } from './components/layout/Header/ViewSwitcher';
-
-// Mobile Layout
-export { MobileDrawer } from './components/layout/MobileLayout/MobileDrawer';
-export type { DrawerMenuItem } from './components/layout/MobileLayout/MobileDrawer';
-export { MobileHeader } from './components/layout/MobileLayout/MobileHeader';
-export type { MobileNavigationDirection } from './components/layout/MobileLayout/MobileHeader';
-export { MobileNavigation } from './components/layout/MobileLayout/MobileNavigation';
-export type { MobileNavItem } from './components/layout/MobileLayout/MobileNavigation';
 
 // =============================================================================
 // View Components
@@ -49,7 +39,6 @@ export { getMultiDayCount, isMultiDayView } from './types/calendar.types';
 export type {
   CalendarEvent,
   CalendarFilter,
-  CalendarHeaderProps,
   CalendarViewProps,
   CalendarViewState,
   CalendarViewType,

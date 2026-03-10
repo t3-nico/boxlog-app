@@ -3,9 +3,9 @@
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 
-import { PageHeader } from '@/components/layout/PageHeader';
+import { AppHeader } from '@/components/layout/AppHeader';
 import { isCalendarViewPath } from '@/features/calendar';
-import { AppSidebar } from '@/features/navigation';
+import { AppSidebar, usePageTitleStore } from '@/features/navigation';
 import { NotificationDropdown } from '@/features/notifications';
 import { cn } from '@/lib/utils';
 import { useLayoutStore } from '@/stores/useLayoutStore';
@@ -28,8 +28,9 @@ interface DesktopLayoutProps {
 export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
   const pathname = usePathname();
   const isSidebarOpen = useLayoutStore.use.sidebarOpen();
+  const title = usePageTitleStore((state) => state.title);
 
-  // ページ判定: 独自ヘッダーを持つページかどうか（PageHeader表示制御用）
+  // ページ判定: 独自ヘッダーを持つページかどうか（AppHeader表示制御用）
   const hasOwnHeader = useMemo(() => {
     const pathWithoutLocale = pathname?.replace(new RegExp(`^/${locale}`), '') ?? '';
     return isCalendarViewPath(pathWithoutLocale) || pathWithoutLocale === '/stats';
@@ -54,8 +55,12 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
 
         {/* PageHeader + Main Content + Inspector */}
         <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-          {/* PageHeader（Calendar/Statsは独自ヘッダーを持つため非表示） */}
-          {!hasOwnHeader && <PageHeader />}
+          {/* AppHeader（Calendar/Statsは独自ヘッダーを持つため非表示） */}
+          {!hasOwnHeader && (
+            <AppHeader>
+              {title && <h1 className="truncate text-lg leading-8 font-bold">{title}</h1>}
+            </AppHeader>
+          )}
 
           {/* Main Content + Inspector（自動的に残りのスペースを使用） */}
           <div className="min-w-0 flex-1 overflow-hidden">

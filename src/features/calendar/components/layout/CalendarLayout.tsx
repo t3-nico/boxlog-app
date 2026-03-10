@@ -4,12 +4,20 @@ import { useTranslations } from 'next-intl';
 import dynamic from 'next/dynamic';
 import { memo, useCallback } from 'react';
 
-import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { Search } from 'lucide-react';
+
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/utils';
 
-import { AppAside, type AsideType } from '@/components/layout/AppAside';
-import { useLayoutStore } from '@/stores/useLayoutStore';
+import type { AsideType } from '@/components/layout/AppAside';
+import { AppHeader } from '@/components/layout/AppHeader';
+import { ResizableAsidePanel } from '@/components/layout/ResizableAsidePanel';
+import { Button } from '@/components/ui/button';
+import { DateNavigator } from '@/core/components/DateNavigator';
+import { useGlobalSearch } from '@/hooks/use-global-search';
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
+import { useSwipeGesture } from '../../hooks/useSwipeGesture';
+import type { CalendarViewType } from '../../types/calendar.types';
 
 // tiptap + AI SDK を初期バンドルから除外（LCP改善）
 const AIInspectorContent = dynamic(
@@ -17,11 +25,8 @@ const AIInspectorContent = dynamic(
   { ssr: false },
 );
 
-import { useResizeHandle } from '@/hooks/useResizeHandle';
-import { useSwipeGesture } from '../../hooks/useSwipeGesture';
-import type { CalendarViewType } from '../../types/calendar.types';
-
-import { CalendarHeader } from './Header';
+import { DateRangeDisplay } from './Header/DateRangeDisplay';
+import { ViewSwitcher } from './Header/ViewSwitcher';
 
 export interface CalendarLayoutProps {
   children: React.ReactNode;
@@ -32,12 +37,6 @@ export interface CalendarLayoutProps {
   currentDate: Date;
   onNavigate: (direction: 'prev' | 'next' | 'today') => void;
   onViewChange: (view: CalendarViewType) => void;
-
-  // Header actions
-  onSettings?: (() => void) | undefined;
-  onExport?: (() => void) | undefined;
-  onImport?: (() => void) | undefined;
-  showHeaderActions?: boolean | undefined;
 
   // Date selection for mini calendar
   selectedDate?: Date | undefined;
@@ -74,10 +73,6 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
     currentDate,
     onNavigate,
     onViewChange,
-    onSettings,
-    onExport,
-    onImport,
-    showHeaderActions = false,
 
     // Date selection for mini calendar
     onDateSelect,
@@ -91,6 +86,8 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
     rightSlot,
   }) => {
     const t = useTranslations('calendar');
+    const { open: openSearch } = useGlobalSearch();
+    const showWeekNumbers = useCalendarSettingsStore((state) => state.showWeekNumbers);
 
     // スワイプで前後の期間に移動
     const handleSwipeLeft = useCallback(() => {
@@ -107,129 +104,94 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
     // モバイル判定（md ブレークポイント = 768px 未満）
     const isMobile = useMediaQuery('(max-width: 767px)');
 
-    // アサイドを表示するか
-    const showAside = currentAside && currentAside !== 'none';
-
-    // アサイドリサイズ
-    const asideSize = useLayoutStore.use.asideSize();
-    const setAsideSize = useLayoutStore.use.setAsideSize();
-    const { percent, isResizing, handleMouseDown, containerRef } = useResizeHandle({
-      initialPercent: asideSize,
-      onResizeEnd: setAsideSize,
-    });
+    const renderAsideContent = useCallback((type: AsideType) => {
+      switch (type) {
+        case 'chat':
+          return <AIInspectorContent />;
+        default:
+          return null;
+      }
+    }, []);
 
     return (
-      <div
-        ref={containerRef}
-        className={cn('calendar-layout bg-background flex h-full flex-col', className)}
-      >
+      <div className={cn('calendar-layout bg-background flex h-full flex-col', className)}>
         {/* スクリーンリーダー用のページタイトル */}
         <h1 className="sr-only">{t('title')}</h1>
 
-        {/* 左右カラム分割（ヘッダー行からアサイドが独立） */}
-        <div className="flex min-h-0 flex-1">
-          {/* 左カラム: ヘッダー + カレンダー */}
-          <div className="flex min-h-0 flex-1 flex-col">
-            <CalendarHeader
-              viewType={viewType}
-              currentDate={currentDate}
-              onNavigate={onNavigate}
-              onViewChange={onViewChange}
-              onSettings={onSettings}
-              onExport={onExport}
-              onImport={onImport}
-              showActions={showHeaderActions}
-              onDateSelect={onDateSelect}
-              showMiniCalendar={true}
-              displayRange={displayRange}
-              currentAside={currentAside}
-              onAsideChange={onAsideChange}
-              rightSlot={rightSlot}
-            />
-
-            {/* カレンダーコンテンツ（スワイプ対応） */}
-            <div
-              ref={ref as React.RefObject<HTMLDivElement>}
-              data-calendar-main
-              className="flex min-h-0 flex-1 flex-col"
-              onTouchStart={handlers.onTouchStart}
-              onTouchMove={handlers.onTouchMove}
-              onTouchEnd={handlers.onTouchEnd}
-            >
-              <div className="flex min-h-0 flex-1 flex-col">{children}</div>
-            </div>
-          </div>
-
-          {/* リサイズハンドル（デスクトップ、パネルオープン時のみ） */}
-          {showAside && (
-            <div
-              role="separator"
-              aria-orientation="vertical"
-              className={cn(
-                'bg-border hidden w-px shrink-0 cursor-col-resize md:block',
-                'hover:bg-primary active:bg-primary',
-                'after:absolute after:inset-y-0 after:left-1/2 after:w-2 after:-translate-x-1/2',
-                'relative',
-                isResizing && 'bg-primary',
-              )}
-              onMouseDown={handleMouseDown}
-            />
-          )}
-
-          {/* 右カラム: アサイド（デスクトップのみ） */}
-          <aside
-            className={cn(
-              'hidden shrink-0 overflow-hidden md:block',
-              !isResizing && 'transition-all duration-200',
-            )}
-            style={{
-              width: showAside ? `${percent}%` : 0,
-              minWidth: showAside ? 288 : 0,
-            }}
-          >
-            {showAside && onAsideChange && (
-              <div className="bg-container h-full">
-                <AppAside
-                  asideType={currentAside}
-                  onAsideChange={onAsideChange}
-                  renderContent={(type) => {
-                    switch (type) {
-                      case 'chat':
-                        return <AIInspectorContent />;
-                      default:
-                        return null;
-                    }
-                  }}
+        <ResizableAsidePanel
+          asideType={currentAside ?? 'none'}
+          onAsideChange={onAsideChange ?? (() => {})}
+          renderContent={renderAsideContent}
+          isMobile={isMobile}
+          sheetAriaLabel={t('aside.open')}
+        >
+          <AppHeader
+            controls={
+              <>
+                <DateNavigator onNavigate={onNavigate} arrowSize="md" />
+                <ViewSwitcher
+                  className="ml-4"
+                  currentView={viewType}
+                  onChange={(view) => onViewChange(view as CalendarViewType)}
                 />
+              </>
+            }
+            rightSlot={rightSlot}
+            mobileRightSlot={
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  icon
+                  size="sm"
+                  className="text-muted-foreground hover:text-foreground"
+                  onClick={openSearch}
+                  aria-label="検索"
+                >
+                  <Search className="size-5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  icon
+                  size="sm"
+                  className="text-muted-foreground hover:text-foreground"
+                  onClick={() => onNavigate('today')}
+                  aria-label="今日に戻る"
+                >
+                  <div className="relative flex size-6 flex-col">
+                    <div className="h-1.5 w-full border-b-2 border-current" />
+                    <div className="flex flex-1 items-center justify-center">
+                      <span className="text-xs leading-none font-bold">{new Date().getDate()}</span>
+                    </div>
+                  </div>
+                </Button>
               </div>
-            )}
-          </aside>
-        </div>
+            }
+            {...(onAsideChange && {
+              aside: { currentAside: currentAside ?? 'none', onAsideChange },
+            })}
+          >
+            <DateRangeDisplay
+              date={currentDate}
+              viewType={viewType}
+              showWeekNumber={showWeekNumbers}
+              clickable={true}
+              onDateSelect={onDateSelect ? (date) => date && onDateSelect(date) : undefined}
+              displayRange={displayRange}
+            />
+          </AppHeader>
 
-        {/* モバイル: アサイドを全画面 Sheet で表示 */}
-        {isMobile && onAsideChange && currentAside && (
-          <Sheet open={!!showAside} onOpenChange={(open) => !open && onAsideChange('none')}>
-            <SheetContent
-              side="right"
-              className="w-full p-0 sm:max-w-full"
-              showCloseButton={false}
-              aria-label={t('aside.open')}
-            >
-              <AppAside
-                asideType={currentAside}
-                onAsideChange={onAsideChange}
-                renderContent={(type) => {
-                  switch (type) {
-                    case 'chat':
-                      return <AIInspectorContent />;
-                    default:
-                      return null;
-                  }
-                }}
-              />
-            </SheetContent>
-          </Sheet>
-        )}
+          {/* カレンダーコンテンツ（スワイプ対応） */}
+          <div
+            ref={ref as React.RefObject<HTMLDivElement>}
+            data-calendar-main
+            className="flex min-h-0 flex-1 flex-col"
+            onTouchStart={handlers.onTouchStart}
+            onTouchMove={handlers.onTouchMove}
+            onTouchEnd={handlers.onTouchEnd}
+          >
+            <div className="flex min-h-0 flex-1 flex-col">{children}</div>
+          </div>
+        </ResizableAsidePanel>
       </div>
     );
   },

@@ -296,7 +296,6 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
           isCompact={safePosition.height < 40}
           showTime={safePosition.height >= 30}
           previewTime={previewTime}
-          isMobile={isMobile}
         />
 
         {/* 予定 vs 記録: 上部 — 未実行は控えめな斜線 */}

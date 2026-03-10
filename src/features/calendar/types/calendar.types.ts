@@ -24,13 +24,6 @@ export interface ViewDateRange {
   days: Date[];
 }
 
-export interface CalendarHeaderProps {
-  viewType: CalendarViewType;
-  currentDate: Date;
-  onNavigate: (direction: 'prev' | 'next' | 'today') => void;
-  onViewChange: (view: CalendarViewType) => void;
-}
-
 export interface ViewSelectorProps {
   value: CalendarViewType;
   onChange: (view: CalendarViewType) => void;

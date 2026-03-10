@@ -4,10 +4,9 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { CompactDateNavigator, DateNavigator } from '@/core/components/DateNavigator';
-import { HeaderActions } from './HeaderActions';
 import { ViewSwitcher } from './ViewSwitcher';
 
-/** カレンダーヘッダーのサブコンポーネント（ViewSwitcher, DateNavigator, HeaderActions）。 */
+/** カレンダーヘッダーのサブコンポーネント（ViewSwitcher, DateNavigator）。 */
 const meta = {
   title: 'Features/Calendar/Header',
   parameters: {
@@ -79,16 +78,6 @@ export const DateNavigatorPatterns: Story = {
   },
 };
 
-/** ヘッダーアクションボタン群。設定・エクスポート・インポート。 */
-export const HeaderActionsAll: Story = {
-  render: () => <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} />,
-};
-
-/** コンパクトモード。アイコンサイズが小さくなる。 */
-export const HeaderActionsCompact: Story = {
-  render: () => <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} compact />,
-};
-
 /** 全パターン一覧。 */
 export const AllPatterns: Story = {
   render: () => (
@@ -99,18 +88,15 @@ export const AllPatterns: Story = {
         <CompactDateNavigator onNavigate={fn()} />
         <DateNavigator onNavigate={fn()} showArrows={false} />
       </div>
-      <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} />
-      <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} compact />
     </div>
   ),
 };
 
-/** モバイルレイアウト。コンパクト日付ナビ + コンパクトアクション。viewport addon で自動切替。 */
+/** モバイルレイアウト。コンパクト日付ナビ。viewport addon で自動切替。 */
 export const MobileLayout: Story = {
   render: () => (
     <div className="flex items-center justify-between gap-2">
       <CompactDateNavigator onNavigate={fn()} />
-      <HeaderActions onSettings={fn()} onExport={fn()} onImport={fn()} compact />
     </div>
   ),
   globals: {

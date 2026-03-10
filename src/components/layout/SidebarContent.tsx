@@ -7,9 +7,16 @@
  * features の組み合わせはこの composition layer で行う。
  */
 
+import { useCallback } from 'react';
+
+import { Moon, Sun } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
 
+import { Button } from '@/components/ui/button';
 import { MiniCalendar } from '@/components/ui/mini-calendar';
+import { HoverTooltip } from '@/components/ui/tooltip';
+import { useTheme } from '@/contexts/theme-context';
 import { CalendarFilterList, useCalendarNavigation, ViewSwitcherList } from '@/features/calendar';
 import { useStatsFilterStore } from '@/features/stats';
 
@@ -51,6 +58,39 @@ export function SidebarContent() {
         {/* カレンダーフィルター */}
         <CalendarFilterList />
       </div>
+
+      {/* テーマ切替 */}
+      <SidebarUtilities />
     </>
+  );
+}
+
+/** テーマ切替ユーティリティ */
+function SidebarUtilities() {
+  const t = useTranslations();
+  const { resolvedTheme, setTheme } = useTheme();
+
+  const handleThemeToggle = useCallback(() => {
+    setTheme(resolvedTheme === 'light' ? 'dark' : 'light');
+  }, [resolvedTheme, setTheme]);
+
+  return (
+    <div className="flex items-center gap-1 px-2 py-2">
+      <HoverTooltip content={resolvedTheme === 'light' ? 'Dark mode' : 'Light mode'} side="right">
+        <Button
+          variant="ghost"
+          icon
+          className="size-8"
+          onClick={handleThemeToggle}
+          aria-label={t('sidebar.theme')}
+        >
+          {resolvedTheme === 'light' ? (
+            <Moon className="size-4" aria-hidden="true" />
+          ) : (
+            <Sun className="size-4" aria-hidden="true" />
+          )}
+        </Button>
+      </HoverTooltip>
+    </div>
   );
 }
