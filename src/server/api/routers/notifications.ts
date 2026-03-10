@@ -4,15 +4,10 @@
  * リマインダー通知管理API
  */
 
-import { z } from 'zod';
-
 import {
-  createNotificationSchema,
-  deleteNotificationsSchema,
   listNotificationsSchema,
   markAllAsReadSchema,
   notificationIdSchema,
-  updateNotificationSchema,
 } from '@/schemas/notifications';
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
 import { handleServiceError } from '@/server/services/errors';
@@ -69,50 +64,6 @@ export const notificationsRouter = createTRPCRouter({
   }),
 
   /**
-   * 通知作成
-   */
-  create: protectedProcedure.input(createNotificationSchema).mutation(async ({ ctx, input }) => {
-    const service = createNotificationService(ctx.supabase);
-
-    try {
-      return await service.create({
-        userId: ctx.userId,
-        type: input.type,
-        planId: input.plan_id,
-      });
-    } catch (error) {
-      handleServiceError(error);
-    }
-  }),
-
-  /**
-   * 通知更新（既読化）
-   */
-  update: protectedProcedure
-    .input(
-      z.object({
-        id: z.string().uuid(),
-        data: updateNotificationSchema,
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const service = createNotificationService(ctx.supabase);
-
-      try {
-        const options: Parameters<typeof service.update>[0] = {
-          userId: ctx.userId,
-          notificationId: input.id,
-        };
-        if (input.data.is_read !== undefined) options.isRead = input.data.is_read;
-        if (input.data.read_at !== undefined) options.readAt = input.data.read_at;
-
-        return await service.update(options);
-      } catch (error) {
-        handleServiceError(error);
-      }
-    }),
-
-  /**
    * 既読化（単一）
    */
   markAsRead: protectedProcedure.input(notificationIdSchema).mutation(async ({ ctx, input }) => {
@@ -157,24 +108,6 @@ export const notificationsRouter = createTRPCRouter({
       handleServiceError(error);
     }
   }),
-
-  /**
-   * 一括削除
-   */
-  bulkDelete: protectedProcedure
-    .input(deleteNotificationsSchema)
-    .mutation(async ({ ctx, input }) => {
-      const service = createNotificationService(ctx.supabase);
-
-      try {
-        return await service.bulkDelete({
-          userId: ctx.userId,
-          ids: input.ids,
-        });
-      } catch (error) {
-        handleServiceError(error);
-      }
-    }),
 
   /**
    * 既読通知を全削除
