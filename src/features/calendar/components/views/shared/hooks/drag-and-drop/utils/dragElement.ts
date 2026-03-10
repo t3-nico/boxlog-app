@@ -1,6 +1,3 @@
-import type { CalendarEvent } from '../../../../../../types/calendar.types';
-import { getEventOrigin } from '../../../../../../utils/planDataAdapter';
-
 /**
  * ドラッグ要素を作成する（position: fixed で自由移動）
  *
@@ -124,51 +121,8 @@ export function calculateColumnWidth(
   return columnWidth;
 }
 
-/**
- * クライアント側で時間重複をチェックする
- *
- * 同タイプ間のみ重複チェック:
- * - Plan↔Plan: ❌ 重複禁止
- * - Record↔Record: ❌ 重複禁止
- * - Plan↔Record: ✅ 共存可能
- *
- * @param events - 全イベント
- * @param draggedEventId - ドラッグ中のイベントID
- * @param previewStartTime - プレビュー開始時刻
- * @param previewEndTime - プレビュー終了時刻
- * @returns 同タイプのイベントと重複している場合true
- */
-export function checkClientSideOverlap(
-  events: CalendarEvent[],
-  draggedEventId: string,
-  previewStartTime: Date,
-  previewEndTime: Date,
-): boolean {
-  // ドラッグ中のイベントを取得
-  const draggedEvent = events.find((e) => e.id === draggedEventId);
-  if (!draggedEvent) return false;
-
-  // ドラッグ中のイベントのタイプを取得
-  const draggedType = getEventOrigin(draggedEvent);
-
-  // 同タイプのイベントとのみ重複チェック
-  return events.some((event) => {
-    // 自分自身は除外
-    if (event.id === draggedEventId) return false;
-
-    // イベントのタイプを取得
-    const eventType = getEventOrigin(event);
-
-    // 異なるタイプは重複OK（Plan↔Record共存可能）
-    if (eventType !== draggedType) return false;
-
-    // 時間範囲がなければスキップ
-    if (!event.startDate || !event.endDate) return false;
-
-    // 時間重複チェック（同タイプ間）
-    return event.startDate < previewEndTime && event.endDate > previewStartTime;
-  });
-}
+// Re-export from engine (pure function, no DOM dependency)
+export { checkClientSideOverlap } from '../../../../../../engine/overlap';
 
 /**
  * ドラッグ要素の重複状態のスタイルを更新する
