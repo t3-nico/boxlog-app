@@ -20,12 +20,7 @@ export type { StatsGranularity } from './stores/useStatsFilterStore';
 // =============================================================================
 // Types
 // =============================================================================
-export type {
-  StatsHeroData,
-  StatsTagBreakdown,
-  StatsViewData,
-  StatsViewProps,
-} from './types/stats.types';
+export type { StatsViewProps } from './types/stats.types';
 
 // =============================================================================
 // Lib
