@@ -69,7 +69,6 @@ export {
 // =============================================================================
 // Hooks
 // =============================================================================
-export { useResizeHandle } from '@/hooks/useResizeHandle';
 export { useCalendarLayout } from './hooks/ui/useCalendarLayout';
 export { useCalendarProviderProps } from './hooks/useCalendarProviderProps';
 export { useWeekendNavigation } from './hooks/useWeekendNavigation';

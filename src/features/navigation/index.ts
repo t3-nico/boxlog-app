@@ -8,7 +8,6 @@
 // =============================================================================
 // Components
 // =============================================================================
-export type { AsideType } from './components/aside/AsideSwitcher';
 export { CreateActionSheet, useCreateActionSheet } from './components/mobile/CreateActionSheet';
 export type { CreateActionType } from './components/mobile/CreateActionSheet';
 export { AppSidebar } from './components/sidebar/app-sidebar';
@@ -26,6 +25,6 @@ export type {
 // =============================================================================
 // Stores
 // =============================================================================
-// Layout state (sidebar + aside) is now in @/stores/useLayoutStore
+// Layout state (sidebar) is now in @/stores/useLayoutStore
 export { useLayoutStore } from '@/stores/useLayoutStore';
 export { usePageTitleStore } from './stores/usePageTitleStore';

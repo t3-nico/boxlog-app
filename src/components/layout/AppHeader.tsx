@@ -1,14 +1,12 @@
 'use client';
 
-import { PanelLeft, PanelRight, Search } from 'lucide-react';
+import { PanelLeft, Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { useGlobalSearch } from '@/hooks/use-global-search';
 import { useLayoutStore } from '@/stores/useLayoutStore';
-
-import type { AsideType } from '@/components/layout/AppAside';
 
 import { MobileMenuButton } from './MobileMenuButton';
 
@@ -17,17 +15,10 @@ interface AppHeaderProps {
   children: React.ReactNode;
   /** デスクトップ: 左コンテンツ後のコントロール群（DateNavigator + ViewSwitcher等） */
   controls?: React.ReactNode;
-  /** デスクトップ右側スロット: PageSwitcher等（検索とAsideトグルの間） */
+  /** デスクトップ右側スロット: PageSwitcher等 */
   rightSlot?: React.ReactNode;
   /** モバイル右側コンテンツ: 検索/Todayボタン等 */
   mobileRightSlot?: React.ReactNode;
-  /** Asideトグル連携（省略でトグル非表示） */
-  aside?:
-    | {
-        currentAside: AsideType;
-        onAsideChange: (aside: AsideType) => void;
-      }
-    | undefined;
 }
 
 /**
@@ -42,13 +33,7 @@ interface AppHeaderProps {
  * - コンテナ: 32px（h-8）
  * - 8pxグリッドシステム準拠
  */
-export function AppHeader({
-  children,
-  controls,
-  rightSlot,
-  mobileRightSlot,
-  aside,
-}: AppHeaderProps) {
+export function AppHeader({ children, controls, rightSlot, mobileRightSlot }: AppHeaderProps) {
   const t = useTranslations();
   const { open: openSearch } = useGlobalSearch();
   const isSidebarOpen = useLayoutStore.use.sidebarOpen();
@@ -91,7 +76,7 @@ export function AppHeader({
             <div className="flex items-center gap-1 md:hidden">{mobileRightSlot}</div>
           )}
 
-          {/* デスクトップ右側: 検索 + スロット + Asideトグル */}
+          {/* デスクトップ右側: 検索 + スロット */}
           <div className="hidden items-center gap-2 md:flex">
             <HoverTooltip content={t('sidebar.navigation.search')} side="bottom">
               <Button
@@ -106,20 +91,6 @@ export function AppHeader({
             </HoverTooltip>
 
             {rightSlot}
-
-            {aside && aside.currentAside === 'none' && (
-              <HoverTooltip content={t('calendar.aside.open')} side="bottom">
-                <Button
-                  variant="ghost"
-                  icon
-                  className="-mr-4 size-8"
-                  onClick={() => aside.onAsideChange('chat')}
-                  aria-label={t('calendar.aside.open')}
-                >
-                  <PanelRight className="size-4" />
-                </Button>
-              </HoverTooltip>
-            )}
           </div>
         </div>
       </div>

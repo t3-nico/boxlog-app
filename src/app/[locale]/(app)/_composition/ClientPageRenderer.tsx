@@ -12,22 +12,32 @@ import { StatsPageContent } from '@/features/stats';
 import { useClientRouterStore } from '@/stores/useClientRouterStore';
 
 import { CalendarViewClient } from '../calendar/_helpers/CalendarViewClient';
-import { renderStatsAsideContent } from '../stats/StatsAsideContent';
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
-function getPageType(pathname: string): 'calendar' | 'stats' | null {
+function stripLocale(pathname: string): string {
   const segments = pathname.split('/');
-  const pathWithoutLocale =
-    segments.length >= 2 && (segments[1] === 'ja' || segments[1] === 'en')
-      ? '/' + segments.slice(2).join('/')
-      : pathname;
+  return segments.length >= 2 && (segments[1] === 'ja' || segments[1] === 'en')
+    ? '/' + segments.slice(2).join('/')
+    : pathname;
+}
+
+function getPageType(pathname: string): 'calendar' | 'stats' | null {
+  const pathWithoutLocale = stripLocale(pathname);
 
   if (isCalendarViewPath(pathWithoutLocale)) return 'calendar';
   if (pathWithoutLocale.startsWith('/stats')) return 'stats';
   return null;
+}
+
+/**
+ * @modal でインターセプトされるパスかどうか判定
+ * インターセプト時は clientPage をリセットせず、背景のページを維持する
+ */
+function isInterceptedPath(pathname: string): boolean {
+  return stripLocale(pathname).startsWith('/settings');
 }
 
 function extractViewFromPathname(pathname: string): CalendarViewType {
@@ -68,9 +78,7 @@ function CalendarClientView({ pathname }: { pathname: string }) {
 }
 
 function StatsClientView() {
-  return (
-    <StatsPageContent renderAsideContent={renderStatsAsideContent} headerSlot={<PageSwitcher />} />
-  );
+  return <StatsPageContent headerSlot={<PageSwitcher />} />;
 }
 
 // ---------------------------------------------------------------------------
@@ -105,7 +113,7 @@ export function ClientPageRenderer({ children }: ClientPageRendererProps) {
     if (currentPageType !== clientPage) {
       if (currentPageType === 'calendar' || currentPageType === 'stats') {
         switchToPage(currentPageType);
-      } else {
+      } else if (!isInterceptedPath(pathname)) {
         resetToServer();
       }
     }

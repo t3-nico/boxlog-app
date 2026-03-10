@@ -28,7 +28,6 @@ import {
 import { useNotifications } from '@/features/notifications';
 import { useCalendarNavigationStore } from '@/stores/useCalendarNavigationStore';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
-import { useLayoutStore, type AsideType } from '@/stores/useLayoutStore';
 
 import { getCurrentTimezone, setUserTimezone, useCalendarSettingsStore } from '@/features/settings';
 import { logger } from '@/lib/logger';
@@ -61,10 +60,6 @@ export interface CalendarCompositionResult {
 
   // === Plan state ===
   disabledPlanId: string | null;
-
-  // === Aside ===
-  currentAside: AsideType;
-  onAsideChange: (aside: AsideType) => void;
 
   // === Plan click handlers ===
   onPlanClick: (plan: CalendarEvent) => void;
@@ -129,12 +124,6 @@ export function useCalendarComposition({
       }
     }
   }, [timezone, updateSettings]);
-
-  // =========================================================================
-  // Aside state
-  // =========================================================================
-  const currentAside = useLayoutStore.use.asideType();
-  const setCurrentAside = useLayoutStore.use.setAside();
 
   // =========================================================================
   // Plan Inspector state
@@ -315,10 +304,6 @@ export function useCalendarComposition({
       // Plan state
       disabledPlanId,
 
-      // Aside
-      currentAside,
-      onAsideChange: setCurrentAside,
-
       // Plan click handlers
       onPlanClick: handlePlanClick,
       onTimeRangeSelect: handleDateTimeRangeSelect,
@@ -350,8 +335,6 @@ export function useCalendarComposition({
       allCalendarEvents,
       showWeekends,
       disabledPlanId,
-      currentAside,
-      setCurrentAside,
       handlePlanClick,
       handleDateTimeRangeSelect,
       handleUpdatePlan,

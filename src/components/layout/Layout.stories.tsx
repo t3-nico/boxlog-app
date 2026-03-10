@@ -21,11 +21,10 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
  * | `main-content-wrapper.tsx` | `<main>` 要素のラッパー |
  * | `PageHeader.tsx` | 非カレンダーページ用の共通ヘッダー |
  *
- * ### Aside / Sidebar はここに置かない
+ * ### Sidebar はここに置かない
  *
  * | コンポーネント | 現在の場所 | ここに置かない理由 |
  * |---|---|---|
- * | `AppAside` | `features/navigation/components/aside/` | ai, reflection, stats, plans, records の5つのfeatureを束ねるルーター。feature依存が重い |
  * | `AppSidebar` | `features/navigation/components/sidebar/` | calendar context, auth, tags に依存。featureの組み合わせコンポーネント |
  * | `SidebarShell` | `features/navigation/components/sidebar/` | auth store, navigation storeに依存 |
  *
@@ -37,7 +36,6 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
  * | Storybookパス | 物理ディレクトリ | 備考 |
  * |---|---|---|
  * | `Primitives/Layout/*` | `src/components/layout/` | このディレクトリ |
- * | `Features/Aside/*` | `src/features/navigation/components/aside/` | feature層のAside |
  * | `Features/Sidebar/*` | `src/features/navigation/components/sidebar/` | feature層のSidebar |
  *
  * Storybookの表示グループ名とファイルの物理位置は独立しており、
@@ -85,24 +83,9 @@ export const Structure: Story = {
               <div className="text-muted-foreground/50 ml-2 text-[10px]">components/layout/</div>
             </div>
 
-            {/* Content + Aside */}
-            <div className="flex min-h-0 flex-1">
-              <div className="flex flex-1 items-center justify-center">
-                <div className="text-muted-foreground text-xs">MainContentWrapper</div>
-              </div>
-              <div className="bg-surface-container border-border flex w-40 flex-col border-l">
-                <div className="border-border border-b p-3">
-                  <div className="text-muted-foreground text-xs">AppAside</div>
-                  <div className="text-muted-foreground/50 mt-1 text-[10px]">
-                    features/navigation/
-                  </div>
-                </div>
-                <div className="flex-1 p-3">
-                  <div className="text-muted-foreground/50 text-[10px]">
-                    Plan / Record / Stats / Chat
-                  </div>
-                </div>
-              </div>
+            {/* Content */}
+            <div className="flex min-h-0 flex-1 items-center justify-center">
+              <div className="text-muted-foreground text-xs">MainContentWrapper</div>
             </div>
           </div>
         </div>

@@ -271,7 +271,6 @@
       "ariaLabel": "Calendar time grid - click or press Enter to create event"
     },
     "aside": {
-      "open": "Open aside",
       "plan": "Plans",
       "record": "Records",
       "stats": "Statistics",

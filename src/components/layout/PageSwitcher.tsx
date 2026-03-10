@@ -86,12 +86,12 @@ export function PageSwitcher({ className }: PageSwitcherProps) {
           className={cn(
             'inline-flex size-7 items-center justify-center rounded-md transition-colors',
             activePage === 'calendar'
-              ? 'bg-primary-state-selected text-primary'
+              ? 'text-primary'
               : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
           )}
           onClick={handleCalendarClick}
         >
-          <CalendarDays className="size-4" />
+          <CalendarDays className="size-4" strokeWidth={activePage === 'calendar' ? 2.5 : 2} />
         </button>
       </HoverTooltip>
       <HoverTooltip content="Stats" side="bottom">
@@ -102,12 +102,12 @@ export function PageSwitcher({ className }: PageSwitcherProps) {
           className={cn(
             'inline-flex size-7 items-center justify-center rounded-md transition-colors',
             activePage === 'stats'
-              ? 'bg-primary-state-selected text-primary'
+              ? 'text-primary'
               : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
           )}
           onClick={handleStatsClick}
         >
-          <BarChart3 className="size-4" />
+          <BarChart3 className="size-4" strokeWidth={activePage === 'stats' ? 2.5 : 2} />
         </button>
       </HoverTooltip>
     </div>

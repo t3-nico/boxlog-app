@@ -6,8 +6,6 @@ import { StatsPageContent, prefetchStatsData } from '@/features/stats';
 import type { Locale } from '@/i18n/routing';
 import { HydrationBoundary } from '@/lib/trpc/server';
 
-import { renderStatsAsideContent } from './StatsAsideContent';
-
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
@@ -27,10 +25,7 @@ const StatsPage = async () => {
 
   return (
     <HydrationBoundary state={dehydratedState}>
-      <StatsPageContent
-        renderAsideContent={renderStatsAsideContent}
-        headerSlot={<PageSwitcher />}
-      />
+      <StatsPageContent headerSlot={<PageSwitcher />} />
     </HydrationBoundary>
   );
 };
