@@ -46,7 +46,7 @@ export const TimeColumn = memo<TimeColumnProps>(function TimeColumn({
       rows.push(
         <div
           key={`hour-${hour}`}
-          className="text-muted-foreground relative flex w-full items-start justify-end pr-2 text-xs select-none"
+          className="text-muted-foreground relative flex w-full items-start pr-2 pl-4 text-sm select-none"
           style={{ height: `${hourHeight}px` }}
         >
           {showLabel && <span className="-translate-y-1/2">{label}</span>}
