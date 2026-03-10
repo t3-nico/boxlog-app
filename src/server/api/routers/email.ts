@@ -20,6 +20,7 @@ import { AccountDeletionEmail } from '@/emails/AccountDeletionEmail';
 import { OverdueEmail } from '@/emails/OverdueEmail';
 import { ReminderEmail } from '@/emails/ReminderEmail';
 import { WelcomeEmail } from '@/emails/WelcomeEmail';
+import { getAppUrl } from '@/lib/app-url';
 import { logger } from '@/lib/logger';
 import type { Context } from '@/server/api/trpc';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
@@ -31,7 +32,7 @@ function getResend() {
 
 // 送信元メールアドレス
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://dayopt.app';
+const APP_URL = getAppUrl();
 
 /**
  * 送信先メールアドレスがログインユーザー自身のものか検証する
@@ -226,7 +227,7 @@ export const emailRouter = createTRPCRouter({
         subject: input.subject,
         react: WelcomeEmail({
           userName: 'Test User',
-          appUrl: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+          appUrl: getAppUrl(),
         }),
         context: 'Test email',
       });
