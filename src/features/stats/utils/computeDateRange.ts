@@ -1,49 +1,67 @@
-import type { StatsPeriod } from '../stores/useStatsFilterStore';
+import {
+  endOfDay,
+  endOfMonth,
+  endOfWeek,
+  startOfDay,
+  startOfMonth,
+  startOfWeek,
+} from '@/lib/date/core';
+
+import type { StatsGranularity } from '../stores/useStatsFilterStore';
 
 /**
- * StatsPeriod から startDate/endDate を算出
- *
- * - week: 過去7日
- * - month: 過去30日
- * - year: 過去365日
- * - all: フィルターなし（undefined）
+ * 基準日と粒度から絶対的な日付範囲を算出
  */
-export function computeDateRange(period: StatsPeriod): {
-  startDate: string | undefined;
-  endDate: string | undefined;
+export function computeStatsDateRange(
+  currentDate: Date,
+  granularity: StatsGranularity,
+): {
+  startDate: string;
+  endDate: string;
 } {
-  if (period === 'all') {
-    return { startDate: undefined, endDate: undefined };
+  switch (granularity) {
+    case 'day': {
+      return {
+        startDate: startOfDay(currentDate).toISOString(),
+        endDate: endOfDay(currentDate).toISOString(),
+      };
+    }
+    case 'week': {
+      return {
+        startDate: startOfWeek(currentDate).toISOString(),
+        endDate: endOfWeek(currentDate).toISOString(),
+      };
+    }
+    case 'month': {
+      return {
+        startDate: startOfMonth(currentDate).toISOString(),
+        endDate: endOfMonth(currentDate).toISOString(),
+      };
+    }
+    case 'year': {
+      const year = currentDate.getFullYear();
+      const start = new Date(year, 0, 1, 0, 0, 0, 0);
+      const end = new Date(year, 11, 31, 23, 59, 59, 999);
+      return {
+        startDate: start.toISOString(),
+        endDate: end.toISOString(),
+      };
+    }
   }
-
-  const now = new Date();
-  const end = now.toISOString();
-
-  const daysMap: Record<Exclude<StatsPeriod, 'all'>, number> = {
-    week: 7,
-    month: 30,
-    year: 365,
-  };
-
-  const start = new Date(now);
-  start.setDate(start.getDate() - daysMap[period]);
-  start.setHours(0, 0, 0, 0);
-
-  return { startDate: start.toISOString(), endDate: end };
 }
 
 /**
- * StatsPeriod から MonthlyTrend の月数を算出
+ * 粒度から MonthlyTrend の月数を算出
  */
-export function computeMonthCount(period: StatsPeriod): number | undefined {
-  switch (period) {
-    case 'week':
+export function computeMonthCount(granularity: StatsGranularity): number | undefined {
+  switch (granularity) {
+    case 'day':
       return 1;
-    case 'month':
+    case 'week':
       return 3;
-    case 'year':
+    case 'month':
       return 12;
-    case 'all':
+    case 'year':
       return undefined;
   }
 }
