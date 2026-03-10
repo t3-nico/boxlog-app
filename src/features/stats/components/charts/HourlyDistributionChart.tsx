@@ -15,7 +15,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { api } from '@/lib/trpc';
 
 import { useStatsFilterStore } from '../../stores/useStatsFilterStore';
-import { computeDateRange } from '../../utils/computeDateRange';
+import { computeStatsDateRange } from '../../utils/computeDateRange';
 
 const chartConfig = {
   hours: {
@@ -30,9 +30,13 @@ function formatHours(hours: number): string {
 }
 
 export function HourlyDistributionChart() {
-  const period = useStatsFilterStore((s) => s.period);
-  const dateRange = useMemo(() => computeDateRange(period), [period]);
-  const queryInput = dateRange.startDate ? dateRange : undefined;
+  const currentDate = useStatsFilterStore((s) => s.currentDate);
+  const granularity = useStatsFilterStore((s) => s.granularity);
+  const dateRange = useMemo(
+    () => computeStatsDateRange(currentDate, granularity),
+    [currentDate, granularity],
+  );
+  const queryInput = dateRange;
   const { data, isPending } = api.entries.getHourlyDistribution.useQuery(queryInput);
 
   if (isPending) {

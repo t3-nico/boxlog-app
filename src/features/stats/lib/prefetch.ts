@@ -1,22 +1,27 @@
+import { endOfWeek, startOfWeek } from '@/lib/date/core';
 import { createServerHelpers, dehydrate } from '@/lib/trpc/server';
 
 /**
  * Stats ビュー用 prefetch
  *
- * 統計ビューで使用するデータを事前取得する。
- * カレンダービューとは異なるデータ要件（日付範囲なし、集計データ中心）。
+ * デフォルト粒度（week）の日付範囲でデータを事前取得する。
  */
 export async function prefetchStatsData() {
   const helpers = await createServerHelpers();
 
+  const now = new Date();
+  const dateRange = {
+    startDate: startOfWeek(now).toISOString(),
+    endDate: endOfWeek(now).toISOString(),
+  };
+
   await Promise.all([
     helpers.entries.getStreak.prefetch(),
-    helpers.entries.getDailyHours.prefetch({ year: new Date().getFullYear() }),
-    // 以下はデフォルト期間('all')ではinput不要
-    helpers.entries.getTimeByTag.prefetch(),
-    helpers.entries.getHourlyDistribution.prefetch(),
-    helpers.entries.getDayOfWeekDistribution.prefetch(),
-    helpers.entries.getMonthlyTrend.prefetch(),
+    helpers.entries.getDailyHours.prefetch({ year: now.getFullYear() }),
+    helpers.entries.getTimeByTag.prefetch(dateRange),
+    helpers.entries.getHourlyDistribution.prefetch(dateRange),
+    helpers.entries.getDayOfWeekDistribution.prefetch(dateRange),
+    helpers.entries.getMonthlyTrend.prefetch({ months: 3 }),
   ]);
 
   return { helpers, dehydratedState: dehydrate(helpers.queryClient) };
