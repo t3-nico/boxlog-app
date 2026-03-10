@@ -266,7 +266,6 @@ export function TagFlatList({
             tag={info.tag}
             allTags={tags}
             checked={visibleTagIds.has(info.tag.id)}
-            count={tagCounts[info.tag.id] ?? 0}
             groupOptions={groupOptions}
             isGrouped={info.isGrouped}
             isFirstInGroup={info.isFirstInGroup}
@@ -292,7 +291,6 @@ function SortableTagItem({
   tag,
   allTags,
   checked,
-  count,
   groupOptions,
   isGrouped,
   isFirstInGroup,
@@ -311,7 +309,6 @@ function SortableTagItem({
   tag: Tag;
   allTags: Tag[];
   checked: boolean;
-  count: number;
   groupOptions: GroupOption[];
   isGrouped: boolean;
   isFirstInGroup: boolean;
@@ -493,7 +490,6 @@ function SortableTagItem({
             label={currentGroup}
             checked={groupVisibility === 'all'}
             indeterminate={groupVisibility === 'some'}
-            count={groupCount}
             collapsed={collapsed}
             displayColor={displayColor}
             onCheckedChange={() => onToggleGroupTags(groupTagIds)}
@@ -563,11 +559,6 @@ function SortableTagItem({
                 onDeleteTag={onDeleteTag}
               />
             </DropdownMenu>
-
-            {/* Count */}
-            <span className="text-muted-foreground ml-1 shrink-0 pr-2 text-xs tabular-nums">
-              {count}
-            </span>
           </div>
         )}
       </div>

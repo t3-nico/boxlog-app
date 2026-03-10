@@ -6,7 +6,7 @@ import { GroupHeader } from './GroupHeader';
 /**
  * コロン記法グループのヘッダー行。
  *
- * チェックボックス + グループ名 + シェブロン + メニュー + 件数で構成。
+ * チェックボックス + グループ名 + シェブロン + メニューで構成。
  * メニューには「タグ追加」「リネーム」「色変更」「グループ解除」「このグループだけ表示」「グループ削除」。
  */
 const meta = {
@@ -20,7 +20,6 @@ const meta = {
     label: '開発',
     checked: true,
     indeterminate: false,
-    count: 12,
     collapsed: false,
     displayColor: 'green',
     onCheckedChange: fn(),
@@ -70,13 +69,6 @@ export const Collapsed: Story = {
   },
 };
 
-/** 件数0のグループ。 */
-export const ZeroCount: Story = {
-  args: {
-    count: 0,
-  },
-};
-
 /** 長いグループ名。truncate が効く。 */
 export const LongLabel: Story = {
   args: {
@@ -92,7 +84,6 @@ export const AllPatterns: Story = {
         label="開発"
         checked={true}
         indeterminate={false}
-        count={12}
         collapsed={false}
         displayColor="green"
         onCheckedChange={fn()}
@@ -108,7 +99,6 @@ export const AllPatterns: Story = {
         label="デザイン"
         checked={false}
         indeterminate={true}
-        count={5}
         collapsed={false}
         displayColor="orange"
         onCheckedChange={fn()}
@@ -124,7 +114,6 @@ export const AllPatterns: Story = {
         label="マーケティング"
         checked={false}
         indeterminate={false}
-        count={3}
         collapsed={true}
         displayColor="blue"
         onCheckedChange={fn()}
