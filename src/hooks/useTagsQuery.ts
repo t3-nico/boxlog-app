@@ -1,6 +1,6 @@
 // タグ取得用クエリフック
 
-import { trpc } from '@/lib/trpc/client';
+import { trpc } from '@/platform/trpc/client';
 
 // タグ一覧取得フック
 // Note: selectを使わず直接data.dataにアクセスする

@@ -39,7 +39,7 @@ import { signupSchema, type SignupFormData } from '../schemas/auth.schema';
 async function safeCheckPasswordPwned(password: string): Promise<boolean> {
   try {
     // 動的インポートでエラーハンドリングを強化
-    const { checkPasswordPwned } = await import('@/lib/auth/pwned-password');
+    const { checkPasswordPwned } = await import('@/platform/auth/pwned-password');
     return await checkPasswordPwned(password);
   } catch (err) {
     logger.warn('[SignupForm] Pwned password check failed, skipping:', err);

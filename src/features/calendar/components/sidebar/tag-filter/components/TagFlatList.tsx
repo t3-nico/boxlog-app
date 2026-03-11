@@ -29,12 +29,12 @@ import {
   useUngroupTags,
 } from '@/hooks/mutations/useTagCrudMutations';
 import { useMergeTag, useUpdateTag } from '@/hooks/mutations/useTagMutations';
-import { useTagModalNavigation } from '@/hooks/useTagModalNavigation';
 import { buildColonTagName, getTagDisplayLabel, parseColonTag } from '@/lib/tag-colon';
 import type { TagColorName } from '@/lib/tag-colors';
 import { resolveTagColor } from '@/lib/tag-colors';
 import { cn } from '@/lib/utils';
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
+import { useTagModalNavigation } from '../../../../hooks/useTagModalNavigation';
 
 import { TagDeleteStrategyDialog } from '@/components/common/TagDeleteStrategyDialog';
 import { TagRenameDialog } from '@/components/tags/TagRenameDialog';

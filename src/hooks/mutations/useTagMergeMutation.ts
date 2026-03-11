@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
-import { trpc } from '@/lib/trpc/client';
+import { trpc } from '@/platform/trpc/client';
 import { useTagCacheStore } from '@/stores/useTagCacheStore';
 
 export function useMergeTag() {

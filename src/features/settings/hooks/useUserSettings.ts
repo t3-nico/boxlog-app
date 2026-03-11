@@ -6,7 +6,7 @@
 import { useCallback, useEffect } from 'react';
 
 import { CACHE_5_MINUTES } from '@/lib/date';
-import { api } from '@/lib/trpc';
+import { api } from '@/platform/trpc';
 
 import type { ProductivityZone } from '@/core/types/chronotype';
 import type { DateFormatType } from '@/stores/useCalendarSettingsStore';

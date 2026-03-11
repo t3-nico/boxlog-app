@@ -9,7 +9,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 
 import type { Database } from '@/lib/database.types';
 import { logger } from '@/lib/logger';
-import { createServiceRoleClient } from '@/lib/supabase/oauth';
+import { createServiceRoleClient } from '@/platform/supabase/oauth';
 
 /**
  * User Service エラー

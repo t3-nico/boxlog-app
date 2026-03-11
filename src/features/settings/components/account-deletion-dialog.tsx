@@ -19,7 +19,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { logger } from '@/lib/logger';
-import { api } from '@/lib/trpc';
+import { api } from '@/platform/trpc';
 
 /**
  * 🗑️ Account Deletion Dialog Component

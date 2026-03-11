@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 
 import { CACHE_2_MINUTES, CACHE_5_MINUTES } from '@/lib/date';
-import { api } from '@/lib/trpc';
+import { api } from '@/platform/trpc';
 
 import type { EntryInstanceException } from '@/lib/entry-recurrence';
 

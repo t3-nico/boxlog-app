@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { useRouter } from '@/i18n/navigation';
 import { logger } from '@/lib/logger';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/platform/supabase/client';
 
 import { AccountDeletionDialog } from './account-deletion-dialog';
 import { SettingRow } from './fields/SettingRow';

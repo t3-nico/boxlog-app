@@ -3,7 +3,7 @@
  * 型安全なAPI通信の基盤
  *
  * @note サーバー専用のhelpers（createServerHelpers等）は
- *       '@/lib/trpc/server' から直接インポートしてください
+ *       '@/platform/trpc/server' から直接インポートしてください
  */
 
 import { AppRouter } from '@/server/api/root';

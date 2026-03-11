@@ -16,9 +16,9 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { checkPasswordPwned } from '@/lib/auth/pwned-password';
 import { logger } from '@/lib/logger';
-import { createClient } from '@/lib/supabase/client';
+import { checkPasswordPwned } from '@/platform/auth/pwned-password';
+import { createClient } from '@/platform/supabase/client';
 import { useAuthStore } from '@/stores/useAuthStore';
 
 interface PasswordChangeDialogProps {

@@ -7,11 +7,14 @@ import { addDays, format, subDays } from 'date-fns';
 import type { EntryWithTags } from '@/core/types/entry';
 import { useEntries } from '@/hooks/useEntries';
 import { useTags } from '@/hooks/useTagsQuery';
-import { expandEntriesToCalendarEvents, type EntryInstanceException } from '@/lib/entry-adapter';
 import { isRecurringEntry } from '@/lib/entry-recurrence';
 import { logger } from '@/lib/logger';
-import { api } from '@/lib/trpc';
+import { api } from '@/platform/trpc';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
+import {
+  expandEntriesToCalendarEvents,
+  type EntryInstanceException,
+} from '../../../lib/entry-adapter';
 
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 

@@ -19,7 +19,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { ApiKeyStorage } from '@/lib/security/encryption';
+import { ApiKeyStorage } from '@/platform/security/encryption';
 import { useAuthStore } from '@/stores/useAuthStore';
 
 import { SettingRow } from './fields/SettingRow';

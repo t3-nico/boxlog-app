@@ -5,7 +5,7 @@
  * @see docs/architecture/AUTH_STORE.md
  */
 import { logger } from '@/lib/logger';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/platform/supabase/client';
 import type { AuthError, AuthResponse, OAuthResponse, Session, User } from '@supabase/supabase-js';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';

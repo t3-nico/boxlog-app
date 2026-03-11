@@ -17,7 +17,6 @@ import { usePathname } from 'next/navigation';
 import { format } from 'date-fns';
 
 import { FeatureErrorBoundary } from '@/components/error-boundary';
-import { PageSwitcher } from '@/components/layout/PageSwitcher';
 import type { CalendarViewType } from '@/features/calendar';
 import {
   CalendarController,
@@ -26,6 +25,7 @@ import {
   useCalendarNavigation,
 } from '@/features/calendar';
 import { logger } from '@/lib/logger';
+import { PageSwitcher } from '@/shell/layout/PageSwitcher';
 
 import { useCalendarComposition } from './useCalendarComposition';
 

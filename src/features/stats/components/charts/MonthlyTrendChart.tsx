@@ -12,7 +12,7 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart';
 import { Skeleton } from '@/components/ui/skeleton';
-import { api } from '@/lib/trpc';
+import { api } from '@/platform/trpc';
 
 import { useStatsFilterStore } from '../../stores/useStatsFilterStore';
 import { computeMonthCount } from '../../utils/computeDateRange';

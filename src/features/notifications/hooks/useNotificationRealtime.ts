@@ -7,8 +7,8 @@
 
 import { useEffect, useRef } from 'react';
 
-import { createClient } from '@/lib/supabase/client';
-import { trpc } from '@/lib/trpc/client';
+import { createClient } from '@/platform/supabase/client';
+import { trpc } from '@/platform/trpc/client';
 import { toast } from 'sonner';
 import type { NotificationType } from '../schemas';
 

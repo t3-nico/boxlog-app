@@ -17,7 +17,7 @@ import { convertToModelMessages, stepCountIs, streamText } from 'ai';
 import { NextResponse } from 'next/server';
 
 import { logger } from '@/lib/logger';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/platform/supabase/server';
 import { buildAIContext, buildSystemPrompt, createAITools } from '@/server/services/ai';
 import { DEFAULT_MODELS, FREE_TIER_MODEL, SUPPORTED_MODELS } from '@/server/services/ai/types';
 import { createAIUsageService } from '@/server/services/ai/usage-service';

@@ -9,7 +9,7 @@ import { useCallback } from 'react';
 
 import { useUpdateEntityTagsInCache } from '@/hooks/useUpdateEntityTagsInCache';
 import { logger } from '@/lib/logger';
-import { api } from '@/lib/trpc';
+import { api } from '@/platform/trpc';
 
 /** tRPC utils 型 */
 type TRPCUtils = ReturnType<typeof api.useUtils>;

@@ -1,5 +1,5 @@
 import { endOfWeek, startOfWeek } from '@/lib/date/core';
-import { createServerHelpers, dehydrate } from '@/lib/trpc/server';
+import { createServerHelpers, dehydrate } from '@/platform/trpc/server';
 
 /**
  * Stats ビュー用 prefetch

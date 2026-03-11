@@ -29,14 +29,6 @@ export interface UpdateTagInput {
   sort_order?: number | undefined;
 }
 
-// タグ選択用（UI コンポーネントで使用）
-export interface TagOption {
-  value: string;
-  label: string;
-  color: string | null;
-  disabled?: boolean | undefined;
-}
-
 // タグフィルター用
 export interface TagFilter {
   search?: string | undefined;

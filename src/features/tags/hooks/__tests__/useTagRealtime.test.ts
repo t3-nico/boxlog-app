@@ -10,7 +10,7 @@ const mockUtils = {
   },
 };
 
-vi.mock('@/lib/trpc', () => ({
+vi.mock('@/platform/trpc', () => ({
   api: {
     useUtils: () => mockUtils,
   },
@@ -23,7 +23,7 @@ vi.mock('@/stores/useTagCacheStore', () => ({
 }));
 
 const mockUseRealtimeSubscription = vi.fn();
-vi.mock('@/lib/supabase/realtime/useRealtimeSubscription', () => ({
+vi.mock('@/platform/supabase/realtime/useRealtimeSubscription', () => ({
   useRealtimeSubscription: (config: Record<string, unknown>) => mockUseRealtimeSubscription(config),
 }));
 

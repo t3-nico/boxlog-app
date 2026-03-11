@@ -25,8 +25,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { logger } from '@/lib/logger';
-import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
+import { createClient } from '@/platform/supabase/client';
 import { useAuthStore } from '@/stores/useAuthStore';
 
 import { getAuthErrorKey } from '../lib/sanitize-auth-error';

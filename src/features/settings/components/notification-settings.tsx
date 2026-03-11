@@ -13,7 +13,7 @@ import {
   checkBrowserNotificationSupport,
   requestNotificationPermission,
 } from '@/lib/notification-helpers';
-import { api } from '@/lib/trpc';
+import { api } from '@/platform/trpc';
 
 import { SettingRow } from './fields/SettingRow';
 import { SettingsCard } from './SettingsCard';

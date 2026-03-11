@@ -67,13 +67,16 @@ const eslintConfig = defineConfig([
       'src/components/**/*.{ts,tsx}',
       'src/hooks/**/*.{ts,tsx}',
       'src/stores/**/*.{ts,tsx}',
+      'src/shell/**/*.{ts,tsx}',
+      'src/platform/**/*.{ts,tsx}',
     ],
     ignores: [
-      'src/components/layout/**',       // Layout Composition Layer
-      'src/components/providers/**',     // Provider Composition Layer
-      'src/components/providers.tsx',    // Provider root
+      'src/shell/layout/**',            // Layout Composition Layer
+      'src/shell/providers/**',          // Provider Composition Layer
+      'src/shell/providers.tsx',         // Provider root
       'src/components/dnd/**',           // DnD (stories only)
       'src/components/**/*.stories.*',   // Storybook files
+      'src/shell/**/*.stories.*',        // Storybook files
     ],
     rules: {
       'no-restricted-imports': ['error', {

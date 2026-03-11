@@ -5,8 +5,8 @@ import { useCallback } from 'react';
 import { getInstanceRef } from '@/lib/instance-id';
 import { logger } from '@/lib/logger';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
-import { useInlineCreateStore } from '@/stores/useInlineCreateStore';
 import { closeModal, useModalStore } from '@/stores/useModalStore';
+import { useInlineCreateStore } from '../../../stores/useInlineCreateStore';
 
 import type { CalendarEvent } from '../../../types/calendar.types';
 

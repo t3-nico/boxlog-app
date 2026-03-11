@@ -17,7 +17,7 @@
 
 'use client';
 
-import { createRealtimeHook } from '@/lib/supabase/realtime/createRealtimeHook';
+import { createRealtimeHook } from '@/platform/supabase/realtime/createRealtimeHook';
 import { useEntryCacheStore } from '@/stores/useEntryCacheStore';
 
 export const useEntryRealtime = createRealtimeHook({

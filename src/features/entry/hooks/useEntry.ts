@@ -1,5 +1,5 @@
 import { cacheStrategies } from '@/lib/tanstack-query/cache-config';
-import { api } from '@/lib/trpc';
+import { api } from '@/platform/trpc';
 
 /**
  * 単一エントリ取得フック

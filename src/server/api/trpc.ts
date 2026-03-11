@@ -14,7 +14,7 @@ import { z } from 'zod';
 import { createAppError, ERROR_CODES } from '@/lib/errors/error-patterns';
 import { logger } from '@/lib/logger';
 import { apiRateLimit, withUpstashRateLimit } from '@/lib/rate-limit/upstash';
-import { extractClientIp } from '@/lib/security/ip-validation';
+import { extractClientIp } from '@/platform/security/ip-validation';
 import {
   AuthMode,
   createServiceRoleClient,
@@ -22,7 +22,7 @@ import {
   extractBearerToken,
   OAuthError,
   verifyOAuthToken,
-} from '@/lib/supabase/oauth';
+} from '@/platform/supabase/oauth';
 
 import type { Database } from '@/lib/database.types';
 

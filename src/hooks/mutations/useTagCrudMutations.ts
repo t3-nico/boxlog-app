@@ -11,7 +11,7 @@ import {
   snapshotQuery,
   updatePaginatedList,
 } from '@/lib/tanstack-query/optimistic-mutation';
-import { trpc } from '@/lib/trpc/client';
+import { trpc } from '@/platform/trpc/client';
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 import { useTagCacheStore } from '@/stores/useTagCacheStore';
 

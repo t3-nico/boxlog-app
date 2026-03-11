@@ -9,7 +9,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { localTimeToUTCISO, parseISOToUserTimezone } from '@/lib/date-utils';
 import { isEntryPast } from '@/lib/entry-status';
-import { api } from '@/lib/trpc';
+import { api } from '@/platform/trpc';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
 import type { EntryWithTags } from '@/core/types/entry';

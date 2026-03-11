@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 
 import type { Locale } from '@/i18n/routing';
-import { HydrationBoundary } from '@/lib/trpc/server';
+import { HydrationBoundary } from '@/platform/trpc/server';
 
 import { CalendarViewClient } from '../_composition/CalendarViewClient';
 import { prefetchCalendarData } from '../_server/calendar-prefetch';

@@ -11,8 +11,8 @@ import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTags } from '@/hooks/useTagsQuery';
 import { TAG_COLOR_MAP, TAG_COLOR_NAMES, type TagColorName } from '@/lib/tag-colors';
-import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
+import { api } from '@/platform/trpc';
 
 import { SettingsCard } from './SettingsCard';
 

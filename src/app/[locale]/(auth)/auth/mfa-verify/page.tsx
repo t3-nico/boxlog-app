@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/platform/supabase/client';
 import { useTranslations } from 'next-intl';
 
 export default function MFAVerifyPage() {

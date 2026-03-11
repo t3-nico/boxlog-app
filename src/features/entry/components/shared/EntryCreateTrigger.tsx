@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 
 import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { logger } from '@/lib/logger';
-import { api } from '@/lib/trpc';
+import { api } from '@/platform/trpc';
 
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 

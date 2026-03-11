@@ -16,7 +16,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { logger } from '@/lib/logger';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/platform/supabase/client';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { toast } from 'sonner';
 

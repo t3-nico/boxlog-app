@@ -10,7 +10,7 @@ const mockUtils = {
   },
 };
 
-vi.mock('@/lib/trpc', () => ({
+vi.mock('@/platform/trpc', () => ({
   api: {
     useUtils: () => mockUtils,
   },

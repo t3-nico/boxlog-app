@@ -42,7 +42,7 @@ vi.mock('@/stores/useAuthStore', () => ({
     selector({ signIn: mockSignIn }),
 }));
 
-vi.mock('@/lib/supabase/client', () => ({
+vi.mock('@/platform/supabase/client', () => ({
   createClient: () => ({
     auth: {
       mfa: {

@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 
-import { PageSwitcher } from '@/components/layout/PageSwitcher';
 import { StatsPageContent, prefetchStatsData } from '@/features/stats';
 import type { Locale } from '@/i18n/routing';
-import { HydrationBoundary } from '@/lib/trpc/server';
+import { HydrationBoundary } from '@/platform/trpc/server';
+import { PageSwitcher } from '@/shell/layout/PageSwitcher';
 
 export const dynamic = 'force-dynamic';
 

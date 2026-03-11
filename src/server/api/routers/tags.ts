@@ -16,7 +16,7 @@
 
 import { z } from 'zod';
 
-import { invalidateUserTagsCache } from '@/lib/cache';
+import { invalidateUserTagsCache } from '@/platform/cache';
 import { handleServiceError } from '@/server/services/errors';
 import { createTagService } from '@/server/services/tags/tag-service';
 import { createTRPCRouter, protectedProcedure } from '../trpc';

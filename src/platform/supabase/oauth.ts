@@ -15,7 +15,7 @@
  * 使用例:
  * ```tsx
  * // MCPサーバーからのリクエスト処理
- * import { verifyOAuthToken, createServiceRoleClient } from '@/lib/supabase/oauth'
+ * import { verifyOAuthToken, createServiceRoleClient } from '@/platform/supabase/oauth'
  *
  * const authHeader = req.headers.get('Authorization')
  * const token = extractBearerToken(authHeader)

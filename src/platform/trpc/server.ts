@@ -7,7 +7,7 @@
  * @example
  * ```tsx
  * // Server Component (page.tsx)
- * import { createServerHelpers, HydrationBoundary, dehydrate } from '@/lib/trpc/server'
+ * import { createServerHelpers, HydrationBoundary, dehydrate } from '@/platform/trpc/server'
  *
  * export default async function Page() {
  *   const helpers = await createServerHelpers()

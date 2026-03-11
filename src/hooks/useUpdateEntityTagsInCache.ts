@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
-import { api } from '@/lib/trpc';
+import { api } from '@/platform/trpc';
 
 /**
  * エンティティのtagIdsキャッシュを楽観的に更新するフック

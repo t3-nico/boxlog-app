@@ -31,7 +31,7 @@ import { logger } from '@/lib/logger';
 
 import { useEffect, useRef, useState } from 'react';
 
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/platform/supabase/client';
 
 import type { RealtimeChannelManager, RealtimeSubscriptionConfig } from './types';
 import { RealtimeSubscriptionError } from './types';

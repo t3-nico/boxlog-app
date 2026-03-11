@@ -6,11 +6,8 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
-import {
-  CHRONOTYPE_PRESETS,
-  getChronotypeColor,
-  getProductivityZoneForHour,
-} from '@/core/types/chronotype';
+import { CHRONOTYPE_PRESETS, getProductivityZoneForHour } from '@/core/types/chronotype';
+import { getChronotypeColor } from '@/lib/chronotype-colors';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
 interface UseCurrentTimeLineOptions {

@@ -18,7 +18,7 @@ import {
   passwordResetRateLimit,
   withUpstashRateLimit,
 } from '@/lib/rate-limit/upstash';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/platform/supabase/server';
 
 /**
  * レート制限チェック用ヘルパー

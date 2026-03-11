@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 import QRCode from 'qrcode';
 
 import { logger } from '@/lib/logger';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/platform/supabase/client';
 
 interface MFAState {
   hasMFA: boolean;
@@ -84,7 +84,9 @@ export function useMFA(): UseMFAReturn {
   // リカバリーコード生成・保存
   const generateAndSaveRecoveryCodes = useCallback(async (): Promise<string[] | null> => {
     try {
-      const { generateRecoveryCodes, hashRecoveryCode } = await import('@/lib/auth/recovery-codes');
+      const { generateRecoveryCodes, hashRecoveryCode } = await import(
+        '@/platform/auth/recovery-codes'
+      );
       const codes = generateRecoveryCodes();
 
       const { data: userData } = await supabase.auth.getUser();

@@ -1,6 +1,6 @@
 import type { CalendarViewType } from '@/features/calendar';
 import { calculateViewDateRange } from '@/features/calendar';
-import { createServerHelpers, dehydrate } from '@/lib/trpc/server';
+import { createServerHelpers, dehydrate } from '@/platform/trpc/server';
 
 /**
  * カレンダービュー用 prefetch（day/week/Nday）

@@ -16,7 +16,7 @@ import {
 } from '@/hooks/mutations/mutationUtils';
 import { isTimePast } from '@/lib/entry-status';
 import { logger } from '@/lib/logger';
-import { api } from '@/lib/trpc';
+import { api } from '@/platform/trpc';
 import type { UpdateEntryInput } from '@/server/api/routers/entries/schemas';
 import { useEntryCacheStore } from '@/stores/useEntryCacheStore';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';

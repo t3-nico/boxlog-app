@@ -9,8 +9,8 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { CACHE_5_MINUTES } from '@/lib/date';
-import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
+import { api } from '@/platform/trpc';
 import { useAutoSaveSettings } from '../hooks/useAutoSaveSettings';
 
 import { SettingsCard } from './SettingsCard';

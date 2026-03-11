@@ -15,8 +15,8 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { Switch } from '@/components/ui/switch';
 import { CACHE_5_MINUTES } from '@/lib/date';
-import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
+import { api } from '@/platform/trpc';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 import { useAutoSaveSettings } from '../hooks/useAutoSaveSettings';
 
@@ -24,7 +24,8 @@ import { SettingRow } from './fields/SettingRow';
 import { SettingsCard } from './SettingsCard';
 
 import type { ChronotypeType, ProductivityZone } from '@/core/types/chronotype';
-import { CHRONOTYPE_PRESETS, LEVEL_COLORS } from '@/core/types/chronotype';
+import { CHRONOTYPE_PRESETS } from '@/core/types/chronotype';
+import { LEVEL_COLORS } from '@/lib/chronotype-colors';
 
 // クロノタイプごとの絵文字アイコン
 const CHRONOTYPE_EMOJI: Record<Exclude<ChronotypeType, 'custom'>, string> = {

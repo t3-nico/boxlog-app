@@ -4,7 +4,7 @@ import type { LucideIcon } from 'lucide-react';
 
 import type { SettingsCategory } from '@/core/types';
 
-import type { TranslatedString } from '@/lib/i18n';
+import type { TranslatedString } from '@/platform/i18n';
 
 // ========================================
 // Settings Dialog Types

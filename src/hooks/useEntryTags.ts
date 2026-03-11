@@ -1,5 +1,5 @@
 import { useEntityTagsHook } from '@/hooks/createEntityTagsHook';
-import { api } from '@/lib/trpc';
+import { api } from '@/platform/trpc';
 
 /**
  * エントリとタグの関連付け管理フック

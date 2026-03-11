@@ -21,7 +21,7 @@
 'use client';
 
 import { logger } from '@/lib/logger';
-import { api } from '@/lib/trpc';
+import { api } from '@/platform/trpc';
 
 import { useRealtimeSubscription } from './useRealtimeSubscription';
 

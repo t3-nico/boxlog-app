@@ -33,7 +33,7 @@
 
 'use client';
 
-import { createRealtimeHook } from '@/lib/supabase/realtime/createRealtimeHook';
+import { createRealtimeHook } from '@/platform/supabase/realtime/createRealtimeHook';
 
 import { useTagCacheStore } from '@/stores/useTagCacheStore';
 

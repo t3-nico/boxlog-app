@@ -1,5 +1,5 @@
 import { cacheStrategies } from '@/lib/tanstack-query/cache-config';
-import { api } from '@/lib/trpc';
+import { api } from '@/platform/trpc';
 import type { EntryFilter } from '@/server/api/routers/entries/schemas';
 
 /**

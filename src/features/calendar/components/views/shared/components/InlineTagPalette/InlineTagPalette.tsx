@@ -20,7 +20,7 @@ import { convertFromTimezone } from '@/lib/date/timezone';
 import { logger } from '@/lib/logger';
 import { resolveTagColor } from '@/lib/tag-colors';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
-import { useInlineCreateStore } from '@/stores/useInlineCreateStore';
+import { useInlineCreateStore } from '../../../../../stores/useInlineCreateStore';
 
 import { TagQuickSelector } from '@/components/tags/TagQuickSelector';
 

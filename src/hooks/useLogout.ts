@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { useRouter } from '@/i18n/navigation';
 import { logger } from '@/lib/logger';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/platform/supabase/client';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 

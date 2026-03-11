@@ -8,8 +8,8 @@ import CalendarHeatmap from 'react-calendar-heatmap';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
+import { api } from '@/platform/trpc';
 
 import 'react-calendar-heatmap/dist/styles.css';
 
