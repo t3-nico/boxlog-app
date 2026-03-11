@@ -19,7 +19,7 @@ import {
   entryIdSchema,
   getEntryByIdSchema,
   updateEntrySchema,
-} from './schemas';
+} from '@/schemas/entry';
 import { createEntryService } from './service-index';
 
 import { removeUndefinedFields } from '@/lib/entry-utils';

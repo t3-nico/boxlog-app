@@ -7,7 +7,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 import type { Database } from '@/lib/database.types';
-import type { CreateEntryInput, EntryFilter, UpdateEntryInput } from './schemas';
+import type { CreateEntryInput, EntryFilter, UpdateEntryInput } from '@/schemas/entry';
 
 /**
  * サービス関数で使用するSupabaseクライアント型
