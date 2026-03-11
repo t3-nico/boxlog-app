@@ -228,7 +228,7 @@
       "viewWeek": "週表示"
     },
     "chronotype": {
-      "title": "クロノタイプ設定",
+      "title": "クロノタイプ",
       "description": "あなたの生体リズムに合ったタイプを選択してください。選択したタイプに基づいて、最適な作業時間帯がステータスバーに表示されます。",
       "settingsSaved": "クロノタイプ設定を保存しました",
       "notSelected": "未選択",
@@ -238,12 +238,79 @@
       "learnMore": "クロノタイプについて詳しく知る",
       "showOnTimeline": "タイムラインに表示",
       "showOnTimelineDesc": "生産性ゾーンでタイムグリッドの背景を色分けする",
+      "notDiagnosed": "まだ診断されていません。いくつかの質問に答えて、あなたのクロノタイプを見つけましょう。",
+      "diagnose": "診断する",
+      "rediagnose": "再診断する",
       "levels": {
         "warmup": "ウォームアップ",
         "peak": "ピーク",
         "dip": "ディップ",
         "recovery": "リカバリー",
         "winddown": "ウインドダウン"
+      },
+      "quiz": {
+        "title": "クロノタイプ診断",
+        "progress": "{current}/{total}",
+        "back": "戻る",
+        "next": "次へ",
+        "cancel": "キャンセル",
+        "showResult": "結果を見る",
+        "questions": {
+          "wakeTime": {
+            "title": "目覚ましなしで自然に起きると、何時頃に目が覚めますか？",
+            "options": {
+              "early": "5〜6時台",
+              "moderate": "7〜8時台",
+              "late": "9時以降",
+              "irregular": "日によってバラバラ"
+            }
+          },
+          "morningEnergy": {
+            "title": "午前中のエネルギーレベルはどうですか？",
+            "options": {
+              "veryHigh": "朝からエネルギー全開",
+              "gradual": "徐々に調子が上がる",
+              "low": "午前中は低調",
+              "anxious": "不安定で落ち着かない"
+            }
+          },
+          "peakFocus": {
+            "title": "最も集中できるのはいつですか？",
+            "options": {
+              "earlyMorning": "早朝（6〜9時）",
+              "lateMorning": "午前中（9〜12時）",
+              "afternoon": "午後（13〜17時）",
+              "evening": "夕方〜夜（17時以降）"
+            }
+          },
+          "afternoonDip": {
+            "title": "午後の眠気はどうですか？",
+            "options": {
+              "earlyDip": "昼過ぎに強い眠気が来る",
+              "normalDip": "14〜15時頃に少し眠くなる",
+              "noDip": "午後は眠くならない",
+              "unpredictable": "予測できないタイミングで眠くなる"
+            }
+          },
+          "bedTime": {
+            "title": "理想的な就寝時間はいつですか？",
+            "options": {
+              "early": "21〜22時",
+              "normal": "23時頃",
+              "late": "0時以降",
+              "inconsistent": "決まっていない"
+            }
+          },
+          "sleepQuality": {
+            "title": "睡眠の質はどうですか？",
+            "options": {
+              "deepSleep": "深く眠れる、朝スッキリ",
+              "normalSleep": "普通に眠れる",
+              "nightOwl": "夜更かしすると調子が良い",
+              "lightSleep": "眠りが浅く、途中で起きやすい"
+            }
+          }
+        }
       }
     },
     "sleepSchedule": {

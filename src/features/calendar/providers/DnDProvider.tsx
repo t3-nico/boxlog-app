@@ -15,9 +15,8 @@ import { fromZonedTime } from 'date-fns-tz';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
+import { useEntries, useEntryMutations } from '@/features/entry';
 import { useDateFormat } from '@/hooks/useDateFormat';
-import { useEntries } from '@/hooks/useEntries';
-import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 import { useHapticFeedback } from '../hooks/useHapticFeedback';
 

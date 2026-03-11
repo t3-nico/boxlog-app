@@ -13,7 +13,7 @@ import {
 } from '@/lib/tanstack-query/optimistic-mutation';
 import { trpc } from '@/platform/trpc/client';
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
-import { useTagCacheStore } from '@/stores/useTagCacheStore';
+import { useTagCacheStore } from '../stores/useTagCacheStore';
 
 import type { Tag } from '@/types/tag';
 

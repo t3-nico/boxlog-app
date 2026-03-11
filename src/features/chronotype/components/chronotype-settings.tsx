@@ -1,17 +1,11 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
-import { ExternalLink, Star } from 'lucide-react';
+import { ExternalLink, RefreshCw, Star, Stethoscope } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CACHE_5_MINUTES } from '@/lib/date';
 import { cn } from '@/lib/utils';
@@ -22,15 +16,14 @@ import {
   CHRONOTYPE_EMOJI,
   CHRONOTYPE_LEVEL_CLASSES,
   CHRONOTYPE_LEVEL_ORDER,
-  CHRONOTYPE_PRESETS,
-  CHRONOTYPE_SELECTABLE_TYPES,
   DEFAULT_CHRONOTYPE_SETTINGS,
 } from '../lib/constants';
 import { getPeakHours, getPresetChronotypeProfile } from '../lib/utils';
 
-import { SettingRow } from '@/components/common/SettingRow';
 import { SettingsCard } from '@/components/common/SettingsCard';
 import { useAutoSaveSettings } from '@/hooks/useAutoSaveSettings';
+
+import { ChronotypeQuiz } from './chronotype-quiz';
 
 import type {
   ChronotypeDisplayMode,
@@ -39,6 +32,8 @@ import type {
   PresetChronotypeType,
   ProductivityZone,
 } from '../types';
+
+type ViewState = 'idle' | 'quiz' | 'empty';
 
 interface ChronotypeAutoSaveSettings {
   chronotype: ChronotypeSettingsState;
@@ -118,8 +113,6 @@ export function ChronotypeSettings() {
     },
   });
 
-  const NONE_VALUE = 'none';
-
   const dbChronotype = dbSettings?.chronotype;
   const initialValues = useMemo(
     () => ({
@@ -150,23 +143,34 @@ export function ChronotypeSettings() {
     debounceMs: 800,
   });
 
-  const handleTypeSelect = useCallback(
-    (value: string) => {
-      const nextChronotype =
-        value === NONE_VALUE
-          ? { ...autoSave.values.chronotype, enabled: false }
-          : { ...autoSave.values.chronotype, enabled: true, type: value as ChronotypeType };
+  const isEnabled = autoSave.values.chronotype.enabled;
+  const selectedType = autoSave.values.chronotype.type;
+  const selectedProfile = isEnabled ? getPresetChronotypeProfile(selectedType) : null;
 
+  const initialView: ViewState = isEnabled ? 'idle' : 'empty';
+  const [view, setView] = useState<ViewState>(initialView);
+
+  const handleQuizComplete = useCallback(
+    (type: PresetChronotypeType) => {
+      const nextChronotype = {
+        ...autoSave.values.chronotype,
+        enabled: true,
+        type: type as ChronotypeType,
+      };
       updateStoreSettings({ chronotype: nextChronotype });
       autoSave.updateValue('chronotype', nextChronotype);
+      setView('idle');
     },
     [autoSave, updateStoreSettings],
   );
 
-  const isEnabled = autoSave.values.chronotype.enabled;
-  const selectedType = autoSave.values.chronotype.type;
-  const selectValue = isEnabled ? selectedType : NONE_VALUE;
-  const selectedProfile = isEnabled ? getPresetChronotypeProfile(selectedType) : null;
+  const handleStartQuiz = useCallback(() => {
+    setView('quiz');
+  }, []);
+
+  const handleCancelQuiz = useCallback(() => {
+    setView(isEnabled ? 'idle' : 'empty');
+  }, [isEnabled]);
 
   if (isPending) {
     return (
@@ -176,27 +180,26 @@ export function ChronotypeSettings() {
     );
   }
 
-  return (
-    <div className="space-y-8">
-      <SettingsCard title={t('settings.chronotype.title')}>
-        <div className="space-y-0">
-          <SettingRow label={t('settings.chronotype.title')}>
-            <Select value={selectValue} onValueChange={handleTypeSelect}>
-              <SelectTrigger variant="ghost">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={NONE_VALUE}>{t('settings.chronotype.notSelected')}</SelectItem>
-                {CHRONOTYPE_SELECTABLE_TYPES.map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {CHRONOTYPE_EMOJI[type]} {CHRONOTYPE_PRESETS[type].name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </SettingRow>
-        </div>
+  // Quiz state
+  if (view === 'quiz') {
+    return (
+      <SettingsCard title={t('settings.chronotype.quiz.title')}>
+        <ChronotypeQuiz onComplete={handleQuizComplete} onCancel={handleCancelQuiz} />
+      </SettingsCard>
+    );
+  }
 
+  // Empty state (not diagnosed yet)
+  if (view === 'empty') {
+    return (
+      <SettingsCard title={t('settings.chronotype.title')}>
+        <div className="space-y-4 py-2">
+          <p className="text-muted-foreground text-sm">{t('settings.chronotype.notDiagnosed')}</p>
+          <Button variant="outline" size="sm" onClick={handleStartQuiz}>
+            <Stethoscope />
+            {t('settings.chronotype.diagnose')}
+          </Button>
+        </div>
         <div className="mt-4">
           <a
             href="https://sleepdoctor.com/pages/chronotypes"
@@ -209,37 +212,56 @@ export function ChronotypeSettings() {
           </a>
         </div>
       </SettingsCard>
+    );
+  }
 
+  // Idle state (result display)
+  return (
+    <SettingsCard title={t('settings.chronotype.title')}>
       {selectedProfile ? (
-        <SettingsCard title={t('settings.chronotype.details')}>
-          <div className="space-y-4">
-            <div className="flex items-start gap-4">
-              <span className="text-3xl">
-                {CHRONOTYPE_EMOJI[selectedType as PresetChronotypeType]}
-              </span>
-              <div>
-                <h4 className="font-normal">{selectedProfile.name}</h4>
-                <p className="text-muted-foreground mt-1 text-sm">{selectedProfile.description}</p>
-              </div>
-            </div>
-
-            <div className="pt-2">
-              <h5 className="mb-4 text-sm font-normal">{t('settings.chronotype.timeline')}</h5>
-              <TimelineBar zones={selectedProfile.productivityZones} />
-            </div>
-
-            <div className="bg-success/10 flex items-center gap-2 rounded-2xl p-4">
-              <Star className="text-success h-4 w-4" />
-              <div>
-                <span className="text-sm font-normal">{t('settings.chronotype.peakTime')}</span>
-                <span className="text-muted-foreground ml-2 text-sm">
-                  {getPeakHours(selectedProfile.productivityZones)}
-                </span>
-              </div>
+        <div className="space-y-4">
+          <div className="flex items-start gap-4">
+            <span className="text-3xl">
+              {CHRONOTYPE_EMOJI[selectedType as PresetChronotypeType]}
+            </span>
+            <div>
+              <h4 className="font-normal">{selectedProfile.name}</h4>
+              <p className="text-muted-foreground mt-1 text-sm">{selectedProfile.description}</p>
             </div>
           </div>
-        </SettingsCard>
+
+          <div className="pt-2">
+            <h5 className="mb-4 text-sm font-normal">{t('settings.chronotype.timeline')}</h5>
+            <TimelineBar zones={selectedProfile.productivityZones} />
+          </div>
+
+          <div className="bg-success/10 flex items-center gap-2 rounded-2xl p-4">
+            <Star className="text-success h-4 w-4" />
+            <div>
+              <span className="text-sm font-normal">{t('settings.chronotype.peakTime')}</span>
+              <span className="text-muted-foreground ml-2 text-sm">
+                {getPeakHours(selectedProfile.productivityZones)}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between pt-2">
+            <a
+              href="https://sleepdoctor.com/pages/chronotypes"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-xs underline transition-colors"
+            >
+              <span>{t('settings.chronotype.learnMore')}</span>
+              <ExternalLink className="h-3 w-3" />
+            </a>
+            <Button variant="outline" size="sm" onClick={handleStartQuiz}>
+              <RefreshCw />
+              {t('settings.chronotype.rediagnose')}
+            </Button>
+          </div>
+        </div>
       ) : null}
-    </div>
+    </SettingsCard>
   );
 }

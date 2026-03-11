@@ -16,8 +16,13 @@ import { InspectorTagRow } from '../InspectorTagRow';
 import { InspectorTimeSection } from '../InspectorTimeSection';
 import { TimeConflictAlert } from '../TimeConflictAlert';
 
-import type { EntryState } from '@/lib/entry-status';
-import type { EntryOrigin, EntryWithTags, FulfillmentScore, RecurrenceType } from '@/types/entry';
+import type {
+  EntryOrigin,
+  EntryState,
+  EntryWithTags,
+  FulfillmentScore,
+  RecurrenceType,
+} from '@/types/entry';
 
 import { Bell, Repeat } from 'lucide-react';
 

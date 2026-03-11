@@ -22,13 +22,16 @@ import { CSS } from '@dnd-kit/utilities';
 import { useTranslations } from 'next-intl';
 
 import {
+  buildColonTagName,
+  getTagDisplayLabel,
+  parseColonTag,
   useDeleteGroup,
+  useMergeTag,
   useRenameGroup,
   useReorderTags,
   useUngroupTags,
-} from '@/hooks/mutations/useTagCrudMutations';
-import { useMergeTag, useUpdateTag } from '@/hooks/mutations/useTagMutations';
-import { buildColonTagName, getTagDisplayLabel, parseColonTag } from '@/lib/tag-colon';
+  useUpdateTag,
+} from '@/features/tags';
 import type { TagColorName } from '@/lib/tag-colors';
 import { resolveTagColor } from '@/lib/tag-colors';
 import { cn } from '@/lib/utils';

@@ -11,8 +11,7 @@ import {
   type CreateActionType,
 } from '@/components/common/CreateActionSheet';
 import { Button } from '@/components/ui/button';
-import { useEntryMutations } from '@/hooks/useEntryMutations';
-import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
+import { useEntryInspectorStore, useEntryMutations } from '@/features/entry';
 
 /**
  * モバイル用FAB（Floating Action Button）+ CreateActionSheet

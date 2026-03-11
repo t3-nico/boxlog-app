@@ -7,8 +7,8 @@ import { ActionFooter } from '@/components/ui/action-footer';
 import { Button } from '@/components/ui/button';
 import { Field, FieldError } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { useTags } from '@/features/tags';
 import { useDialogKeyboard } from '@/hooks/useDialogKeyboard';
-import { useTags } from '@/hooks/useTagsQuery';
 import { TAG_NAME_MAX_LENGTH } from '@/lib/tag-colors';
 import { useTranslations } from 'next-intl';
 

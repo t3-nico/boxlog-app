@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useTags } from '@/hooks/useTagsQuery';
+import { useTags } from '@/features/tags';
 import { TAG_COLOR_MAP, TAG_COLOR_NAMES, type TagColorName } from '@/lib/tag-colors';
 import { cn } from '@/lib/utils';
 import { api } from '@/platform/trpc';

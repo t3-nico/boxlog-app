@@ -11,9 +11,9 @@
 
 import { useCallback, useMemo } from 'react';
 
-import { useEntryMutations } from '@/hooks/useEntryMutations';
-import { getEntryState } from '@/lib/entry-status';
 import type { EntryOrigin, FulfillmentScore } from '@/types/entry';
+import { useEntryMutations } from '../../../hooks/useEntryMutations';
+import { getEntryState } from '../../../lib/entry-status';
 
 import { EntryInspectorDetailsTab } from './EntryInspectorDetailsTab';
 import { useEntryInspectorContentLogic } from './useEntryInspectorContentLogic';

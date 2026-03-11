@@ -3,7 +3,7 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
-import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
+import { useEntryInspectorStore } from '../stores/useEntryInspectorStore';
 
 const ENTRY_PARAM = 'entry';
 

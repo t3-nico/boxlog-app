@@ -11,9 +11,11 @@
 
 import { useCallback, useRef } from 'react';
 
-import { useEntryMutations } from '@/hooks/useEntryMutations';
-import { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
-import { computeOriginTransition } from '@/lib/entry-status';
+import {
+  computeOriginTransition,
+  useEntryMutations,
+  useRecurringScopeMutations,
+} from '@/features/entry';
 import { logger } from '@/lib/logger';
 import { openRecurringEditConfirm, type RecurringEditScope } from '@/stores/useModalStore';
 

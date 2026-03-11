@@ -228,7 +228,7 @@
       "viewWeek": "Week"
     },
     "chronotype": {
-      "title": "Chronotype Settings",
+      "title": "Chronotype",
       "description": "Select a type that matches your biological rhythm. Based on your selection, optimal work hours will be displayed in the status bar.",
       "settingsSaved": "Chronotype settings saved",
       "notSelected": "Not selected",
@@ -238,12 +238,79 @@
       "learnMore": "Learn more about chronotypes",
       "showOnTimeline": "Show on timeline",
       "showOnTimelineDesc": "Color the time grid background by productivity zone",
+      "notDiagnosed": "Not yet diagnosed. Answer a few questions to discover your chronotype.",
+      "diagnose": "Take the quiz",
+      "rediagnose": "Retake quiz",
       "levels": {
         "warmup": "Warm-up",
         "peak": "Peak",
         "dip": "Dip",
         "recovery": "Recovery",
         "winddown": "Wind-down"
+      },
+      "quiz": {
+        "title": "Chronotype Quiz",
+        "progress": "{current}/{total}",
+        "back": "Back",
+        "next": "Next",
+        "cancel": "Cancel",
+        "showResult": "See result",
+        "questions": {
+          "wakeTime": {
+            "title": "Without an alarm, what time do you naturally wake up?",
+            "options": {
+              "early": "5–6 AM",
+              "moderate": "7–8 AM",
+              "late": "9 AM or later",
+              "irregular": "It varies day to day"
+            }
+          },
+          "morningEnergy": {
+            "title": "How is your energy level in the morning?",
+            "options": {
+              "veryHigh": "Full of energy from the start",
+              "gradual": "Gradually picks up",
+              "low": "Low in the morning",
+              "anxious": "Restless and uneasy"
+            }
+          },
+          "peakFocus": {
+            "title": "When do you focus best?",
+            "options": {
+              "earlyMorning": "Early morning (6–9 AM)",
+              "lateMorning": "Late morning (9 AM–12 PM)",
+              "afternoon": "Afternoon (1–5 PM)",
+              "evening": "Evening or night (after 5 PM)"
+            }
+          },
+          "afternoonDip": {
+            "title": "How does the afternoon slump affect you?",
+            "options": {
+              "earlyDip": "Strong drowsiness right after lunch",
+              "normalDip": "Slightly sleepy around 2–3 PM",
+              "noDip": "No drowsiness in the afternoon",
+              "unpredictable": "Sleepiness hits at unpredictable times"
+            }
+          },
+          "bedTime": {
+            "title": "What is your ideal bedtime?",
+            "options": {
+              "early": "9–10 PM",
+              "normal": "Around 11 PM",
+              "late": "After midnight",
+              "inconsistent": "No consistent bedtime"
+            }
+          },
+          "sleepQuality": {
+            "title": "How is your sleep quality?",
+            "options": {
+              "deepSleep": "Deep sleep, wake up refreshed",
+              "normalSleep": "Sleep normally",
+              "nightOwl": "Feel better staying up late",
+              "lightSleep": "Light sleeper, wake up easily"
+            }
+          }
+        }
       }
     },
     "sleepSchedule": {

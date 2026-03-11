@@ -12,7 +12,7 @@
 import { useCallback, useMemo, type ReactNode } from 'react';
 
 import { cn } from '@/lib/utils';
-import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
+import { useEntryInspectorStore } from '../../stores/useEntryInspectorStore';
 
 /** インスペクターのサイズ定数 */
 const INSPECTOR_MAX_WIDTH = 480; // max-w-[30rem] = 480px

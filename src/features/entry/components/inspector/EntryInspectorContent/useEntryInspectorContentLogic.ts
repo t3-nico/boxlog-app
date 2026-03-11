@@ -13,10 +13,7 @@
 
 import { useCallback, useEffect, useRef } from 'react';
 
-import { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
 import { logger } from '@/lib/logger';
-import { useEntryCacheStore } from '@/stores/useEntryCacheStore';
-import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import {
   closeModal,
   openDeleteConfirm,
@@ -26,6 +23,9 @@ import {
 } from '@/stores/useModalStore';
 import type { EntryWithTags } from '@/types/entry';
 import { useEntry } from '../../../hooks/useEntry';
+import { useRecurringScopeMutations } from '../../../hooks/useRecurringScopeMutations';
+import { useEntryCacheStore } from '../../../stores/useEntryCacheStore';
+import { useEntryInspectorStore } from '../../../stores/useEntryInspectorStore';
 import { useInspectorAutoSave, useInspectorNavigation, useRecurringEntryEdit } from '../hooks';
 import { useInspectorSaveClose } from './useInspectorSaveClose';
 import { useInspectorTagState } from './useInspectorTagState';

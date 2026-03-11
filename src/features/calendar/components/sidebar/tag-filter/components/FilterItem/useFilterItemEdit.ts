@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from 'react';
 
-import { useUpdateTag } from '@/hooks/mutations/useTagMutations';
+import { useUpdateTag } from '@/features/tags';
 import type { TagColorName } from '@/lib/tag-colors';
 import { resolveTagColor } from '@/lib/tag-colors';
 

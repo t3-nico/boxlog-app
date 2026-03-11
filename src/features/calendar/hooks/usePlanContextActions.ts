@@ -2,11 +2,13 @@
 
 import { useCallback, useRef } from 'react';
 
-import { useEntryMutations } from '@/hooks/useEntryMutations';
-import { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
+import {
+  useEntryInspectorStore,
+  useEntryMutations,
+  useRecurringScopeMutations,
+} from '@/features/entry';
 import { getInstanceRef } from '@/lib/instance-id';
 import { logger } from '@/lib/logger';
-import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import {
   openDeleteConfirm,
   openRecurringEditConfirm,

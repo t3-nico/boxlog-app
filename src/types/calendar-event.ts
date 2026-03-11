@@ -1,8 +1,7 @@
 // Core calendar event type - extracted from features/calendar/types/calendar.types.ts
 // This is the canonical definition; feature-level modules re-export from here.
 
-import type { EntryState } from '@/lib/entry-status';
-import type { EntryOrigin, FulfillmentScore } from '@/types/entry';
+import type { EntryOrigin, EntryState, FulfillmentScore } from '@/types/entry';
 
 export interface CalendarEvent {
   id: string;

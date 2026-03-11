@@ -2,8 +2,8 @@
 
 import React, { useCallback } from 'react';
 
+import { useEntryInspectorStore } from '@/features/entry';
 import { cn } from '@/lib/utils';
-import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { useCalendarDragStore } from '../../../../stores/useCalendarDragStore';
 import type { CalendarEvent } from '../../../../types/calendar.types';
 

@@ -8,11 +8,9 @@ import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 
 import { TagDeleteStrategyDialog } from '@/components/common/TagDeleteStrategyDialog';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useDeleteTag } from '@/hooks/mutations/useTagMutations';
-import { useTags } from '@/hooks/useTagsQuery';
+import { useDeleteTag, useTagCacheStore, useTags } from '@/features/tags';
 import { api } from '@/platform/trpc';
 import { SidebarSection } from '@/shell/layout/SidebarSection';
-import { useTagCacheStore } from '@/stores/useTagCacheStore';
 import { useTagModalNavigation } from '../../../hooks/useTagModalNavigation';
 
 import { CreateTagButton } from './components/CreateTagButton';

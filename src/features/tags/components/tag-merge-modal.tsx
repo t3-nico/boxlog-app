@@ -20,8 +20,8 @@ import { Input } from '@/components/ui/input';
 import { useHasMounted } from '@/hooks/useHasMounted';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { logger } from '@/lib/logger';
-import { parseColonTag } from '@/lib/tag-colon';
 import { cn } from '@/lib/utils';
+import { parseColonTag } from '../lib/tag-colon';
 import { TagRadioItem } from './TagRadioItem';
 
 import { useMergeTag, useTags } from '../hooks';

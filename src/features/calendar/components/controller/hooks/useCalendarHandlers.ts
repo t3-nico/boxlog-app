@@ -2,9 +2,9 @@
 
 import { useCallback } from 'react';
 
+import { useEntryInspectorStore } from '@/features/entry';
 import { getInstanceRef } from '@/lib/instance-id';
 import { logger } from '@/lib/logger';
-import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { closeModal, useModalStore } from '@/stores/useModalStore';
 import { useInlineCreateStore } from '../../../stores/useInlineCreateStore';
 

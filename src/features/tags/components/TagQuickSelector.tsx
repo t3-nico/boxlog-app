@@ -19,9 +19,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useHasMounted } from '@/hooks/useHasMounted';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { useTags } from '@/hooks/useTagsQuery';
-import { parseColonTag } from '@/lib/tag-colon';
 import { cn } from '@/lib/utils';
+import { useTags } from '../hooks/useTagsQuery';
+import { parseColonTag } from '../lib/tag-colon';
 
 import type { Tag } from '@/types/tag';
 

@@ -15,4 +15,4 @@ export {
 
 export type { ReorderTagInput } from './useTagCrudMutations';
 
-export { useMergeTag } from '@/hooks/mutations/useTagMergeMutation';
+export { useMergeTag } from './useTagMergeMutation';

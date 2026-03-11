@@ -8,14 +8,12 @@
  * - past: 過去の記録（予定ロック、記録のみ編集可、移動・日付変更不可）
  */
 
-import type { EntryOrigin } from '@/types/entry';
+import type { EntryOrigin, EntryState } from '@/types/entry';
 
 type EntryLike = {
   start_time: string | null;
   end_time: string | null;
 };
-
-export type EntryState = 'upcoming' | 'active' | 'past';
 
 /**
  * エントリの時間位置から状態を判定

@@ -2,9 +2,8 @@
 
 import { useEffect, useRef } from 'react';
 
-import { useEntryMutations } from '@/hooks/useEntryMutations';
+import { useEntryInspectorStore, useEntryMutations } from '@/features/entry';
 import { logger } from '@/lib/logger';
-import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { openDeleteConfirm } from '@/stores/useModalStore';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';

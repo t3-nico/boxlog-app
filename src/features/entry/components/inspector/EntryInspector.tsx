@@ -7,10 +7,10 @@ import { InspectorContent } from './InspectorContent';
 import { InspectorShell } from './InspectorShell';
 import { useInspectorKeyboard } from './hooks';
 
-import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { useModalStore } from '@/stores/useModalStore';
 import type { EntryWithTags } from '@/types/entry';
 import { useEntry } from '../../hooks/useEntry';
+import { useEntryInspectorStore } from '../../stores/useEntryInspectorStore';
 
 import { useInspectorURLSync } from '../../hooks/useInspectorURLSync';
 import { EntryInspectorContent } from './EntryInspectorContent';

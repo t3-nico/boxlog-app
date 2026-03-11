@@ -4,9 +4,9 @@
  * plans + records を統合した entries テーブルのビジネスロジック
  */
 
-import { isTimePast } from '@/lib/entry-status';
 import { normalizeDateTimeConsistency, removeUndefinedFields } from '@/lib/entry-utils';
 import { logger } from '@/lib/logger';
+import { isTimePast } from '../lib/entry-status';
 
 import type {
   CreateEntryOptions,

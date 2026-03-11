@@ -6,8 +6,8 @@ import { CheckCircle2, Circle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Card } from '@/components/ui/card';
+import { getEntryState } from '@/features/entry';
 import { useDateFormat } from '@/hooks/useDateFormat';
-import { getEntryState } from '@/lib/entry-status';
 import { cn } from '@/lib/utils';
 
 import { TagsContainer } from '../views/shared/components/PlanCard/TagsContainer';

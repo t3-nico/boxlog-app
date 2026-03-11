@@ -4,8 +4,8 @@ import { useEffect, useMemo } from 'react';
 
 import { addDays, format, subDays } from 'date-fns';
 
-import { useEntries } from '@/hooks/useEntries';
-import { useTags } from '@/hooks/useTagsQuery';
+import { useEntries } from '@/features/entry';
+import { useTags } from '@/features/tags';
 import { isRecurringEntry } from '@/lib/entry-recurrence';
 import { logger } from '@/lib/logger';
 import { api } from '@/platform/trpc';

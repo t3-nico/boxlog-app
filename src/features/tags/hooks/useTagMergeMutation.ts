@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
 import { trpc } from '@/platform/trpc/client';
-import { useTagCacheStore } from '@/stores/useTagCacheStore';
+import { useTagCacheStore } from '../stores/useTagCacheStore';
 
 export function useMergeTag() {
   const utils = trpc.useUtils();

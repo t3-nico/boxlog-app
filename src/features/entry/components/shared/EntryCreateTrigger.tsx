@@ -4,11 +4,11 @@ import { cloneElement, isValidElement, useCallback, type ReactNode } from 'react
 
 import { useTranslations } from 'next-intl';
 
-import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { logger } from '@/lib/logger';
 import { api } from '@/platform/trpc';
+import { useEntryMutations } from '../../hooks/useEntryMutations';
 
-import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
+import { useEntryInspectorStore } from '../../stores/useEntryInspectorStore';
 
 interface EntryCreateTriggerProps {
   triggerElement: ReactNode;

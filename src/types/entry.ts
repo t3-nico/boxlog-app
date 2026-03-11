@@ -2,6 +2,14 @@
 // plans + records を統合した entries テーブルに対応
 
 /**
+ * エントリの時間位置ベースの状態
+ * - upcoming: 未来の予定
+ * - active: 現在進行中
+ * - past: 過去の記録
+ */
+export type EntryState = 'upcoming' | 'active' | 'past';
+
+/**
  * エントリの起源
  * - planned: 未来に予定として作成された
  * - unplanned: 過去に記録として直接追加された

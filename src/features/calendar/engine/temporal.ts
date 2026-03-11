@@ -10,6 +10,5 @@ export {
   getEntryState,
   isEntryPast,
   isTimePast,
-} from '@/lib/entry-status';
-
-export type { EntryState } from '@/lib/entry-status';
+  type EntryState,
+} from '@/features/entry';

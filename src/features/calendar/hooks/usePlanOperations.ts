@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 
-import { useEntryInstanceMutations } from '@/hooks/useEntryInstances';
-import { useEntryMutations } from '@/hooks/useEntryMutations';
+import { useEntryInstanceMutations, useEntryMutations } from '@/features/entry';
 import { decodeInstanceId } from '@/lib/instance-id';
 import { logger } from '@/lib/logger';
 import { api } from '@/platform/trpc';

@@ -11,13 +11,12 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { useEntries } from '@/hooks/useEntries';
-import { useTags } from '@/hooks/useTagsQuery';
+import { useEntries, useEntryInspectorStore } from '@/features/entry';
+import { useTags } from '@/features/tags';
 import { formatDateShort, formatTimeRange } from '@/lib/date/format';
 import { getTagColorClasses } from '@/lib/tag-colors';
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 import { useCalendarNavigationStore } from '@/stores/useCalendarNavigationStore';
-import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
 import { HighlightedText } from '../lib/highlight-text';

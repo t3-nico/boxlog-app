@@ -10,7 +10,7 @@
 
 import { memo, useEffect, useRef, useState } from 'react';
 
-import { useTagsMap } from '@/hooks/useTagsMap';
+import { useTagsMap } from '@/features/tags';
 import { getTagColorClasses } from '@/lib/tag-colors';
 import { cn } from '@/lib/utils';
 

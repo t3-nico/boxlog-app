@@ -25,9 +25,9 @@ import {
   useRecurringPlanDrag,
   useWeekendToggleShortcut,
 } from '@/features/calendar';
+import { useEntryInspectorStore } from '@/features/entry';
 import { useNotifications } from '@/features/notifications';
 import { useCalendarNavigationStore } from '@/stores/useCalendarNavigationStore';
-import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 
 import { getCurrentTimezone, setUserTimezone } from '@/features/settings';
 import { logger } from '@/lib/logger';
