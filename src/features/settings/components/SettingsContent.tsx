@@ -3,7 +3,7 @@
 import { Suspense, lazy, useEffect } from 'react';
 
 import { Skeleton } from '@/components/ui/skeleton';
-import { CACHE_5_MINUTES } from '@/constants/time';
+import { CACHE_5_MINUTES } from '@/lib/date';
 import { api } from '@/lib/trpc';
 
 import type { SettingsCategory } from '../types';
@@ -12,21 +12,15 @@ const categoryComponents: Record<
   SettingsCategory,
   React.LazyExoticComponent<React.ComponentType<object>>
 > = {
-  profile: lazy(() =>
-    import('./profile-settings').then((m) => ({ default: m.ProfileSettings })),
-  ),
-  display: lazy(() =>
-    import('./display-settings').then((m) => ({ default: m.DisplaySettings })),
-  ),
+  profile: lazy(() => import('./profile-settings').then((m) => ({ default: m.ProfileSettings }))),
+  display: lazy(() => import('./display-settings').then((m) => ({ default: m.DisplaySettings }))),
   tags: lazy(() =>
     import('./tag-management-settings').then((m) => ({ default: m.TagManagementSettings })),
   ),
   notifications: lazy(() =>
     import('./notification-settings').then((m) => ({ default: m.NotificationSettings })),
   ),
-  data: lazy(() =>
-    import('./data-settings').then((m) => ({ default: m.DataSettings })),
-  ),
+  data: lazy(() => import('./data-settings').then((m) => ({ default: m.DataSettings }))),
   account: lazy(() => import('./account-settings').then((m) => ({ default: m.AccountSettings }))),
 };
 

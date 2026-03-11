@@ -5,7 +5,7 @@
  * このファイルではエラーメッセージ定義用の型を提供。
  */
 
-import type { ErrorLevel } from '@/constants/errorCodes';
+import type { ErrorLevel } from './error-codes';
 
 /**
  * エラーメッセージパターン

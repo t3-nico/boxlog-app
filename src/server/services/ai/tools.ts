@@ -11,7 +11,7 @@
 import { tool } from 'ai';
 import { z } from 'zod';
 
-import { MS_PER_HOUR, MS_PER_MINUTE } from '@/constants/time';
+import { MS_PER_HOUR, MS_PER_MINUTE } from '@/lib/date';
 import { logger } from '@/lib/logger';
 import { EntryService } from '@/server/services/entries/entry-service';
 import { TagService } from '@/server/services/tags/tag-service';

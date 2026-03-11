@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 
 import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
-import { CACHE_5_MINUTES } from '@/constants/time';
+import { CACHE_5_MINUTES } from '@/lib/date';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 import { useAutoSaveSettings } from '../hooks/useAutoSaveSettings';

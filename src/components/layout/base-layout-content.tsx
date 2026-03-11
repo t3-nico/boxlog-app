@@ -6,10 +6,10 @@ import {
   type CreateActionType,
 } from '@/components/common/CreateActionSheet';
 import { Button } from '@/components/ui/button';
-import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
 import { CalendarNavigationProvider, useCalendarProviderProps } from '@/features/calendar';
 import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { MEDIA_QUERIES } from '@/lib/breakpoints';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';

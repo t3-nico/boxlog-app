@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
-import { CACHE_5_MINUTES } from '@/constants/time';
+import { CACHE_5_MINUTES } from '@/lib/date';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 import { useAutoSaveSettings } from '../hooks/useAutoSaveSettings';

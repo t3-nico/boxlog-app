@@ -2,7 +2,7 @@
  * 3000番台: データ・データベース系エラーパターン
  */
 
-import { ERROR_CODES } from '@/constants/errorCodes';
+import { ERROR_CODES } from '../error-codes';
 
 import type { ErrorMessagePattern } from '../types';
 

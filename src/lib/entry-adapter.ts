@@ -6,7 +6,7 @@
  * 繰り返しエントリの展開も含む。
  */
 
-import { MS_PER_MINUTE } from '@/constants/time';
+import { MS_PER_MINUTE } from '@/lib/date';
 
 import type { CalendarEvent } from '@/core/types/calendar-event';
 import type { EntryWithTags } from '@/core/types/entry';

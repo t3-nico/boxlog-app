@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Switch } from '@/components/ui/switch';
-import { CACHE_5_MINUTES } from '@/constants/time';
+import { CACHE_5_MINUTES } from '@/lib/date';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';

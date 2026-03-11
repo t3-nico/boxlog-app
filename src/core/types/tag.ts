@@ -1,7 +1,7 @@
 // Core Tag type definitions
 // Extracted from features/tags/types for cross-feature usage
 
-import type { TagColorName } from '@/config/ui/colors';
+import type { TagColorName } from '@/lib/tag-colors';
 
 export interface Tag {
   id: string;

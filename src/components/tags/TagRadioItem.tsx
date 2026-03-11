@@ -2,7 +2,7 @@
 
 import { Check } from 'lucide-react';
 
-import { getTagColorClasses } from '@/config/ui/colors';
+import { getTagColorClasses } from '@/lib/tag-colors';
 import { cn } from '@/lib/utils';
 
 interface TagRadioItemProps {

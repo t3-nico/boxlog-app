@@ -14,8 +14,8 @@ import { useCallback, useMemo, useState } from 'react';
 import { Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { getTagColorClasses } from '@/config/ui/colors';
 import type { Tag } from '@/core/types/tag';
+import { getTagColorClasses } from '@/lib/tag-colors';
 import { cn } from '@/lib/utils';
 import type { TagDeleteStrategy } from '@/server/services/tags/tag-service';
 

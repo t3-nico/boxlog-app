@@ -80,6 +80,8 @@ export const API_ERRORS = {
   RATE_LIMIT_EXCEEDED: 2001,
   /** 無効なフォーマット（API_INVALID_PARAMのエイリアス） */
   INVALID_FORMAT: 2002,
+  /** サービス利用不可（API_SERVER_ERRORのエイリアス） */
+  SERVICE_UNAVAILABLE: 2003,
 } as const;
 
 // ==============================================
@@ -110,6 +112,16 @@ export const DATA_ERRORS = {
   // Aliases for middleware compatibility
   /** データが見つからない（DATA_NOT_FOUNDのエイリアス） */
   NOT_FOUND: 3001,
+  /** 必須フィールド未入力（DATA_VALIDATION_ERRORのエイリアス） */
+  REQUIRED_FIELD: 3003,
+  /** DB接続失敗（DATA_DB_CONNECTION_ERRORのエイリアス） */
+  CONNECTION_FAILED: 3005,
+  /** DBクエリタイムアウト（DATA_TRANSACTION_ERRORのエイリアス） */
+  QUERY_TIMEOUT: 3006,
+  /** 重複キー（DATA_DUPLICATEのエイリアス） */
+  DUPLICATE_KEY: 3002,
+  /** 外部キー制約違反（DATA_CONSTRAINT_VIOLATIONのエイリアス） */
+  FOREIGN_KEY_VIOLATION: 3007,
 } as const;
 
 // ==============================================
@@ -222,6 +234,14 @@ export const EXTERNAL_ERRORS = {
   EXTERNAL_STORAGE_ERROR: 7008,
   /** 決済サービスエラー */
   EXTERNAL_PAYMENT_ERROR: 7009,
+
+  // Aliases for middleware compatibility
+  /** 外部認証失敗（EXTERNAL_SERVICE_AUTHのエイリアス） */
+  EXTERNAL_AUTH_FAILED: 7002,
+  /** 外部API利用不可（EXTERNAL_API_CONNECTIONのエイリアス） */
+  API_UNAVAILABLE: 7001,
+  /** サードパーティエラー（EXTERNAL_WEBHOOK_ERRORのエイリアス） */
+  THIRD_PARTY_ERROR: 7005,
 } as const;
 
 // ==============================================

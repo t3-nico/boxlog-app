@@ -2,8 +2,8 @@
  * エラーパターンヘルパー関数
  */
 
-import type { ErrorCode, ErrorLevel } from '@/constants/errorCodes';
-import { ERROR_CODES } from '@/constants/errorCodes';
+import type { ErrorCode, ErrorLevel } from './error-codes';
+import { ERROR_CODES } from './error-codes';
 
 import { ERROR_MESSAGE_PATTERNS } from './patterns';
 import type { ErrorMessagePattern } from './types';

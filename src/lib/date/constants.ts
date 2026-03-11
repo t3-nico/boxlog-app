@@ -5,7 +5,7 @@
  *
  * @example
  * ```typescript
- * import { MS_PER_HOUR, msToMinutes, msToHours } from '@/constants/time'
+ * import { MS_PER_HOUR, msToMinutes, msToHours } from '@/lib/date'
  *
  * // 直接定数を使用
  * const hours = diffMs / MS_PER_HOUR

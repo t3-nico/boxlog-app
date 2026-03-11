@@ -5,8 +5,8 @@
  * @see Issue #487 - OWASP準拠のセキュリティ強化 Phase 2
  */
 
-import { AppError } from '@/config/error-patterns';
 import { logger } from '@/lib/logger';
+import { AppError } from './error-patterns';
 
 /**
  * サニタイズされたエラーレスポンス

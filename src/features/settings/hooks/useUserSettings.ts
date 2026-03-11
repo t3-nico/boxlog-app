@@ -5,7 +5,7 @@
 
 import { useCallback, useEffect } from 'react';
 
-import { CACHE_5_MINUTES } from '@/constants/time';
+import { CACHE_5_MINUTES } from '@/lib/date';
 import { api } from '@/lib/trpc';
 
 import type { ProductivityZone } from '@/core/types/chronotype';

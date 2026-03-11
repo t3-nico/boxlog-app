@@ -8,7 +8,7 @@
 
 import * as Sentry from '@sentry/nextjs';
 
-import { AppError, type ErrorCategory, type SeverityLevel } from '@/config/error-patterns';
+import { AppError, type ErrorCategory, type SeverityLevel } from '@/lib/errors/error-patterns';
 
 /**
  * カテゴリ別Sentryタグ設定

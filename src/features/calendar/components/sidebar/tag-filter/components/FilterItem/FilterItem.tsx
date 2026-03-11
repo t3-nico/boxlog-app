@@ -5,7 +5,7 @@ import { useCallback, useState } from 'react';
 import { MoreHorizontal } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { getTagColorClasses } from '@/config/ui/colors';
+import { getTagColorClasses } from '@/lib/tag-colors';
 import { cn } from '@/lib/utils';
 
 import { TagRenameDialog } from '@/components/tags/TagRenameDialog';

@@ -9,10 +9,10 @@ import React, { memo, useCallback, useEffect, useMemo } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
-import { getTagColorClasses } from '@/config/ui/colors';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useTagsMap } from '@/hooks/useTagsMap';
+import { MEDIA_QUERIES } from '@/lib/breakpoints';
+import { getTagColorClasses } from '@/lib/tag-colors';
 import { cn } from '@/lib/utils';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 

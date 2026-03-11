@@ -2,7 +2,7 @@
 
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react';
 
-import { CACHE_5_MINUTES } from '@/constants/time';
+import { CACHE_5_MINUTES } from '@/lib/date';
 import { api } from '@/lib/trpc';
 
 type Theme = 'light' | 'dark' | 'system';

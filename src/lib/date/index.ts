@@ -143,6 +143,11 @@ export { matchesDateRangeFilter, type DateRangeFilter } from './filter';
 // 定数の再エクスポート
 // ========================================
 export {
+  CACHE_10_MINUTES,
+  CACHE_1_HOUR,
+  CACHE_2_MINUTES,
+  CACHE_30_MINUTES,
+  CACHE_5_MINUTES,
   MINUTES_PER_DAY,
   MINUTES_PER_HOUR,
   MS_PER_DAY,
@@ -160,4 +165,4 @@ export {
   msToHours,
   msToMinutes,
   msToSeconds,
-} from '@/constants/time';
+} from './constants';

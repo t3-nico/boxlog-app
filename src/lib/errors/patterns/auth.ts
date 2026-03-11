@@ -2,7 +2,7 @@
  * 1000番台: 認証・セキュリティ系エラーパターン
  */
 
-import { ERROR_CODES } from '@/constants/errorCodes';
+import { ERROR_CODES } from '../error-codes';
 
 import type { ErrorMessagePattern } from '../types';
 

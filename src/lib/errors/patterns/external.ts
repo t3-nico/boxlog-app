@@ -2,7 +2,7 @@
  * 7000番台: 外部サービス連携系エラーパターン
  */
 
-import { ERROR_CODES } from '@/constants/errorCodes';
+import { ERROR_CODES } from '../error-codes';
 
 import type { ErrorMessagePattern } from '../types';
 

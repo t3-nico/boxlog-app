@@ -1,6 +1,6 @@
 import { format, isSameDay, isToday, isWeekend } from 'date-fns';
 
-import { MS_PER_MINUTE } from '@/constants/time';
+import { MS_PER_MINUTE } from '@/lib/date';
 
 // Re-export from engine for backward compatibility
 export { calculateViewDateRange, getNextPeriod, getPreviousPeriod } from '../engine/range';

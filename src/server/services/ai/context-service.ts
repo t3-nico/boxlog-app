@@ -5,7 +5,7 @@
  * entries テーブル（plans+records統合）からデータを取得する。
  */
 
-import { MS_PER_MINUTE } from '@/constants/time';
+import { MS_PER_MINUTE } from '@/lib/date';
 import { endOfWeek, startOfWeek } from '@/lib/date/core';
 import { formatDateISO } from '@/lib/date/format';
 import { logger } from '@/lib/logger';

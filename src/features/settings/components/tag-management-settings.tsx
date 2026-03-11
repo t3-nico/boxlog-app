@@ -9,8 +9,8 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
-import { TAG_COLOR_MAP, TAG_COLOR_NAMES, type TagColorName } from '@/config/ui/colors';
 import { useTags } from '@/hooks/useTagsQuery';
+import { TAG_COLOR_MAP, TAG_COLOR_NAMES, type TagColorName } from '@/lib/tag-colors';
 import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 
@@ -69,14 +69,11 @@ export function TagManagementSettings() {
     }
   }, [newName, newColor, createMutation, t]);
 
-  const handleStartEdit = useCallback(
-    (id: string, name: string, color: string | null) => {
-      setEditingId(id);
-      setEditName(name);
-      setEditColor((color as TagColorName) || 'blue');
-    },
-    [],
-  );
+  const handleStartEdit = useCallback((id: string, name: string, color: string | null) => {
+    setEditingId(id);
+    setEditName(name);
+    setEditColor((color as TagColorName) || 'blue');
+  }, []);
 
   const handleSaveEdit = useCallback(async () => {
     if (!editingId) return;
@@ -158,9 +155,7 @@ export function TagManagementSettings() {
 
         {/* Tag list */}
         {activeTags.length === 0 ? (
-          <p className="text-muted-foreground py-8 text-center text-sm">
-            {t('tags.page.noTags')}
-          </p>
+          <p className="text-muted-foreground py-8 text-center text-sm">{t('tags.page.noTags')}</p>
         ) : (
           <div className="divide-border divide-y">
             {activeTags.map((tag) => (

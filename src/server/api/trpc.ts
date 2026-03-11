@@ -11,7 +11,7 @@ import { CreateNextContextOptions } from '@trpc/server/adapters/next';
 import superjson from 'superjson';
 import { z } from 'zod';
 
-import { createAppError, ERROR_CODES } from '@/config/error-patterns';
+import { createAppError, ERROR_CODES } from '@/lib/errors/error-patterns';
 import { logger } from '@/lib/logger';
 import { apiRateLimit, withUpstashRateLimit } from '@/lib/rate-limit/upstash';
 import { extractClientIp } from '@/lib/security/ip-validation';

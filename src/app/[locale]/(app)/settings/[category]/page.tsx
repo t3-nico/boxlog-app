@@ -6,10 +6,10 @@ import { ChevronLeft } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
-import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
 import { isValidCategory, SETTINGS_CATEGORIES, SettingsContent } from '@/features/settings';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { Link } from '@/i18n/navigation';
+import { MEDIA_QUERIES } from '@/lib/breakpoints';
 
 /**
  * 設定カテゴリページ

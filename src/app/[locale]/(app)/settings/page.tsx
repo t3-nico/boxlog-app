@@ -7,9 +7,9 @@ import { ChevronRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
 import { SETTINGS_CATEGORIES } from '@/features/settings';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { MEDIA_QUERIES } from '@/lib/breakpoints';
 
 /**
  * 設定ページのルート

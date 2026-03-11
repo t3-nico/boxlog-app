@@ -43,7 +43,7 @@ const AxeAccessibilityChecker =
     : () => null;
 
 import { RealtimeProvider } from '@/components/providers/RealtimeProvider';
-import { ThemeProvider } from '@/contexts/theme-context';
+import { ThemeProvider } from '@/components/providers/theme-provider';
 import { AuthStoreInitializer } from '@/features/auth';
 import { api } from '@/lib/trpc';
 

@@ -2,9 +2,9 @@
 
 import { useParams } from 'next/navigation';
 
-import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
 import { isValidCategory, SettingsDialog } from '@/features/settings';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { MEDIA_QUERIES } from '@/lib/breakpoints';
 
 /**
  * 設定ダイアログ（Intercepting Route）

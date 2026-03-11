@@ -1,8 +1,8 @@
 'use client';
 
-import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
 import { SettingsSidebar } from '@/features/settings';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { MEDIA_QUERIES } from '@/lib/breakpoints';
 
 /**
  * 設定ページレイアウト

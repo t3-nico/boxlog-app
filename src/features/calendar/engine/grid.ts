@@ -5,7 +5,7 @@
  * すべての関数は副作用を持たず、テスト容易性を保証する。
  */
 
-import { MS_PER_MINUTE } from '@/constants/time';
+import { MS_PER_MINUTE } from '@/lib/date';
 
 /** SSRフォールバック用デフォルトの1時間高さ(px) */
 export const DEFAULT_HOUR_HEIGHT = 72;
@@ -255,9 +255,7 @@ export interface PlanPositionInput {
 }
 
 /** プラン位置情報からCSSスタイルマップを生成（純粋関数） */
-export function computePlanStyles(
-  positions: PlanPositionInput[],
-): Record<
+export function computePlanStyles(positions: PlanPositionInput[]): Record<
   string,
   {
     position: 'absolute';

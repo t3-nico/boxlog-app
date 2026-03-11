@@ -16,9 +16,9 @@ import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { MiniCalendar } from '@/components/ui/mini-calendar';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { useTheme } from '@/contexts/theme-context';
 import { CalendarFilterList, useCalendarNavigation, ViewSwitcherList } from '@/features/calendar';
 import { useStatsFilterStore } from '@/features/stats';
+import { useTheme } from '@/hooks/useTheme';
 
 export function SidebarContent() {
   const pathname = usePathname();

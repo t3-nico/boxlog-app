@@ -11,11 +11,11 @@ import {
   errorPatternDictionary,
   executeWithAutoRecovery,
   getErrorCategory,
-} from '@/config/error-patterns/index';
+} from '@/lib/errors/error-patterns';
 import { logger } from '@/lib/logger';
 
 // 型のインポート
-import type { ErrorCode, ErrorHandlingResult, ErrorMetadata } from '@/config/error-patterns/index';
+import type { AppErrorMetadata, ErrorCode, ErrorHandlingResult } from '@/lib/errors/error-patterns';
 
 /**
  * エラーハンドリングオプション
@@ -90,10 +90,13 @@ export class ErrorHandler {
     const appError = this.normalizeError(error, errorCode, options);
 
     // ログ出力
-    this.logError(appError, options.logLevel || appError.pattern.recovery.logLevel);
+    this.logError(appError, options.logLevel || 'error');
 
-    // ユーザー通知
-    if (options.showUserNotification !== false && appError.shouldNotifyUser()) {
+    // ユーザー通知（高重要度のエラーは通知）
+    if (
+      options.showUserNotification !== false &&
+      (appError.severity === 'critical' || appError.severity === 'high')
+    ) {
       await this.notifyUser(appError, options);
     }
 
@@ -174,7 +177,7 @@ export class ErrorHandler {
     }
 
     const errorMessage = `API Error: ${response.status} ${response.statusText}`;
-    const metadata: Partial<ErrorMetadata> = {
+    const metadata: AppErrorMetadata = {
       source: 'api',
       context: {
         url: response.url,
@@ -200,7 +203,7 @@ export class ErrorHandler {
   ): Promise<AppError> {
     const errorCode = ERROR_CODES.REQUIRED_FIELD;
     const errorMessage = 'Validation failed';
-    const metadata: Partial<ErrorMetadata> = {
+    const metadata: AppErrorMetadata = {
       source: 'validation',
       context: { fieldErrors },
       ...options,
@@ -240,7 +243,7 @@ export class ErrorHandler {
       errorCode = ERROR_CODES.UNEXPECTED_ERROR;
     }
 
-    const metadata: Partial<ErrorMetadata> = {
+    const metadata: AppErrorMetadata = {
       source: 'database',
       context: {
         operation,
@@ -276,7 +279,7 @@ export class ErrorHandler {
       errorCode = ERROR_CODES.THIRD_PARTY_ERROR;
     }
 
-    const metadata: Partial<ErrorMetadata> = {
+    const metadata: AppErrorMetadata = {
       source: `external:${serviceName}`,
       context: {
         serviceName,
@@ -304,12 +307,12 @@ export class ErrorHandler {
     }
 
     const finalErrorCode = errorCode || ERROR_CODES.UNEXPECTED_ERROR;
-    const metadata: Partial<ErrorMetadata> = {
+    const metadata: AppErrorMetadata = {
       source: options.source || 'unknown',
-      context: options.context,
-      userId: options.userId,
-      sessionId: options.sessionId,
-      requestId: options.requestId,
+      ...(options.context != null && { context: options.context }),
+      ...(options.userId != null && { userId: options.userId }),
+      ...(options.sessionId != null && { sessionId: options.sessionId }),
+      ...(options.requestId != null && { requestId: options.requestId }),
     };
 
     return createAppError(error.message, finalErrorCode, metadata);
@@ -358,10 +361,7 @@ export class ErrorHandler {
     };
 
     // ユーザーメッセージを取得
-    const userMsg = error.userMessage;
-    const message = userMsg
-      ? `${userMsg.title}${userMsg.description ? `: ${userMsg.description}` : ''}`
-      : error.message;
+    const message = error.userMessage || error.message;
 
     // 登録された通知ハンドラーを実行
     this.notificationHandlers.forEach((handler) => {

@@ -10,8 +10,8 @@
 
 import { memo, useEffect, useRef, useState } from 'react';
 
-import { getTagColorClasses } from '@/config/ui/colors';
 import { useTagsMap } from '@/hooks/useTagsMap';
+import { getTagColorClasses } from '@/lib/tag-colors';
 import { cn } from '@/lib/utils';
 
 interface TagsContainerProps {

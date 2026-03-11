@@ -15,10 +15,9 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
 import { TagQuickSelector } from '@/components/tags/TagQuickSelector';
-import { getTagColorClasses } from '@/config/ui/colors';
 import { useCreateTag } from '@/hooks/mutations/useTagCrudMutations';
 import { useTagsMap } from '@/hooks/useTagsMap';
-import { resolveTagColor } from '@/lib/tag-colors';
+import { getTagColorClasses, resolveTagColor } from '@/lib/tag-colors';
 import { cn } from '@/lib/utils';
 
 interface InspectorTagRowProps {

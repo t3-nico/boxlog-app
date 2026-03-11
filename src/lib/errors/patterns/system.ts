@@ -2,7 +2,7 @@
  * 5000番台: システム・インフラ系エラーパターン
  */
 
-import { ERROR_CODES } from '@/constants/errorCodes';
+import { ERROR_CODES } from '../error-codes';
 
 import type { ErrorMessagePattern } from '../types';
 

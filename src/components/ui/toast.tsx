@@ -1,7 +1,7 @@
 'use client';
 
-import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { MEDIA_QUERIES } from '@/lib/breakpoints';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 import { Toaster as Sonner } from 'sonner';
