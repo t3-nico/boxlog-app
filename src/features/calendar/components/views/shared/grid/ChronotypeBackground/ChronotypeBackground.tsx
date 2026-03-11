@@ -4,8 +4,8 @@ import { memo, useMemo } from 'react';
 
 import { cn } from '@/lib/utils';
 
+import { CHRONOTYPE_PRESETS, type ProductivityZone } from '@/core/types/chronotype';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
-import { CHRONOTYPE_PRESETS, type ProductivityZone } from '@/types/chronotype';
 
 /**
  * タイムライン背景用の tint カラー（tokens/colors.css の --chronotype-tint-* を使用）

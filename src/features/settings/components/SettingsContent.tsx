@@ -12,24 +12,30 @@ const categoryComponents: Record<
   SettingsCategory,
   React.LazyExoticComponent<React.ComponentType<object>>
 > = {
-  general: lazy(() => import('./general-settings').then((m) => ({ default: m.GeneralSettings }))),
-  calendar: lazy(() =>
-    import('./calendar-settings').then((m) => ({ default: m.CalendarSettings })),
+  profile: lazy(() =>
+    import('./profile-settings').then((m) => ({ default: m.ProfileSettings })),
   ),
-  personalization: lazy(() =>
-    import('./personalization-page').then((m) => ({ default: m.PersonalizationPage })),
+  display: lazy(() =>
+    import('./display-settings').then((m) => ({ default: m.DisplaySettings })),
+  ),
+  tags: lazy(() =>
+    import('./tag-management-settings').then((m) => ({ default: m.TagManagementSettings })),
   ),
   notifications: lazy(() =>
     import('./notification-settings').then((m) => ({ default: m.NotificationSettings })),
+  ),
+  data: lazy(() =>
+    import('./data-settings').then((m) => ({ default: m.DataSettings })),
   ),
   account: lazy(() => import('./account-settings').then((m) => ({ default: m.AccountSettings }))),
 };
 
 const VALID_CATEGORIES = new Set<string>([
-  'general',
-  'calendar',
-  'personalization',
+  'profile',
+  'display',
+  'tags',
   'notifications',
+  'data',
   'account',
 ]);
 

@@ -23,8 +23,8 @@ import { useAutoSaveSettings } from '../hooks/useAutoSaveSettings';
 import { SettingRow } from './fields/SettingRow';
 import { SettingsCard } from './SettingsCard';
 
-import type { ChronotypeType, ProductivityZone } from '@/types/chronotype';
-import { CHRONOTYPE_PRESETS, LEVEL_COLORS } from '@/types/chronotype';
+import type { ChronotypeType, ProductivityZone } from '@/core/types/chronotype';
+import { CHRONOTYPE_PRESETS, LEVEL_COLORS } from '@/core/types/chronotype';
 
 // クロノタイプごとの絵文字アイコン
 const CHRONOTYPE_EMOJI: Record<Exclude<ChronotypeType, 'custom'>, string> = {

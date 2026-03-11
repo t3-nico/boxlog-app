@@ -50,7 +50,7 @@ export function PasswordResetEmail({
               <br />
               <br />
               If you&apos;re concerned about your account security, please visit{' '}
-              <Link style={styles.link} href={`${appUrl}/settings/account`}>
+              <Link style={styles.link} href={`${appUrl}/settings/profile`}>
                 your settings
               </Link>{' '}
               to update your password.

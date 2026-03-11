@@ -1,9 +1,9 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
+import type { ChronotypeType, ProductivityZone } from '@/core/types/chronotype';
 import type { HourHeightDensity } from '@/lib/calendar-constants';
 import { listenToTimezoneChange } from '@/lib/timezone-listener';
-import type { ChronotypeType, ProductivityZone } from '@/types/chronotype';
 
 export type CalendarViewType = 'day' | '3day' | '5day' | 'week';
 

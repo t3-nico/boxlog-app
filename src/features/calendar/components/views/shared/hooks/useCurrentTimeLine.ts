@@ -6,12 +6,12 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 import {
   CHRONOTYPE_PRESETS,
   getChronotypeColor,
   getProductivityZoneForHour,
-} from '@/types/chronotype';
+} from '@/core/types/chronotype';
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
 interface UseCurrentTimeLineOptions {
   hourHeight: number;

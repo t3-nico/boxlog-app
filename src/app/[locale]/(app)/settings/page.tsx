@@ -14,7 +14,7 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 /**
  * 設定ページのルート
  *
- * PC: /settings/general にリダイレクト
+ * PC: /settings/profile にリダイレクト
  * Mobile: カテゴリリスト表示
  */
 export default function SettingsPage() {
@@ -25,7 +25,7 @@ export default function SettingsPage() {
   // PC: デフォルトカテゴリにリダイレクト
   useEffect(() => {
     if (!isMobile) {
-      router.replace('/settings/general');
+      router.replace('/settings/profile');
     }
   }, [isMobile, router]);
 

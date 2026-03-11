@@ -8,9 +8,9 @@ import { useCallback, useEffect } from 'react';
 import { CACHE_5_MINUTES } from '@/constants/time';
 import { api } from '@/lib/trpc';
 
+import type { ProductivityZone } from '@/core/types/chronotype';
 import type { DateFormatType } from '@/stores/useCalendarSettingsStore';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
-import type { ProductivityZone } from '@/types/chronotype';
 
 /**
  * ユーザー設定をDBと同期するhook

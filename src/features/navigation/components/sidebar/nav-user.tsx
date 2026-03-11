@@ -109,7 +109,7 @@ export function NavUser({
 
         {/* アカウント関連 */}
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => router.push('/settings/account')}>
+          <DropdownMenuItem onClick={() => router.push('/settings/profile')}>
             <UserCircle />
             {t('navUser.account')}
           </DropdownMenuItem>
@@ -117,7 +117,7 @@ export function NavUser({
             <Sparkles />
             {t('navUser.upgradePlan')}
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => router.push('/settings/personalization')}>
+          <DropdownMenuItem onClick={() => router.push('/settings/display')}>
             <Palette />
             {t('navUser.personalize')}
           </DropdownMenuItem>
@@ -127,7 +127,7 @@ export function NavUser({
 
         {/* 設定とヘルプ（Sidebarから移動） */}
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => router.push('/settings/general')}>
+          <DropdownMenuItem onClick={() => router.push('/settings/profile')}>
             <Settings />
             {t('navUser.settings')}
           </DropdownMenuItem>

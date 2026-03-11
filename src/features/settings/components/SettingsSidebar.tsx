@@ -26,7 +26,7 @@ export function SettingsSidebar({ className }: SettingsSidebarProps) {
   const pathname = usePathname() ?? '/';
 
   // パスからカテゴリを抽出: /[locale]/settings/[category] or /settings/[category]
-  const currentCategory = pathname.split('/settings/')[1]?.split('/')[0] ?? 'general';
+  const currentCategory = pathname.split('/settings/')[1]?.split('/')[0] ?? 'profile';
 
   return (
     <aside className={cn('bg-surface-container flex flex-col', className)}>

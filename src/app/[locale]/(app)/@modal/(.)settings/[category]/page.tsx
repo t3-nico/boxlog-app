@@ -21,7 +21,7 @@ export default function SettingsModalInterceptPage() {
     return null;
   }
 
-  const category = params?.category ?? 'general';
+  const category = params?.category ?? 'profile';
   if (!isValidCategory(category)) {
     return null;
   }

@@ -1,8 +1,9 @@
 import {
   Bell,
-  Calendar,
+  Database,
+  Monitor,
   Settings as SettingsIcon,
-  Sliders,
+  Tag,
   User,
   type LucideIcon,
 } from 'lucide-react';
@@ -21,31 +22,26 @@ export interface SettingsCategoryMeta {
 }
 
 /**
- * 設定カテゴリの定義（5カテゴリ）
- *
- * 設計思想:
- * - 頻度が高いものを上に配置
- * - 関連する設定をグループ化
- * - 5カテゴリで認知負荷を軽減
+ * 設定カテゴリの定義（6カテゴリ）
  */
 export const SETTINGS_CATEGORIES: readonly SettingsCategoryMeta[] = [
   {
-    id: 'general',
-    icon: SettingsIcon,
-    labelKey: 'settings.dialog.categories.general',
-    descKey: 'settings.dialog.categories.generalDesc',
+    id: 'profile',
+    icon: User,
+    labelKey: 'settings.dialog.categories.profile',
+    descKey: 'settings.dialog.categories.profileDesc',
   },
   {
-    id: 'calendar',
-    icon: Calendar,
-    labelKey: 'settings.dialog.categories.calendar',
-    descKey: 'settings.dialog.categories.calendarDesc',
+    id: 'display',
+    icon: Monitor,
+    labelKey: 'settings.dialog.categories.display',
+    descKey: 'settings.dialog.categories.displayDesc',
   },
   {
-    id: 'personalization',
-    icon: Sliders,
-    labelKey: 'settings.dialog.categories.personalization',
-    descKey: 'settings.dialog.categories.personalizationDesc',
+    id: 'tags',
+    icon: Tag,
+    labelKey: 'settings.dialog.categories.tags',
+    descKey: 'settings.dialog.categories.tagsDesc',
   },
   {
     id: 'notifications',
@@ -54,8 +50,14 @@ export const SETTINGS_CATEGORIES: readonly SettingsCategoryMeta[] = [
     descKey: 'settings.dialog.categories.notificationsDesc',
   },
   {
+    id: 'data',
+    icon: Database,
+    labelKey: 'settings.dialog.categories.data',
+    descKey: 'settings.dialog.categories.dataDesc',
+  },
+  {
     id: 'account',
-    icon: User,
+    icon: SettingsIcon,
     labelKey: 'settings.dialog.categories.account',
     descKey: 'settings.dialog.categories.accountDesc',
   },
