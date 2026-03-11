@@ -302,15 +302,18 @@ export function useInteraction(props: UseInteractionProps): UseInteractionReturn
       let targetDateIndex: number | undefined;
       const r = latestRef.current;
       if (r.viewMode !== 'day' && r.displayDates && r.displayDates.length > 1) {
-        const gridEl = document.querySelector<HTMLElement>('[data-calendar-grid]');
-        if (gridEl) {
-          const gridRect = gridEl.getBoundingClientRect();
-          const relX = Math.max(0, Math.min(point.clientX - gridRect.left, gridRect.width));
-          const colWidth = gridRect.width / r.displayDates.length;
-          targetDateIndex = Math.max(
-            0,
-            Math.min(r.displayDates.length - 1, Math.floor(relX / colWidth)),
-          );
+        const columns = document.querySelectorAll<HTMLElement>('[data-calendar-day-index]');
+        for (const col of columns) {
+          const rect = col.getBoundingClientRect();
+          if (point.clientX >= rect.left && point.clientX < rect.right) {
+            targetDateIndex = parseInt(col.dataset.calendarDayIndex ?? '0', 10);
+            break;
+          }
+        }
+        // Fallback: rightmost column if mouse is beyond
+        if (targetDateIndex === undefined && columns.length > 0) {
+          const last = columns[columns.length - 1]!;
+          targetDateIndex = parseInt(last.dataset.calendarDayIndex ?? '0', 10);
         }
       }
 
@@ -347,6 +350,30 @@ export function useInteraction(props: UseInteractionProps): UseInteractionReturn
       document.removeEventListener('touchcancel', handleGlobalUp);
     };
   }, [renderState.mode, dispatch]);
+
+  // ---- Global cursor management ----
+  useEffect(() => {
+    const mode = renderState.mode;
+    if (mode !== 'dragging' && mode !== 'resizing') return;
+
+    const cursor = mode === 'resizing' ? 'ns-resize' : 'grabbing';
+    document.body.style.setProperty('cursor', cursor, 'important');
+    document.body.style.setProperty('user-select', 'none', 'important');
+    document.documentElement.style.setProperty('cursor', cursor, 'important');
+
+    const style = document.createElement('style');
+    style.id = 'interaction-cursor-override';
+    style.textContent = `* { cursor: ${cursor} !important; }`;
+    document.head.appendChild(style);
+
+    return () => {
+      document.body.style.removeProperty('cursor');
+      document.body.style.removeProperty('user-select');
+      document.documentElement.style.removeProperty('cursor');
+      const el = document.getElementById('interaction-cursor-override');
+      if (el) el.remove();
+    };
+  }, [renderState.mode]);
 
   // ---- Convenience handlers ----
 

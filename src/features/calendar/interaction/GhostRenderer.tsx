@@ -6,7 +6,8 @@
  * DOM cloneNode を廃止し、React の宣言的レンダリングで
  * ゴースト要素を管理。PlanCard と同じスタイルを自動的に維持。
  *
- * 現行の dragElement.ts (cloneNode + document.body.appendChild) を置き換える。
+ * 動的にターゲット列とスクロールコンテナを検出し、
+ * 任意のビュー（Day/Week/MultiDay）で正しく描画。
  */
 
 import { createPortal } from 'react-dom';
@@ -22,10 +23,6 @@ import type { InteractionState, TimeRange } from './types';
 interface GhostRendererProps {
   /** Current interaction state */
   state: InteractionState;
-  /** Hour height in pixels (for position calculation) */
-  hourHeight: number;
-  /** Grid container element (for converting grid coords to viewport coords) */
-  gridContainer: HTMLElement | null;
   /** Children to render as ghost content (typically a PlanCard) */
   renderGhost?: (params: GhostRenderParams) => React.ReactNode;
 }
@@ -42,30 +39,37 @@ export interface GhostRenderParams {
 // Component
 // ========================================
 
-export function GhostRenderer({
-  state,
-  hourHeight: _hourHeight,
-  gridContainer,
-  renderGhost,
-}: GhostRendererProps) {
-  if (state.mode !== 'dragging' || !gridContainer) return null;
+export function GhostRenderer({ state, renderGhost }: GhostRendererProps) {
+  if (state.mode !== 'dragging') return null;
+
+  // Find the target day column via data-calendar-day-index
+  const targetIndex = state.targetDateIndex;
+  const targetColumn = document.querySelector<HTMLElement>(
+    `[data-calendar-day-index="${targetIndex}"]`,
+  );
+  if (!targetColumn) return null;
+
+  // Find scrollable ancestor for offset calculation
+  const scrollContainer = targetColumn.closest<HTMLElement>('[data-calendar-scroll]');
+  const scrollTop = scrollContainer?.scrollTop ?? 0;
+  const scrollRect = scrollContainer?.getBoundingClientRect();
 
   // Convert grid-relative snappedTop to viewport coordinates
-  const gridRect = gridContainer.getBoundingClientRect();
-  const viewportTop = gridRect.top + state.snappedTop - gridContainer.scrollTop;
+  const columnRect = targetColumn.getBoundingClientRect();
+  const viewportTop = scrollRect
+    ? scrollRect.top + state.snappedTop - scrollTop
+    : columnRect.top + state.snappedTop;
 
-  // Calculate width and left for multi-column views
-  // For single-column (day view), use full width
   const style: React.CSSProperties = {
     position: 'fixed',
     top: viewportTop,
-    left: gridRect.left,
-    width: gridRect.width,
+    left: columnRect.left,
+    width: columnRect.width,
     height: state.originalPosition.height,
     zIndex: 9999,
     pointerEvents: 'none',
     opacity: 0.85,
-    transition: 'top 50ms ease-out',
+    transition: 'top 50ms ease-out, left 100ms ease-out',
   };
 
   const content = renderGhost?.({

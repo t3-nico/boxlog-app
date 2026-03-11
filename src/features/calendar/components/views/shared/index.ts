@@ -42,8 +42,11 @@ export { DateDisplay, DateDisplayRow, DayDisplay } from './DateDisplay';
 
 // ===== カスタムフック =====
 export { useCurrentTime } from './hooks/useCurrentTime';
+/** @deprecated Use `useInteraction` from `interaction/` instead */
 export { useDragAndDrop } from './hooks/useDragAndDrop';
+/** @deprecated Use `InteractionState` from `interaction/` instead */
 export type { DragHandlers, DragState } from './hooks/useDragAndDrop';
+/** @deprecated Cursor management is built into `useInteraction` */
 export { useGlobalDragCursor } from './hooks/useGlobalDragCursor';
 export { useIsToday } from './hooks/useIsToday';
 export { usePlanLayoutCalculator } from './hooks/usePlanLayoutCalculator';
@@ -125,6 +128,7 @@ export {
 } from './utils/gridCalculator';
 
 // planGhost
+/** @deprecated Ghost style is computed inline using InteractionState */
 export { calculatePlanGhostStyle, calculatePreviewTime } from './utils/planGhost';
 
 // planPositioning
