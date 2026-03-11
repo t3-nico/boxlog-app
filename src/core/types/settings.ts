@@ -1,0 +1,13 @@
+/**
+ * 設定カテゴリの識別子（7カテゴリ）
+ *
+ * 複数featureから参照されるため @/core/types に配置
+ */
+export type SettingsCategory =
+  | 'profile'
+  | 'display'
+  | 'tags'
+  | 'notifications'
+  | 'data'
+  | 'billing'
+  | 'account';

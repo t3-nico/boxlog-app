@@ -32,8 +32,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useLogout } from '@/hooks/useLogout';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useRouter } from '@/i18n/navigation';
+import { MEDIA_QUERIES } from '@/lib/breakpoints';
+import { useSettingsStore } from '@/stores/useSettingsStore';
 import { useLocale, useTranslations } from 'next-intl';
+
+import type { SettingsCategory } from '@/core/types';
 
 export function UserMenu({
   user,
@@ -48,6 +53,16 @@ export function UserMenu({
   const { logout, isLoggingOut } = useLogout();
   const t = useTranslations();
   const locale = useLocale();
+  const isMobile = useMediaQuery(MEDIA_QUERIES.mobile);
+  const openSettings = useSettingsStore((s) => s.open);
+
+  const handleOpenSettings = (category: SettingsCategory) => {
+    if (isMobile) {
+      router.push(`/settings/${category}`);
+    } else {
+      openSettings(category);
+    }
+  };
 
   return (
     <DropdownMenu>
@@ -90,15 +105,15 @@ export function UserMenu({
 
         {/* アカウント関連 */}
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => router.push('/settings/profile')}>
+          <DropdownMenuItem onClick={() => handleOpenSettings('profile')}>
             <UserCircle />
             {t('navUser.account')}
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => router.push('/settings/account')}>
+          <DropdownMenuItem onClick={() => handleOpenSettings('billing')}>
             <Sparkles />
             {t('navUser.upgradePlan')}
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => router.push('/settings/display')}>
+          <DropdownMenuItem onClick={() => handleOpenSettings('display')}>
             <Palette />
             {t('navUser.personalize')}
           </DropdownMenuItem>
@@ -108,7 +123,7 @@ export function UserMenu({
 
         {/* 設定とヘルプ */}
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => router.push('/settings/profile')}>
+          <DropdownMenuItem onClick={() => handleOpenSettings('profile')}>
             <Settings />
             {t('navUser.settings')}
           </DropdownMenuItem>

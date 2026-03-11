@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { Check, CreditCard, Crown, Receipt, Sparkles, Zap } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
+import { SettingRow } from './fields/SettingRow';
 import { SettingsCard } from './SettingsCard';
 
 interface Plan {
@@ -62,7 +63,7 @@ const PLANS: Plan[] = [
   },
 ];
 
-export const PlanBillingSettings = memo(function PlanBillingSettings() {
+export function BillingSettings() {
   const t = useTranslations();
   const [currentPlan] = useState('free');
   const [billingPeriod, setBillingPeriod] = useState<'month' | 'year'>('month');
@@ -75,25 +76,23 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
     <div className="space-y-8">
       {/* 現在のプラン */}
       <SettingsCard title={t('settings.subscription.currentPlan')}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="bg-state-active flex h-12 w-12 items-center justify-center rounded-2xl">
-              <Zap className="text-primary h-6 w-6" />
+        <div className="flex items-center gap-4 py-2">
+          <div className="bg-state-active flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl">
+            <Zap className="text-primary h-6 w-6" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2">
+              <h4 className="text-lg font-bold">{t('settings.subscription.freePlanLabel')}</h4>
+              <Badge variant="secondary">{t('settings.subscription.currentBadge')}</Badge>
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h4 className="text-lg font-bold">{t('settings.subscription.freePlanLabel')}</h4>
-                <Badge variant="secondary">{t('settings.subscription.currentBadge')}</Badge>
-              </div>
-              <p className="text-muted-foreground text-sm">
-                {t('settings.subscription.freePlanDescription')}
-              </p>
-            </div>
+            <p className="text-muted-foreground text-sm">
+              {t('settings.subscription.freePlanDescription')}
+            </p>
           </div>
         </div>
       </SettingsCard>
 
-      {/* プラン選択 */}
+      {/* プラン変更 */}
       <SettingsCard
         title={t('settings.subscription.selectPlan')}
         actions={
@@ -171,39 +170,37 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
         </div>
       </SettingsCard>
 
-      {/* 支払い方法 */}
+      {/* お支払い方法 */}
       <SettingsCard title={t('settings.subscription.paymentMethod')}>
-        <div className="space-y-4">
-          <div className="border-border flex items-center justify-between rounded-2xl border p-4">
-            <div className="flex items-center gap-4">
-              <div className="bg-container flex h-10 w-10 items-center justify-center rounded-2xl">
-                <CreditCard className="text-muted-foreground h-5 w-5" />
-              </div>
-              <div>
-                <p className="text-muted-foreground text-sm">{t('settings.subscription.noCard')}</p>
-              </div>
-            </div>
-            <Button variant="ghost" disabled>
-              {t('settings.subscription.addCard')}
-            </Button>
-          </div>
-          <p className="text-muted-foreground text-xs">
-            {t('settings.subscription.paymentComingSoon')}
+        <SettingRow label={t('settings.subscription.noCard')}>
+          <Button variant="outline" disabled>
+            <CreditCard className="mr-2 h-4 w-4" />
+            {t('settings.subscription.addCard')}
+          </Button>
+        </SettingRow>
+        <p className="text-muted-foreground text-xs">
+          {t('settings.subscription.paymentComingSoon')}
+        </p>
+      </SettingsCard>
+
+      {/* 請求履歴・領収書 */}
+      <SettingsCard title={t('settings.subscription.billingHistory')}>
+        <div className="flex h-32 flex-col items-center justify-center">
+          <Receipt className="text-muted-foreground mb-2 h-8 w-8" />
+          <p className="text-muted-foreground text-sm">
+            {t('settings.subscription.noBillingHistory')}
           </p>
         </div>
       </SettingsCard>
 
-      {/* 請求履歴 */}
-      <SettingsCard title={t('settings.subscription.billingHistory')}>
-        <div className="space-y-4">
-          <div className="flex h-32 flex-col items-center justify-center">
-            <Receipt className="text-muted-foreground mb-2 h-8 w-8" />
-            <p className="text-muted-foreground text-sm">
-              {t('settings.subscription.noBillingHistory')}
-            </p>
-          </div>
-        </div>
+      {/* プランキャンセル */}
+      <SettingsCard title={t('settings.billing.cancelPlan')}>
+        <SettingRow label={t('settings.billing.cancelPlanDescription')}>
+          <Button variant="outline" disabled>
+            {t('settings.billing.cancelPlanComingSoon')}
+          </Button>
+        </SettingRow>
       </SettingsCard>
     </div>
   );
-});
+}

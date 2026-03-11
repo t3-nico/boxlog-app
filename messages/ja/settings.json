@@ -418,8 +418,10 @@
         "displayDesc": "テーマ、言語、タイムゾーン、カレンダー設定",
         "data": "データ",
         "dataDesc": "エクスポート、インポート、データ管理",
+        "billing": "請求",
+        "billingDesc": "プラン、お支払い、領収書",
         "account": "アカウント",
-        "accountDesc": "プラン、お支払い、アカウント管理",
+        "accountDesc": "ログアウト、アカウント削除",
         "subscription": "サブスクリプション",
         "subscriptionDesc": "プランと課金管理",
         "about": "このアプリについて",
@@ -430,27 +432,54 @@
     },
     "dataControls": {
       "export": {
-        "title": "データエクスポート",
-        "includedDataTitle": "エクスポートされるデータ",
-        "profileInfo": "プロフィール情報",
-        "tasksEvents": "タスク・イベント",
-        "tagSettings": "タグ設定",
-        "calendarSettings": "カレンダー設定",
-        "notificationSettings": "通知設定",
-        "otherSettings": "その他の設定",
+        "title": "エクスポート",
+        "description": "選択した形式でデータをダウンロードします。",
+        "format": "形式",
+        "formatJson": "JSON（バックアップ・復元用）",
+        "formatCsv": "CSV（スプレッドシート用）",
+        "range": "範囲",
+        "rangeAll": "全期間",
+        "rangeCustom": "期間指定",
+        "startDate": "開始日",
+        "endDate": "終了日",
         "exporting": "エクスポート中...",
-        "exportButton": "データをエクスポート"
+        "exportButton": "エクスポート"
       },
-      "import": {
-        "title": "データインポート",
-        "dropzone": "JSONファイルをドロップまたはクリックして選択",
+      "restore": {
+        "title": "バックアップ復元",
+        "description": "DayoptのJSONエクスポートファイルから復元します。",
+        "dropzone": "JSONファイルをドロップ、またはクリックして選択",
         "selectFile": "ファイルを選択",
-        "comingSoon": "※ インポート機能は現在開発中です"
+        "warning": "復元すると既存のデータが上書きされます。この操作は取り消せません。",
+        "comingSoon": "Coming soon"
       },
-      "backup": {
-        "title": "自動バックアップ",
-        "enableLabel": "自動バックアップを有効にする",
-        "lastBackup": "最終バックアップ: 未実行"
+      "mcp": {
+        "title": "MCP / API",
+        "description": "Claude DesktopなどのAIアシスタントからDayoptのデータに接続します。",
+        "serverUrl": "MCPサーバーURL",
+        "apiKey": "APIキー",
+        "noKey": "APIキーが未生成です",
+        "generateKey": "APIキーを生成",
+        "regenerateKey": "再発行",
+        "regenerateConfirm": "再発行すると現在のキーが無効になります。続けますか？",
+        "copied": "クリップボードにコピーしました",
+        "connectionGuide": "上記のURLとAPIキーをClaude Desktopの設定に追加してください。",
+        "viewDocs": "ドキュメントを見る",
+        "proRequired": "MCP / APIアクセスにはProプランが必要です。",
+        "upgrade": "Proにアップグレード"
+      },
+      "deletion": {
+        "title": "データ削除",
+        "deleteBlocks": "全ブロックを削除",
+        "deleteBlocksDesc": "すべてのプランと記録を削除します。タグと設定は残ります。",
+        "deleteAllData": "全データを削除",
+        "deleteAllDataDesc": "タグや設定を含むすべてのデータを削除します。アカウントは残ります。",
+        "confirmTitle": "本当に削除しますか？",
+        "confirmDeleteBlocks": "すべてのプランと記録が完全に削除されます。タグと設定は保持されます。",
+        "confirmDeleteAll": "すべてのデータが完全に削除されます。アカウントは残りますが、プラン、記録、タグ、設定はすべて削除されます。",
+        "typeToConfirm": "確認のため「{keyword}」と入力してください",
+        "confirmKeyword": "削除",
+        "deleting": "削除中..."
       }
     },
     "integrations": {
@@ -512,6 +541,11 @@
         "cookies": "Cookie設定",
         "ossCredits": "オープンソースライセンス"
       }
+    },
+    "billing": {
+      "cancelPlan": "プランキャンセル",
+      "cancelPlanDescription": "現在のサブスクリプションプランを解約します",
+      "cancelPlanComingSoon": "準備中"
     },
     "subscription": {
       "currentPlan": "現在のプラン",

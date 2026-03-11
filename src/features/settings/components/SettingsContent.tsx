@@ -21,6 +21,7 @@ const categoryComponents: Record<
     import('./notification-settings').then((m) => ({ default: m.NotificationSettings })),
   ),
   data: lazy(() => import('./data-settings').then((m) => ({ default: m.DataSettings }))),
+  billing: lazy(() => import('./billing-settings').then((m) => ({ default: m.BillingSettings }))),
   account: lazy(() => import('./account-settings').then((m) => ({ default: m.AccountSettings }))),
 };
 
@@ -30,6 +31,7 @@ const VALID_CATEGORIES = new Set<string>([
   'tags',
   'notifications',
   'data',
+  'billing',
   'account',
 ]);
 

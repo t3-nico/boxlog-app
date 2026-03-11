@@ -1,5 +1,6 @@
 import {
   Bell,
+  CreditCard,
   Database,
   Monitor,
   Settings as SettingsIcon,
@@ -22,7 +23,7 @@ export interface SettingsCategoryMeta {
 }
 
 /**
- * 設定カテゴリの定義（6カテゴリ）
+ * 設定カテゴリの定義（7カテゴリ）
  */
 export const SETTINGS_CATEGORIES: readonly SettingsCategoryMeta[] = [
   {
@@ -54,6 +55,12 @@ export const SETTINGS_CATEGORIES: readonly SettingsCategoryMeta[] = [
     icon: Database,
     labelKey: 'settings.dialog.categories.data',
     descKey: 'settings.dialog.categories.dataDesc',
+  },
+  {
+    id: 'billing',
+    icon: CreditCard,
+    labelKey: 'settings.dialog.categories.billing',
+    descKey: 'settings.dialog.categories.billingDesc',
   },
   {
     id: 'account',
