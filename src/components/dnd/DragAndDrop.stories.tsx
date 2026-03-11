@@ -17,7 +17,7 @@ import { PlanCard } from '@/features/calendar/components/views/shared/components
  *
  * | 層 | 方式 | 用途 |
  * |---|---|---|
- * | **ローカル層** | カスタム mouse/touch ハンドラ (`useDragAndDrop`) | カレンダー内カード移動・リサイズ |
+ * | **ローカル層** | interaction state machine (`useInteraction`) | カレンダー内カード移動・リサイズ |
  * | **グローバル層** | Zustand (`useCalendarDragStore`) | 複数日付間のドラッグ状態共有 |
  * | **プロバイダー層** | @dnd-kit (`DnDProvider`) | パネル↔カレンダー間ドラッグ |
  *
@@ -133,15 +133,16 @@ const formatTime = (hour: number, minute: number) => {
  * ### データフロー
  * ```
  * PlanCard onMouseDown
- *   → useDragAndDrop.handleMouseDown
- *   → useDragHandler（マウスムーブ中の位置計算）
+ *   → useInteraction.handlePointerDown
+ *   → interaction state machine（状態遷移: idle→pending→dragging）
  *   → useCalendarDragStore.startDrag（グローバル状態更新）
  *   → PlanCard isDragging=true（opacity低下 + z-30）
+ *   → GhostRenderer（React Portalでゴースト描画）
  * ```
  *
  * ### 実装方式
- * dnd-kit ではなく**カスタム mouse/touch ハンドラ**で実装。
- * `useDragAndDrop` がマウスイベントを直接購読し、グリッドDOM測定を行う。
+ * dnd-kit ではなく **interaction state machine** で実装。
+ * `useInteraction` が mouse/touch を統一的に処理。
  * タッチは500ms長押しで起動。15分単位でスナップ。
  *
  * ### 注意点
@@ -160,8 +161,9 @@ export const CalendarDrag: Story = {
         </p>
         <FileList
           files={[
-            { path: 'hooks/drag-and-drop/useDragAndDrop.ts', role: 'ローカルDnD状態管理' },
-            { path: 'hooks/drag-and-drop/useDragHandler.ts', role: 'マウスムーブ位置計算' },
+            { path: 'interaction/useInteraction.ts', role: '統合インタラクションhook' },
+            { path: 'interaction/machine.ts', role: '純粋状態機械' },
+            { path: 'interaction/GhostRenderer.tsx', role: 'React Portalゴースト' },
             { path: 'stores/useCalendarDragStore.ts', role: 'グローバルドラッグ状態' },
             { path: 'components/PlanCard/PlanCard.tsx', role: 'ドラッグ対象カード' },
           ]}
@@ -239,8 +241,8 @@ export const ResizeHandle: Story = {
         <FileList
           files={[
             {
-              path: 'hooks/drag-and-drop/useResizeHandler.ts',
-              role: 'リサイズ中の高さ計算・重複チェック',
+              path: 'interaction/machine.ts',
+              role: 'リサイズ状態遷移・高さ計算・重複チェック',
             },
             {
               path: 'shared/constants/grid.constants.ts',
