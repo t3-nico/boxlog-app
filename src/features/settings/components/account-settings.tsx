@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { Suspense, lazy, useCallback, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
@@ -8,6 +8,7 @@ import { Camera } from 'lucide-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useAuthStore } from '@/stores/useAuthStore';
 
 import { AccountDeletionDialog } from './account-deletion-dialog';
@@ -19,11 +20,32 @@ import { PasswordChangeDialog } from './password-change-dialog';
 import { MFASection } from './sections/MFASection';
 import { SettingsCard } from './SettingsCard';
 
+// 統合されたセクション（旧 data-controls, integrations, subscription）を遅延ロード
+const IntegrationSettings = lazy(() =>
+  import('./integration-settings').then((m) => ({ default: m.IntegrationSettings })),
+);
+const DataExportSettings = lazy(() =>
+  import('./data-export-settings').then((m) => ({
+    default: m.DataExportSettings as React.ComponentType<object>,
+  })),
+);
+const PlanBillingSettings = lazy(() =>
+  import('./plan-billing-settings').then((m) => ({ default: m.PlanBillingSettings })),
+);
+
+function SectionSkeleton() {
+  return (
+    <div className="space-y-4">
+      <Skeleton className="h-12 w-full" />
+      <Skeleton className="h-12 w-full" />
+    </div>
+  );
+}
+
 /**
- * アカウント設定コンポーネント（ChatGPT/Notion風 統一レイアウト）
+ * アカウント設定コンポーネント
  *
- * 各項目を1行で表示し、変更はダイアログで行う
- * MFAセクションは複雑な状態を持つため別コンポーネントとして維持
+ * プロフィール、セキュリティ、MFA、連携、データ管理、プランを統合管理
  */
 export function AccountSettings() {
   const t = useTranslations();
@@ -92,8 +114,23 @@ export function AccountSettings() {
         </div>
       </SettingsCard>
 
-      {/* MFA Section - 複雑な状態を持つため別コンポーネントとして維持 */}
+      {/* MFA Section */}
       <MFASection />
+
+      {/* Integrations Section (旧 integrations カテゴリ) */}
+      <Suspense fallback={<SectionSkeleton />}>
+        <IntegrationSettings />
+      </Suspense>
+
+      {/* Data Management Section (旧 data-controls カテゴリ) */}
+      <Suspense fallback={<SectionSkeleton />}>
+        <DataExportSettings />
+      </Suspense>
+
+      {/* Plan & Billing Section (旧 subscription カテゴリ) */}
+      <Suspense fallback={<SectionSkeleton />}>
+        <PlanBillingSettings />
+      </Suspense>
 
       {/* Danger Zone */}
       <SettingsCard
