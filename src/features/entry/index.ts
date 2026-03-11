@@ -21,42 +21,9 @@ export type {
 } from './types/entry';
 
 // =============================================================================
-// Stores (Re-export from shared stores)
+// Hooks (feature-internal)
 // =============================================================================
-export { useEntryCacheStore } from '@/stores/useEntryCacheStore';
-export { useEntryClipboardStore } from '@/stores/useEntryClipboardStore';
-export type { ClipboardEntry, LastClickedPosition } from '@/stores/useEntryClipboardStore';
-export { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
-
-// =============================================================================
-// Hooks
-// =============================================================================
-export { useEntries } from '@/hooks/useEntries';
-export {
-  instancesToExceptionsMap,
-  useEntryInstanceMutations,
-  useEntryInstances,
-} from '@/hooks/useEntryInstances';
-export { useEntryMutations } from '@/hooks/useEntryMutations';
-export { useEntryTags } from '@/hooks/useEntryTags';
-export { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
 export { useEntry, usePlan, useplan } from './hooks/useEntry';
-
-// =============================================================================
-// Utils
-// =============================================================================
-export {
-  expandRecurrence,
-  getEntryRecurrenceConfig,
-  isRecurringEntry,
-} from '@/lib/entry-recurrence';
-export type { EntryInstanceException, ExpandedOccurrence } from '@/lib/entry-recurrence';
-
-export { decodeInstanceId, encodeInstanceId, getInstanceRef } from '@/lib/instance-id';
-export type { RecurrenceInstanceRef } from '@/lib/instance-id';
-
-export { groupItems } from '@/lib/entry-grouping';
-export type { GroupByField, GroupedData } from '@/lib/entry-grouping';
 
 // =============================================================================
 // Components

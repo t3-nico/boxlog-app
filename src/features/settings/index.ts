@@ -6,12 +6,6 @@
  */
 
 // =============================================================================
-// Stores
-// =============================================================================
-// Re-export from shared stores for backward compatibility
-export { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
-export type { CalendarViewType, DateFormatType } from '@/stores/useCalendarSettingsStore';
-// =============================================================================
 // Types
 // =============================================================================
 export type { SettingsCategory } from './types';
@@ -28,11 +22,6 @@ export type { SettingsCategoryMeta } from './constants';
 export { SettingsContent, isValidCategory } from './components/SettingsContent';
 export { SettingsDialog } from './components/SettingsDialog';
 export { SettingsSidebar } from './components/SettingsSidebar';
-
-// =============================================================================
-// Hooks
-// =============================================================================
-export { useDateFormat } from '@/hooks/useDateFormat';
 
 // =============================================================================
 // Utils

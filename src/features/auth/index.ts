@@ -8,17 +8,8 @@ export { SessionMonitorProvider } from './components/SessionMonitorProvider';
 export { SessionTimeoutDialog } from './components/SessionTimeoutDialog';
 export { SignupForm } from './components/SignupForm';
 
-// State management - Zustand store (Context APIから移行)
+// State management - Zustand store
 export { AuthStoreInitializer } from './stores/AuthStoreInitializer';
-// Re-export from shared stores for backward compatibility
-export {
-  selectError,
-  selectIsAuthenticated,
-  selectLoading,
-  selectSession,
-  selectUser,
-  useAuthStore,
-} from '@/stores/useAuthStore';
 
 // Hooks
 export { useSessionMonitor } from './hooks/useSessionMonitor';

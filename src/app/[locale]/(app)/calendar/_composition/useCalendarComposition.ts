@@ -29,8 +29,9 @@ import { useNotifications } from '@/features/notifications';
 import { useCalendarNavigationStore } from '@/stores/useCalendarNavigationStore';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 
-import { getCurrentTimezone, setUserTimezone, useCalendarSettingsStore } from '@/features/settings';
+import { getCurrentTimezone, setUserTimezone } from '@/features/settings';
 import { logger } from '@/lib/logger';
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
 // =============================================================================
 // Types
