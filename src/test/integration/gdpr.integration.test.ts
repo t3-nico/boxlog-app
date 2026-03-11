@@ -17,9 +17,9 @@ import { createClient } from '@supabase/supabase-js';
 import { TRPCError } from '@trpc/server';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
+import { userRouter } from '@/features/auth/server/router';
 import type { Database } from '@/lib/database.types';
-import { userRouter } from '@/server/api/routers/user';
-import type { Context } from '@/server/api/trpc';
+import type { Context } from '@/platform/trpc/procedures';
 import { createTestCaller } from '@/test/trpc-test-helpers';
 
 // 環境変数からSupabase接続情報を取得

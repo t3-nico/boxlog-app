@@ -5,11 +5,8 @@
  */
 
 import { isTimePast } from '@/lib/entry-status';
+import { normalizeDateTimeConsistency, removeUndefinedFields } from '@/lib/entry-utils';
 import { logger } from '@/lib/logger';
-import {
-  normalizeDateTimeConsistency,
-  removeUndefinedFields,
-} from '@/server/api/routers/shared/utils';
 
 import type {
   CreateEntryOptions,

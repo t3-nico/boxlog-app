@@ -64,3 +64,6 @@ export interface TagMutationResult {
   data?: Tag | undefined;
   error?: TagError | undefined;
 }
+
+// タグ削除戦略
+export type TagDeleteStrategy = 'delete_entries' | 'reassign';

@@ -11,9 +11,9 @@
 
 import { z } from 'zod';
 
-import { handleServiceError } from '@/server/services/errors';
-import { createUserService, UserServiceError } from '@/server/services/user/user-service';
-import { createTRPCRouter, protectedProcedure } from '../trpc';
+import { handleServiceError } from '@/platform/trpc/errors';
+import { createTRPCRouter, protectedProcedure } from '@/platform/trpc/procedures';
+import { createUserService, UserServiceError } from './user-service';
 
 /**
  * User Router

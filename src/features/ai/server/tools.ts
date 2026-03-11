@@ -11,10 +11,10 @@
 import { tool } from 'ai';
 import { z } from 'zod';
 
+import { EntryService } from '@/features/entry/server/entry-service';
+import { TagService } from '@/features/tags/server/tag-service';
 import { MS_PER_HOUR, MS_PER_MINUTE } from '@/lib/date';
 import { logger } from '@/lib/logger';
-import { EntryService } from '@/server/services/entries/entry-service';
-import { TagService } from '@/server/services/tags/tag-service';
 
 import type { ToolSet } from 'ai';
 import type { AISupabaseClient } from './types';

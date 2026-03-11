@@ -22,8 +22,8 @@ import { ReminderEmail } from '@/emails/ReminderEmail';
 import { WelcomeEmail } from '@/emails/WelcomeEmail';
 import { getAppUrl } from '@/lib/app-url';
 import { logger } from '@/lib/logger';
-import type { Context } from '@/server/api/trpc';
-import { createTRPCRouter, protectedProcedure } from '../trpc';
+import type { Context } from '@/platform/trpc/procedures';
+import { createTRPCRouter, protectedProcedure } from '@/platform/trpc/procedures';
 
 // 遅延初期化: ビルド時にAPI_KEYが未設定でもクラッシュしないようにする
 function getResend() {

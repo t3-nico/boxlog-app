@@ -14,10 +14,9 @@ import { useCallback, useMemo, useState } from 'react';
 import { Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import type { Tag } from '@/core/types/tag';
+import type { Tag, TagDeleteStrategy } from '@/core/types/tag';
 import { getTagColorClasses } from '@/lib/tag-colors';
 import { cn } from '@/lib/utils';
-import type { TagDeleteStrategy } from '@/server/services/tags/tag-service';
 
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Input } from '@/components/ui/input';

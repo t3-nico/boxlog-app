@@ -12,8 +12,8 @@ import { TRPCError } from '@trpc/server';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
 import type { Database } from '@/lib/database.types';
+import type { Context } from '@/platform/trpc/procedures';
 import { profileRouter } from '@/server/api/routers/profile';
-import type { Context } from '@/server/api/trpc';
 import { createTestCaller } from '@/test/trpc-test-helpers';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:54321';

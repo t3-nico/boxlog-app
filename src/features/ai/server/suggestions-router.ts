@@ -6,9 +6,9 @@
 
 import { z } from 'zod';
 
-import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
-import { handleServiceError } from '@/server/services/errors';
-import { createSuggestionService } from '@/server/services/suggestions';
+import { handleServiceError } from '@/platform/trpc/errors';
+import { createTRPCRouter, protectedProcedure } from '@/platform/trpc/procedures';
+import { createSuggestionService } from './suggestions-index';
 
 export const suggestionsRouter = createTRPCRouter({
   /**

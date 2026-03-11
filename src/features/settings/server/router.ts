@@ -8,7 +8,7 @@ import { z } from 'zod';
 
 import type { Database } from '@/lib/database.types';
 import { logger } from '@/lib/logger';
-import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
+import { createTRPCRouter, protectedProcedure } from '@/platform/trpc/procedures';
 
 type UserSettingsInsert = Database['public']['Tables']['user_settings']['Insert'];
 

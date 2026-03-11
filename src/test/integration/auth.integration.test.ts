@@ -14,8 +14,8 @@ import { TRPCError } from '@trpc/server';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
 import type { Database } from '@/lib/database.types';
+import type { Context } from '@/platform/trpc/procedures';
 import { authRouter } from '@/server/api/routers/auth';
-import type { Context } from '@/server/api/trpc';
 import { createTestCaller } from '@/test/trpc-test-helpers';
 
 // 環境変数からSupabase接続情報を取得

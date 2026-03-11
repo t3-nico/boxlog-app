@@ -7,7 +7,7 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 import { logger } from '@/lib/logger';
-import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
+import { createTRPCRouter, protectedProcedure } from '@/platform/trpc/procedures';
 
 export const notificationPreferencesRouter = createTRPCRouter({
   /**

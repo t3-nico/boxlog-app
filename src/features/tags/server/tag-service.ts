@@ -16,7 +16,7 @@
  * - TanStack Queryのクライアントキャッシュ（5分）で対応
  */
 
-import type { Tag } from '@/core/types/tag';
+import type { Tag, TagDeleteStrategy } from '@/core/types/tag';
 import type { Database } from '@/lib/database.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
@@ -830,8 +830,7 @@ export class TagService {
   }
 }
 
-/** タグ削除ストラテジー */
-export type TagDeleteStrategy = 'delete_entries' | 'reassign';
+export type { TagDeleteStrategy } from '@/core/types/tag';
 
 /** タグ統計の型 */
 export interface TagStatsRow {

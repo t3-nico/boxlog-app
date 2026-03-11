@@ -4,7 +4,7 @@
  * 通知のビジネスロジックを集約したサービス層
  */
 
-import { ServiceError } from '../errors';
+import { ServiceError } from '@/platform/trpc/errors';
 
 import type {
   CreateNotificationOptions,

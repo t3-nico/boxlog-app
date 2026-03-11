@@ -9,9 +9,6 @@
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
-import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
-import { createEntryService } from '@/server/services/entries';
-import { handleServiceError } from '@/server/services/errors';
 import {
   bulkDeleteEntrySchema,
   bulkUpdateEntrySchema,
@@ -20,9 +17,12 @@ import {
   entryIdSchema,
   getEntryByIdSchema,
   updateEntrySchema,
-} from './schemas';
+} from '@/core/schemas/entry';
+import { handleServiceError } from '@/platform/trpc/errors';
+import { createTRPCRouter, protectedProcedure } from '@/platform/trpc/procedures';
+import { createEntryService } from './service-index';
 
-import { removeUndefinedFields } from '../shared/utils';
+import { removeUndefinedFields } from '@/lib/entry-utils';
 
 // =============================================================================
 // Inline Schemas

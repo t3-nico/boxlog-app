@@ -4,14 +4,10 @@
  * リマインダー通知管理API
  */
 
-import {
-  listNotificationsSchema,
-  markAllAsReadSchema,
-  notificationIdSchema,
-} from '@/features/notifications/schemas';
-import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
-import { handleServiceError } from '@/server/services/errors';
-import { createNotificationService } from '@/server/services/notifications';
+import { handleServiceError } from '@/platform/trpc/errors';
+import { createTRPCRouter, protectedProcedure } from '@/platform/trpc/procedures';
+import { listNotificationsSchema, markAllAsReadSchema, notificationIdSchema } from '../schemas';
+import { createNotificationService } from './service-index';
 
 export const notificationsRouter = createTRPCRouter({
   /**
