@@ -191,3 +191,108 @@ export function calculateScrollPosition(
   // 画面の中央に表示するように調整
   return Math.max(0, targetPosition - containerHeight / 3);
 }
+
+// ========================================
+// Time Slot Generation
+// ========================================
+
+/** タイムスロット — 15分単位の時間区画 */
+export interface TimeSlot {
+  time: string;
+  hour: number;
+  minute: number;
+  label: string;
+  isHour: boolean;
+  isHalfHour: boolean;
+  isQuarterHour: boolean;
+}
+
+/**
+ * タイムスロット配列を生成（純粋関数）
+ * @param startHour - 開始時間（デフォルト: 0）
+ * @param endHour - 終了時間（デフォルト: 24）
+ * @param interval - 間隔（分、デフォルト: 15）
+ */
+export function generateTimeSlots(
+  startHour: number = 0,
+  endHour: number = 24,
+  interval: number = 15,
+): TimeSlot[] {
+  const slots: TimeSlot[] = [];
+
+  for (let hour = startHour; hour < endHour; hour++) {
+    for (let minute = 0; minute < 60; minute += interval) {
+      const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+
+      slots.push({
+        time: timeString,
+        hour,
+        minute,
+        label: minute === 0 ? `${hour}:00` : timeString,
+        isHour: minute === 0,
+        isHalfHour: minute === 30,
+        isQuarterHour: minute === 15 || minute === 45,
+      });
+    }
+  }
+
+  return slots;
+}
+
+// ========================================
+// Plan Style Computation
+// ========================================
+
+/** プラン位置情報 */
+export interface PlanPositionInput {
+  id: string;
+  top: number;
+  height: number;
+  left: number;
+  width: number;
+  zIndex: number;
+  opacity?: number;
+}
+
+/** プラン位置情報からCSSスタイルマップを生成（純粋関数） */
+export function computePlanStyles(
+  positions: PlanPositionInput[],
+): Record<
+  string,
+  {
+    position: 'absolute';
+    top: string;
+    height: string;
+    left: string;
+    width: string;
+    zIndex: number;
+    opacity: number;
+  }
+> {
+  const styles: Record<
+    string,
+    {
+      position: 'absolute';
+      top: string;
+      height: string;
+      left: string;
+      width: string;
+      zIndex: number;
+      opacity: number;
+    }
+  > = {};
+
+  for (const pos of positions) {
+    styles[pos.id] = {
+      position: 'absolute',
+      top: `${pos.top}px`,
+      height: `${pos.height}px`,
+      left: `${pos.left}%`,
+      width: `${pos.width}%`,
+      zIndex: pos.zIndex,
+      opacity: pos.opacity ?? 1.0,
+    };
+  }
+
+  return styles;
+}

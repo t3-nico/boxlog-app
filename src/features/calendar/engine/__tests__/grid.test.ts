@@ -10,7 +10,7 @@ import {
   pixelsToTimeValues,
   roundToQuarterHour,
   timeToPixels,
-} from './gridCalculator';
+} from '../grid';
 
 describe('timeToPixels', () => {
   it('0:00を0pxに変換する', () => {

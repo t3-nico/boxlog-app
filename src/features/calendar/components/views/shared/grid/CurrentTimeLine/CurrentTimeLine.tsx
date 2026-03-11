@@ -6,10 +6,10 @@
 
 import { memo, useMemo } from 'react';
 
+import { timeToPixels } from '../../../../../engine/grid';
 import { HOUR_HEIGHT, Z_INDEX } from '../../constants/grid.constants';
 import { useCurrentTime } from '../../hooks/useCurrentTime';
 import type { CurrentTimeLineProps } from '../../types/grid.types';
-import { timeToPixels } from '../../utils/gridCalculator';
 
 export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLine({
   hourHeight = HOUR_HEIGHT,

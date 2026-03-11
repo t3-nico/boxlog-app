@@ -11,6 +11,8 @@ export {
   MIN_EVENT_HEIGHT,
   calculateGridHeight,
   calculateScrollPosition,
+  computePlanStyles,
+  generateTimeSlots,
   getDurationInMinutes,
   getEventStyle,
   isTimeInRange,
@@ -19,7 +21,7 @@ export {
   roundToQuarterHour,
   timeToPixels,
 } from './grid';
-export type { EventStyle } from './grid';
+export type { EventStyle, PlanPositionInput, TimeSlot } from './grid';
 
 // Layout: 重複検出、カラム割り当て、プランカード配置
 export {
