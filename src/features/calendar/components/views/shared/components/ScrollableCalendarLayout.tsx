@@ -11,10 +11,10 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 
+import { ChronotypeBackground } from '@/features/chronotype/components';
 import { cn } from '@/lib/utils';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
-import { ChronotypeBackground } from '../grid/ChronotypeBackground';
 import { TimeColumn } from '../grid/TimeColumn/TimeColumn';
 import { useCurrentTimeLine } from '../hooks/useCurrentTimeLine';
 import { useResponsiveHourHeight } from '../hooks/useResponsiveHourHeight';

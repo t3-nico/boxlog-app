@@ -10,6 +10,7 @@ import { endOfWeek, startOfWeek } from '@/lib/date/core';
 import { formatDateISO } from '@/lib/date/format';
 import { logger } from '@/lib/logger';
 
+import type { ChronotypeType } from '@/features/chronotype';
 import type { AIContext, AIContextPlan, AIContextRecord, AISupabaseClient } from './types';
 
 /**
@@ -177,7 +178,7 @@ export async function buildAIContext(
     },
     timezone: settings?.timezone ?? 'Asia/Tokyo',
     chronotype: {
-      type: (settings?.chronotype_type as string) ?? 'bear',
+      type: (settings?.chronotype_type as ChronotypeType) ?? 'bear',
       enabled: settings?.chronotype_enabled ?? false,
     },
     tags: tags.map((t) => ({ name: t.name, color: t.color ?? '#888' })),

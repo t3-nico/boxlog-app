@@ -6,6 +6,12 @@
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
+import type { ChronotypeDisplayMode, ChronotypeType } from '@/features/chronotype';
+import {
+  chronotypeCustomZonesSchema,
+  chronotypeDisplayModeSchema,
+  chronotypeTypeSchema,
+} from '@/features/chronotype/lib/schemas';
 import type { Database } from '@/lib/database.types';
 import { logger } from '@/lib/logger';
 import { createTRPCRouter, protectedProcedure } from '@/platform/trpc/procedures';
@@ -42,19 +48,9 @@ const userSettingsSchema = z.object({
 
   // クロノタイプ設定
   chronotypeEnabled: z.boolean().optional(),
-  chronotypeType: z.enum(['bear', 'lion', 'wolf', 'dolphin', 'custom']).optional(),
-  chronotypeCustomZones: z
-    .array(
-      z.object({
-        startHour: z.number().int().min(0).max(23),
-        endHour: z.number().int().min(0).max(23),
-        level: z.enum(['warmup', 'peak', 'dip', 'recovery', 'winddown']),
-        label: z.string().max(100),
-      }),
-    )
-    .max(24)
-    .optional(),
-  chronotypeDisplayMode: z.enum(['border', 'background', 'both']).optional(),
+  chronotypeType: chronotypeTypeSchema.optional(),
+  chronotypeCustomZones: chronotypeCustomZonesSchema.optional(),
+  chronotypeDisplayMode: chronotypeDisplayModeSchema.optional(),
   chronotypeOpacity: z.number().min(0).max(100).optional(),
 
   // Plan/Record表示設定
@@ -133,9 +129,9 @@ export const userSettingsRouter = createTRPCRouter({
       showDeclinedEvents: data.show_declined_events,
       chronotype: {
         enabled: data.chronotype_enabled,
-        type: data.chronotype_type as 'bear' | 'lion' | 'wolf' | 'dolphin' | 'custom',
+        type: data.chronotype_type as ChronotypeType,
         customZones: data.chronotype_custom_zones,
-        displayMode: data.chronotype_display_mode as 'border' | 'background' | 'both',
+        displayMode: data.chronotype_display_mode as ChronotypeDisplayMode,
         opacity: data.chronotype_opacity,
       },
       planRecordMode: data.plan_record_mode as 'plan' | 'record' | 'both',

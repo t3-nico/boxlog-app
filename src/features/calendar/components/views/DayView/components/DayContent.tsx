@@ -2,6 +2,7 @@
 
 import React, { useCallback } from 'react';
 
+import { ChronotypeBackground } from '@/features/chronotype/components';
 import { cn } from '@/lib/utils';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 
@@ -11,7 +12,6 @@ import { GhostRenderer } from '../../../../interaction/GhostRenderer';
 import { CalendarDragSelection, PlanCard } from '../../shared';
 import { InlineTagPalette } from '../../shared/components/InlineTagPalette';
 import { PanelDragPreview } from '../../shared/components/PanelDragPreview';
-import { ChronotypeBackground } from '../../shared/grid/ChronotypeBackground';
 import { useResponsiveHourHeight } from '../../shared/hooks/useResponsiveHourHeight';
 import type { CalendarEvent } from '../../shared/types/base.types';
 import type { DayContentProps } from '../DayView.types';

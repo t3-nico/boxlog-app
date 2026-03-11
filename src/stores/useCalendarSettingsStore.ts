@@ -1,7 +1,8 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
-import type { ChronotypeType, ProductivityZone } from '@/core/types/chronotype';
+import type { ChronotypeSettings as ChronotypeSettingsState } from '@/features/chronotype';
+import { DEFAULT_CHRONOTYPE_SETTINGS } from '@/features/chronotype';
 import type { HourHeightDensity } from '@/lib/calendar-constants';
 import { listenToTimezoneChange } from '@/lib/timezone-listener';
 
@@ -33,13 +34,7 @@ interface CalendarSettings {
   showWeekends: boolean;
 
   // クロノタイプ設定
-  chronotype: {
-    enabled: boolean;
-    type: ChronotypeType;
-    customZones?: ProductivityZone[];
-    displayMode: 'border' | 'background' | 'both';
-    opacity: number; // 0-100
-  };
+  chronotype: ChronotypeSettingsState;
 
   // Plan/Record表示設定
   planRecordMode: 'plan' | 'record' | 'both';
@@ -71,12 +66,7 @@ const defaultSettings: CalendarSettings = {
   snapInterval: 15, // デフォルトは15分間隔
   showWeekNumbers: false,
   showWeekends: true, // デフォルトは週末も表示
-  chronotype: {
-    enabled: false,
-    type: 'bear', // デフォルト選択肢（enabled: false なので未設定扱い）
-    displayMode: 'border',
-    opacity: 90,
-  },
+  chronotype: { ...DEFAULT_CHRONOTYPE_SETTINGS },
   planRecordMode: 'both',
   sleepSchedule: {
     enabled: true,

@@ -51,6 +51,17 @@ const eslintConfig = defineConfig([
     files: ['src/features/**/*.{ts,tsx}'],
     ignores: [
       'src/features/ai/server/**',        // AI tools compose across feature services
+      'src/features/chronotype/**',       // Chronotype composes with settings UI
+      'src/features/calendar/components/views/shared/grid/ChronotypeBackground/**', // ChronotypeBackground
+      'src/features/calendar/components/views/shared/hooks/useCurrentTimeLine.ts',  // Chronotype types
+      'src/features/calendar/components/views/DayView/**',                          // ChronotypeBackground
+      'src/features/calendar/components/views/WeekView/**',                         // ChronotypeBackground
+      'src/features/calendar/components/views/shared/components/ScrollableCalendarLayout.tsx',
+      'src/features/calendar/components/views/shared/grid/TimeGrid/**',              // Chronotype toggle
+      'src/features/settings/components/personalization-page.tsx',  // ChronotypeSettings component
+      'src/features/settings/components/profile-settings.tsx',      // ChronotypeSettings component
+      'src/features/settings/hooks/useUserSettings.ts',             // Chronotype types
+      'src/features/settings/server/router.ts',                     // Chronotype schemas
     ],
     rules: {
       'no-restricted-imports': ['error', {
@@ -78,6 +89,7 @@ const eslintConfig = defineConfig([
       'src/shell/providers/**',          // Provider Composition Layer
       'src/shell/providers.tsx',         // Provider root
       'src/platform/trpc/root.ts',      // Server Composition Layer (router aggregator)
+      'src/stores/useCalendarSettingsStore.ts', // Chronotype defaults + types
       'src/components/dnd/**',           // DnD (stories only)
       'src/components/**/*.stories.*',   // Storybook files
       'src/shell/**/*.stories.*',        // Storybook files

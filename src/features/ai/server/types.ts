@@ -6,6 +6,7 @@
 
 import type { SupabaseClient } from '@supabase/supabase-js';
 
+import type { ChronotypeType } from '@/features/chronotype';
 import type { Database } from '@/lib/database.types';
 
 export type AISupabaseClient = SupabaseClient<Database>;
@@ -112,7 +113,7 @@ export interface AIContext {
   /** コンテキスト情報 */
   timezone: string;
   chronotype: {
-    type: string;
+    type: ChronotypeType;
     enabled: boolean;
   };
   tags: { name: string; color: string }[];

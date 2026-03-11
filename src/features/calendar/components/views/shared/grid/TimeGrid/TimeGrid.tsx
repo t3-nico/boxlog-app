@@ -7,12 +7,13 @@
 import { useTranslations } from 'next-intl';
 import React, { memo, useCallback, useEffect, useRef } from 'react';
 
+import { ChronotypeBackground } from '@/features/chronotype/components';
+
 import { calculateScrollPosition, pixelsToTimeValues } from '../../../../../engine/grid';
 import { GRID_BACKGROUND, HOUR_HEIGHT, TIME_COLUMN_WIDTH } from '../../constants/grid.constants';
 import { useTimeSelection } from '../../hooks/useTimeSelection';
 import { useViewDimensions } from '../../hooks/useViewDimensions';
 import type { TimeGridProps } from '../../types/grid.types';
-import { ChronotypeBackground } from '../ChronotypeBackground';
 import { HalfHourLines, HourLines, QuarterHourLines } from '../GridLines';
 import { TimeColumn } from '../TimeColumn';
 

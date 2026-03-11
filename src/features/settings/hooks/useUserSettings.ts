@@ -5,10 +5,13 @@
 
 import { useCallback, useEffect } from 'react';
 
+import type {
+  ChronotypeSettings as ChronotypeSettingsState,
+  ProductivityZone,
+} from '@/features/chronotype';
 import { CACHE_5_MINUTES } from '@/lib/date';
 import { api } from '@/platform/trpc';
 
-import type { ProductivityZone } from '@/core/types/chronotype';
 import type { DateFormatType } from '@/stores/useCalendarSettingsStore';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
@@ -44,14 +47,7 @@ export function useUserSettings() {
   // DBから取得した設定をStoreに反映（初回のみ）
   useEffect(() => {
     if (dbSettings && !isPending) {
-      // chronotype設定の構築
-      const chronotypeSettings: {
-        enabled: boolean;
-        type: 'bear' | 'lion' | 'wolf' | 'dolphin' | 'custom';
-        displayMode: 'border' | 'background' | 'both';
-        opacity: number;
-        customZones?: ProductivityZone[];
-      } = {
+      const chronotypeSettings: ChronotypeSettingsState = {
         enabled: dbSettings.chronotype.enabled,
         type: dbSettings.chronotype.type,
         displayMode: dbSettings.chronotype.displayMode,

@@ -2,6 +2,7 @@
 
 import React, { useCallback } from 'react';
 
+import { ChronotypeBackground } from '@/features/chronotype/components';
 import { cn } from '@/lib/utils';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { useCalendarDragStore } from '../../../../stores/useCalendarDragStore';
@@ -13,7 +14,6 @@ import { GhostRenderer } from '../../../../interaction/GhostRenderer';
 import { CalendarDragSelection, PlanCard, usePlanStyles } from '../../shared';
 import { InlineTagPalette } from '../../shared/components/InlineTagPalette';
 import { PanelDragPreview } from '../../shared/components/PanelDragPreview';
-import { ChronotypeBackground } from '../../shared/grid/ChronotypeBackground';
 import { useResponsiveHourHeight } from '../../shared/hooks/useResponsiveHourHeight';
 import type { WeekPlanPosition } from '../WeekView.types';
 
