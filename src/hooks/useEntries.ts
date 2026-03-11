@@ -1,6 +1,6 @@
 import { cacheStrategies } from '@/lib/tanstack-query/cache-config';
 import { api } from '@/lib/trpc';
-import type { EntryFilter } from '@/schemas/entries/entry';
+import type { EntryFilter } from '@/server/api/routers/entries/schemas';
 
 /**
  * エントリ一覧取得フック（plans + records 統合）

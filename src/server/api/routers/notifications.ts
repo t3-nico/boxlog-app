@@ -8,7 +8,7 @@ import {
   listNotificationsSchema,
   markAllAsReadSchema,
   notificationIdSchema,
-} from '@/schemas/notifications';
+} from '@/features/notifications/schemas';
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
 import { handleServiceError } from '@/server/services/errors';
 import { createNotificationService } from '@/server/services/notifications';

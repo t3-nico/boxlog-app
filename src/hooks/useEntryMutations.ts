@@ -17,7 +17,7 @@ import {
 import { isTimePast } from '@/lib/entry-status';
 import { logger } from '@/lib/logger';
 import { api } from '@/lib/trpc';
-import type { UpdateEntryInput } from '@/schemas/entries/entry';
+import type { UpdateEntryInput } from '@/server/api/routers/entries/schemas';
 import { useEntryCacheStore } from '@/stores/useEntryCacheStore';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { useQueryClient } from '@tanstack/react-query';
@@ -504,4 +504,4 @@ export function useEntryMutations() {
 }
 
 // 型エクスポート
-export type { CreateEntryInput, UpdateEntryInput } from '@/schemas/entries/entry';
+export type { CreateEntryInput, UpdateEntryInput } from '@/server/api/routers/entries/schemas';

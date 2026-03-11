@@ -12,8 +12,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import type { NotificationType } from '@/schemas/notifications';
 import { useLocale, useTranslations } from 'next-intl';
+import type { NotificationType } from '../schemas';
 
 import { useRouter } from '@/i18n/navigation';
 

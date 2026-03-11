@@ -9,8 +9,8 @@ import { useEffect, useRef } from 'react';
 
 import { createClient } from '@/lib/supabase/client';
 import { trpc } from '@/lib/trpc/client';
-import type { NotificationType } from '@/schemas/notifications';
 import { toast } from 'sonner';
+import type { NotificationType } from '../schemas';
 
 import {
   checkBrowserNotificationSupport,
