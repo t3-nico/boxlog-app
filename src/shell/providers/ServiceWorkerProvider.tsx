@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { RefreshCw } from 'lucide-react';
 
-import { useServiceWorker } from '@/hooks/useServiceWorker';
+import { useServiceWorker } from '../hooks/useServiceWorker';
 
 /**
  * Service Worker プロバイダー

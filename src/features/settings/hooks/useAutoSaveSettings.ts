@@ -3,9 +3,9 @@ import { useCallback, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
-import { useDebouncedCallback } from '@/hooks/useDebounce';
 import { getErrorMessage } from '@/lib/errors';
 import { logger } from '@/lib/logger';
+import { useDebouncedCallback } from './useDebounce';
 
 interface UseAutoSaveSettingsOptions<T> {
   initialValues: T;

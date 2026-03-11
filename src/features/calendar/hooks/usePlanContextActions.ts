@@ -6,7 +6,6 @@ import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
 import { getInstanceRef } from '@/lib/instance-id';
 import { logger } from '@/lib/logger';
-import { useEntryClipboardStore } from '@/stores/useEntryClipboardStore';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import {
   openDeleteConfirm,
@@ -15,6 +14,7 @@ import {
 } from '@/stores/useModalStore';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
+import { useEntryClipboardStore } from '../stores/useEntryClipboardStore';
 import type { CalendarEvent } from '../types/calendar.types';
 
 export function usePlanContextActions() {

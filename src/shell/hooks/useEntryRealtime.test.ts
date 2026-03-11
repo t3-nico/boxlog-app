@@ -34,7 +34,7 @@ vi.mock('@/lib/logger', () => ({
 import { renderHook } from '@testing-library/react';
 import { beforeEach } from 'vitest';
 
-import { useEntryRealtime } from '../useEntryRealtime';
+import { useEntryRealtime } from './useEntryRealtime';
 
 describe('useEntryRealtime', () => {
   beforeEach(() => {

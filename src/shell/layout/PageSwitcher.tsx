@@ -8,7 +8,7 @@ import { useCallback, useMemo } from 'react';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { isCalendarViewPath, useCalendarNavigation } from '@/features/calendar';
 import { cn } from '@/lib/utils';
-import { useClientRouterStore } from '@/stores/useClientRouterStore';
+import { useClientRouterStore } from '../stores/useClientRouterStore';
 
 interface PageSwitcherProps {
   className?: string;

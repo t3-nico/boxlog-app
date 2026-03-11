@@ -4,11 +4,11 @@ import { useEffect, useRef } from 'react';
 
 import { useEntryMutations } from '@/hooks/useEntryMutations';
 import { logger } from '@/lib/logger';
-import { useEntryClipboardStore } from '@/stores/useEntryClipboardStore';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { openDeleteConfirm } from '@/stores/useModalStore';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
+import { useEntryClipboardStore } from '../stores/useEntryClipboardStore';
 
 interface UseCalendarEventKeyboardOptions {
   /** ショートカットを有効にするか */

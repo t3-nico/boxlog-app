@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { usePageTitleStore } from '@/stores/usePageTitleStore';
+import { usePageTitleStore } from './usePageTitleStore';
 
 describe('usePageTitleStore', () => {
   beforeEach(() => {

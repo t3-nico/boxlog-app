@@ -27,9 +27,9 @@ import { useMemo } from 'react';
 import { isCalendarViewPath } from '@/features/calendar';
 import { useNotificationRealtime } from '@/features/notifications';
 import { useTagRealtime } from '@/features/tags';
-import { useEntryRealtime } from '@/hooks/useEntryRealtime';
 import { useHasMounted } from '@/hooks/useHasMounted';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { useEntryRealtime } from '../hooks/useEntryRealtime';
 
 interface RealtimeProviderProps {
   children: React.ReactNode;

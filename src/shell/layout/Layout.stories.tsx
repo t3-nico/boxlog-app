@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 /**
- * ## Layout (`src/components/layout/`)
+ * ## Layout (`src/shell/layout/`)
  *
  * **feature依存のない、純粋なレイアウトプリミティブ**を置くディレクトリ。
  *
  * ### 設計原則
  *
- * `src/components/layout/` にはfeature層への依存がゼロ（またはごく薄い）コンポーネントのみを配置する。
+ * `src/shell/layout/` にはアプリ全体のレイアウト責務を持つコンポーネントを配置する。
  * これにより **layout → features** という逆方向の依存を防ぎ、レイアウト層の安定性を保つ。
  *
  * ### 現在の構成
@@ -25,8 +25,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
  *
  * | コンポーネント | 現在の場所 | ここに置かない理由 |
  * |---|---|---|
- * | `AppSidebar` | `features/navigation/components/sidebar/` | calendar context, auth, tags に依存。featureの組み合わせコンポーネント |
- * | `SidebarShell` | `features/navigation/components/sidebar/` | auth store, navigation storeに依存 |
+ * | `TagFilter` | `src/features/calendar/components/sidebar/` | calendar 固有のフィルタ状態と表示ロジックに依存 |
+ * | `Plan/Record Aside` | `src/features/calendar/components/aside/` | calendar 固有のリスト表示と操作に依存 |
  *
  * これらはfeature固有の状態・データに強く依存しているため、
  * `src/features/` 配下に置くのが正しいアーキテクチャ。
@@ -35,8 +35,9 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
  *
  * | Storybookパス | 物理ディレクトリ | 備考 |
  * |---|---|---|
- * | `Primitives/Layout/*` | `src/components/layout/` | このディレクトリ |
- * | `Features/Sidebar/*` | `src/features/navigation/components/sidebar/` | feature層のSidebar |
+ * | `Primitives/Layout/*` | `src/shell/layout/` | このディレクトリ |
+ * | `Features/Calendar/Sidebar/*` | `src/features/calendar/components/sidebar/` | calendar feature の sidebar |
+ * | `Features/Calendar/Aside/*` | `src/features/calendar/components/aside/` | calendar feature の aside |
  *
  * Storybookの表示グループ名とファイルの物理位置は独立しており、
  * 各コンポーネントの依存関係に基づいて物理配置を決定している。

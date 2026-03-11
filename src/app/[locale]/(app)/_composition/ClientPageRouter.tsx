@@ -9,7 +9,7 @@ import type { CalendarViewType } from '@/features/calendar';
 import { isCalendarViewPath } from '@/features/calendar';
 import { StatsPageContent } from '@/features/stats';
 import { PageSwitcher } from '@/shell/layout/PageSwitcher';
-import { useClientRouterStore } from '@/stores/useClientRouterStore';
+import { useClientRouterStore } from '@/shell/stores/useClientRouterStore';
 
 import { CalendarViewClient } from '../calendar/_composition/CalendarViewClient';
 

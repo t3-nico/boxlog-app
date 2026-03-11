@@ -7,9 +7,9 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
-import { useUpdateEntityTagsInCache } from '@/hooks/useUpdateEntityTagsInCache';
 import { logger } from '@/lib/logger';
 import { api } from '@/platform/trpc';
+import { useUpdateEntityTagsInCache } from './useUpdateEntityTagsInCache';
 
 /** tRPC utils 型 */
 type TRPCUtils = ReturnType<typeof api.useUtils>;

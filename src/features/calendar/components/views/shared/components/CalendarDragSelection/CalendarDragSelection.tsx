@@ -12,7 +12,7 @@
 import { useDroppable } from '@dnd-kit/core';
 
 import { cn } from '@/lib/utils';
-import { useEntryClipboardStore } from '@/stores/useEntryClipboardStore';
+import { useEntryClipboardStore } from '../../../../../stores/useEntryClipboardStore';
 
 import { useResponsiveHourHeight } from '../../hooks/useResponsiveHourHeight';
 import { DragSelectionPreview } from './DragSelectionPreview';

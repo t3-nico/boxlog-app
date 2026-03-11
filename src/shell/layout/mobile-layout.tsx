@@ -7,8 +7,8 @@ import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { isCalendarViewPath } from '@/features/calendar';
 import { Sidebar } from '@/features/navigation';
 import { AppHeader } from '@/shell/layout/AppHeader';
+import { usePageTitleStore } from '@/shell/stores/usePageTitleStore';
 import { useLayoutStore } from '@/stores/useLayoutStore';
-import { usePageTitleStore } from '@/stores/usePageTitleStore';
 
 import { MainContentWrapper } from './main-content-wrapper';
 import { SidebarContent } from './SidebarContent';
