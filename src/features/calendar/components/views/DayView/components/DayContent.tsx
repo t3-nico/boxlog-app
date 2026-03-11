@@ -2,7 +2,7 @@
 
 import React, { useCallback } from 'react';
 
-import { ChronotypeBackground } from '@/features/chronotype/components';
+import { ChronotypeBackground } from '@/features/chronotype';
 import { cn } from '@/lib/utils';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 

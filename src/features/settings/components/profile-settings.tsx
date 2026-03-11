@@ -8,7 +8,7 @@ import { Camera } from 'lucide-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { ChronotypeSettings } from '@/features/chronotype/components';
+import { ChronotypeSettingsPanel as ChronotypeSettings } from '@/features/chronotype';
 import { useAuthStore } from '@/stores/useAuthStore';
 
 import { SettingRow } from '@/components/common/SettingRow';

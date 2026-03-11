@@ -11,7 +11,7 @@ import {
   chronotypeCustomZonesSchema,
   chronotypeDisplayModeSchema,
   chronotypeTypeSchema,
-} from '@/features/chronotype/lib/schemas';
+} from '@/features/chronotype';
 import type { Database } from '@/lib/database.types';
 import { logger } from '@/lib/logger';
 import { createTRPCRouter, protectedProcedure } from '@/platform/trpc/procedures';

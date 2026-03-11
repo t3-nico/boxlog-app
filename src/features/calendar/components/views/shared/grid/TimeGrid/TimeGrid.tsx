@@ -7,7 +7,7 @@
 import { useTranslations } from 'next-intl';
 import React, { memo, useCallback, useEffect, useRef } from 'react';
 
-import { ChronotypeBackground } from '@/features/chronotype/components';
+import { ChronotypeBackground } from '@/features/chronotype';
 
 import { calculateScrollPosition, pixelsToTimeValues } from '../../../../../engine/grid';
 import { GRID_BACKGROUND, HOUR_HEIGHT, TIME_COLUMN_WIDTH } from '../../constants/grid.constants';

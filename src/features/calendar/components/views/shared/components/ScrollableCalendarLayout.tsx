@@ -11,7 +11,7 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { ChronotypeBackground } from '@/features/chronotype/components';
+import { ChronotypeBackground } from '@/features/chronotype';
 import { cn } from '@/lib/utils';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
