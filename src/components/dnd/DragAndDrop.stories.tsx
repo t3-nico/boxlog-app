@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
-import type { CalendarEvent } from '@/core/types/calendar-event';
 import { useCalendarDragStore } from '@/features/calendar/stores/useCalendarDragStore';
+import type { CalendarEvent } from '@/types/calendar-event';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { DragSelectionPreview } from '@/features/calendar/components/views/shared/components/CalendarDragSelection/DragSelectionPreview';

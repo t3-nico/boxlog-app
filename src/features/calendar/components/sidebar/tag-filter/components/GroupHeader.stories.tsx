@@ -10,7 +10,7 @@ import { GroupHeader } from './GroupHeader';
  * メニューには「タグ追加」「リネーム」「色変更」「グループ解除」「このグループだけ表示」「グループ削除」。
  */
 const meta = {
-  title: 'Features/Sidebar/TagFilter/GroupHeader',
+  title: 'Features/Calendar/Sidebar/TagFilter/GroupHeader',
   component: GroupHeader,
   tags: ['autodocs'],
   parameters: {

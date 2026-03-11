@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import type { Tag } from '@/core/types/tag';
+import type { Tag } from '@/types/tag';
 
 import { TagDeleteStrategyDialog } from '@/components/common/TagDeleteStrategyDialog';
 import { Button } from '@/components/ui/button';
