@@ -26,7 +26,7 @@ import { cn } from '@/lib/utils';
 
 import { useMergeTag, useTags } from '../hooks';
 
-import type { Tag } from '@/core/types/tag';
+import type { Tag } from '@/types/tag';
 
 interface TagMergeModalProps {
   open: boolean;

@@ -8,10 +8,10 @@ import { useTranslations } from 'next-intl';
 import { getTagColorClasses } from '@/lib/tag-colors';
 import { cn } from '@/lib/utils';
 
-import { TagRenameDialog } from '@/components/tags/TagRenameDialog';
 import { useUpdateTag } from '@/hooks/mutations/useTagMutations';
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 import { useTagModalNavigation } from '../../../../../hooks/useTagModalNavigation';
+import { TagRenameDialog } from '../../../../TagRenameDialog';
 
 import { Checkbox } from '@/components/ui/checkbox';
 import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
