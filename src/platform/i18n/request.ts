@@ -32,7 +32,7 @@ async function loadMessages(locale: string): Promise<Record<string, unknown>> {
   const namespaceModules = await Promise.all(
     NAMESPACES.map(async (ns) => {
       try {
-        const mod = await import(`../../messages/${locale}/${ns}.json`);
+        const mod = await import(`../../../messages/${locale}/${ns}.json`);
         return { namespace: ns, data: mod.default };
       } catch {
         logger.warn(`Failed to load namespace: ${ns} for locale: ${locale}`);

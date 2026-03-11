@@ -8,8 +8,8 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { isValidCategory, SETTINGS_CATEGORIES, SettingsContent } from '@/features/settings';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { Link } from '@/i18n/navigation';
 import { MEDIA_QUERIES } from '@/lib/breakpoints';
+import { Link } from '@/platform/i18n/navigation';
 
 /**
  * 設定カテゴリページ

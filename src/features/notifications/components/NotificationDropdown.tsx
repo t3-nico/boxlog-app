@@ -16,8 +16,8 @@ import { useLocale, useTranslations } from 'next-intl';
 import type { NotificationType } from '../schemas';
 
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { useRouter } from '@/i18n/navigation';
 import { MEDIA_QUERIES } from '@/lib/breakpoints';
+import { useRouter } from '@/platform/i18n/navigation';
 import { useSettingsStore } from '@/stores/useSettingsStore';
 
 import {

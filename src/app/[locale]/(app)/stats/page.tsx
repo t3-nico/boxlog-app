@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 
 import { StatsPageContent, prefetchStatsData } from '@/features/stats';
-import type { Locale } from '@/i18n/routing';
+import type { Locale } from '@/platform/i18n/routing';
 import { HydrationBoundary } from '@/platform/trpc/server';
 import { PageSwitcher } from '@/shell/layout/PageSwitcher';
 

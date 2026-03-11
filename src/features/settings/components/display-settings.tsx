@@ -13,8 +13,8 @@ import {
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTheme } from '@/hooks/useTheme';
-import { usePathname, useRouter } from '@/i18n/navigation';
-import { routing, type Locale } from '@/i18n/routing';
+import { usePathname, useRouter } from '@/platform/i18n/navigation';
+import { routing, type Locale } from '@/platform/i18n/routing';
 
 import type { DateFormatType } from '@/stores/useCalendarSettingsStore';
 import { useUserSettings } from '../hooks/useUserSettings';

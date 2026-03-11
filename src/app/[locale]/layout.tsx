@@ -4,9 +4,9 @@ import { getMessages, getTranslations } from 'next-intl/server';
 import Script from 'next/script';
 
 import { CookieConsentBanner } from '@/components/ui/cookie-consent-banner';
-import type { Locale } from '@/i18n/routing';
-import { routing } from '@/i18n/routing';
 import { getAppUrl } from '@/lib/app-url';
+import type { Locale } from '@/platform/i18n/routing';
+import { routing } from '@/platform/i18n/routing';
 
 interface LocaleLayoutProps {
   children: React.ReactNode;

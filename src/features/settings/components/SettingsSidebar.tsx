@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 
-import { Link } from '@/i18n/navigation';
+import { Link } from '@/platform/i18n/navigation';
 
 import { useTranslations } from 'next-intl';
 

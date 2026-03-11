@@ -7,8 +7,8 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
-import { useRouter } from '@/i18n/navigation';
 import { logger } from '@/lib/logger';
+import { useRouter } from '@/platform/i18n/navigation';
 import { createClient } from '@/platform/supabase/client';
 
 import { AccountDeletionDialog } from './account-deletion-dialog';

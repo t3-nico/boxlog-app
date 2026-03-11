@@ -1,6 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 
-import type { Locale } from '@/i18n/routing';
+import type { Locale } from '@/platform/i18n/routing';
 
 /**
  * searchParams から日付を解析する

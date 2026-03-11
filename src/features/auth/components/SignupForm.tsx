@@ -8,7 +8,7 @@ import { useTranslations } from 'next-intl';
 import NextImage from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 
-import { Link } from '@/i18n/navigation';
+import { Link } from '@/platform/i18n/navigation';
 import { Controller, useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';

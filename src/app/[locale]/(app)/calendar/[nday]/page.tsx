@@ -3,7 +3,7 @@ import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
 import type { MultiDayViewType } from '@/features/calendar';
-import type { Locale } from '@/i18n/routing';
+import type { Locale } from '@/platform/i18n/routing';
 import { HydrationBoundary } from '@/platform/trpc/server';
 
 import { CalendarViewClient } from '../_composition/CalendarViewClient';
