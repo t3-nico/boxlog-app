@@ -18,6 +18,7 @@ import { SettingsCard } from '@/components/common/SettingsCard';
 import { AccountDeletionDialog } from './account-deletion-dialog';
 import { EmailChangeDialog } from './email-change-dialog';
 import { PasswordChangeDialog } from './password-change-dialog';
+import { MFASection } from './sections/MFASection';
 
 /**
  * アカウント設定コンポーネント
@@ -69,6 +70,9 @@ export function AccountSettings() {
           </Button>
         </SettingRow>
       </SettingsCard>
+
+      {/* 2段階認証 */}
+      <MFASection />
 
       {/* ソーシャルログイン連携 */}
       <SettingsCard title={t('settings.account.socialLogin')}>
