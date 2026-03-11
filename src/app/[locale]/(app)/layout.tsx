@@ -25,13 +25,15 @@ import { ClientPageRenderer } from './_composition/ClientPageRenderer';
 
 interface AppLayoutProps {
   children: React.ReactNode;
+  modal: React.ReactNode;
 }
 
-const AppLayout = async ({ children }: AppLayoutProps) => {
+const AppLayout = async ({ children, modal }: AppLayoutProps) => {
   return (
     <Providers>
       <BaseLayout>
         <ClientPageRenderer>{children}</ClientPageRenderer>
+        {modal}
         <EntryInspector />
         <EntryDeleteConfirmDialog />
         <RecurringEditConfirmDialog />

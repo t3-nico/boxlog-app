@@ -17,10 +17,9 @@ import {
   UserCircle,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 
-import { openSettingsModal } from '@/stores/useModalStore';
+import { useRouter } from '@/i18n/navigation';
+import { useState } from 'react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -110,15 +109,15 @@ export function NavUser({
 
         {/* アカウント関連 */}
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => openSettingsModal('account')}>
+          <DropdownMenuItem onClick={() => router.push('/settings/account')}>
             <UserCircle />
             {t('navUser.account')}
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => openSettingsModal('subscription')}>
+          <DropdownMenuItem onClick={() => router.push('/settings/account')}>
             <Sparkles />
             {t('navUser.upgradePlan')}
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => openSettingsModal('personalization')}>
+          <DropdownMenuItem onClick={() => router.push('/settings/personalization')}>
             <Palette />
             {t('navUser.personalize')}
           </DropdownMenuItem>
@@ -128,7 +127,7 @@ export function NavUser({
 
         {/* 設定とヘルプ（Sidebarから移動） */}
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => openSettingsModal('general')}>
+          <DropdownMenuItem onClick={() => router.push('/settings/general')}>
             <Settings />
             {t('navUser.settings')}
           </DropdownMenuItem>

@@ -1,27 +1,32 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
+
+import { Link } from '@/i18n/navigation';
+
 import { useTranslations } from 'next-intl';
 
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 
-import { useModalStore } from '@/stores/useModalStore';
-import { SETTINGS_CATEGORIES } from '../../constants';
+import { SETTINGS_CATEGORIES } from '../constants';
 
-interface SettingsModalSidebarProps {
+interface SettingsSidebarProps {
   className?: string;
 }
 
 /**
- * 設定モーダルのサイドバー
+ * 設定サイドバー
  *
- * カテゴリナビゲーションを表示
+ * カテゴリナビゲーションを表示（Link ベース）
+ * ルーティングページとダイアログの両方で再利用
  */
-export function SettingsModalSidebar({ className }: SettingsModalSidebarProps) {
+export function SettingsSidebar({ className }: SettingsSidebarProps) {
   const t = useTranslations();
-  const modal = useModalStore((state) => state.modal);
-  const setSettingsCategory = useModalStore((state) => state.setSettingsCategory);
-  const selectedCategory = modal?.type === 'settings' ? modal.category : 'general';
+  const pathname = usePathname() ?? '/';
+
+  // パスからカテゴリを抽出: /[locale]/settings/[category] or /settings/[category]
+  const currentCategory = pathname.split('/settings/')[1]?.split('/')[0] ?? 'general';
 
   return (
     <aside className={cn('bg-surface-container flex flex-col', className)}>
@@ -32,13 +37,12 @@ export function SettingsModalSidebar({ className }: SettingsModalSidebarProps) {
         <nav className="flex flex-col gap-1 p-2">
           {SETTINGS_CATEGORIES.map((category) => {
             const Icon = category.icon;
-            const isActive = selectedCategory === category.id;
+            const isActive = currentCategory === category.id;
 
             return (
-              <button
+              <Link
                 key={category.id}
-                type="button"
-                onClick={() => setSettingsCategory(category.id)}
+                href={`/settings/${category.id}`}
                 className={cn(
                   'flex w-full items-center gap-4 rounded-lg px-4 py-2 text-left text-sm transition-colors',
                   isActive
@@ -48,7 +52,7 @@ export function SettingsModalSidebar({ className }: SettingsModalSidebarProps) {
               >
                 <Icon className="size-4 shrink-0" />
                 <span className="font-normal">{t(category.labelKey)}</span>
-              </button>
+              </Link>
             );
           })}
         </nav>

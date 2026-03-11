@@ -78,12 +78,6 @@ const GlobalTagMergeModal = dynamic(
   { ssr: false },
 );
 
-// SettingsModalを遅延ロード
-const SettingsModal = dynamic(
-  () => import('@/features/settings/components/modal').then((mod) => mod.SettingsModal),
-  { ssr: false },
-);
-
 function getBaseUrl() {
   if (typeof window !== 'undefined') return ''; // ブラウザではルート相対パス
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`; // SSR Vercel
@@ -204,7 +198,6 @@ export function Providers({ children }: ProvidersProps) {
                 {children}
                 <GlobalTagCreateModal />
                 <GlobalTagMergeModal />
-                <SettingsModal />
               </ServiceWorkerProvider>
             </GlobalSearchProvider>
           </ThemeProvider>

@@ -1,9 +1,6 @@
 import {
   Bell,
   Calendar,
-  CreditCard,
-  Database,
-  Plug,
   Settings as SettingsIcon,
   Sliders,
   User,
@@ -24,20 +21,12 @@ export interface SettingsCategoryMeta {
 }
 
 /**
- * 設定カテゴリの定義（ChatGPT風7カテゴリ）
+ * 設定カテゴリの定義（5カテゴリ）
  *
  * 設計思想:
  * - 頻度が高いものを上に配置
  * - 関連する設定をグループ化
- * - カテゴリ数は7（認知負荷を軽減）
- *
- * @example
- * const t = useTranslations()
- * const menuItems = SETTINGS_CATEGORIES.map(cat => ({
- *   ...cat,
- *   label: t(cat.labelKey),
- *   description: t(cat.descKey)
- * }))
+ * - 5カテゴリで認知負荷を軽減
  */
 export const SETTINGS_CATEGORIES: readonly SettingsCategoryMeta[] = [
   {
@@ -65,27 +54,9 @@ export const SETTINGS_CATEGORIES: readonly SettingsCategoryMeta[] = [
     descKey: 'settings.dialog.categories.notificationsDesc',
   },
   {
-    id: 'data-controls',
-    icon: Database,
-    labelKey: 'settings.dialog.categories.dataControls',
-    descKey: 'settings.dialog.categories.dataControlsDesc',
-  },
-  {
-    id: 'integrations',
-    icon: Plug,
-    labelKey: 'settings.dialog.categories.integrations',
-    descKey: 'settings.dialog.categories.integrationsDesc',
-  },
-  {
     id: 'account',
     icon: User,
     labelKey: 'settings.dialog.categories.account',
     descKey: 'settings.dialog.categories.accountDesc',
-  },
-  {
-    id: 'subscription',
-    icon: CreditCard,
-    labelKey: 'settings.dialog.categories.subscription',
-    descKey: 'settings.dialog.categories.subscriptionDesc',
   },
 ] as const;

@@ -11,7 +11,23 @@
 // Re-export from shared stores for backward compatibility
 export { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 export type { CalendarViewType, DateFormatType } from '@/stores/useCalendarSettingsStore';
-// Modal state is now in @/stores/useModalStore (openSettingsModal, closeModal)
+// =============================================================================
+// Types
+// =============================================================================
+export type { SettingsCategory } from './types';
+
+// =============================================================================
+// Constants
+// =============================================================================
+export { SETTINGS_CATEGORIES } from './constants';
+export type { SettingsCategoryMeta } from './constants';
+
+// =============================================================================
+// Components (for Composition Layer / routing pages)
+// =============================================================================
+export { SettingsContent, isValidCategory } from './components/SettingsContent';
+export { SettingsDialog } from './components/SettingsDialog';
+export { SettingsSidebar } from './components/SettingsSidebar';
 
 // =============================================================================
 // Hooks

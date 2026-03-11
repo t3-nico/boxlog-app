@@ -6,19 +6,6 @@ import { devtools } from 'zustand/middleware';
 import { createSelectors } from '@/lib/zustand/createSelectors';
 
 /**
- * 設定カテゴリの識別子
- */
-export type SettingsCategory =
-  | 'general'
-  | 'calendar'
-  | 'personalization'
-  | 'notifications'
-  | 'data-controls'
-  | 'integrations'
-  | 'account'
-  | 'subscription';
-
-/**
  * 繰り返しプラン編集時のスコープ
  */
 export type RecurringEditScope = 'this' | 'thisAndFuture' | 'all';
@@ -26,8 +13,8 @@ export type RecurringEditScope = 'this' | 'thisAndFuture' | 'all';
 /**
  * モーダル状態の判別共用体
  *
- * 5つの個別モーダルstoreを1つに統合。
  * `type` フィールドで判別し、TypeScriptの型絞り込みが有効。
+ * 設定モーダルは Intercepting Routes に移行済み（/settings/[category]）
  */
 export type ModalState =
   | {
@@ -45,10 +32,6 @@ export type ModalState =
       sourceTag: { id: string; name: string; color?: string | null };
     }
   | {
-      type: 'settings';
-      category: SettingsCategory;
-    }
-  | {
       type: 'recurringEdit';
       planTitle: string | null;
       mode: 'edit' | 'delete';
@@ -62,8 +45,6 @@ interface ModalStoreState {
   openModal: (modal: ModalState) => void;
   /** モーダルを閉じる */
   closeModal: () => void;
-  /** Settings モーダルのカテゴリを変更（settings モーダルが開いている場合のみ有効） */
-  setSettingsCategory: (category: SettingsCategory) => void;
 }
 
 const useModalStoreBase = create<ModalStoreState>()(
@@ -72,13 +53,6 @@ const useModalStoreBase = create<ModalStoreState>()(
       modal: null,
       openModal: (modal) => set({ modal }),
       closeModal: () => set({ modal: null }),
-      setSettingsCategory: (category) =>
-        set((state) => {
-          if (state.modal?.type === 'settings') {
-            return { modal: { ...state.modal, category } };
-          }
-          return state;
-        }),
     }),
     { name: 'modal-store' },
   ),
@@ -88,7 +62,8 @@ const useModalStoreBase = create<ModalStoreState>()(
  * 統合モーダルStore
  *
  * 旧 useDeleteConfirmStore, useTagCreateModalStore, useTagMergeModalStore,
- * useSettingsModalStore, useRecurringEditConfirmStore を1つに統合。
+ * useRecurringEditConfirmStore を統合。
+ * 設定モーダルは Intercepting Routes（/settings/[category]）に移行済み。
  *
  * @example
  * ```tsx
@@ -98,7 +73,6 @@ const useModalStoreBase = create<ModalStoreState>()(
  *
  * // モーダルを開く（便利関数を使用）
  * openDeleteConfirm(planId, planTitle, onConfirm);
- * openSettingsModal('general');
  *
  * // モーダルを閉じる
  * const closeModal = useModalStore.use.closeModal();
@@ -107,7 +81,7 @@ const useModalStoreBase = create<ModalStoreState>()(
  */
 export const useModalStore = createSelectors(useModalStoreBase);
 
-// ── 便利関数（旧storeの openDialog/openModal を置き換え） ──
+// ── 便利関数 ──
 
 export function openDeleteConfirm(
   planId: string,
@@ -125,10 +99,6 @@ export function openTagCreateModal(defaultGroup?: string) {
 
 export function openTagMergeModal(sourceTag: { id: string; name: string; color?: string | null }) {
   useModalStore.getState().openModal({ type: 'tagMerge', sourceTag });
-}
-
-export function openSettingsModal(category: SettingsCategory = 'general') {
-  useModalStore.getState().openModal({ type: 'settings', category });
 }
 
 export function openRecurringEditConfirm(
