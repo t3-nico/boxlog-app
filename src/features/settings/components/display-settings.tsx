@@ -20,8 +20,8 @@ import type { DateFormatType } from '@/stores/useCalendarSettingsStore';
 import { useUserSettings } from '../hooks/useUserSettings';
 import { getTimeZones } from '../utils/timezone-utils';
 
-import { SettingRow } from './fields/SettingRow';
-import { SettingsCard } from './SettingsCard';
+import { SettingRow } from '@/components/common/SettingRow';
+import { SettingsCard } from '@/components/common/SettingsCard';
 
 /**
  * 表示設定コンポーネント

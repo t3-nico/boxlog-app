@@ -11,11 +11,10 @@ import { Button } from '@/components/ui/button';
 import { ChronotypeSettings } from '@/features/chronotype/components';
 import { useAuthStore } from '@/stores/useAuthStore';
 
+import { SettingRow } from '@/components/common/SettingRow';
+import { SettingsCard } from '@/components/common/SettingsCard';
 import { AvatarChangeDialog } from './avatar-change-dialog';
 import { DisplayNameDialog } from './display-name-dialog';
-import { EmailChangeDialog } from './email-change-dialog';
-import { SettingRow } from './fields/SettingRow';
-import { SettingsCard } from './SettingsCard';
 import { ValueRankingSettings } from './value-ranking-settings';
 import { ValuesSettings } from './values-settings';
 
@@ -30,11 +29,9 @@ export function ProfileSettings() {
 
   const [showAvatarDialog, setShowAvatarDialog] = useState(false);
   const [showDisplayNameDialog, setShowDisplayNameDialog] = useState(false);
-  const [showEmailDialog, setShowEmailDialog] = useState(false);
 
   const avatarUrl = user?.user_metadata?.avatar_url || null;
   const displayName = user?.user_metadata?.username || user?.email?.split('@')[0] || '';
-  const email = user?.email || '';
 
   const getInitials = useCallback((name: string) => {
     return name.slice(0, 2).toUpperCase();
@@ -69,11 +66,6 @@ export function ProfileSettings() {
               {t('common.change')}
             </Button>
           </SettingRow>
-          <SettingRow label={t('settings.account.email')} description={email}>
-            <Button variant="outline" onClick={() => setShowEmailDialog(true)}>
-              {t('common.change')}
-            </Button>
-          </SettingRow>
         </div>
       </SettingsCard>
 
@@ -90,11 +82,6 @@ export function ProfileSettings() {
         open={showDisplayNameDialog}
         onOpenChange={setShowDisplayNameDialog}
         currentName={displayName}
-      />
-      <EmailChangeDialog
-        open={showEmailDialog}
-        onOpenChange={setShowEmailDialog}
-        currentEmail={email}
       />
     </div>
   );

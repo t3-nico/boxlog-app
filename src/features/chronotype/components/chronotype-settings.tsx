@@ -29,9 +29,9 @@ import {
 } from '../lib/constants';
 import { getPeakHours, getPresetChronotypeProfile } from '../lib/utils';
 
-import { SettingRow } from '@/features/settings/components/fields/SettingRow';
-import { SettingsCard } from '@/features/settings/components/SettingsCard';
-import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings';
+import { SettingRow } from '@/components/common/SettingRow';
+import { SettingsCard } from '@/components/common/SettingsCard';
+import { useAutoSaveSettings } from '@/hooks/useAutoSaveSettings';
 
 import type {
   ChronotypeDisplayMode,

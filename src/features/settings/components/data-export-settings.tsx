@@ -10,8 +10,8 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { api } from '@/platform/trpc';
 
-import { SettingRow } from './fields/SettingRow';
-import { SettingsCard } from './SettingsCard';
+import { SettingRow } from '@/components/common/SettingRow';
+import { SettingsCard } from '@/components/common/SettingsCard';
 
 export const DataExportSettings = memo(function DataExportSettings() {
   const t = useTranslations();

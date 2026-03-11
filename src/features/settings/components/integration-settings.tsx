@@ -22,8 +22,8 @@ import { Switch } from '@/components/ui/switch';
 import { ApiKeyStorage } from '@/platform/security/encryption';
 import { useAuthStore } from '@/stores/useAuthStore';
 
-import { SettingRow } from './fields/SettingRow';
-import { SettingsCard } from './SettingsCard';
+import { SettingRow } from '@/components/common/SettingRow';
+import { SettingsCard } from '@/components/common/SettingsCard';
 
 interface Integration {
   id: string;

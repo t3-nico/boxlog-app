@@ -24,14 +24,13 @@ import { CSS } from '@dnd-kit/utilities';
 import { GripVertical } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
+import { SettingsCard } from '@/components/common/SettingsCard';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useAutoSaveSettings } from '@/hooks/useAutoSaveSettings';
 import { CACHE_5_MINUTES } from '@/lib/date';
 import { cn } from '@/lib/utils';
 import { api } from '@/platform/trpc';
-import { useAutoSaveSettings } from '../hooks/useAutoSaveSettings';
-
-import { SettingsCard } from './SettingsCard';
 
 import type { DragEndEvent, DropAnimation, Modifier } from '@dnd-kit/core';
 import type { AnimateLayoutChanges } from '@dnd-kit/sortable';

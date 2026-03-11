@@ -10,8 +10,8 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 
-import { SettingRow } from './fields/SettingRow';
-import { SettingsCard } from './SettingsCard';
+import { SettingRow } from '@/components/common/SettingRow';
+import { SettingsCard } from '@/components/common/SettingsCard';
 
 /** SettingsCard - 設定セクションコンポーネント */
 const meta = {
