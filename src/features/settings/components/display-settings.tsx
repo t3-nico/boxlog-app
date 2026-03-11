@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Switch } from '@/components/ui/switch';
 import { useTheme } from '@/hooks/useTheme';
 import { usePathname, useRouter } from '@/platform/i18n/navigation';
 import { routing, type Locale } from '@/platform/i18n/routing';
@@ -94,6 +95,23 @@ export function DisplaySettings() {
       saveSettings({ defaultDuration: Number(value) });
     },
     [saveSettings],
+  );
+
+  const showChronotypeOnTimeline =
+    settings.chronotype?.displayMode === 'background' ||
+    settings.chronotype?.displayMode === 'both';
+
+  const handleChronotypeTimelineToggle = useCallback(
+    (checked: boolean) => {
+      if (!settings.chronotype) return;
+      saveSettings({
+        chronotype: {
+          ...settings.chronotype,
+          displayMode: checked ? 'background' : 'border',
+        },
+      });
+    },
+    [settings.chronotype, saveSettings],
   );
 
   if (isPending) {
@@ -236,6 +254,21 @@ export function DisplaySettings() {
           </SettingRow>
         </div>
       </SettingsCard>
+
+      {/* Chronotype Display */}
+      {settings.chronotype?.enabled && (
+        <SettingsCard title={t('settings.chronotype.title')}>
+          <SettingRow
+            label={t('settings.chronotype.showOnTimeline')}
+            description={t('settings.chronotype.showOnTimelineDesc')}
+          >
+            <Switch
+              checked={showChronotypeOnTimeline}
+              onCheckedChange={handleChronotypeTimelineToggle}
+            />
+          </SettingRow>
+        </SettingsCard>
+      )}
     </div>
   );
 }

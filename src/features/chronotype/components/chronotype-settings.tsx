@@ -13,7 +13,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Switch } from '@/components/ui/switch';
 import { CACHE_5_MINUTES } from '@/lib/date';
 import { cn } from '@/lib/utils';
 import { api } from '@/platform/trpc';
@@ -164,25 +163,9 @@ export function ChronotypeSettings() {
     [autoSave, updateStoreSettings],
   );
 
-  const handleTimelineToggle = useCallback(
-    (checked: boolean) => {
-      const nextChronotype: ChronotypeSettingsState = {
-        ...autoSave.values.chronotype,
-        displayMode: checked ? 'background' : 'border',
-      };
-
-      updateStoreSettings({ chronotype: nextChronotype });
-      autoSave.updateValue('chronotype', nextChronotype);
-    },
-    [autoSave, updateStoreSettings],
-  );
-
   const isEnabled = autoSave.values.chronotype.enabled;
   const selectedType = autoSave.values.chronotype.type;
   const selectValue = isEnabled ? selectedType : NONE_VALUE;
-  const showOnTimeline =
-    autoSave.values.chronotype.displayMode === 'background' ||
-    autoSave.values.chronotype.displayMode === 'both';
   const selectedProfile = isEnabled ? getPresetChronotypeProfile(selectedType) : null;
 
   if (isPending) {
@@ -212,14 +195,6 @@ export function ChronotypeSettings() {
               </SelectContent>
             </Select>
           </SettingRow>
-          {isEnabled ? (
-            <SettingRow
-              label={t('settings.chronotype.showOnTimeline')}
-              description={t('settings.chronotype.showOnTimelineDesc')}
-            >
-              <Switch checked={showOnTimeline} onCheckedChange={handleTimelineToggle} />
-            </SettingRow>
-          ) : null}
         </div>
 
         <div className="mt-4">

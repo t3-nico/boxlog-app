@@ -22,6 +22,7 @@
       "emailDesc": "Email address associated with your account",
       "emailPlaceholder": "Enter email address",
       "profilePicture": "Profile Picture",
+      "avatar": "Avatar",
       "profilePictureDesc": "JPG, PNG, GIF max 2MB",
       "profilePictureAlt": "Profile Picture",
       "avatarDeleteConfirm": "Delete profile picture?",
