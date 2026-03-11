@@ -1,5 +1,5 @@
 // タグシステムの型定義
-// Canonical definitions are in @/core/types/tag.
+// Canonical definitions are in @/types/tag.
 // Re-exported here for backward compatibility.
 
 export type {
@@ -13,7 +13,7 @@ export type {
   TagSortOrder,
   TagsResponse,
   UpdateTagInput,
-} from '@/core/types/tag';
+} from '@/types/tag';
 
 // タグ選択用（UI コンポーネントで使用）
 export interface TagOption {

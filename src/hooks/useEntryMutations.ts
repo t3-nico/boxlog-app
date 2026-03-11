@@ -9,7 +9,6 @@
  * - 楽観的更新
  */
 
-import type { UpdateEntryInput } from '@/core/schemas/entry';
 import {
   createListQueryPredicate,
   createTempId,
@@ -18,6 +17,7 @@ import {
 import { isTimePast } from '@/lib/entry-status';
 import { logger } from '@/lib/logger';
 import { api } from '@/platform/trpc';
+import type { UpdateEntryInput } from '@/schemas/entry';
 import { useEntryCacheStore } from '@/stores/useEntryCacheStore';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { useQueryClient } from '@tanstack/react-query';
@@ -504,4 +504,4 @@ export function useEntryMutations() {
 }
 
 // 型エクスポート
-export type { CreateEntryInput, UpdateEntryInput } from '@/core/schemas/entry';
+export type { CreateEntryInput, UpdateEntryInput } from '@/schemas/entry';

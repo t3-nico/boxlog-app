@@ -1,5 +1,5 @@
 // Entry型定義
-// Canonical definitions are in @/core/types/entry.
+// Canonical definitions are in @/types/entry.
 // Re-exported here for feature-internal usage.
 
 export type {
@@ -12,4 +12,4 @@ export type {
   RecurrenceConfig,
   RecurrenceType,
   UpdateEntryInput,
-} from '@/core/types/entry';
+} from '@/types/entry';

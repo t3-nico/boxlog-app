@@ -6,7 +6,7 @@
  *     "運動" → prefix "運動", suffix null（階層なし）
  */
 
-import type { Tag } from '@/core/types/tag';
+import type { Tag } from '@/types/tag';
 
 export interface ParsedColonTag {
   /** コロンの前の部分（グループ名）。コロンがなければタグ名全体 */

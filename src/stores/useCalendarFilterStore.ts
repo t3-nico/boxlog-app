@@ -8,7 +8,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import type { EntryOrigin } from '@/core/types/entry';
+import type { EntryOrigin } from '@/types/entry';
 
 export interface CalendarFilterState {
   /** 起源ごとの表示設定（デフォルト: すべて表示） */

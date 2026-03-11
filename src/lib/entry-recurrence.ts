@@ -18,7 +18,7 @@ import {
   startOfDay,
 } from 'date-fns';
 
-import type { Entry, RecurrenceConfig } from '@/core/types/entry';
+import type { Entry, RecurrenceConfig } from '@/types/entry';
 
 import { ruleToConfig } from '@/lib/rrule';
 

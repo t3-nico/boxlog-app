@@ -1,4 +1,4 @@
-export type { CalendarEvent } from '@/core/types/calendar-event';
+export type { CalendarEvent } from '@/types/calendar-event';
 
 export type MultiDayCount = 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 export type MultiDayViewType = `${MultiDayCount}day`;

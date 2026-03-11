@@ -1,7 +1,12 @@
-import type { GroupedData } from '@/core/types/grouping';
-
-/** Re-export for backward compatibility */
-export type { GroupedData } from '@/core/types/grouping';
+/**
+ * グループ化されたデータの共通インターフェース
+ */
+export interface GroupedData<T> {
+  groupKey: string;
+  groupLabel: string;
+  items: T[];
+  count: number;
+}
 
 /** グループ化フィールド */
 export type GroupByField = 'tags' | null;

@@ -2,7 +2,7 @@
 
 import type { LucideIcon } from 'lucide-react';
 
-import type { SettingsCategory } from '@/core/types';
+import type { SettingsCategory } from '@/types';
 
 import type { TranslatedString } from '@/platform/i18n';
 
@@ -10,7 +10,7 @@ import type { TranslatedString } from '@/platform/i18n';
 // Settings Dialog Types
 // ========================================
 
-// SettingsCategory は @/core/types/settings.ts で定義（複数featureから参照されるため）
+// SettingsCategory は @/types/settings.ts で定義（複数featureから参照されるため）
 export type { SettingsCategory };
 
 /**

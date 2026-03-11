@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { Tag } from '@/core/types/tag';
+import type { Tag } from '@/types/tag';
 
 import {
   buildColonTagName,

@@ -5,7 +5,7 @@
  * エンコード・デコードを型安全に行う。
  */
 
-import type { CalendarEvent } from '@/core/types/calendar-event';
+import type { CalendarEvent } from '@/types/calendar-event';
 
 export interface RecurrenceInstanceRef {
   parentEntryId: string;

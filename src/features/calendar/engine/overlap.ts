@@ -9,7 +9,7 @@
  * - Plan↔Record: 共存可能（タイムボクシング × 時間記録の設計）
  */
 
-import type { CalendarEvent } from '@/core/types/calendar-event';
+import type { CalendarEvent } from '@/types/calendar-event';
 
 /**
  * イベントの起源を取得（planned or unplanned）

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import type { SettingsCategory } from '@/core/types';
+import type { SettingsCategory } from '@/types';
 
 interface SettingsStoreState {
   /** モーダルが開いているか */

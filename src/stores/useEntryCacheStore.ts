@@ -1,6 +1,6 @@
 import { createCacheStore } from '@/stores/createCacheStore';
 
-import type { FulfillmentScore, RecurrenceType } from '@/core/types/entry';
+import type { FulfillmentScore, RecurrenceType } from '@/types/entry';
 
 /**
  * Entry キャッシュデータ型（Plan + Record 統合）

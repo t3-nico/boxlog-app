@@ -15,7 +15,7 @@ import { trpc } from '@/platform/trpc/client';
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 import { useTagCacheStore } from '@/stores/useTagCacheStore';
 
-import type { Tag } from '@/core/types/tag';
+import type { Tag } from '@/types/tag';
 
 // 新しい入力型（tRPC形式）
 interface TrpcTagUpdateInput {
