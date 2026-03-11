@@ -8,9 +8,9 @@ import { Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 import { DateNavigator } from '@/components/DateNavigator';
-import { AppHeader } from '@/components/layout/AppHeader';
 import { Button } from '@/components/ui/button';
 import { useGlobalSearch } from '@/hooks/use-global-search';
+import { AppHeader } from '@/shell/layout/AppHeader';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 import { useSwipeGesture } from '../../hooks/useSwipeGesture';
 import type { CalendarViewType } from '../../types/calendar.types';

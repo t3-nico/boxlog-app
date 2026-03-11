@@ -15,7 +15,10 @@ import { HoverTooltip } from '@/components/ui/tooltip';
 import { useLocale, useTranslations } from 'next-intl';
 import type { NotificationType } from '../schemas';
 
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useRouter } from '@/i18n/navigation';
+import { MEDIA_QUERIES } from '@/lib/breakpoints';
+import { useSettingsStore } from '@/stores/useSettingsStore';
 
 import {
   useNotificationMutations,
@@ -95,10 +98,16 @@ export function NotificationDropdown({
   }, [deleteAllRead, t]);
 
   const settingsRouter = useRouter();
+  const isMobile = useMediaQuery(MEDIA_QUERIES.mobile);
+  const openSettings = useSettingsStore((s) => s.open);
   const handleOpenSettings = useCallback(() => {
     setIsOpen(false);
-    settingsRouter.push('/settings/notifications');
-  }, [settingsRouter]);
+    if (isMobile) {
+      settingsRouter.push('/settings/notifications');
+    } else {
+      openSettings('notifications');
+    }
+  }, [settingsRouter, isMobile, openSettings]);
 
   // 通知リストのレンダリング
   const renderNotificationList = () => {

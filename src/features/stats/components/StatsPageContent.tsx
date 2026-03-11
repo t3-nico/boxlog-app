@@ -4,8 +4,8 @@ import { useTranslations } from 'next-intl';
 
 import { DateNavigator } from '@/components/DateNavigator';
 import { FeatureErrorBoundary } from '@/components/error-boundary';
-import { AppHeader } from '@/components/layout/AppHeader';
 import { Tabs, TabsContent, TabsList, UnderlineTabsTrigger } from '@/components/ui/tabs';
+import { AppHeader } from '@/shell/layout/AppHeader';
 
 import type { StatsGranularity, StatsTab } from '../stores/useStatsFilterStore';
 import { useStatsFilterStore } from '../stores/useStatsFilterStore';

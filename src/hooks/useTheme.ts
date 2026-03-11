@@ -1,1 +1,1 @@
-export { useTheme } from '@/components/providers/theme-provider';
+export { useTheme } from '@/shell/providers/theme-provider';

@@ -1,40 +1,30 @@
 'use client';
 
-import { useRouter } from '@/i18n/navigation';
-
 import { useTranslations } from 'next-intl';
 
 import { XIcon } from 'lucide-react';
 
 import { Dialog, DialogClose, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { useSettingsStore } from '@/stores/useSettingsStore';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
-import type { SettingsCategory } from '../types';
 import { SettingsContent } from './SettingsContent';
 import { SettingsSidebar } from './SettingsSidebar';
 
-interface SettingsDialogProps {
-  category: SettingsCategory;
-}
-
 /**
- * 設定ダイアログ（PC インターセプト時に使用）
+ * 設定ダイアログ（PC用）
  *
- * SettingsSidebar + SettingsContent を Dialog 内に配置
- * 閉じる → router.back() で前のページに戻る
+ * Zustand store で開閉・カテゴリを管理。
+ * URL は変更しない。サイドバーのカテゴリ切替も store 経由。
  */
-export function SettingsDialog({ category }: SettingsDialogProps) {
+export function SettingsDialog() {
   const t = useTranslations();
-  const router = useRouter();
-
-  const handleOpenChange = (open: boolean) => {
-    if (!open) {
-      router.back();
-    }
-  };
+  const isOpen = useSettingsStore((s) => s.isOpen);
+  const category = useSettingsStore((s) => s.category);
+  const close = useSettingsStore((s) => s.close);
 
   return (
-    <Dialog open onOpenChange={handleOpenChange}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && close()}>
       <DialogContent
         className="flex h-[85vh] max-h-[800px] max-w-4xl gap-0 overflow-hidden p-0"
         showCloseButton={false}

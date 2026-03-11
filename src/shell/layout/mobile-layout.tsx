@@ -3,10 +3,10 @@
 import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useRef } from 'react';
 
-import { AppHeader } from '@/components/layout/AppHeader';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { isCalendarViewPath } from '@/features/calendar';
 import { Sidebar } from '@/features/navigation';
+import { AppHeader } from '@/shell/layout/AppHeader';
 import { useLayoutStore } from '@/stores/useLayoutStore';
 import { usePageTitleStore } from '@/stores/usePageTitleStore';
 

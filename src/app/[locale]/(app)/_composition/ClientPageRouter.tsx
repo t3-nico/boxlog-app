@@ -5,10 +5,10 @@ import { useEffect, useMemo } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import { PageSwitcher } from '@/components/layout/PageSwitcher';
 import type { CalendarViewType } from '@/features/calendar';
 import { isCalendarViewPath } from '@/features/calendar';
 import { StatsPageContent } from '@/features/stats';
+import { PageSwitcher } from '@/shell/layout/PageSwitcher';
 import { useClientRouterStore } from '@/stores/useClientRouterStore';
 
 import { CalendarViewClient } from '../calendar/_composition/CalendarViewClient';

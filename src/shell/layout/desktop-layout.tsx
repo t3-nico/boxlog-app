@@ -3,11 +3,11 @@
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 
-import { AppHeader } from '@/components/layout/AppHeader';
 import { isCalendarViewPath } from '@/features/calendar';
 import { Sidebar } from '@/features/navigation';
 import { NotificationDropdown } from '@/features/notifications';
 import { cn } from '@/lib/utils';
+import { AppHeader } from '@/shell/layout/AppHeader';
 import { useLayoutStore } from '@/stores/useLayoutStore';
 import { usePageTitleStore } from '@/stores/usePageTitleStore';
 

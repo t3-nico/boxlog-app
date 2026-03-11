@@ -3,8 +3,7 @@
 import { useCallback, useEffect } from 'react';
 
 import { Check, ChevronDown } from 'lucide-react';
-import { useLocale, useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 import { buttonVariants } from '@/components/ui/button';
 import {
@@ -20,6 +19,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
+import { useSettingsStore } from '@/stores/useSettingsStore';
 import type { CalendarViewType } from '../../../types/calendar.types';
 import { isMultiDayView } from '../../../types/calendar.types';
 
@@ -52,8 +52,6 @@ const DAY_COUNTS = [2, 3, 4, 5, 6, 7, 8, 9] as const;
  */
 export function ViewSwitcher({ currentView, onChange, className }: ViewSwitcherProps) {
   const t = useTranslations();
-  const router = useRouter();
-  const locale = useLocale();
   const showWeekends = useCalendarSettingsStore((s) => s.showWeekends);
   const showWeekNumbers = useCalendarSettingsStore((s) => s.showWeekNumbers);
   const hourHeightDensity = useCalendarSettingsStore((s) => s.hourHeightDensity);
@@ -231,7 +229,7 @@ export function ViewSwitcher({ currentView, onChange, className }: ViewSwitcherP
               </DropdownMenuSubContent>
             </DropdownMenuSub>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => router.push(`/${locale}/settings`)}>
+            <DropdownMenuItem onClick={() => useSettingsStore.getState().open('display')}>
               {t('calendar.views.generalSettings')}
             </DropdownMenuItem>
           </DropdownMenuSubContent>

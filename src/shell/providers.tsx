@@ -42,10 +42,10 @@ const AxeAccessibilityChecker =
       )
     : () => null;
 
-import { RealtimeProvider } from '@/components/providers/RealtimeProvider';
-import { ThemeProvider } from '@/components/providers/theme-provider';
 import { AuthStoreInitializer } from '@/features/auth';
-import { api } from '@/lib/trpc';
+import { api } from '@/platform/trpc';
+import { RealtimeProvider } from '@/shell/providers/RealtimeProvider';
+import { ThemeProvider } from '@/shell/providers/theme-provider';
 
 // GlobalSearchProviderを遅延ロード（初回レンダリングをブロックしない）
 const GlobalSearchProvider = dynamic(
@@ -57,8 +57,7 @@ const GlobalSearchProvider = dynamic(
 
 // ServiceWorkerProviderを遅延ロード（PWAオフライン対応）
 const ServiceWorkerProvider = dynamic(
-  () =>
-    import('@/components/providers/ServiceWorkerProvider').then((mod) => mod.ServiceWorkerProvider),
+  () => import('@/shell/providers/ServiceWorkerProvider').then((mod) => mod.ServiceWorkerProvider),
   { ssr: false },
 );
 

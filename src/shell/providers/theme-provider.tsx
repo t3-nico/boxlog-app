@@ -3,7 +3,7 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react';
 
 import { CACHE_5_MINUTES } from '@/lib/date';
-import { api } from '@/lib/trpc';
+import { api } from '@/platform/trpc';
 
 type Theme = 'light' | 'dark' | 'system';
 type ColorScheme = 'blue' | 'green' | 'purple' | 'orange' | 'red';

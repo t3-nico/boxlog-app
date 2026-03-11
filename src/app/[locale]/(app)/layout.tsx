@@ -12,8 +12,8 @@
  * @see src/components/providers.tsx - フルProviders定義
  * @see ./_overlays/GlobalOverlays.tsx - グローバルダイアログ群
  */
-import { BaseLayout } from '@/components/layout/base-layout';
-import { Providers } from '@/components/providers';
+import { BaseLayout } from '@/shell/layout/base-layout';
+import { Providers } from '@/shell/providers';
 
 import { ClientPageRouter } from './_composition/ClientPageRouter';
 import { GlobalOverlays } from './_overlays/GlobalOverlays';

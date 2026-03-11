@@ -16,6 +16,8 @@ import { DisplayNameDialog } from './display-name-dialog';
 import { EmailChangeDialog } from './email-change-dialog';
 import { SettingRow } from './fields/SettingRow';
 import { SettingsCard } from './SettingsCard';
+import { ValueRankingSettings } from './value-ranking-settings';
+import { ValuesSettings } from './values-settings';
 
 /**
  * プロフィール設定コンポーネント
@@ -74,6 +76,10 @@ export function ProfileSettings() {
           </SettingRow>
         </div>
       </SettingsCard>
+
+      {/* Values Section */}
+      <ValuesSettings />
+      <ValueRankingSettings />
 
       {/* Chronotype Section */}
       <ChronotypeSettings />
