@@ -90,6 +90,13 @@
           "noCodesLeft": "リカバリーコードがありません"
         }
       },
+      "socialLogin": "ソーシャルログイン連携",
+      "socialLoginDesc": "ソーシャルログイン連携は今後のアップデートで利用可能になります",
+      "connect": "連携",
+      "disconnect": "解除",
+      "connected": "連携済み",
+      "notConnected": "未連携",
+      "comingSoon": "準備中",
       "session": "セッション",
       "dangerZone": "危険な操作",
       "dangerZoneDesc": "取り消すことのできない破壊的なアクション",
@@ -421,7 +428,7 @@
         "billing": "請求",
         "billingDesc": "プラン、お支払い、領収書",
         "account": "アカウント",
-        "accountDesc": "ログアウト、アカウント削除",
+        "accountDesc": "メール、パスワード、ログイン連携",
         "subscription": "サブスクリプション",
         "subscriptionDesc": "プランと課金管理",
         "about": "このアプリについて",

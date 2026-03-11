@@ -14,7 +14,6 @@ import { createPortal } from 'react-dom';
 import { Search, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { TagRadioItem } from '@/components/tags/TagRadioItem';
 import { ActionFooter } from '@/components/ui/action-footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,6 +22,7 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 import { logger } from '@/lib/logger';
 import { parseColonTag } from '@/lib/tag-colon';
 import { cn } from '@/lib/utils';
+import { TagRadioItem } from './TagRadioItem';
 
 import { useMergeTag, useTags } from '../hooks';
 

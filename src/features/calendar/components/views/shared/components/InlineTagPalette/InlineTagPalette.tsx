@@ -22,7 +22,7 @@ import { resolveTagColor } from '@/lib/tag-colors';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 import { useInlineCreateStore } from '../../../../../stores/useInlineCreateStore';
 
-import { TagQuickSelector } from '@/components/tags/TagQuickSelector';
+import { TagQuickSelector } from '@/features/tags';
 
 import { Z_INDEX } from '../../constants/grid.constants';
 

@@ -11,6 +11,8 @@ export {
   // Modals & Dialogs
   TagCreateModal,
 } from './components';
+export { TagQuickSelector } from './components/TagQuickSelector';
+export { TagRadioItem } from './components/TagRadioItem';
 
 // Hooks
 export {

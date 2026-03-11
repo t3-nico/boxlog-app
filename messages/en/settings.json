@@ -90,6 +90,13 @@
           "noCodesLeft": "No recovery codes remaining"
         }
       },
+      "socialLogin": "Social Login",
+      "socialLoginDesc": "Social login integration will be available in a future update",
+      "connect": "Connect",
+      "disconnect": "Disconnect",
+      "connected": "Connected",
+      "notConnected": "Not connected",
+      "comingSoon": "Coming Soon",
       "session": "Session",
       "dangerZone": "Danger Zone",
       "dangerZoneDesc": "Irreversible and destructive actions",
@@ -421,7 +428,7 @@
         "billing": "Billing",
         "billingDesc": "Plans, payments, and invoices",
         "account": "Account",
-        "accountDesc": "Logout and account deletion",
+        "accountDesc": "Email, password, and login connections",
         "subscription": "Subscription",
         "subscriptionDesc": "Plan and billing management",
         "about": "About",

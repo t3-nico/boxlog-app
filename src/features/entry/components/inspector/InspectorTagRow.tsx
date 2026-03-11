@@ -14,7 +14,7 @@ import { ChevronDown, Plus, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
-import { TagQuickSelector } from '@/components/tags/TagQuickSelector';
+import { TagQuickSelector } from '@/features/tags';
 import { useCreateTag } from '@/hooks/mutations/useTagCrudMutations';
 import { useTagsMap } from '@/hooks/useTagsMap';
 import { getTagColorClasses, resolveTagColor } from '@/lib/tag-colors';
