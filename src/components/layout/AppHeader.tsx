@@ -8,7 +8,7 @@ import { HoverTooltip } from '@/components/ui/tooltip';
 import { useGlobalSearch } from '@/hooks/use-global-search';
 import { useLayoutStore } from '@/stores/useLayoutStore';
 
-import { MobileMenuButton } from './MobileMenuButton';
+import { MobileMenuButton } from '@/features/navigation';
 
 interface AppHeaderProps {
   /** 左コンテンツ: 日付表示、ページタイトル等 */

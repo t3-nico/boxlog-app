@@ -5,10 +5,11 @@ import { useMemo } from 'react';
 
 import { AppHeader } from '@/components/layout/AppHeader';
 import { isCalendarViewPath } from '@/features/calendar';
-import { AppSidebar, usePageTitleStore } from '@/features/navigation';
+import { Sidebar } from '@/features/navigation';
 import { NotificationDropdown } from '@/features/notifications';
 import { cn } from '@/lib/utils';
 import { useLayoutStore } from '@/stores/useLayoutStore';
+import { usePageTitleStore } from '@/stores/usePageTitleStore';
 
 import { MainContentWrapper } from './main-content-wrapper';
 import { SidebarContent } from './SidebarContent';
@@ -22,7 +23,7 @@ interface DesktopLayoutProps {
  * デスクトップ用レイアウト
  *
  * 2カラムレイアウト:
- * - Sidebar（256px、開閉可能）← 全ページ共通 AppSidebar
+ * - Sidebar（256px、開閉可能）← 全ページ共通 Sidebar
  * - PageHeader + MainContent + Inspector
  */
 export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
@@ -47,9 +48,9 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
           )}
         >
           <div className="h-full w-64">
-            <AppSidebar headerActions={<NotificationDropdown size="sm" />}>
+            <Sidebar headerActions={<NotificationDropdown size="sm" />}>
               <SidebarContent />
-            </AppSidebar>
+            </Sidebar>
           </div>
         </div>
 

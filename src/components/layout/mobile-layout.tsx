@@ -6,8 +6,9 @@ import { useEffect, useMemo, useRef } from 'react';
 import { AppHeader } from '@/components/layout/AppHeader';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { isCalendarViewPath } from '@/features/calendar';
-import { AppSidebar, usePageTitleStore } from '@/features/navigation';
+import { Sidebar } from '@/features/navigation';
 import { useLayoutStore } from '@/stores/useLayoutStore';
+import { usePageTitleStore } from '@/stores/usePageTitleStore';
 
 import { MainContentWrapper } from './main-content-wrapper';
 import { SidebarContent } from './SidebarContent';
@@ -70,9 +71,9 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
           showCloseButton={false}
           aria-label="Navigation menu"
         >
-          <AppSidebar>
+          <Sidebar>
             <SidebarContent />
-          </AppSidebar>
+          </Sidebar>
         </SheetContent>
       </Sheet>
 

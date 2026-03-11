@@ -18,9 +18,6 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
-import { useRouter } from '@/i18n/navigation';
-import { useState } from 'react';
-
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -34,12 +31,11 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { logger } from '@/lib/logger';
-import { createClient } from '@/lib/supabase/client';
+import { useLogout } from '@/hooks/useLogout';
+import { useRouter } from '@/i18n/navigation';
 import { useLocale, useTranslations } from 'next-intl';
-import { toast } from 'sonner';
 
-export function NavUser({
+export function UserMenu({
   user,
 }: {
   user: {
@@ -49,24 +45,9 @@ export function NavUser({
   };
 }) {
   const router = useRouter();
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const { logout, isLoggingOut } = useLogout();
   const t = useTranslations();
   const locale = useLocale();
-  const handleLogout = async () => {
-    setIsLoggingOut(true);
-    try {
-      const supabase = createClient();
-      await supabase.auth.signOut();
-      toast.success(t('navUser.logoutSuccess'));
-      router.push('/auth/login');
-      router.refresh();
-    } catch (error) {
-      logger.error('Logout error:', error);
-      toast.error(t('navUser.logoutFailed'));
-    } finally {
-      setIsLoggingOut(false);
-    }
-  };
 
   return (
     <DropdownMenu>
@@ -125,7 +106,7 @@ export function NavUser({
 
         <DropdownMenuSeparator />
 
-        {/* 設定とヘルプ（Sidebarから移動） */}
+        {/* 設定とヘルプ */}
         <DropdownMenuGroup>
           <DropdownMenuItem onClick={() => router.push('/settings/profile')}>
             <Settings />
@@ -213,7 +194,7 @@ export function NavUser({
         <DropdownMenuSeparator />
 
         {/* ログアウト */}
-        <DropdownMenuItem variant="destructive" onClick={handleLogout} disabled={isLoggingOut}>
+        <DropdownMenuItem variant="destructive" onClick={logout} disabled={isLoggingOut}>
           <LogOut />
           {isLoggingOut ? t('navUser.loggingOut') : t('navUser.logout')}
         </DropdownMenuItem>

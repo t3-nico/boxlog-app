@@ -5,12 +5,12 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { HoverTooltip } from '@/components/ui/tooltip';
 
-import { SidebarShell } from './SidebarShell';
+import { Sidebar } from './Sidebar';
 
-/** サイドバーシェル。カレンダーや設定ページで使用。折りたたみ可能で、状態はlocalStorageに永続化される。 */
+/** サイドバーコンテナ。折りたたみ可能で、状態はlocalStorageに永続化される。 */
 const meta = {
-  title: 'Features/Sidebar/Shell',
-  component: SidebarShell,
+  title: 'Features/Navigation/Sidebar',
+  component: Sidebar,
   parameters: {
     layout: 'fullscreen',
   },
@@ -24,7 +24,7 @@ const meta = {
       </div>
     ),
   },
-} satisfies Meta<typeof SidebarShell>;
+} satisfies Meta<typeof Sidebar>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -142,7 +142,7 @@ function LayoutOpen() {
     <div className="border-border flex h-64 w-[600px] overflow-hidden rounded-lg border">
       <div className="bg-surface-container border-border w-64 shrink-0 border-r">
         <div className="border-border flex h-12 items-center justify-between border-b px-2">
-          <span className="text-muted-foreground text-sm">NavUser</span>
+          <span className="text-muted-foreground text-sm">UserMenu</span>
           <Button variant="ghost" icon className="size-8" aria-label="サイドバーを閉じる">
             <PanelLeftClose className="size-4" />
           </Button>
@@ -193,20 +193,6 @@ function LayoutClosed() {
 
 /** デフォルト状態。サイドバーが開いている。 */
 export const Default: Story = {
-  decorators: [
-    (Story) => (
-      <div className="h-[400px] w-64">
-        <Story />
-      </div>
-    ),
-  ],
-};
-
-/** NavUserを非表示にした状態。 */
-export const HideNavUser: Story = {
-  args: {
-    hideNavUser: true,
-  },
   decorators: [
     (Story) => (
       <div className="h-[400px] w-64">
