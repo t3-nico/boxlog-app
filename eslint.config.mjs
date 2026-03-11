@@ -49,6 +49,9 @@ const eslintConfig = defineConfig([
   // Feature boundary enforcement: features cannot import from other features
   {
     files: ['src/features/**/*.{ts,tsx}'],
+    ignores: [
+      'src/features/ai/server/**',        // AI tools compose across feature services
+    ],
     rules: {
       'no-restricted-imports': ['error', {
         patterns: [
@@ -74,6 +77,7 @@ const eslintConfig = defineConfig([
       'src/shell/layout/**',            // Layout Composition Layer
       'src/shell/providers/**',          // Provider Composition Layer
       'src/shell/providers.tsx',         // Provider root
+      'src/platform/trpc/root.ts',      // Server Composition Layer (router aggregator)
       'src/components/dnd/**',           // DnD (stories only)
       'src/components/**/*.stories.*',   // Storybook files
       'src/shell/**/*.stories.*',        // Storybook files
