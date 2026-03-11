@@ -4,9 +4,9 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Bell, ChevronDown, Plus, Repeat, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import type { EntryOrigin, FulfillmentScore } from '@/core/types/entry';
 import type { EntryState } from '@/lib/entry-status';
 import { cn } from '@/lib/utils';
+import type { EntryOrigin, FulfillmentScore } from '@/types/entry';
 
 import { InspectorDetailsLayout } from './InspectorDetailsLayout';
 import { InspectorShell } from './InspectorShell';

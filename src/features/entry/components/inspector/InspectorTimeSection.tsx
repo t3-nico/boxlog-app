@@ -14,11 +14,11 @@ import { useMemo } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import type { EntryOrigin, FulfillmentScore } from '@/core/types/entry';
 import { useAutoAdjustEndTime } from '@/hooks/useAutoAdjustEndTime';
 import type { EntryState } from '@/lib/entry-status';
 import { computeDuration } from '@/lib/time-utils';
 import { cn } from '@/lib/utils';
+import type { EntryOrigin, FulfillmentScore } from '@/types/entry';
 
 import { DateNavigatorRow } from './DateNavigatorRow';
 import { FulfillmentRow } from './FulfillmentRow';

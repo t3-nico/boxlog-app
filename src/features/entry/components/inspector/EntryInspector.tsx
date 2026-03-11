@@ -3,12 +3,13 @@
 import { useTranslations } from 'next-intl';
 import { Suspense, useCallback } from 'react';
 
-import { InspectorContent, InspectorShell } from '@/components/inspector';
+import { InspectorContent } from './InspectorContent';
+import { InspectorShell } from './InspectorShell';
 import { useInspectorKeyboard } from './hooks';
 
-import type { EntryWithTags } from '@/core/types/entry';
 import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { useModalStore } from '@/stores/useModalStore';
+import type { EntryWithTags } from '@/types/entry';
 import { useEntry } from '../../hooks/useEntry';
 
 import { useInspectorURLSync } from '../../hooks/useInspectorURLSync';
