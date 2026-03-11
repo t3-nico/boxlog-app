@@ -2,22 +2,16 @@
 
 import type { LucideIcon } from 'lucide-react';
 
+import type { SettingsCategory } from '@/core/types';
+
 import type { TranslatedString } from '@/lib/i18n';
 
 // ========================================
 // Settings Dialog Types
 // ========================================
 
-/**
- * 設定カテゴリの識別子（6カテゴリ）
- */
-export type SettingsCategory =
-  | 'profile' // 名前、メール、クロノタイプ
-  | 'display' // テーマ、言語、TZ、時間形式、週開始、デフォルトView/duration
-  | 'tags' // タグ一覧、グループ管理
-  | 'notifications' // 通知設定
-  | 'data' // エクスポート、インポート、全データ削除
-  | 'account'; // プラン、ログアウト、アカウント削除
+// SettingsCategory は @/core/types/settings.ts で定義（複数featureから参照されるため）
+export type { SettingsCategory };
 
 /**
  * 設定セクションの識別子（スクロールターゲット用）

@@ -27,7 +27,7 @@ import {
 } from '@/features/calendar';
 import { logger } from '@/lib/logger';
 
-import { useCalendarComposition } from '../_composition/useCalendarComposition';
+import { useCalendarComposition } from './useCalendarComposition';
 
 interface CalendarViewClientProps {
   view: CalendarViewType;

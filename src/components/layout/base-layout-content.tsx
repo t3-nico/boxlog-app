@@ -1,22 +1,17 @@
 'use client';
 
-import {
-  CreateActionSheet,
-  useCreateActionSheet,
-  type CreateActionType,
-} from '@/components/common/CreateActionSheet';
-import { Button } from '@/components/ui/button';
-import { CalendarNavigationProvider, useCalendarProviderProps } from '@/features/calendar';
-import { useEntryMutations } from '@/hooks/useEntryMutations';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { MEDIA_QUERIES } from '@/lib/breakpoints';
-import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
-import { Plus } from 'lucide-react';
+import { useMemo } from 'react';
+
 import { useTranslations } from 'next-intl';
 import { usePathname, useSearchParams } from 'next/navigation';
-import React, { useCallback, useMemo } from 'react';
+
+import { CalendarNavigationProvider, useCalendarProviderProps } from '@/features/calendar';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { MEDIA_QUERIES } from '@/lib/breakpoints';
+
 import { DesktopLayout } from './desktop-layout';
 import { MobileLayout } from './mobile-layout';
+import { MobileFAB } from './MobileFAB';
 
 interface BaseLayoutContentProps {
   children: React.ReactNode;
@@ -28,10 +23,7 @@ interface BaseLayoutContentProps {
  * レイアウトのオーケストレーションのみを担当：
  * - デスクトップ/モバイルレイアウトの切り替え
  * - カレンダープロバイダーのラップ
- * - 共通UI要素（FAB、ダイアログ、バナー等）の配置
- *
- * hooks（useNavigationStore, useGlobalSearch等）を使用するため、
- * Client Componentとして分離
+ * - モバイルFABの配置
  */
 export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
   const pathname = usePathname() || '/';
@@ -39,42 +31,19 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
   const isMobile = useMediaQuery(MEDIA_QUERIES.mobile);
   const searchParams = useSearchParams();
 
-  // メモ化: localeをパスから抽出
   const localeFromPath = useMemo(() => {
     return (pathname.split('/')[1] || 'ja') as 'ja' | 'en';
   }, [pathname]);
 
-  // メモ化: カレンダープロバイダーのprops
   const { calendarProviderProps } = useCalendarProviderProps(
     pathname,
     searchParams || new URLSearchParams(),
-  );
-
-  // 注: Realtime通知購読はRealtimeProviderで一元管理
-
-  // CreateActionSheet状態管理
-  const createActionSheet = useCreateActionSheet();
-
-  // 即DB作成（ドラフトなし）
-  const { createEntry } = useEntryMutations();
-
-  // FABからのアクション選択ハンドラー
-  const handleCreateAction = useCallback(
-    async (_type: CreateActionType) => {
-      const result = await createEntry.mutateAsync({ title: '' });
-      if (result?.id) {
-        useEntryInspectorStore.getState().openInspector(result.id);
-      }
-    },
-    [createEntry],
   );
 
   return (
     // CalendarNavigationProvider を常にレンダリングしてツリー構造を安定化。
     // ルート切替時にProvider の付け外しによるリマウントを防ぎ、
     // Sidebar が静止したままメインコンテンツだけが変わる体験を実現する。
-    // 非カレンダーページでは idle 状態（useCalendarNavigation() は null を返す設計ではなくなるが、
-    // 全消費者が contextAvailable チェック済みのため安全）。
     <CalendarNavigationProvider {...(calendarProviderProps ?? {})}>
       <div className="flex h-screen flex-col">
         {/* アクセシビリティ: スキップリンク */}
@@ -85,37 +54,13 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
           {t('common.skipToMainContent')}
         </a>
 
-        {/* メインレイアウト */}
         {isMobile ? (
           <MobileLayout locale={localeFromPath}>{children}</MobileLayout>
         ) : (
           <DesktopLayout locale={localeFromPath}>{children}</DesktopLayout>
         )}
 
-        {/* Mobile FAB（iOS Safe Area対応） */}
-        {isMobile ? (
-          <Button
-            icon
-            aria-label={t('common.createNewEvent')}
-            className="fixed right-4 z-50 size-14 rounded-2xl shadow-lg"
-            style={{
-              // iOS Safe Area対応: 余白(16px) + Safe Area
-              bottom: 'calc(16px + env(safe-area-inset-bottom, 0px))',
-            }}
-            onClick={createActionSheet.open}
-          >
-            <Plus className="size-6" />
-          </Button>
-        ) : null}
-
-        {/* CreateActionSheet - FABタップ時のボトムシート */}
-        {isMobile ? (
-          <CreateActionSheet
-            open={createActionSheet.isOpen}
-            onOpenChange={createActionSheet.setIsOpen}
-            onSelect={handleCreateAction}
-          />
-        ) : null}
+        {isMobile ? <MobileFAB /> : null}
       </div>
     </CalendarNavigationProvider>
   );

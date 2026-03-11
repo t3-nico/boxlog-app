@@ -11,7 +11,7 @@ import { isCalendarViewPath } from '@/features/calendar';
 import { StatsPageContent } from '@/features/stats';
 import { useClientRouterStore } from '@/stores/useClientRouterStore';
 
-import { CalendarViewClient } from '../calendar/_helpers/CalendarViewClient';
+import { CalendarViewClient } from '../calendar/_composition/CalendarViewClient';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -30,14 +30,6 @@ function getPageType(pathname: string): 'calendar' | 'stats' | null {
   if (isCalendarViewPath(pathWithoutLocale)) return 'calendar';
   if (pathWithoutLocale.startsWith('/stats')) return 'stats';
   return null;
-}
-
-/**
- * @modal でインターセプトされるパスかどうか判定
- * インターセプト時は clientPage をリセットせず、背景のページを維持する
- */
-function isInterceptedPath(pathname: string): boolean {
-  return stripLocale(pathname).startsWith('/settings');
 }
 
 function extractViewFromPathname(pathname: string): CalendarViewType {
@@ -85,7 +77,7 @@ function StatsClientView() {
 // Main
 // ---------------------------------------------------------------------------
 
-interface ClientPageRendererProps {
+interface ClientPageRouterProps {
   children: React.ReactNode;
 }
 
@@ -99,7 +91,7 @@ interface ClientPageRendererProps {
  * これにより router.push() のサーバーラウンドトリップを回避し、
  * ChatGPT ライクな「Sidebar 静止 / メインのみ切り替え」体験を実現する。
  */
-export function ClientPageRenderer({ children }: ClientPageRendererProps) {
+export function ClientPageRouter({ children }: ClientPageRouterProps) {
   const pathname = usePathname() ?? '/';
   const clientPage = useClientRouterStore((s) => s.clientPage);
   const switchToPage = useClientRouterStore((s) => s.switchToPage);
@@ -113,7 +105,7 @@ export function ClientPageRenderer({ children }: ClientPageRendererProps) {
     if (currentPageType !== clientPage) {
       if (currentPageType === 'calendar' || currentPageType === 'stats') {
         switchToPage(currentPageType);
-      } else if (!isInterceptedPath(pathname)) {
+      } else {
         resetToServer();
       }
     }

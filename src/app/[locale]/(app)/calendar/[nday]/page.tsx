@@ -6,9 +6,9 @@ import type { MultiDayViewType } from '@/features/calendar';
 import type { Locale } from '@/i18n/routing';
 import { HydrationBoundary } from '@/lib/trpc/server';
 
-import { prefetchCalendarData } from '../_helpers/calendar-prefetch';
-import { CalendarViewClient } from '../_helpers/CalendarViewClient';
-import { getCalendarTranslations, parseDateParam } from '../_helpers/page-utils';
+import { CalendarViewClient } from '../_composition/CalendarViewClient';
+import { prefetchCalendarData } from '../_server/calendar-prefetch';
+import { getCalendarTranslations, parseDateParam } from '../_server/page-utils';
 
 export const dynamic = 'force-dynamic';
 
