@@ -1,29 +1,10 @@
-export type ChronotypeType = 'lion' | 'bear' | 'wolf' | 'dolphin' | 'custom';
-
-export type PresetChronotypeType = Exclude<ChronotypeType, 'custom'>;
-
-export type ProductivityLevel = 'warmup' | 'peak' | 'dip' | 'recovery' | 'winddown';
-
-export type ChronotypeDisplayMode = 'border' | 'background' | 'both';
-
-export interface ProductivityZone {
-  startHour: number;
-  endHour: number;
-  level: ProductivityLevel;
-  label: string;
-}
-
-export interface ChronotypeProfile {
-  type: ChronotypeType;
-  name: string;
-  description: string;
-  productivityZones: ProductivityZone[];
-}
-
-export interface ChronotypeSettings {
-  enabled: boolean;
-  type: ChronotypeType;
-  customZones?: ProductivityZone[];
-  displayMode: ChronotypeDisplayMode;
-  opacity: number;
-}
+// 共有層の型を re-export（feature barrel の API 維持）
+export type {
+  ChronotypeDisplayMode,
+  ChronotypeProfile,
+  ChronotypeSettings,
+  ChronotypeType,
+  PresetChronotypeType,
+  ProductivityLevel,
+  ProductivityZone,
+} from '@/types/chronotype';

@@ -1,9 +1,6 @@
-import type {
-  ChronotypeProfile,
-  ChronotypeSettings,
-  PresetChronotypeType,
-  ProductivityLevel,
-} from '../types';
+import type { ChronotypeProfile, PresetChronotypeType, ProductivityLevel } from '../types';
+
+export { DEFAULT_CHRONOTYPE_SETTINGS } from '@/lib/chronotype-defaults';
 
 export const CHRONOTYPE_LEVEL_ORDER: ProductivityLevel[] = [
   'warmup',
@@ -25,13 +22,6 @@ export const CHRONOTYPE_EMOJI: Record<PresetChronotypeType, string> = {
   bear: '🐻',
   wolf: '🐺',
   dolphin: '🐬',
-};
-
-export const DEFAULT_CHRONOTYPE_SETTINGS: ChronotypeSettings = {
-  enabled: false,
-  type: 'bear',
-  displayMode: 'border',
-  opacity: 90,
 };
 
 export const CHRONOTYPE_PRESETS: Record<ChronotypeProfile['type'], ChronotypeProfile> = {

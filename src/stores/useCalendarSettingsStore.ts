@@ -1,10 +1,10 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
-import type { ChronotypeSettings as ChronotypeSettingsState } from '@/features/chronotype';
-import { DEFAULT_CHRONOTYPE_SETTINGS } from '@/features/chronotype';
 import type { HourHeightDensity } from '@/lib/calendar-constants';
+import { DEFAULT_CHRONOTYPE_SETTINGS } from '@/lib/chronotype-defaults';
 import { listenToTimezoneChange } from '@/lib/timezone-listener';
+import type { ChronotypeSettings as ChronotypeSettingsState } from '@/types/chronotype';
 
 export type CalendarViewType = 'day' | '3day' | '5day' | 'week';
 
