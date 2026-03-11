@@ -9,7 +9,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useUpdateEntityTagsInCache } from '../../../hooks/useUpdateEntityTagsInCache';
 
-import type { EntryWithTags } from '@/core/types/entry';
+import type { EntryWithTags } from '@/types/entry';
 import { useEntryTags } from '../../../hooks/useEntryTags';
 
 interface UseInspectorTagStateProps {

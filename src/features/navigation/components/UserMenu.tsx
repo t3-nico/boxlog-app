@@ -31,14 +31,14 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useLogout } from '@/hooks/useLogout';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { useRouter } from '@/i18n/navigation';
 import { MEDIA_QUERIES } from '@/lib/breakpoints';
+import { useRouter } from '@/platform/i18n/navigation';
 import { useSettingsStore } from '@/stores/useSettingsStore';
 import { useLocale, useTranslations } from 'next-intl';
+import { useLogout } from '../hooks/useLogout';
 
-import type { SettingsCategory } from '@/core/types';
+import type { SettingsCategory } from '@/types';
 
 export function UserMenu({
   user,

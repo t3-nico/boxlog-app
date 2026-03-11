@@ -12,7 +12,7 @@ import { isEntryPast } from '@/lib/entry-status';
 import { api } from '@/platform/trpc';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
-import type { EntryWithTags } from '@/core/types/entry';
+import type { EntryWithTags } from '@/types/entry';
 
 interface UseInspectorTimeStateProps {
   plan: EntryWithTags | null;
