@@ -6,7 +6,7 @@
  *       '@/platform/trpc/server' から直接インポートしてください
  */
 
-import { AppRouter } from '@/server/api/root';
+import { AppRouter } from '@/platform/trpc/root';
 import { createTRPCReact } from '@trpc/react-query';
 
 /**
@@ -17,4 +17,4 @@ export const api = createTRPCReact<AppRouter>();
 /**
  * APIの型定義をエクスポート
  */
-export type { AppRouter } from '@/server/api/root';
+export type { AppRouter } from '@/platform/trpc/root';

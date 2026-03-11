@@ -26,7 +26,7 @@ import superjson from 'superjson';
 import { expect, vi } from 'vitest';
 
 import type { Database } from '@/lib/database.types';
-import type { Context } from '@/server/api/trpc';
+import type { Context } from '@/platform/trpc/procedures';
 
 /**
  * モックコンテキストのオプション

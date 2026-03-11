@@ -7,7 +7,7 @@ import { timingSafeEqual } from 'crypto';
 
 import { SupabaseClient } from '@supabase/supabase-js';
 import { initTRPC, TRPCError } from '@trpc/server';
-import { CreateNextContextOptions } from '@trpc/server/adapters/next';
+import type { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
 import superjson from 'superjson';
 import { z } from 'zod';
 
@@ -29,9 +29,23 @@ import type { Database } from '@/lib/database.types';
 /**
  * リクエストコンテキストの型定義
  */
+export interface TrpcRequestLike {
+  headers: Record<string, string | undefined>;
+  cookies: Record<string, string | undefined>;
+  socket?: {
+    remoteAddress?: string | undefined;
+  };
+}
+
+export interface TrpcResponseLike {
+  headers?: Headers;
+  setHeader?: (name: string, value: string | readonly string[]) => void;
+  end?: (...args: unknown[]) => void;
+}
+
 export interface Context {
-  req: CreateNextContextOptions['req'];
-  res: CreateNextContextOptions['res'];
+  req: TrpcRequestLike;
+  res: TrpcResponseLike;
   userId?: string | undefined;
   sessionId?: string | undefined;
   supabase: SupabaseClient<Database>;
@@ -49,7 +63,10 @@ export interface Context {
  * 2. oauth: OAuth 2.1トークン認証（MCP用）
  * 3. service-role: Service Role Key認証（管理者用）
  */
-export async function createTRPCContext(opts: CreateNextContextOptions): Promise<Context> {
+export async function createTRPCContext(opts: {
+  req: TrpcRequestLike;
+  res: TrpcResponseLike;
+}): Promise<Context> {
   const { req, res } = opts;
 
   // リクエストヘッダーから認証モードを自動検出
@@ -156,6 +173,13 @@ export async function createTRPCContext(opts: CreateNextContextOptions): Promise
     supabase,
     authMode,
   };
+}
+
+export async function createFetchTRPCContext(opts: FetchCreateContextFnOptions): Promise<Context> {
+  return createTRPCContext({
+    req: createRequestLike(opts.req),
+    res: { headers: opts.resHeaders },
+  });
 }
 
 /**
@@ -300,7 +324,7 @@ function safeCompare(a: string, b: string): boolean {
   return timingSafeEqual(Buffer.from(a), Buffer.from(b));
 }
 
-function getClientIP(req: CreateNextContextOptions['req']): string {
+function getClientIP(req: TrpcRequestLike): string {
   const forwarded =
     typeof req.headers['x-forwarded-for'] === 'string' ? req.headers['x-forwarded-for'] : null;
   const realIp = typeof req.headers['x-real-ip'] === 'string' ? req.headers['x-real-ip'] : null;
@@ -327,3 +351,35 @@ export const paginationSchema = z.object({
 });
 
 export type PaginationInput = z.infer<typeof paginationSchema>;
+
+function createRequestLike(req: Request): TrpcRequestLike {
+  const headers = Object.fromEntries(
+    Array.from(req.headers.entries(), ([key, value]) => [key.toLowerCase(), value]),
+  );
+
+  return {
+    headers,
+    cookies: parseCookieHeader(req.headers.get('cookie')),
+  };
+}
+
+function parseCookieHeader(cookieHeader: string | null): Record<string, string> {
+  if (!cookieHeader) return {};
+
+  const cookies: Record<string, string> = {};
+
+  for (const cookie of cookieHeader.split(';')) {
+    const [rawName, ...rawValue] = cookie.trim().split('=');
+    if (!rawName) continue;
+
+    const value = rawValue.join('=') || '';
+
+    try {
+      cookies[rawName] = decodeURIComponent(value);
+    } catch {
+      cookies[rawName] = value;
+    }
+  }
+
+  return cookies;
+}

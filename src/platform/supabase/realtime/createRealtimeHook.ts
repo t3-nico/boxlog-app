@@ -25,7 +25,7 @@ import { api } from '@/platform/trpc';
 
 import { useRealtimeSubscription } from './useRealtimeSubscription';
 
-import type { AppRouter } from '@/server/api/root';
+import type { AppRouter } from '@/platform/trpc/root';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 
 // tRPC Utils の型
