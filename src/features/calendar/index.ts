@@ -13,7 +13,7 @@ export { CalendarController } from './components/CalendarController';
 // =============================================================================
 // Layout Components
 // =============================================================================
-export { DateNavigator } from '@/core/components/DateNavigator';
+export { DateNavigator } from '@/components/DateNavigator';
 export { CalendarLayout } from './components/layout/CalendarLayout';
 export { DateRangeDisplay } from './components/layout/Header/DateRangeDisplay';
 export { ViewSwitcher } from './components/layout/Header/ViewSwitcher';

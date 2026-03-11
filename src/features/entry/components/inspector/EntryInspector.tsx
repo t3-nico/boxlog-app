@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { Suspense, useCallback } from 'react';
 
-import { InspectorContent, InspectorShell } from '@/core/components/inspector';
+import { InspectorContent, InspectorShell } from '@/components/inspector';
 import { useInspectorKeyboard } from './hooks';
 
 import type { EntryWithTags } from '@/core/types/entry';

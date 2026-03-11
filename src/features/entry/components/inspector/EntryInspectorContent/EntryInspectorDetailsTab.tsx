@@ -15,7 +15,7 @@ import {
   InspectorTagRow,
   InspectorTimeSection,
   TimeConflictAlert,
-} from '@/core/components/inspector';
+} from '@/components/inspector';
 import { useTranslations } from 'next-intl';
 
 import type {
