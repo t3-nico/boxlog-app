@@ -49,9 +49,9 @@ const eslintConfig = defineConfig([
   // =========================================================================
   // Feature Boundary: DAG（有向非循環グラフ）モデル
   //
-  // Layer 0 (基盤):   tags, chronotype         — 他featureに依存しない
-  // Layer 1 (中間):   entry, calendar          — Layer 0 の barrel を使える
-  // Layer 2 (上位):   stats, ai, search        — Layer 0+1 の barrel を使える
+  // Layer 0 (Domain/基盤): tags, chronotype       — 他featureに依存しない
+  // Layer 1 (Domain/中核): entry                  — Layer 0 の barrel を使える
+  // Layer 2 (Feature/体験): calendar, stats, ai, search — Layer 0+1 の barrel を使える
   // Cross-cutting:    settings                 — 全feature の barrel を使える
   // Independent:      auth, navigation, notifications — 他featureに依存しない
   //
@@ -77,19 +77,14 @@ const eslintConfig = defineConfig([
     },
   },
 
-  // Layer 1 (entry, calendar): Layer 0 barrel のみ許可
+  // Layer 1 (entry): Layer 0 barrel のみ許可
   {
-    files: [
-      'src/features/entry/**/*.{ts,tsx}',
-      'src/features/calendar/**/*.{ts,tsx}',
-    ],
+    files: ['src/features/entry/**/*.{ts,tsx}'],
     rules: {
       'no-restricted-imports': ['error', {
         patterns: [
-          // 同層間禁止
-          { group: ['@/features/entry', '@/features/entry/**'], message: '同層featureのimport禁止。' },
-          { group: ['@/features/calendar', '@/features/calendar/**'], message: '同層featureのimport禁止。' },
           // 上位層禁止
+          { group: ['@/features/calendar', '@/features/calendar/**'], message: '上位層featureのimport禁止。' },
           { group: ['@/features/stats', '@/features/stats/**'], message: '上位層featureのimport禁止。' },
           { group: ['@/features/ai', '@/features/ai/**'], message: '上位層featureのimport禁止。' },
           { group: ['@/features/search', '@/features/search/**'], message: '上位層featureのimport禁止。' },
@@ -106,9 +101,10 @@ const eslintConfig = defineConfig([
     },
   },
 
-  // Layer 2 (stats, search): Layer 0+1 barrel のみ許可
+  // Layer 2 (calendar, stats, search): Layer 0+1 barrel のみ許可
   {
     files: [
+      'src/features/calendar/**/*.{ts,tsx}',
       'src/features/stats/**/*.{ts,tsx}',
       'src/features/search/**/*.{ts,tsx}',
     ],
@@ -116,6 +112,7 @@ const eslintConfig = defineConfig([
       'no-restricted-imports': ['error', {
         patterns: [
           // 同層間禁止
+          { group: ['@/features/calendar', '@/features/calendar/**'], message: '同層featureのimport禁止。' },
           { group: ['@/features/stats', '@/features/stats/**'], message: '同層featureのimport禁止。' },
           { group: ['@/features/search', '@/features/search/**'], message: '同層featureのimport禁止。' },
           { group: ['@/features/ai', '@/features/ai/**'], message: '同層featureのimport禁止。' },
@@ -128,7 +125,6 @@ const eslintConfig = defineConfig([
           { group: ['@/features/tags/**'], message: 'barrel import（@/features/tags）のみ使用。' },
           { group: ['@/features/chronotype/**'], message: 'barrel import（@/features/chronotype）のみ使用。' },
           { group: ['@/features/entry/**'], message: 'barrel import（@/features/entry）のみ使用。' },
-          { group: ['@/features/calendar/**'], message: 'barrel import（@/features/calendar）のみ使用。' },
         ],
       }],
     },
@@ -142,6 +138,7 @@ const eslintConfig = defineConfig([
       'no-restricted-imports': ['error', {
         patterns: [
           // 同層間禁止
+          { group: ['@/features/calendar', '@/features/calendar/**'], message: '同層featureのimport禁止。' },
           { group: ['@/features/stats', '@/features/stats/**'], message: '同層featureのimport禁止。' },
           { group: ['@/features/search', '@/features/search/**'], message: '同層featureのimport禁止。' },
           { group: ['@/features/ai', '@/features/ai/**'], message: '自己import禁止。' },
@@ -154,7 +151,6 @@ const eslintConfig = defineConfig([
           { group: ['@/features/tags/**'], message: 'barrel import（@/features/tags）のみ使用。' },
           { group: ['@/features/chronotype/**'], message: 'barrel import（@/features/chronotype）のみ使用。' },
           { group: ['@/features/entry/**'], message: 'barrel import（@/features/entry）のみ使用。' },
-          { group: ['@/features/calendar/**'], message: 'barrel import（@/features/calendar）のみ使用。' },
         ],
       }],
     },
@@ -209,6 +205,7 @@ const eslintConfig = defineConfig([
       'src/shell/layout/**',            // Layout Composition Layer
       'src/shell/providers/**',          // Provider Composition Layer
       'src/shell/providers.tsx',         // Provider root
+      'src/shell/hooks/**',             // Realtime等のComposition hooks
       'src/platform/trpc/root.ts',      // Server Composition Layer (router aggregator)
       'src/components/dnd/**',           // DnD (stories only)
       'src/components/**/*.stories.*',   // Storybook files
