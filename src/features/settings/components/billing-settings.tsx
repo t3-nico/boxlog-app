@@ -9,8 +9,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-import { LabeledRow } from './fields/LabeledRow';
-import { SectionCard } from './SectionCard';
+import { LabeledRow } from '@/components/common/LabeledRow';
+import { SectionCard } from '@/components/common/SectionCard';
 
 interface Plan {
   id: string;

@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { useTranslations } from 'next-intl';
 
+import { SectionCard } from '@/components/common/SectionCard';
 import { useMFA } from '../../hooks/useMFA';
-import { SectionCard } from '../SectionCard';
 
 /**
  * MFA（二段階認証）セクション

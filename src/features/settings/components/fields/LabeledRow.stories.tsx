@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 
-import { LabeledRow } from './LabeledRow';
+import { LabeledRow } from '@/components/common/LabeledRow';
 
 /** LabeledRow - 設定画面の行コンポーネント（2カラム: ラベル | コントロール） */
 const meta = {

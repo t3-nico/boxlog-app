@@ -5,12 +5,12 @@ import { useState } from 'react';
 import { Camera, ChevronDown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
+import { LabeledRow } from '@/components/common/LabeledRow';
+import { SectionCard } from '@/components/common/SectionCard';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ChronotypeSettingsPanel as ChronotypeSettings } from '@/features/chronotype';
 import { getAvatarUrl, getDisplayName, getInitials } from '@/lib/user';
 import { useAuthStore } from '@/stores/useAuthStore';
-import { LabeledRow } from './fields/LabeledRow';
-import { SectionCard } from './SectionCard';
 
 import { AvatarChangeDialog } from './avatar-change-dialog';
 import { DisplayNameDialog } from './display-name-dialog';

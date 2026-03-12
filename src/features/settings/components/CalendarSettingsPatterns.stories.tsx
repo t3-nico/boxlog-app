@@ -13,8 +13,8 @@ import { Switch } from '@/components/ui/switch';
 
 import { getTimeZones } from '../utils/timezone-utils';
 
-import { LabeledRow } from './fields/LabeledRow';
-import { SectionCard } from './SectionCard';
+import { LabeledRow } from '@/components/common/LabeledRow';
+import { SectionCard } from '@/components/common/SectionCard';
 
 // ─────────────────────────────────────────────────────────
 // Demo Components

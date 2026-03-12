@@ -24,6 +24,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, Pencil } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
+import { SectionCard } from '@/components/common/SectionCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -31,7 +32,6 @@ import { CACHE_5_MINUTES } from '@/lib/date';
 import { cn } from '@/lib/utils';
 import { api } from '@/platform/trpc';
 import { useAutoSaveSettings } from '../hooks/useAutoSaveSettings';
-import { SectionCard } from './SectionCard';
 
 import type { DragEndEvent, DropAnimation, Modifier } from '@dnd-kit/core';
 import type { AnimateLayoutChanges } from '@dnd-kit/sortable';

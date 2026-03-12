@@ -10,8 +10,8 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 
-import { LabeledRow } from './fields/LabeledRow';
-import { SectionCard } from './SectionCard';
+import { LabeledRow } from '@/components/common/LabeledRow';
+import { SectionCard } from '@/components/common/SectionCard';
 
 /** SectionCard - 設定セクションコンポーネント */
 const meta = {

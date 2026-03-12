@@ -15,8 +15,8 @@ import {
 } from '@/lib/browser-notification';
 import { api } from '@/platform/trpc';
 
-import { LabeledRow } from './fields/LabeledRow';
-import { SectionCard } from './SectionCard';
+import { LabeledRow } from '@/components/common/LabeledRow';
+import { SectionCard } from '@/components/common/SectionCard';
 
 export function NotificationSettings() {
   const t = useTranslations();

@@ -21,8 +21,8 @@ import type { DateFormatType } from '@/stores/useCalendarSettingsStore';
 import { useUserSettings } from '../hooks/useUserSettings';
 import { getTimeZones } from '../utils/timezone-utils';
 
-import { LabeledRow } from './fields/LabeledRow';
-import { SectionCard } from './SectionCard';
+import { LabeledRow } from '@/components/common/LabeledRow';
+import { SectionCard } from '@/components/common/SectionCard';
 
 /**
  * 表示設定コンポーネント

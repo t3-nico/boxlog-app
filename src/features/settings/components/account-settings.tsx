@@ -13,11 +13,11 @@ import { useRouter } from '@/platform/i18n/navigation';
 import { createClient } from '@/platform/supabase/client';
 import { useAuthStore } from '@/stores/useAuthStore';
 
+import { LabeledRow } from '@/components/common/LabeledRow';
+import { SectionCard } from '@/components/common/SectionCard';
 import { AccountDeletionDialog } from './account-deletion-dialog';
 import { EmailChangeDialog } from './email-change-dialog';
-import { LabeledRow } from './fields/LabeledRow';
 import { PasswordChangeDialog } from './password-change-dialog';
-import { SectionCard } from './SectionCard';
 import { MFASection } from './sections/MFASection';
 
 /**

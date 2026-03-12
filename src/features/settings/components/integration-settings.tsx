@@ -22,8 +22,8 @@ import { Switch } from '@/components/ui/switch';
 import { ApiKeyStorage } from '@/platform/security/encryption';
 import { useAuthStore } from '@/stores/useAuthStore';
 
-import { LabeledRow } from './fields/LabeledRow';
-import { SectionCard } from './SectionCard';
+import { LabeledRow } from '@/components/common/LabeledRow';
+import { SectionCard } from '@/components/common/SectionCard';
 
 interface Integration {
   id: string;
