@@ -22,171 +22,177 @@ import { SectionCard } from './SectionCard';
 
 const TIMEZONES = getTimeZones();
 
-function TimezoneSelectDemo() {
+/**
+ * 表示設定の全セクション（実際の display-settings.tsx と同一構成）
+ *
+ * Section 1: 言語とテーマ
+ * Section 2: 時間とタイムゾーン
+ * Section 3: デフォルトビュー
+ * Section 4: クロノタイプ（enabled時のみ）
+ */
+function DisplaySettingsDemo() {
+  const [language, setLanguage] = useState('ja');
+  const [theme, setTheme] = useState('dark');
   const [timezone, setTimezone] = useState('Asia/Tokyo');
-
-  return (
-    <div className="max-w-2xl">
-      <SectionCard title="時間とタイムゾーン">
-        <LabeledRow label="タイムゾーン">
-          <Select value={timezone} onValueChange={setTimezone}>
-            <SelectTrigger variant="ghost">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {TIMEZONES.map((tz) => (
-                <SelectItem key={tz.value} value={tz.value}>
-                  {tz.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </LabeledRow>
-        <LabeledRow label="時刻形式">
-          <Select defaultValue="24h">
-            <SelectTrigger variant="ghost">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="24h">24時間 (14:00)</SelectItem>
-              <SelectItem value="12h">12時間 (2:00 PM)</SelectItem>
-            </SelectContent>
-          </Select>
-        </LabeledRow>
-        <LabeledRow label="日付形式">
-          <Select defaultValue="yyyy/MM/dd">
-            <SelectTrigger variant="ghost">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="yyyy/MM/dd">2025/01/22 (日本)</SelectItem>
-              <SelectItem value="MM/dd/yyyy">01/22/2025 (US)</SelectItem>
-              <SelectItem value="dd/MM/yyyy">22/01/2025 (EU)</SelectItem>
-              <SelectItem value="yyyy-MM-dd">2025-01-22 (ISO)</SelectItem>
-            </SelectContent>
-          </Select>
-        </LabeledRow>
-      </SectionCard>
-    </div>
-  );
-}
-
-function FullCalendarSettingsDemo() {
-  const [timezone, setTimezone] = useState('Asia/Tokyo');
+  const [timeFormat, setTimeFormat] = useState('24h');
+  const [dateFormat, setDateFormat] = useState('yyyy/MM/dd');
   const [weekStartsOn, setWeekStartsOn] = useState('1');
+  const [defaultView, setDefaultView] = useState('week');
+  const [defaultDuration, setDefaultDuration] = useState('60');
+  const [showWeekends, setShowWeekends] = useState(true);
   const [showWeekNumbers, setShowWeekNumbers] = useState(false);
+  const [density, setDensity] = useState('default');
+  const [showChronotypeOnTimeline, setShowChronotypeOnTimeline] = useState(false);
 
   return (
     <div className="max-w-2xl space-y-8">
-      <SectionCard title="時間とタイムゾーン">
-        <LabeledRow label="タイムゾーン">
-          <Select value={timezone} onValueChange={setTimezone}>
-            <SelectTrigger variant="ghost">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {TIMEZONES.map((tz) => (
-                <SelectItem key={tz.value} value={tz.value}>
-                  {tz.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </LabeledRow>
-        <LabeledRow label="時刻形式">
-          <Select defaultValue="24h">
-            <SelectTrigger variant="ghost">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="24h">24時間 (14:00)</SelectItem>
-              <SelectItem value="12h">12時間 (2:00 PM)</SelectItem>
-            </SelectContent>
-          </Select>
-        </LabeledRow>
-        <LabeledRow label="日付形式">
-          <Select defaultValue="yyyy/MM/dd">
-            <SelectTrigger variant="ghost">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="yyyy/MM/dd">2025/01/22 (日本)</SelectItem>
-              <SelectItem value="MM/dd/yyyy">01/22/2025 (US)</SelectItem>
-              <SelectItem value="dd/MM/yyyy">22/01/2025 (EU)</SelectItem>
-              <SelectItem value="yyyy-MM-dd">2025-01-22 (ISO)</SelectItem>
-            </SelectContent>
-          </Select>
-        </LabeledRow>
-      </SectionCard>
-
-      <SectionCard title="デフォルト表示">
-        <LabeledRow label="デフォルトビュー">
-          <Select defaultValue="week">
-            <SelectTrigger variant="ghost">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="day">日</SelectItem>
-              <SelectItem value="3day">3日間</SelectItem>
-              <SelectItem value="5day">5日間</SelectItem>
-              <SelectItem value="week">週</SelectItem>
-            </SelectContent>
-          </Select>
-        </LabeledRow>
-      </SectionCard>
-
-      <SectionCard title="週とカレンダー表示">
-        <LabeledRow label="週の開始日">
-          <Select value={weekStartsOn} onValueChange={setWeekStartsOn}>
-            <SelectTrigger variant="ghost">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="0">日曜日</SelectItem>
-              <SelectItem value="1">月曜日</SelectItem>
-              <SelectItem value="6">土曜日</SelectItem>
-            </SelectContent>
-          </Select>
-        </LabeledRow>
-        <LabeledRow label="週番号を表示">
-          <Switch checked={showWeekNumbers} onCheckedChange={setShowWeekNumbers} />
-        </LabeledRow>
-      </SectionCard>
-
-      <SectionCard title="勤務時間">
-        <LabeledRow label="開始">
-          <Select defaultValue="9">
-            <SelectTrigger variant="ghost">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {Array.from({ length: 24 }, (_, i) => (
-                <SelectItem key={i} value={String(i)}>
-                  {`${i}:00`}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </LabeledRow>
-        <LabeledRow label="終了">
-          <Select defaultValue="18">
-            <SelectTrigger variant="ghost">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {Array.from({ length: 24 }, (_, i) => (
-                <SelectItem key={i} value={String(i)}>
-                  {`${i}:00`}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </LabeledRow>
-        <div className="bg-card border-border mt-4 rounded-lg border p-4">
-          <p className="text-muted-foreground text-sm">
-            営業時間プレビュー: <span className="text-foreground font-normal">9:00 - 18:00</span>
-          </p>
+      {/* Section 1: 言語とテーマ */}
+      <SectionCard title="言語とテーマ">
+        <div className="space-y-0">
+          <LabeledRow label="言語">
+            <Select value={language} onValueChange={setLanguage}>
+              <SelectTrigger variant="ghost">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ja">日本語</SelectItem>
+                <SelectItem value="en">English</SelectItem>
+              </SelectContent>
+            </Select>
+          </LabeledRow>
+          <LabeledRow label="テーマ">
+            <Select value={theme} onValueChange={setTheme}>
+              <SelectTrigger variant="ghost">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="system">システム</SelectItem>
+                <SelectItem value="light">ライト</SelectItem>
+                <SelectItem value="dark">ダーク</SelectItem>
+              </SelectContent>
+            </Select>
+          </LabeledRow>
         </div>
+      </SectionCard>
+
+      {/* Section 2: 時間とタイムゾーン */}
+      <SectionCard title="時間とタイムゾーン">
+        <div className="space-y-0">
+          <LabeledRow label="タイムゾーン">
+            <Select value={timezone} onValueChange={setTimezone}>
+              <SelectTrigger variant="ghost">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {TIMEZONES.map((tz) => (
+                  <SelectItem key={tz.value} value={tz.value}>
+                    {tz.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </LabeledRow>
+          <LabeledRow label="時間表示形式">
+            <Select value={timeFormat} onValueChange={setTimeFormat}>
+              <SelectTrigger variant="ghost">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="24h">24時間表記 (13:00)</SelectItem>
+                <SelectItem value="12h">12時間表記 (1:00 PM)</SelectItem>
+              </SelectContent>
+            </Select>
+          </LabeledRow>
+          <LabeledRow label="日付表示形式">
+            <Select value={dateFormat} onValueChange={setDateFormat}>
+              <SelectTrigger variant="ghost">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="yyyy/MM/dd">年/月/日 (2025/12/15)</SelectItem>
+                <SelectItem value="MM/dd/yyyy">月/日/年 (12/15/2025)</SelectItem>
+                <SelectItem value="dd/MM/yyyy">日/月/年 (15/12/2025)</SelectItem>
+                <SelectItem value="yyyy-MM-dd">ISO (2025-12-15)</SelectItem>
+              </SelectContent>
+            </Select>
+          </LabeledRow>
+          <LabeledRow label="週の開始曜日">
+            <Select value={weekStartsOn} onValueChange={setWeekStartsOn}>
+              <SelectTrigger variant="ghost">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="0">日曜日</SelectItem>
+                <SelectItem value="1">月曜日</SelectItem>
+                <SelectItem value="6">土曜日</SelectItem>
+              </SelectContent>
+            </Select>
+          </LabeledRow>
+        </div>
+      </SectionCard>
+
+      {/* Section 3: デフォルトビュー */}
+      <SectionCard title="デフォルトビュー">
+        <div className="space-y-0">
+          <LabeledRow label="起動時のビュー">
+            <Select value={defaultView} onValueChange={setDefaultView}>
+              <SelectTrigger variant="ghost">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="day">日表示</SelectItem>
+                <SelectItem value="3day">3日間</SelectItem>
+                <SelectItem value="5day">5日間</SelectItem>
+                <SelectItem value="week">週表示</SelectItem>
+              </SelectContent>
+            </Select>
+          </LabeledRow>
+          <LabeledRow label="デフォルト時間">
+            <Select value={defaultDuration} onValueChange={setDefaultDuration}>
+              <SelectTrigger variant="ghost">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="15">15分</SelectItem>
+                <SelectItem value="30">30分</SelectItem>
+                <SelectItem value="60">1時間</SelectItem>
+                <SelectItem value="90">1時間30分</SelectItem>
+                <SelectItem value="120">2時間</SelectItem>
+              </SelectContent>
+            </Select>
+          </LabeledRow>
+          <LabeledRow label="週末を表示">
+            <Switch checked={showWeekends} onCheckedChange={setShowWeekends} />
+          </LabeledRow>
+          <LabeledRow label="週番号を表示">
+            <Switch checked={showWeekNumbers} onCheckedChange={setShowWeekNumbers} />
+          </LabeledRow>
+          <LabeledRow label="密度">
+            <Select value={density} onValueChange={setDensity}>
+              <SelectTrigger variant="ghost">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="compact">コンパクト</SelectItem>
+                <SelectItem value="default">標準</SelectItem>
+                <SelectItem value="spacious">ゆったり</SelectItem>
+              </SelectContent>
+            </Select>
+          </LabeledRow>
+        </div>
+      </SectionCard>
+
+      {/* Section 4: クロノタイプ（条件付き表示） */}
+      <SectionCard title="クロノタイプ">
+        <LabeledRow
+          label="タイムラインに表示"
+          description="カレンダーの背景に生産性ゾーンを表示します"
+        >
+          <Switch
+            checked={showChronotypeOnTimeline}
+            onCheckedChange={setShowChronotypeOnTimeline}
+          />
+        </LabeledRow>
       </SectionCard>
     </div>
   );
@@ -221,7 +227,7 @@ function TimezoneListReference() {
 // ─────────────────────────────────────────────────────────
 
 const meta = {
-  title: 'Features/Settings/CalendarSettingsPatterns',
+  title: 'Features/Settings/DisplaySettingsPatterns',
   parameters: {
     layout: 'padded',
   },
@@ -231,14 +237,9 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** タイムゾーンセレクター（17ゾーン対応） */
-export const TimezoneSelector: Story = {
-  render: () => <TimezoneSelectDemo />,
-};
-
-/** カレンダー設定全体 */
+/** 表示設定 全セクション（display-settings.tsx と同一構成） */
 export const AllSections: Story = {
-  render: () => <FullCalendarSettingsDemo />,
+  render: () => <DisplaySettingsDemo />,
 };
 
 /** 対応タイムゾーン一覧（リファレンス） */
