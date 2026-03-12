@@ -7,6 +7,7 @@ const meta = {
   parameters: {
     layout: 'fullscreen',
   },
+  tags: ['docs-only'],
 } satisfies Meta;
 
 export default meta;

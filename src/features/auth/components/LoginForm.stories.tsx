@@ -12,7 +12,7 @@ const meta = {
   parameters: {
     layout: 'padded',
   },
-  tags: ['autodocs'],
+  tags: ['autodocs', 'critical'],
 } satisfies Meta<typeof LoginForm>;
 
 export default meta;
