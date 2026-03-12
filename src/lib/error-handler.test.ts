@@ -17,7 +17,7 @@ vi.mock('@/lib/logger', () => ({
 const mockLogger = vi.mocked(loggerModule.logger);
 
 // error-patternsのモック
-vi.mock('@/config/error-patterns/index', () => ({
+vi.mock('@/lib/errors/error-patterns', () => ({
   AppError: class MockAppError extends Error {
     code: string;
     category: string;
@@ -29,7 +29,7 @@ vi.mock('@/config/error-patterns/index', () => ({
       super(message);
       this.code = code;
       this.category = 'mock-category';
-      this.severity = 'error';
+      this.severity = 'critical';
       this.pattern = { recovery: { logLevel: 'error' } };
       this.userMessage = { title: 'Error', description: message };
     }
@@ -53,7 +53,7 @@ vi.mock('@/config/error-patterns/index', () => ({
     };
     error.code = code;
     error.category = 'mock-category';
-    error.severity = 'error';
+    error.severity = 'critical';
     error.pattern = { recovery: { logLevel: 'error' } };
     error.userMessage = { title: 'Error', description: message };
     error.shouldNotifyUser = () => true;
