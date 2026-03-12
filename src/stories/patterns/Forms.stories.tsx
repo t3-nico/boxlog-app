@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';

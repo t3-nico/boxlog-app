@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Calendar, Clock, MoreHorizontal, Tag } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';

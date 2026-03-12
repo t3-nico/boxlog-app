@@ -1,4 +1,4 @@
-import type { Preview } from '@storybook/react-vite';
+import type { Preview } from '@storybook/nextjs-vite';
 import { useDarkMode } from '@vueless/storybook-dark-mode';
 import { NextIntlClientProvider } from 'next-intl';
 import { MINIMAL_VIEWPORTS } from 'storybook/viewport';
@@ -43,6 +43,13 @@ const messages = {
 
 const preview: Preview = {
   parameters: {
+    nextjs: {
+      appDirectory: true,
+      navigation: {
+        pathname: '/ja',
+        params: { locale: 'ja' },
+      },
+    },
     controls: {
       expanded: true,
       matchers: {

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Bell, ChevronDown, Plus, Repeat, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { expect, within } from 'storybook/test';

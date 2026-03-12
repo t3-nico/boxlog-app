@@ -2,7 +2,7 @@
 import { fileURLToPath } from 'node:url';
 import path, { dirname } from 'path';
 
-import type { StorybookConfig } from '@storybook/react-vite';
+import type { StorybookConfig } from '@storybook/nextjs-vite';
 import tailwindcss from '@tailwindcss/vite';
 import remarkGfm from 'remark-gfm';
 
@@ -39,7 +39,7 @@ const config: StorybookConfig = {
     experimentalComponentsManifest: true,
   },
   framework: {
-    name: '@storybook/react-vite',
+    name: '@storybook/nextjs-vite',
     options: {},
   },
   staticDirs: ['../public'],
@@ -55,11 +55,7 @@ const config: StorybookConfig = {
     config.resolve.alias = {
       ...config.resolve.alias,
       '@': path.resolve(__dirname, '../src'),
-      // Next.js 関連をStorybook用モックに置換
-      'next/image': path.resolve(__dirname, './mocks/next-image.tsx'),
-      'next/link': path.resolve(__dirname, './mocks/next-link.tsx'),
-      'next/navigation': path.resolve(__dirname, './mocks/next-navigation.tsx'),
-      // next-intl（React未定義エラー回避）
+      // next-intl（React未定義エラー回避）— next/image, next/link, next/navigation は @storybook/nextjs-vite が自動解決
       'next-intl/navigation': path.resolve(__dirname, './mocks/next-intl-navigation.tsx'),
       'next-intl/routing': path.resolve(__dirname, './mocks/next-intl-routing.ts'),
       // Sentry（@sentry/nextjs が Next.js 内部の process 依存のため Storybook ではモック化）

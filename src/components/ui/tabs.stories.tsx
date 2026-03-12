@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { BarChart3, Calendar, CircleCheckBig, Clock, Settings, User } from 'lucide-react';
 import { expect, userEvent, within } from 'storybook/test';
 

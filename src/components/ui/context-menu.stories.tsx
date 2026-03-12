@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Clipboard, Copy, Edit, RotateCw, Trash2 } from 'lucide-react';
 import { expect, userEvent, within } from 'storybook/test';
 
