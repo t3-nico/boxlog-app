@@ -6,11 +6,11 @@ import { format, isSameDay, isToday } from 'date-fns';
 import { X } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { useAddPopup } from '@/hooks/useAddPopup';
 import { useDateFormat } from '@/hooks/useDateFormat';
 import { getTagColorClasses } from '@/lib/tag-colors';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 import { useTranslations } from 'next-intl';
+import { useAddPopup } from '../../../hooks/useAddPopup';
 import type { CalendarEvent } from '../../../types/calendar.types';
 
 import type { ViewDateRange } from '../../../types/calendar.types';

@@ -22,6 +22,7 @@
       "emailDesc": "Email address associated with your account",
       "emailPlaceholder": "Enter email address",
       "profilePicture": "Profile Picture",
+      "avatar": "Avatar",
       "profilePictureDesc": "JPG, PNG, GIF max 2MB",
       "profilePictureAlt": "Profile Picture",
       "avatarDeleteConfirm": "Delete profile picture?",
@@ -90,6 +91,13 @@
           "noCodesLeft": "No recovery codes remaining"
         }
       },
+      "socialLogin": "Social Login",
+      "socialLoginDesc": "Social login integration will be available in a future update",
+      "connect": "Connect",
+      "disconnect": "Disconnect",
+      "connected": "Connected",
+      "notConnected": "Not connected",
+      "comingSoon": "Coming Soon",
       "session": "Session",
       "dangerZone": "Danger Zone",
       "dangerZoneDesc": "Irreversible and destructive actions",
@@ -188,8 +196,8 @@
       "sunday": "Sunday",
       "monday": "Monday",
       "saturday": "Saturday",
+      "showWeekends": "Show weekends",
       "showWeekNumbers": "Show week numbers",
-      "showWeekNumbersDesc": "Display week numbers in calendar view",
       "defaultTaskSettings": "Creation Defaults",
       "defaultTaskSettingsDesc": "Default behavior when creating new entries",
       "defaultDuration": "Default duration",
@@ -217,10 +225,14 @@
       "viewDay": "Day",
       "view3Day": "3 Days",
       "view5Day": "5 Days",
-      "viewWeek": "Week"
+      "viewWeek": "Week",
+      "density": "Density",
+      "densityCompact": "Compact",
+      "densityDefault": "Default",
+      "densitySpacious": "Spacious"
     },
     "chronotype": {
-      "title": "Chronotype Settings",
+      "title": "Chronotype",
       "description": "Select a type that matches your biological rhythm. Based on your selection, optimal work hours will be displayed in the status bar.",
       "settingsSaved": "Chronotype settings saved",
       "notSelected": "Not selected",
@@ -230,12 +242,79 @@
       "learnMore": "Learn more about chronotypes",
       "showOnTimeline": "Show on timeline",
       "showOnTimelineDesc": "Color the time grid background by productivity zone",
+      "notDiagnosed": "Not yet diagnosed. Answer a few questions to discover your chronotype.",
+      "diagnose": "Take the quiz",
+      "rediagnose": "Retake quiz",
       "levels": {
         "warmup": "Warm-up",
         "peak": "Peak",
         "dip": "Dip",
         "recovery": "Recovery",
         "winddown": "Wind-down"
+      },
+      "quiz": {
+        "title": "Chronotype Quiz",
+        "progress": "{current}/{total}",
+        "back": "Back",
+        "next": "Next",
+        "cancel": "Cancel",
+        "showResult": "See result",
+        "questions": {
+          "wakeTime": {
+            "title": "Without an alarm, what time do you naturally wake up?",
+            "options": {
+              "early": "5–6 AM",
+              "moderate": "7–8 AM",
+              "late": "9 AM or later",
+              "irregular": "It varies day to day"
+            }
+          },
+          "morningEnergy": {
+            "title": "How is your energy level in the morning?",
+            "options": {
+              "veryHigh": "Full of energy from the start",
+              "gradual": "Gradually picks up",
+              "low": "Low in the morning",
+              "anxious": "Restless and uneasy"
+            }
+          },
+          "peakFocus": {
+            "title": "When do you focus best?",
+            "options": {
+              "earlyMorning": "Early morning (6–9 AM)",
+              "lateMorning": "Late morning (9 AM–12 PM)",
+              "afternoon": "Afternoon (1–5 PM)",
+              "evening": "Evening or night (after 5 PM)"
+            }
+          },
+          "afternoonDip": {
+            "title": "How does the afternoon slump affect you?",
+            "options": {
+              "earlyDip": "Strong drowsiness right after lunch",
+              "normalDip": "Slightly sleepy around 2–3 PM",
+              "noDip": "No drowsiness in the afternoon",
+              "unpredictable": "Sleepiness hits at unpredictable times"
+            }
+          },
+          "bedTime": {
+            "title": "What is your ideal bedtime?",
+            "options": {
+              "early": "9–10 PM",
+              "normal": "Around 11 PM",
+              "late": "After midnight",
+              "inconsistent": "No consistent bedtime"
+            }
+          },
+          "sleepQuality": {
+            "title": "How is your sleep quality?",
+            "options": {
+              "deepSleep": "Deep sleep, wake up refreshed",
+              "normalSleep": "Sleep normally",
+              "nightOwl": "Feel better staying up late",
+              "lightSleep": "Light sleeper, wake up easily"
+            }
+          }
+        }
       }
     },
     "sleepSchedule": {
@@ -253,45 +332,53 @@
     },
     "values": {
       "title": "Value Assessment Scale",
-      "description": "Record your values across 12 life domains based on ACT. AI uses these as the most important context for personalized advice.",
+      "description": "Write freely about what matters to you in each area. AI uses your input as context for insights. Everything is optional — the more you write, the better the accuracy.",
       "settingsSaved": "Values saved",
       "placeholder": "What matters to you about this area...",
       "importance": "Importance",
       "setImportance": "Set importance to {value}",
+      "filledCount": "Filled: {count} / {total} areas",
+      "filled": "Filled",
       "categories": {
         "family": "Family",
-        "familyDesc": "Our ancestors lived in kin groups of 15-50. Family bonds are the foundation of security",
+        "familyPrompt": "What do you value most in your family relationships?",
         "romance": "Marriage & Romance",
-        "romanceDesc": "A stable partnership directly impacts mental and physical health",
+        "romancePrompt": "What matters most in your relationship with your partner?",
         "parenting": "Parenting",
-        "parentingDesc": "Tribes once raised children together. Modern isolated parenting creates a mismatch",
+        "parentingPrompt": "What do you focus on in raising your children?",
         "friends": "Friends & Social",
-        "friendsDesc": "Dunbar's number (~150) is the natural limit. Deep connections are about 5 people",
+        "friendsPrompt": "What do you value in your friendships?",
         "career": "Career & Work",
-        "careerDesc": "In hunter-gatherer times, there was no boundary between work and life",
+        "careerPrompt": "What matters most to you at work?",
         "selfGrowth": "Self-Growth",
-        "selfGrowthDesc": "Learning new skills was directly tied to survival",
+        "selfGrowthPrompt": "What do you focus on for personal growth?",
         "leisure": "Leisure & Play",
-        "leisureDesc": "Play was essential for brain development and social bonding",
+        "leisurePrompt": "What do you value in your free time?",
         "spirituality": "Spirituality",
-        "spiritualityDesc": "Awe is a universal human emotion. Reverence for nature is the archetype",
+        "spiritualityPrompt": "What matters to you for mental well-being?",
         "community": "Community",
-        "communityDesc": "Belonging to a tribe was the source of safety and security",
+        "communityPrompt": "What do you value in your community involvement?",
         "health": "Health",
-        "healthDesc": "Diet, sleep, and exercise are all significantly mismatched from ancestral environments",
+        "healthPrompt": "What do you focus on for your health?",
         "environment": "Environment",
-        "environmentDesc": "Contact with nature is essential for recovery (biophilia hypothesis)",
+        "environmentPrompt": "What matters to you about the environment?",
         "art": "Art & Creativity",
-        "artDesc": "Creative expression is a human instinct spanning over 40,000 years"
+        "artPrompt": "What do you value in creative activities?"
       },
       "ranking": {
-        "title": "Value Keyword Ranking",
-        "description": "Select the keywords that resonate with you and rank your top 10 in order of importance.",
+        "title": "Value Keywords",
+        "description": "Select keywords that resonate with you and rank your top 5 in order of importance.",
         "settingsSaved": "Ranking saved",
         "selected": "{count} / {max} selected",
         "limit": "You can select up to {max}",
         "dragHint": "Drag to reorder",
-        "emptyState": "Select keywords above"
+        "emptyState": "Select keywords above",
+        "notSelected": "No keywords selected yet. Choose the values that resonate with you and rank them.",
+        "select": "Select keywords",
+        "edit": "Edit",
+        "done": "Done",
+        "cancel": "Cancel",
+        "idleDescription": "Choose 5 values that matter most to you and rank them by priority. AI uses these as a basis when analyzing how you spend your time."
       },
       "keywords": {
         "integrity": "Integrity",
@@ -401,9 +488,9 @@
       "title": "Settings",
       "categories": {
         "general": "General",
-        "generalDesc": "Language, theme, and startup settings",
+        "generalDesc": "Language, theme, timezone, and date format",
         "calendar": "Calendar",
-        "calendarDesc": "Timezone, display settings, and default view",
+        "calendarDesc": "Default view, snap interval, and display settings",
         "personalization": "Personalization",
         "personalizationDesc": "Values, chronotype, and AI style",
         "notifications": "Notifications",
@@ -412,8 +499,16 @@
         "dataControlsDesc": "Export, import, and backup settings",
         "integrations": "Integrations",
         "integrationsDesc": "AI providers and external service connections",
+        "profile": "Profile",
+        "profileDesc": "Name, email, and chronotype",
+        "display": "Display",
+        "displayDesc": "Theme, language, timezone, and calendar defaults",
+        "data": "Data",
+        "dataDesc": "Export, import, and data management",
+        "billing": "Billing",
+        "billingDesc": "Plans, payments, and invoices",
         "account": "Account",
-        "accountDesc": "Profile and security",
+        "accountDesc": "Email, password, and login connections",
         "subscription": "Subscription",
         "subscriptionDesc": "Plan and billing management",
         "about": "About",
@@ -424,27 +519,54 @@
     },
     "dataControls": {
       "export": {
-        "title": "Data Export",
-        "includedDataTitle": "Exported Data",
-        "profileInfo": "Profile information",
-        "tasksEvents": "Tasks & Events",
-        "tagSettings": "Tag settings",
-        "calendarSettings": "Calendar settings",
-        "notificationSettings": "Notification settings",
-        "otherSettings": "Other settings",
+        "title": "Export",
+        "description": "Download your data in the selected format.",
+        "format": "Format",
+        "formatJson": "JSON (for backup/restore)",
+        "formatCsv": "CSV (for spreadsheets)",
+        "range": "Range",
+        "rangeAll": "All time",
+        "rangeCustom": "Custom range",
+        "startDate": "Start date",
+        "endDate": "End date",
         "exporting": "Exporting...",
-        "exportButton": "Export Data"
+        "exportButton": "Export"
       },
-      "import": {
-        "title": "Data Import",
-        "dropzone": "Drop JSON file or click to select",
+      "restore": {
+        "title": "Backup & Restore",
+        "description": "Restore from a Dayopt JSON export file.",
+        "dropzone": "Drop JSON file here, or click to select",
         "selectFile": "Select File",
-        "comingSoon": "* Import feature is currently under development"
+        "warning": "Restoring will overwrite existing data. This cannot be undone.",
+        "comingSoon": "Coming soon"
       },
-      "backup": {
-        "title": "Auto Backup",
-        "enableLabel": "Enable automatic backup",
-        "lastBackup": "Last backup: Not yet executed"
+      "mcp": {
+        "title": "MCP / API",
+        "description": "Connect AI assistants like Claude Desktop to your Dayopt data.",
+        "serverUrl": "MCP Server URL",
+        "apiKey": "API Key",
+        "noKey": "No API key generated",
+        "generateKey": "Generate API Key",
+        "regenerateKey": "Regenerate",
+        "regenerateConfirm": "Regenerating will invalidate the current key. Continue?",
+        "copied": "Copied to clipboard",
+        "connectionGuide": "Add the URL and API key to your Claude Desktop settings.",
+        "viewDocs": "View documentation",
+        "proRequired": "MCP / API access requires a Pro plan.",
+        "upgrade": "Upgrade to Pro"
+      },
+      "deletion": {
+        "title": "Data Deletion",
+        "deleteBlocks": "Delete all blocks",
+        "deleteBlocksDesc": "Remove all plans and records. Tags and settings are kept.",
+        "deleteAllData": "Delete all data",
+        "deleteAllDataDesc": "Remove all data including tags and settings. Your account remains active.",
+        "confirmTitle": "Are you sure?",
+        "confirmDeleteBlocks": "This will permanently delete all your plans and records. Tags and settings will be preserved.",
+        "confirmDeleteAll": "This will permanently delete all your data. Your account will remain but all plans, records, tags, and settings will be removed.",
+        "typeToConfirm": "Type \"{keyword}\" to confirm",
+        "confirmKeyword": "DELETE",
+        "deleting": "Deleting..."
       }
     },
     "integrations": {
@@ -506,6 +628,11 @@
         "cookies": "Cookie Settings",
         "ossCredits": "Open Source Licenses"
       }
+    },
+    "billing": {
+      "cancelPlan": "Cancel Plan",
+      "cancelPlanDescription": "Cancel your current subscription plan",
+      "cancelPlanComingSoon": "Coming Soon"
     },
     "subscription": {
       "currentPlan": "Current Plan",

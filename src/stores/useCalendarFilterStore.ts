@@ -8,7 +8,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import type { EntryOrigin } from '@/core/types/entry';
+import type { EntryOrigin } from '@/types/entry';
 
 export interface CalendarFilterState {
   /** 起源ごとの表示設定（デフォルト: すべて表示） */
@@ -55,9 +55,6 @@ export interface CalendarFilterActions {
   /** 指定タグだけ表示（グループ用） */
   showOnlyGroupTags: (tagIds: string[]) => void;
 
-  /** 起源が表示中かチェック */
-  isTypeVisible: (origin: EntryOrigin) => boolean;
-
   /** タグが表示中かチェック */
   isTagVisible: (tagId: string) => boolean;
 
@@ -68,7 +65,7 @@ export interface CalendarFilterActions {
   matchesTagFilter: (tagId: string | null) => boolean;
 
   /** エントリが表示対象かチェック（起源とタグの両方） */
-  isEntryVisible: (tagId: string | null) => boolean;
+  isEntryVisible: (origin: EntryOrigin, tagId: string | null) => boolean;
 }
 
 type CalendarFilterStore = CalendarFilterState & CalendarFilterActions;
@@ -198,8 +195,6 @@ export const useCalendarFilterStore = create<CalendarFilterStore>()(
           visibleTagIds: new Set(tagIds),
         })),
 
-      isTypeVisible: (origin) => get().visibleTypes[origin],
-
       isTagVisible: (tagId) => get().visibleTagIds.has(tagId),
 
       getGroupVisibility: (tagIds) => {
@@ -222,15 +217,15 @@ export const useCalendarFilterStore = create<CalendarFilterStore>()(
         return state.visibleTagIds.has(tagId);
       },
 
-      isEntryVisible: (tagId) => {
+      isEntryVisible: (origin, tagId) => {
         const state = get();
 
-        // 起源チェック（planned が非表示なら false）
-        if (!state.visibleTypes.planned) {
+        // 起源チェック
+        if (!state.visibleTypes[origin]) {
           return false;
         }
 
-        return get().matchesTagFilter(tagId);
+        return state.matchesTagFilter(tagId);
       },
     }),
     {

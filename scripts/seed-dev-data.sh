@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ========================================
-# BoxLog App - 開発用データ投入スクリプト
+# Dayopt - 開発用データ投入スクリプト
 # ========================================
 # 使い方:
 #   chmod +x scripts/seed-dev-data.sh
@@ -12,14 +12,13 @@ set -e
 
 SUPABASE_URL="http://127.0.0.1:54321"
 ANON_KEY="sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH"
-DB_URL="postgresql://postgres:postgres@127.0.0.1:54322/postgres"
 
-echo "🚀 開発用データを投入します..."
+echo "開発用データを投入します..."
 
 # ========================================
 # 1. テストユーザーの作成
 # ========================================
-echo "👤 テストユーザーを作成中..."
+echo "テストユーザーを作成中..."
 USER_RESPONSE=$(curl -s -X POST "${SUPABASE_URL}/auth/v1/signup" \
   -H "apikey: ${ANON_KEY}" \
   -H "Content-Type: application/json" \
@@ -31,92 +30,80 @@ USER_RESPONSE=$(curl -s -X POST "${SUPABASE_URL}/auth/v1/signup" \
 USER_ID=$(echo $USER_RESPONSE | jq -r '.user.id')
 
 if [ "$USER_ID" == "null" ] || [ -z "$USER_ID" ]; then
-  echo "❌ ユーザー作成に失敗しました"
+  echo "ユーザー作成に失敗しました"
   echo $USER_RESPONSE | jq .
   exit 1
 fi
 
-echo "✅ ユーザー作成成功: $USER_ID"
+echo "ユーザー作成成功: $USER_ID"
 
 # ========================================
-# 2. サンプルプランの作成
+# 2. サンプルエントリの作成
 # ========================================
-echo "📝 サンプルプランを作成中..."
+echo "サンプルエントリを作成中..."
 
-# SQLファイルの作成（user_idを動的に設定）
-cat > /tmp/seed_plans.sql <<EOF
--- サンプルプラン1
-INSERT INTO public.plans (
-  user_id, plan_number, title, description, status, priority,
-  due_date, start_time, end_time, recurrence_type
+cat > /tmp/seed_entries.sql <<EOF
+-- サンプルエントリ1（予定）
+INSERT INTO public.entries (
+  user_id, title, description, origin,
+  start_time, end_time
 ) VALUES (
   '${USER_ID}',
-  '1',
-  'BoxLog開発タスク',
-  'Inboxテーブルの機能改善とチケット作成フローの最適化',
-  'in_progress',
-  'high',
-  CURRENT_DATE + INTERVAL '7 days',
-  NOW(),
-  NOW() + INTERVAL '2 hours',
-  'none'
+  'Development task',
+  'Feature implementation and code review',
+  'planned',
+  NOW() + INTERVAL '1 hour',
+  NOW() + INTERVAL '3 hours'
 );
 
--- サンプルプラン2
-INSERT INTO public.plans (
-  user_id, plan_number, title, status, priority, due_date, recurrence_type
+-- サンプルエントリ2（予定）
+INSERT INTO public.entries (
+  user_id, title, origin,
+  start_time, end_time
 ) VALUES (
   '${USER_ID}',
-  '2',
-  '認証システムのテスト',
-  'todo',
-  'normal',
-  CURRENT_DATE + INTERVAL '3 days',
-  'none'
+  'Auth system testing',
+  'planned',
+  NOW() + INTERVAL '4 hours',
+  NOW() + INTERVAL '5 hours'
 );
 
--- サンプルプラン3（繰り返しタスク）
-INSERT INTO public.plans (
-  user_id, plan_number, title, description, status, priority,
-  due_date, start_time, end_time, recurrence_type, recurrence_end_date
+-- サンプルエントリ3（実績）
+INSERT INTO public.entries (
+  user_id, title, description, origin,
+  start_time, end_time,
+  actual_start_time, actual_end_time,
+  fulfillment_score
 ) VALUES (
   '${USER_ID}',
-  '3',
-  '日次レビュー',
-  '毎日のタスク振り返りと翌日の計画',
-  'todo',
-  'normal',
-  CURRENT_DATE,
-  CURRENT_DATE + TIME '09:00:00',
-  CURRENT_DATE + TIME '09:30:00',
-  'daily',
-  CURRENT_DATE + INTERVAL '30 days'
+  'Daily review',
+  'Daily task review and next day planning',
+  'planned',
+  NOW() - INTERVAL '2 hours',
+  NOW() - INTERVAL '1 hour',
+  NOW() - INTERVAL '2 hours',
+  NOW() - INTERVAL '50 minutes',
+  3
 );
 
 -- サンプルタグ
 INSERT INTO public.tags (user_id, name, color) VALUES
-  ('${USER_ID}', 'フロントエンド', '#3b82f6'),
-  ('${USER_ID}', 'バックエンド', '#10b981'),
-  ('${USER_ID}', 'バグ修正', '#ef4444'),
-  ('${USER_ID}', 'ドキュメント', '#8b5cf6');
+  ('${USER_ID}', 'Frontend', '#3b82f6'),
+  ('${USER_ID}', 'Backend', '#10b981'),
+  ('${USER_ID}', 'Bug fix', '#ef4444'),
+  ('${USER_ID}', 'Documentation', '#8b5cf6');
 EOF
 
-# Docker経由でPostgreSQLに接続してSQL実行
-docker exec supabase_db_boxlog-app psql -U postgres -d postgres -f /tmp/seed_plans.sql 2>/dev/null || {
-  echo "⚠️  Docker経由での実行に失敗しました。supabase CLIで試します..."
+supabase db execute --file /tmp/seed_entries.sql --local
 
-  # 代替方法: supabase db execute
-  supabase db execute --file /tmp/seed_plans.sql --local
-}
-
-echo "✅ サンプルデータ投入完了"
+echo "サンプルデータ投入完了"
 echo ""
 echo "===================="
-echo "📋 作成されたデータ"
+echo "作成されたデータ"
 echo "===================="
 echo "ユーザー: dev@example.com"
 echo "パスワード: password123"
-echo "プラン: 3件"
+echo "エントリ: 3件"
 echo "タグ: 4件"
 echo ""
-echo "🎉 開発を開始できます！"
+echo "開発を開始できます！"

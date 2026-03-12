@@ -6,12 +6,12 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 import {
-  CHRONOTYPE_PRESETS,
   getChronotypeColor,
+  getChronotypeProfile,
   getProductivityZoneForHour,
-} from '@/types/chronotype';
+} from '@/features/chronotype';
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
 interface UseCurrentTimeLineOptions {
   hourHeight: number;
@@ -51,11 +51,7 @@ export const useCurrentTimeLine = ({
       return null; // クロノタイプ無効時はデフォルト色（bg-primary）
     }
 
-    const profile =
-      chronotype.type === 'custom' && chronotype.customZones
-        ? { ...CHRONOTYPE_PRESETS.custom, productivityZones: chronotype.customZones }
-        : CHRONOTYPE_PRESETS[chronotype.type];
-
+    const profile = getChronotypeProfile(chronotype.type, chronotype.customZones);
     const currentHour = currentTime.getHours();
     const zone = getProductivityZoneForHour(profile, currentHour);
 

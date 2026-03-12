@@ -10,7 +10,7 @@ import { useTranslations } from 'next-intl';
 import { useCallback } from 'react';
 import { toast } from 'sonner';
 
-import { useUpdateEntityTagsInCache } from '@/hooks/useUpdateEntityTagsInCache';
+import { useUpdateEntityTagsInCache } from '../../../hooks/useUpdateEntityTagsInCache';
 
 interface UseInspectorSaveCloseProps {
   planId: string | null;

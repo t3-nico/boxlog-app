@@ -2,7 +2,8 @@
 
 import { useCallback } from 'react';
 
-import { Button } from '@/components/ui/button';
+import { useTranslations } from 'next-intl';
+
 import {
   Select,
   SelectContent,
@@ -13,67 +14,33 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { Switch } from '@/components/ui/switch';
 
-import { useTranslations } from 'next-intl';
-
-import type { DateFormatType } from '@/stores/useCalendarSettingsStore';
 import { useUserSettings } from '../hooks/useUserSettings';
-import { getTimeZones } from '../utils/timezone-utils';
 
-import { SettingRow } from './fields/SettingRow';
-import { SettingsCard } from './SettingsCard';
+import { LabeledRow } from '@/components/common/LabeledRow';
+import { SectionCard } from '@/components/common/SectionCard';
 
+/**
+ * カレンダー設定コンポーネント
+ *
+ * デフォルトビュー、スナップ間隔、デフォルトタスク時間、
+ * 週番号/週末表示の設定を管理
+ *
+ * タイムゾーン・日付/時間形式・週の開始日は GeneralSettings に移動済み
+ */
 export function CalendarSettings() {
   const { settings, saveSettings, isPending } = useUserSettings();
   const t = useTranslations();
 
-  // jsx-no-bind optimization: Reset settings handler
-  const handleResetSettings = useCallback(() => {
-    if (confirm(t('settings.calendar.resetConfirm'))) {
-      settings.resetSettings();
-      saveSettings({
-        timezone: 'Asia/Tokyo',
-        timeFormat: '24h',
-        dateFormat: 'yyyy/MM/dd',
-        weekStartsOn: 1,
-        showWeekNumbers: false,
-        defaultDuration: 60,
-        snapInterval: 15,
-      });
-    }
-  }, [settings, saveSettings, t]);
-
-  // Handler functions
-  const handleTimezoneChange = useCallback(
-    (value: string) => {
-      saveSettings({ timezone: value });
-    },
-    [saveSettings],
-  );
-
-  const handleTimeFormatChange = useCallback(
-    (value: string) => {
-      saveSettings({ timeFormat: value as '12h' | '24h' });
-    },
-    [saveSettings],
-  );
-
-  const handleDateFormatChange = useCallback(
-    (value: string) => {
-      saveSettings({ dateFormat: value as DateFormatType });
-    },
-    [saveSettings],
-  );
-
-  const handleWeekStartsOnChange = useCallback(
-    (value: string) => {
-      saveSettings({ weekStartsOn: Number(value) as 0 | 1 | 6 });
-    },
-    [saveSettings],
-  );
-
   const handleShowWeekNumbersChange = useCallback(
     (checked: boolean) => {
       saveSettings({ showWeekNumbers: checked });
+    },
+    [saveSettings],
+  );
+
+  const handleShowWeekendsChange = useCallback(
+    (checked: boolean) => {
+      saveSettings({ showWeekends: checked });
     },
     [saveSettings],
   );
@@ -102,13 +69,13 @@ export function CalendarSettings() {
   if (isPending) {
     return (
       <div className="space-y-8">
-        {Array.from({ length: 3 }, (_, i) => (
-          <SettingsCard key={i}>
+        {Array.from({ length: 2 }, (_, i) => (
+          <SectionCard key={i}>
             <div className="space-y-4">
               <Skeleton className="h-12 w-full" />
               <Skeleton className="h-12 w-full" />
             </div>
-          </SettingsCard>
+          </SectionCard>
         ))}
       </div>
     );
@@ -116,54 +83,10 @@ export function CalendarSettings() {
 
   return (
     <div className="space-y-8">
-      {/* Time & Timezone Section */}
-      <SettingsCard title={t('settings.calendar.timeAndTimezone')}>
-        <div className="space-y-0">
-          <SettingRow label={t('settings.calendar.timezone')}>
-            <Select value={settings.timezone} onValueChange={handleTimezoneChange}>
-              <SelectTrigger variant="ghost">
-                <SelectValue placeholder={t('settings.calendar.selectTimezone')} />
-              </SelectTrigger>
-              <SelectContent>
-                {getTimeZones().map((tz) => (
-                  <SelectItem key={tz.value} value={tz.value}>
-                    {tz.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </SettingRow>
-          <SettingRow label={t('settings.calendar.timeFormat')}>
-            <Select value={settings.timeFormat} onValueChange={handleTimeFormatChange}>
-              <SelectTrigger variant="ghost">
-                <SelectValue placeholder={t('settings.calendar.selectTimeFormat')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="24h">{t('settings.calendar.timeFormat24h')}</SelectItem>
-                <SelectItem value="12h">{t('settings.calendar.timeFormat12h')}</SelectItem>
-              </SelectContent>
-            </Select>
-          </SettingRow>
-          <SettingRow label={t('settings.calendar.dateFormat')}>
-            <Select value={settings.dateFormat} onValueChange={handleDateFormatChange}>
-              <SelectTrigger variant="ghost">
-                <SelectValue placeholder={t('settings.calendar.selectDateFormat')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="yyyy/MM/dd">{t('settings.calendar.dateFormatJapan')}</SelectItem>
-                <SelectItem value="MM/dd/yyyy">{t('settings.calendar.dateFormatUS')}</SelectItem>
-                <SelectItem value="dd/MM/yyyy">{t('settings.calendar.dateFormatEU')}</SelectItem>
-                <SelectItem value="yyyy-MM-dd">{t('settings.calendar.dateFormatISO')}</SelectItem>
-              </SelectContent>
-            </Select>
-          </SettingRow>
-        </div>
-      </SettingsCard>
-
       {/* Default View Section */}
-      <SettingsCard title={t('settings.calendar.defaultViewSection')}>
+      <SectionCard title={t('settings.calendar.defaultViewSection')}>
         <div className="space-y-0">
-          <SettingRow label={t('settings.calendar.defaultView')}>
+          <LabeledRow label={t('settings.calendar.defaultView')}>
             <Select value={settings.defaultView} onValueChange={handleDefaultViewChange}>
               <SelectTrigger variant="ghost">
                 <SelectValue placeholder={t('settings.calendar.selectDefaultView')} />
@@ -175,38 +98,29 @@ export function CalendarSettings() {
                 <SelectItem value="week">{t('settings.calendar.viewWeek')}</SelectItem>
               </SelectContent>
             </Select>
-          </SettingRow>
+          </LabeledRow>
         </div>
-      </SettingsCard>
+      </SectionCard>
 
-      {/* Week & Calendar Display Section */}
-      <SettingsCard title={t('settings.calendar.weekAndCalendar')}>
+      {/* Display Section */}
+      <SectionCard title={t('settings.calendar.weekAndCalendar')}>
         <div className="space-y-0">
-          <SettingRow label={t('settings.calendar.weekStartsOn')}>
-            <Select value={String(settings.weekStartsOn)} onValueChange={handleWeekStartsOnChange}>
-              <SelectTrigger variant="ghost">
-                <SelectValue placeholder={t('settings.calendar.selectStartDay')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="0">{t('settings.calendar.sunday')}</SelectItem>
-                <SelectItem value="1">{t('settings.calendar.monday')}</SelectItem>
-                <SelectItem value="6">{t('settings.calendar.saturday')}</SelectItem>
-              </SelectContent>
-            </Select>
-          </SettingRow>
-          <SettingRow label={t('settings.calendar.showWeekNumbers')}>
+          <LabeledRow label={t('settings.calendar.showWeekNumbers')}>
             <Switch
               checked={settings.showWeekNumbers}
               onCheckedChange={handleShowWeekNumbersChange}
             />
-          </SettingRow>
+          </LabeledRow>
+          <LabeledRow label={t('settings.calendar.showWeekends')}>
+            <Switch checked={settings.showWeekends} onCheckedChange={handleShowWeekendsChange} />
+          </LabeledRow>
         </div>
-      </SettingsCard>
+      </SectionCard>
 
       {/* Default Task Settings Section */}
-      <SettingsCard title={t('settings.calendar.defaultTaskSettings')}>
+      <SectionCard title={t('settings.calendar.defaultTaskSettings')}>
         <div className="space-y-0">
-          <SettingRow label={t('settings.calendar.defaultDuration')}>
+          <LabeledRow label={t('settings.calendar.defaultDuration')}>
             <Select
               value={String(settings.defaultDuration)}
               onValueChange={handleDefaultDurationChange}
@@ -222,8 +136,8 @@ export function CalendarSettings() {
                 <SelectItem value="120">{t('settings.calendar.duration2hours')}</SelectItem>
               </SelectContent>
             </Select>
-          </SettingRow>
-          <SettingRow label={t('settings.calendar.snapInterval')}>
+          </LabeledRow>
+          <LabeledRow label={t('settings.calendar.snapInterval')}>
             <Select value={String(settings.snapInterval)} onValueChange={handleSnapIntervalChange}>
               <SelectTrigger variant="ghost">
                 <SelectValue placeholder={t('settings.calendar.selectInterval')} />
@@ -235,16 +149,9 @@ export function CalendarSettings() {
                 <SelectItem value="30">{t('settings.calendar.interval30min')}</SelectItem>
               </SelectContent>
             </Select>
-          </SettingRow>
+          </LabeledRow>
         </div>
-      </SettingsCard>
-
-      {/* Reset Settings Section */}
-      <SettingsCard title={t('settings.calendar.resetSettings')}>
-        <Button variant="destructive" onClick={handleResetSettings}>
-          {t('settings.calendar.resetToDefault')}
-        </Button>
-      </SettingsCard>
+      </SectionCard>
     </div>
   );
 }

@@ -60,7 +60,7 @@ Features/{FeatureName}/{ComponentName}
 
 - Feature Story は同一 Feature 内のコンポーネントのみ import 可能
 - 他 Feature のコンポーネントが必要 → Mock で差し替え
-- 共有コンポーネント（`@/core/components/`, `@/components/ui/`）は import OK
+- 共有コンポーネント（`@/components/`, `@/components/ui/`）は import OK
 
 ## tRPC 依存コンポーネントの扱い
 

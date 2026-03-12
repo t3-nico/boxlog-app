@@ -12,7 +12,7 @@
 | **active**   | `start_time <= now < end_time` | 進行中     |
 | **past**     | `end_time <= now`              | 過去の記録 |
 
-判定は `getEntryState()` (`src/lib/entry-status.ts`) で自動計算。手動ステータスは持たない。
+判定は `getEntryState()` (`src/features/entry/lib/entry-status.ts`) で自動計算。手動ステータスは持たない。
 
 ## 操作制約マトリクス
 

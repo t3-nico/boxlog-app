@@ -11,7 +11,7 @@
 export { tagKeys } from './tagQueryKeys';
 
 // Tags Query Hooks
-export { useTag, useTags } from '@/hooks/useTagsQuery';
+export { useTag, useTags } from './useTagsQuery';
 
 // Tags Mutation Hooks
 export {

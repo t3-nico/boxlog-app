@@ -166,4 +166,4 @@ export const VALUE_KEYWORDS: ValueKeyword[] = [
 ];
 
 /** ランキングの最大数 */
-export const MAX_RANKED_VALUES = 10;
+export const MAX_RANKED_VALUES = 5;

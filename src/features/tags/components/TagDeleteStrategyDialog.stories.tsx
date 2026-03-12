@@ -2,10 +2,10 @@ import { useState } from 'react';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import type { Tag } from '@/core/types/tag';
+import type { Tag } from '../types';
 
-import { TagDeleteStrategyDialog } from '@/components/common/TagDeleteStrategyDialog';
 import { Button } from '@/components/ui/button';
+import { TagDeleteStrategyDialog } from './TagDeleteStrategyDialog';
 
 const mockTags: Tag[] = [
   {

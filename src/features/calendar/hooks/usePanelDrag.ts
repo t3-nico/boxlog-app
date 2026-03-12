@@ -4,7 +4,7 @@ import { useCallback, useRef } from 'react';
 
 import { addDays, startOfWeek } from 'date-fns';
 
-import { useEntryMutations } from '@/hooks/useEntryMutations';
+import { useEntryMutations } from '@/features/entry';
 import { convertFromTimezone } from '@/lib/date/timezone';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 import type { DragEntryData } from '../stores/useCalendarDragStore';

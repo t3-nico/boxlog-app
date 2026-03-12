@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
-import { Link } from '@/i18n/navigation';
+import { Link } from '@/platform/i18n/navigation';
 
 import { ResetPasswordForm } from './ResetPasswordForm';
 

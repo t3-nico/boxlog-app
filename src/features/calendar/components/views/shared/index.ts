@@ -14,7 +14,6 @@ export { TimeColumn, TimeLabel } from './grid/TimeColumn';
 export { HalfHourLines, HourLines } from './grid/GridLines';
 
 // CurrentTimeLine - 現在時刻線
-export { CurrentTimeLine as SimpleCurrentTimeLine } from '../../CurrentTimeLine';
 export { CurrentTimeLine, CurrentTimeLineForColumn } from './grid/CurrentTimeLine';
 
 // ===== UIコンポーネント =====
@@ -29,10 +28,6 @@ export { DayColumn } from './components/DayColumn';
 export { CalendarDragSelection } from './components/CalendarDragSelection';
 export type { DateTimeSelection, TimeRange } from './components/CalendarDragSelection';
 
-// 旧版（後方互換性のため保持）
-export { DragSelectionLayer } from './components/DragSelectionLayer';
-export type { TimeSelection } from './components/DragSelectionLayer';
-
 // TimezoneOffset - タイムゾーン表示
 export { TimezoneOffset } from './components/TimezoneOffset';
 
@@ -42,9 +37,6 @@ export { DateDisplay, DateDisplayRow, DayDisplay } from './DateDisplay';
 
 // ===== カスタムフック =====
 export { useCurrentTime } from './hooks/useCurrentTime';
-export { useDragAndDrop } from './hooks/useDragAndDrop';
-export type { DragHandlers, DragState } from './hooks/useDragAndDrop';
-export { useGlobalDragCursor } from './hooks/useGlobalDragCursor';
 export { useIsToday } from './hooks/useIsToday';
 export { usePlanLayoutCalculator } from './hooks/usePlanLayoutCalculator';
 export type { PlanLayout } from './hooks/usePlanLayoutCalculator';
@@ -87,63 +79,14 @@ export {
 export type { PositionedPlan } from './hooks/usePlanPosition';
 
 // ===== ユーティリティ関数 =====
-// @/lib/date re-exports（後方互換性のため）
-export {
-  addDays,
-  addMinutes,
-  endOfDay,
-  formatTime,
-  formatTimeRange,
-  generateDateRange,
-  getDateKey,
-  getDaysDifference,
-  endOfMonth as getMonthEnd,
-  startOfMonth as getMonthStart,
-  endOfWeek as getWeekEnd,
-  startOfWeek as getWeekStart,
-  isSameDay,
-  isToday,
-  isWeekend,
-  normalizeDate as normalizeEventDate,
-  startOfDay,
-} from '@/lib/date';
+// @/lib/date re-exports（使用中のもののみ）
+export { getDateKey } from '@/lib/date';
 
 // dateHelpers（カレンダー固有）
 export { formatDate, getTodayIndex, isValidEvent } from './utils/dateHelpers';
 
-// gridCalculator
-export {
-  calculateGridHeight,
-  calculateScrollPosition,
-  getDurationInMinutes,
-  getEventStyle,
-  isTimeInRange,
-  pixelsToTime,
-  pixelsToTimeValues,
-  roundToQuarterHour,
-  timeToPixels,
-} from './utils/gridCalculator';
-
-// planGhost
-export { calculatePlanGhostStyle, calculatePreviewTime } from './utils/planGhost';
-
-// planPositioning
-export {
-  calculatePlanPosition,
-  calculatePlanPositionWithCollapse,
-  detectOverlapGroups,
-  filterPlansByDate,
-  plansOverlap,
-  sortTimedPlans,
-} from './utils/planPositioning';
-
-// planSorting
-export {
-  sortAgendaEventsByDateKeys,
-  sortEventsByDateKeys,
-  sortEventsByTime,
-  sortEventsForAgenda,
-} from './utils/planSorting';
+// planSorting（使用中のもののみ）
+export { sortEventsByDateKeys } from './utils/planSorting';
 
 // ===== 定数 =====
 export {

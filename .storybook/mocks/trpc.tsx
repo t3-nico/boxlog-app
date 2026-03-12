@@ -9,7 +9,7 @@ import { httpBatchLink } from '@trpc/react-query';
 import type { ReactNode } from 'react';
 import superjson from 'superjson';
 
-import { api } from '@/lib/trpc';
+import { api } from '@/platform/trpc';
 
 // モック用のQueryClient
 const queryClient = new QueryClient({

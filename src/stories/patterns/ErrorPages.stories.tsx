@@ -181,6 +181,46 @@ function MockNotFound() {
   );
 }
 
+/** src/app/maintenance/route.ts 相当 — 静的HTML、Providerバイパス */
+function MockMaintenance() {
+  return (
+    <div className="flex min-h-[50vh] items-center justify-center p-4">
+      <div className="bg-card border-border w-full max-w-[28rem] rounded-lg border p-8 shadow-lg">
+        <div className="mb-6 flex justify-center">
+          <div className="bg-muted flex size-16 items-center justify-center rounded-full">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-muted-foreground size-8"
+            >
+              <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z" />
+            </svg>
+          </div>
+        </div>
+        <div className="mb-6 text-center">
+          <h1 className="text-foreground mb-2 text-2xl font-bold">Under Maintenance</h1>
+        </div>
+        <div className="bg-muted mb-6 rounded p-4">
+          <p className="text-foreground mb-2 text-sm">
+            We&apos;re currently performing system maintenance.
+          </p>
+          <p className="text-muted-foreground text-xs">Please check back shortly.</p>
+        </div>
+        <p className="text-muted-foreground text-center text-xs">
+          We apologize for the inconvenience.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // ---------------------------------------------------------------------------
 // Mock: ErrorBoundary fallbacks
 // ---------------------------------------------------------------------------
@@ -298,6 +338,12 @@ export const Overview: Story = {
                 <td className="py-3 pr-4">カレンダーSSR/ランタイムエラー</td>
                 <td className="py-3">あり（next-intl）</td>
               </tr>
+              <tr className="border-border border-b">
+                <td className="py-3 pr-4 font-medium">Maintenance</td>
+                <td className="py-3 pr-4 font-mono text-xs">src/app/maintenance/route.ts</td>
+                <td className="py-3 pr-4">システムメンテナンス中（503）</td>
+                <td className="py-3">なし（英語固定）</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -363,6 +409,11 @@ export const CalendarError: Story = {
 /** ルートレベル404ページ。カード型のシンプルデザイン。 */
 export const NotFound: Story = {
   render: () => <MockNotFound />,
+};
+
+/** メンテナンスページ。静的HTML、Providerバイパス。503 + Retry-After。 */
+export const Maintenance: Story = {
+  render: () => <MockMaintenance />,
 };
 
 // ---------------------------------------------------------------------------
@@ -449,6 +500,12 @@ export const AllPages: Story = {
         description="カード型、ホームへの導線のみ（src/app/not-found.tsx）"
       >
         <MockNotFound />
+      </Section>
+      <Section
+        title="Maintenance"
+        description="静的HTML、503 + Retry-After（src/app/maintenance/route.ts）"
+      >
+        <MockMaintenance />
       </Section>
     </div>
   ),

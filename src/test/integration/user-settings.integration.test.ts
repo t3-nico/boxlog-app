@@ -11,9 +11,9 @@ import { createClient } from '@supabase/supabase-js';
 import { TRPCError } from '@trpc/server';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
+import { userSettingsRouter } from '@/features/settings/server/router';
 import type { Database } from '@/lib/database.types';
-import { userSettingsRouter } from '@/server/api/routers/userSettings';
-import type { Context } from '@/server/api/trpc';
+import type { Context } from '@/platform/trpc/procedures';
 import { createTestCaller } from '@/test/trpc-test-helpers';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:54321';

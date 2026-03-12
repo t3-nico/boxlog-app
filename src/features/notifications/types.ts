@@ -1,9 +1,9 @@
 // Notification types for Dayopt notification system
 // Authoritative types are in @/schemas/notifications (Zod schemas)
 
-export type { NotificationType } from '@/schemas/notifications';
+export type { NotificationType } from './schemas';
 
-import type { NotificationType } from '@/schemas/notifications';
+import type { NotificationType } from './schemas';
 
 // データベースエンティティ（Supabaseから取得する型 — plan JOINデータ含む）
 export interface NotificationEntity {

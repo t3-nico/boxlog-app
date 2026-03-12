@@ -249,7 +249,9 @@
       "periodMonth": "Month",
       "periodYear": "Year",
       "periodAll": "All",
-      "thisYear": "This year"
+      "thisYear": "This year",
+      "tabOverview": "Overview",
+      "tabInsights": "Insights"
     },
     "collapsedSection": {
       "expandLabel": "Expand {timeRange}"
@@ -269,7 +271,6 @@
       "ariaLabel": "Calendar time grid - click or press Enter to create event"
     },
     "aside": {
-      "open": "Open aside",
       "plan": "Plans",
       "record": "Records",
       "stats": "Statistics",

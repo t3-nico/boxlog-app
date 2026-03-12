@@ -2,23 +2,18 @@
 
 import React, { useCallback } from 'react';
 
+import { ChronotypeBackground } from '@/features/chronotype';
+import { useEntryInspectorStore } from '@/features/entry';
 import { cn } from '@/lib/utils';
-import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { useCalendarDragStore } from '../../../../stores/useCalendarDragStore';
 import type { CalendarEvent } from '../../../../types/calendar.types';
 
-import {
-  calculatePlanGhostStyle,
-  calculatePreviewTime,
-  CalendarDragSelection,
-  PlanCard,
-  useGlobalDragCursor,
-  usePlanStyles,
-} from '../../shared';
+import type { InteractionState } from '../../../../interaction';
+import { useInteraction } from '../../../../interaction';
+import { GhostRenderer } from '../../../../interaction/GhostRenderer';
+import { CalendarDragSelection, PlanCard, usePlanStyles } from '../../shared';
 import { InlineTagPalette } from '../../shared/components/InlineTagPalette';
 import { PanelDragPreview } from '../../shared/components/PanelDragPreview';
-import { ChronotypeBackground } from '../../shared/grid/ChronotypeBackground';
-import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop';
 import { useResponsiveHourHeight } from '../../shared/hooks/useResponsiveHourHeight';
 import type { WeekPlanPosition } from '../WeekView.types';
 
@@ -33,11 +28,47 @@ interface WeekContentProps {
   onPlanUpdate?: ((planId: string, updates: Partial<CalendarEvent>) => void) | undefined;
   onTimeRangeSelect?: ((selection: import('../../shared').DateTimeSelection) => void) | undefined;
   className?: string | undefined;
-  dayIndex: number; // 週内での日付インデックス（0-6）
-  displayDates?: Date[] | undefined; // 週の全日付配列（日付間移動用）
+  dayIndex: number;
+  displayDates?: Date[] | undefined;
   /** DnDを無効化するプランID（Inspector表示中のプランなど） */
   disabledPlanId?: string | null | undefined;
 }
+
+// ========================================
+// Helpers
+// ========================================
+
+function getAdjustedStyle(
+  originalStyle: React.CSSProperties,
+  planId: string,
+  state: InteractionState,
+): React.CSSProperties {
+  if (state.mode === 'dragging' && state.entryId === planId) {
+    return { ...originalStyle, opacity: 0.3, zIndex: 1 };
+  }
+  if (state.mode === 'resizing' && state.entryId === planId) {
+    return {
+      ...originalStyle,
+      height: `${state.snappedHeight}px`,
+      zIndex: 1000,
+    };
+  }
+  return originalStyle;
+}
+
+function getPreviewTime(
+  planId: string,
+  state: InteractionState,
+): { start: Date; end: Date } | null {
+  if (state.mode === 'resizing' && state.entryId === planId) {
+    return state.previewTime;
+  }
+  return null;
+}
+
+// ========================================
+// Component
+// ========================================
 
 export const WeekContent = React.memo(function WeekContent({
   date,
@@ -53,29 +84,22 @@ export const WeekContent = React.memo(function WeekContent({
   displayDates,
   disabledPlanId,
 }: WeekContentProps) {
-  // Inspectorで開いているプランのIDを取得
   const inspectorPlanId = useEntryInspectorStore((state) => state.entryId);
   const isInspectorOpen = useEntryInspectorStore((state) => state.isOpen);
 
-  // レスポンシブな高さ
   const HOUR_HEIGHT = useResponsiveHourHeight();
-
-  // グリッド高さ
   const gridHeight = 24 * HOUR_HEIGHT;
 
   // グローバルドラッグ状態（日付間移動用）
-  // セレクター形式で必要な値のみ取得（不要な再レンダリングを防止）
   const isGlobalDragging = useCalendarDragStore((s) => s.isDragging);
   const globalDraggedPlan = useCalendarDragStore((s) => s.draggedPlan);
   const globalTargetDateIndex = useCalendarDragStore((s) => s.targetDateIndex);
   const globalOriginalDateIndex = useCalendarDragStore((s) => s.originalDateIndex);
 
-  // ドラッグ&ドロップ機能用にonPlanUpdateを変換
-  const handlePlanUpdate = useCallback(
+  // onPlanUpdate → onEventUpdate 変換
+  const handleEventUpdate = useCallback(
     async (planId: string, updates: { startTime: Date; endTime: Date }) => {
       if (!onPlanUpdate) return;
-
-      // handleUpdatePlan形式で呼び出し（返り値を伝播）
       return await onPlanUpdate(planId, {
         startDate: updates.startTime,
         endDate: updates.endTime,
@@ -84,32 +108,33 @@ export const WeekContent = React.memo(function WeekContent({
     [onPlanUpdate],
   );
 
-  // ドラッグ&ドロップ機能（日付間移動対応）
-  const { dragState, handlers } = useDragAndDrop({
-    onPlanUpdate: handlePlanUpdate,
-    onPlanClick,
+  // 統合インタラクション
+  const { state, handlers } = useInteraction({
     date,
     events: plans,
-    allEventsForOverlapCheck,
-    displayDates,
+    ...(allEventsForOverlapCheck ? { allEventsForOverlapCheck } : {}),
+    ...(displayDates ? { displayDates } : {}),
     viewMode: 'week',
-    disabledPlanId,
+    hourHeight: HOUR_HEIGHT,
+    onEventUpdate: handleEventUpdate,
+    ...(onPlanClick ? { onEventClick: onPlanClick } : {}),
+    ...(disabledPlanId != null ? { disabledPlanId } : {}),
   });
 
-  // グローバルドラッグカーソー管理（共通化）
-  useGlobalDragCursor(dragState, handlers);
+  const isActive = state.mode !== 'idle';
+  const isDragging = state.mode === 'dragging';
+  const isResizing = state.mode === 'resizing';
 
-  // この日のプラン位置を統一方式で変換
+  // この日のプラン位置
   const dayPlanPositions = React.useMemo(() => {
-    // planPositionsから該当dayIndexのプランを抽出（統一フィルタリング済み）
     return planPositions
       .filter((pos) => pos.dayIndex === dayIndex)
       .map((pos) => ({
         plan: pos.plan,
         top: pos.top,
         height: pos.height,
-        left: 2, // 列内での位置（px）
-        width: 96, // 列幅の96%使用
+        left: 2,
+        width: 96,
         zIndex: pos.zIndex,
         column: pos.column,
         totalColumns: pos.totalColumns,
@@ -122,16 +147,13 @@ export const WeekContent = React.memo(function WeekContent({
   // プラン右クリックハンドラー
   const handlePlanContextMenu = useCallback(
     (plan: CalendarEvent, mouseEvent: React.MouseEvent) => {
-      // ドラッグ操作中またはリサイズ操作中は右クリックを無視
-      if (dragState.isDragging || dragState.isResizing) {
-        return;
-      }
+      if (isDragging || isResizing) return;
       onPlanContextMenu?.(plan, mouseEvent);
     },
-    [onPlanContextMenu, dragState.isDragging, dragState.isResizing],
+    [onPlanContextMenu, isDragging, isResizing],
   );
 
-  // 時間グリッドの生成
+  // 時間グリッド
   const timeGrid = React.useMemo(
     () =>
       Array.from({ length: 24 }, (_, hour) => (
@@ -148,58 +170,47 @@ export const WeekContent = React.memo(function WeekContent({
     <div
       className={cn(
         'bg-background relative h-full flex-1',
-        dragState.isDragging ? 'overflow-visible' : 'overflow-hidden',
+        isDragging ? 'overflow-visible' : 'overflow-hidden',
         className,
       )}
       data-calendar-grid
       data-calendar-day-index={dayIndex}
     >
-      {/* CalendarDragSelectionを使用（ドラッグ操作のみでプラン作成） */}
       <CalendarDragSelection
         date={date}
         className="absolute inset-0 z-10"
         onTimeRangeSelect={(selection) => {
-          // DayViewと同じように直接DateTimeSelectionを渡す
           onTimeRangeSelect?.(selection);
         }}
-        disabled={dragState.isPending || dragState.isDragging || dragState.isResizing}
+        disabled={isActive}
         plans={allEventsForOverlapCheck ?? plans}
       >
-        {/* 背景グリッド */}
         <div className="absolute inset-0" style={{ height: gridHeight }}>
           <ChronotypeBackground startHour={0} endHour={24} hourHeight={HOUR_HEIGHT} />
           {timeGrid}
         </div>
       </CalendarDragSelection>
 
-      {/* プラン表示エリア - CalendarDragSelectionより上にz-indexを設定 */}
       <div className="pointer-events-none absolute inset-0 z-20" style={{ height: gridHeight }}>
-        {/* パネルドラッグのプレビュー */}
         <PanelDragPreview dayIndex={dayIndex} />
 
-        {/* 通常のプラン表示 */}
         {plans.map((plan) => {
           const style = planStyles[plan.id];
           if (!style) return null;
 
-          const isDragging = dragState.draggedEventId === plan.id && dragState.isDragging;
+          const planDragging = isDragging && (state as { entryId: string }).entryId === plan.id;
 
-          // 日付間移動中のプランは元のカラムで非表示（ゴースト要素がカーソルに追従）
-          // ただし、同じカラム内での移動は表示を維持
+          // 日付間移動中のプランは元のカラムで半透明
           const isMovingToOtherDate =
             isGlobalDragging &&
             globalDraggedPlan?.id === plan.id &&
             globalTargetDateIndex !== globalOriginalDateIndex;
 
-          // ドラッグ中のプラン表示制御
-          const isResizingThis = dragState.isResizing && dragState.draggedEventId === plan.id;
+          const planResizing = isResizing && (state as { entryId: string }).entryId === plan.id;
           const currentTop = parseFloat(style.top?.toString() || '0');
           const currentHeight = parseFloat(style.height?.toString() || '20');
 
-          // ゴースト表示スタイル（共通化）
-          const adjustedStyle = calculatePlanGhostStyle(style, plan.id, dragState);
-
-          // 他の日付に移動中は元のプランを半透明に
+          const adjustedStyle = getAdjustedStyle(style, plan.id, state);
           const finalStyle = isMovingToOtherDate
             ? { ...adjustedStyle, opacity: 0.3 }
             : adjustedStyle;
@@ -211,14 +222,12 @@ export const WeekContent = React.memo(function WeekContent({
               className="pointer-events-none absolute"
               data-plan-block="true"
             >
-              {/* PlanCardの内容部分のみクリック可能 */}
               <div
                 className="pointer-events-auto absolute inset-0 rounded"
                 data-plan-block="true"
                 onMouseDown={(e) => {
-                  // 左クリックのみドラッグ開始
                   if (e.button === 0) {
-                    handlers.handleMouseDown(
+                    handlers.handlePointerDown(
                       plan.id,
                       e,
                       {
@@ -232,7 +241,6 @@ export const WeekContent = React.memo(function WeekContent({
                   }
                 }}
                 onTouchStart={(e) => {
-                  // モバイル: タッチでドラッグ開始（長押しで開始）
                   handlers.handleTouchStart(
                     plan.id,
                     e,
@@ -253,42 +261,42 @@ export const WeekContent = React.memo(function WeekContent({
                     left: 0,
                     width: 100,
                     height:
-                      isResizingThis && dragState.snappedPosition
-                        ? (dragState.snappedPosition.height ?? currentHeight)
+                      planResizing && state.mode === 'resizing'
+                        ? state.snappedHeight
                         : currentHeight,
                   }}
-                  // クリックは useDragAndDrop で処理されるため削除
-                  onContextMenu={(plan: CalendarEvent, e: React.MouseEvent) =>
-                    handlePlanContextMenu(plan, e)
+                  onContextMenu={(p: CalendarEvent, e: React.MouseEvent) =>
+                    handlePlanContextMenu(p, e)
                   }
                   onResizeStart={(
-                    plan: CalendarEvent,
+                    p: CalendarEvent,
                     direction: 'top' | 'bottom',
                     e: React.MouseEvent,
-                    _position: { top: number; left: number; width: number; height: number },
                   ) =>
-                    handlers.handleResizeStart(plan.id, direction, e, {
+                    handlers.handleResizeStart(p.id, direction, e, {
                       top: currentTop,
                       left: 0,
                       width: 100,
                       height: currentHeight,
                     })
                   }
-                  isDragging={isDragging}
-                  isResizing={isResizingThis}
+                  isDragging={planDragging}
+                  isResizing={planResizing}
                   isActive={isInspectorOpen && inspectorPlanId === plan.id}
-                  previewTime={calculatePreviewTime(plan.id, dragState)}
+                  previewTime={getPreviewTime(plan.id, state)}
                   hourHeight={HOUR_HEIGHT}
-                  className={`h-full w-full ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+                  className={`h-full w-full ${planDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
                 />
               </div>
             </div>
           );
         })}
 
-        {/* インラインタグパレット（ドラッグ/タップ後のタグ選択UI） */}
         <InlineTagPalette hourHeight={HOUR_HEIGHT} date={date} />
       </div>
+
+      {/* React Portal ゴースト */}
+      <GhostRenderer state={state} />
     </div>
   );
 });

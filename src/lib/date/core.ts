@@ -14,7 +14,7 @@
  * ```
  */
 
-import { MS_PER_DAY } from '@/constants/time';
+import { MS_PER_DAY } from './constants';
 
 // ========================================
 // 日の境界

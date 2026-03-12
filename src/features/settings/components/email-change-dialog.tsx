@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/platform/supabase/client';
 
 interface EmailChangeDialogProps {
   open: boolean;

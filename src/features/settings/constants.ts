@@ -1,11 +1,9 @@
 import {
   Bell,
-  Calendar,
   CreditCard,
   Database,
-  Plug,
+  Monitor,
   Settings as SettingsIcon,
-  Sliders,
   User,
   type LucideIcon,
 } from 'lucide-react';
@@ -24,39 +22,20 @@ export interface SettingsCategoryMeta {
 }
 
 /**
- * 設定カテゴリの定義（ChatGPT風7カテゴリ）
- *
- * 設計思想:
- * - 頻度が高いものを上に配置
- * - 関連する設定をグループ化
- * - カテゴリ数は7（認知負荷を軽減）
- *
- * @example
- * const t = useTranslations()
- * const menuItems = SETTINGS_CATEGORIES.map(cat => ({
- *   ...cat,
- *   label: t(cat.labelKey),
- *   description: t(cat.descKey)
- * }))
+ * 設定カテゴリの定義（6カテゴリ）
  */
 export const SETTINGS_CATEGORIES: readonly SettingsCategoryMeta[] = [
   {
-    id: 'general',
-    icon: SettingsIcon,
-    labelKey: 'settings.dialog.categories.general',
-    descKey: 'settings.dialog.categories.generalDesc',
+    id: 'profile',
+    icon: User,
+    labelKey: 'settings.dialog.categories.profile',
+    descKey: 'settings.dialog.categories.profileDesc',
   },
   {
-    id: 'calendar',
-    icon: Calendar,
-    labelKey: 'settings.dialog.categories.calendar',
-    descKey: 'settings.dialog.categories.calendarDesc',
-  },
-  {
-    id: 'personalization',
-    icon: Sliders,
-    labelKey: 'settings.dialog.categories.personalization',
-    descKey: 'settings.dialog.categories.personalizationDesc',
+    id: 'display',
+    icon: Monitor,
+    labelKey: 'settings.dialog.categories.display',
+    descKey: 'settings.dialog.categories.displayDesc',
   },
   {
     id: 'notifications',
@@ -65,27 +44,21 @@ export const SETTINGS_CATEGORIES: readonly SettingsCategoryMeta[] = [
     descKey: 'settings.dialog.categories.notificationsDesc',
   },
   {
-    id: 'data-controls',
+    id: 'data',
     icon: Database,
-    labelKey: 'settings.dialog.categories.dataControls',
-    descKey: 'settings.dialog.categories.dataControlsDesc',
+    labelKey: 'settings.dialog.categories.data',
+    descKey: 'settings.dialog.categories.dataDesc',
   },
   {
-    id: 'integrations',
-    icon: Plug,
-    labelKey: 'settings.dialog.categories.integrations',
-    descKey: 'settings.dialog.categories.integrationsDesc',
+    id: 'billing',
+    icon: CreditCard,
+    labelKey: 'settings.dialog.categories.billing',
+    descKey: 'settings.dialog.categories.billingDesc',
   },
   {
     id: 'account',
-    icon: User,
+    icon: SettingsIcon,
     labelKey: 'settings.dialog.categories.account',
     descKey: 'settings.dialog.categories.accountDesc',
-  },
-  {
-    id: 'subscription',
-    icon: CreditCard,
-    labelKey: 'settings.dialog.categories.subscription',
-    descKey: 'settings.dialog.categories.subscriptionDesc',
   },
 ] as const;

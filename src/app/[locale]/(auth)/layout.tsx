@@ -17,10 +17,10 @@
  */
 'use client';
 
-import { PublicProviders } from '@/components/providers/PublicProviders';
 import { Toaster } from '@/components/ui/toast';
 import { AuthLayout } from '@/features/auth';
 import { RecaptchaScript } from '@/lib/recaptcha';
+import { PublicProviders } from '@/shell/providers/PublicProviders';
 
 const AuthRootLayout = ({ children }: { children: React.ReactNode }) => {
   return (

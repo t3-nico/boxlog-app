@@ -268,7 +268,6 @@ jobs:
         lint,
         typecheck,
         unit-tests,
-        storybook-tests,
         build,
         accessibility,
         heavy-checks,
@@ -291,10 +290,8 @@ jobs:
             echo "❌ Unit Tests failed"
             exit 1
           fi
-          if [[ "${{ needs.storybook-tests.result }}" != "success" ]]; then
-            echo "❌ Storybook Tests failed"
-            exit 1
-          fi
+          # Storybook Tests は Quality Gate の needs から除外（コンテナスケジューリング問題で pending 固まり防止）
+          # Storybook の失敗は個別ジョブのステータスで確認する
           if [[ "${{ needs.build.result }}" != "success" ]]; then
             echo "❌ Build failed"
             exit 1
@@ -320,7 +317,7 @@ jobs:
             | ${getEmoji('${{ needs.lint.result }}')} **Lint** | ${{ needs.lint.result }} |
             | ${getEmoji('${{ needs.typecheck.result }}')} **TypeScript** | ${{ needs.typecheck.result }} |
             | ${getEmoji('${{ needs.unit-tests.result }}')} **Unit Tests** | ${{ needs.unit-tests.result }} |
-            | ${getEmoji('${{ needs.storybook-tests.result }}')} **Storybook Tests** | ${{ needs.storybook-tests.result }} |
+            | ⚠️ **Storybook Tests** | (separate job) |
             | ${getEmoji('${{ needs.build.result }}')} **Build** | ${{ needs.build.result }} |
             | ${getEmoji('${{ needs.accessibility.result }}')} **Accessibility** | ${{ needs.accessibility.result }} |
             | ${getEmoji('${{ needs.heavy-checks.result }}')} **Heavy Checks** | ${{ needs.heavy-checks.result }} |

@@ -4,8 +4,9 @@ import { getMessages, getTranslations } from 'next-intl/server';
 import Script from 'next/script';
 
 import { CookieConsentBanner } from '@/components/ui/cookie-consent-banner';
-import type { Locale } from '@/i18n/routing';
-import { routing } from '@/i18n/routing';
+import { getAppUrl } from '@/lib/app-url';
+import type { Locale } from '@/platform/i18n/routing';
+import { routing } from '@/platform/i18n/routing';
 
 interface LocaleLayoutProps {
   children: React.ReactNode;
@@ -36,7 +37,7 @@ export async function generateMetadata({
   // 代替言語URLの生成
   const alternateLanguages: Record<string, string> = {};
   routing.locales.forEach((lang) => {
-    const url = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/${lang}`;
+    const url = `${getAppUrl()}/${lang}`;
     alternateLanguages[lang as keyof typeof alternateLanguages] = url;
   });
 
@@ -74,7 +75,7 @@ export async function generateMetadata({
       type: 'website',
       locale: validLocale,
       alternateLocale: routing.locales.filter((l) => l !== validLocale),
-      url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/${validLocale}`,
+      url: `${getAppUrl()}/${validLocale}`,
       siteName: t('name'),
       title: t('name'),
       description: t('description'),
@@ -96,7 +97,7 @@ export async function generateMetadata({
       images: ['/og-image.png'],
     },
     alternates: {
-      canonical: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/${validLocale}`,
+      canonical: `${getAppUrl()}/${validLocale}`,
       languages: alternateLanguages,
     },
     other: {
@@ -107,7 +108,7 @@ export async function generateMetadata({
 
 // JSON-LD構造化データ（SEO改善）
 function generateJsonLd(locale: string, appName: string, appDescription: string) {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const baseUrl = getAppUrl();
 
   return {
     '@context': 'https://schema.org',

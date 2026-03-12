@@ -3,10 +3,10 @@
 import { Check } from 'lucide-react';
 
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
-import { TAG_COLOR_MAP, TAG_COLOR_NAMES, resolveTagColor } from '@/config/ui/colors';
+import { TAG_COLOR_MAP, TAG_COLOR_NAMES, resolveTagColor } from '@/lib/tag-colors';
 import { cn } from '@/lib/utils';
 
-import type { TagColorName } from '@/config/ui/colors';
+import type { TagColorName } from '@/lib/tag-colors';
 
 // カラー表示名マッピング
 export const COLOR_DISPLAY_NAMES: Record<TagColorName, string> = {

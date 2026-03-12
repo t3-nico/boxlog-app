@@ -10,21 +10,19 @@
 
 import { memo } from 'react';
 
-import {
-  InspectorDetailsLayout,
-  InspectorTagRow,
-  InspectorTimeSection,
-  TimeConflictAlert,
-} from '@/core/components/inspector';
 import { useTranslations } from 'next-intl';
+import { InspectorDetailsLayout } from '../InspectorDetailsLayout';
+import { InspectorTagRow } from '../InspectorTagRow';
+import { InspectorTimeSection } from '../InspectorTimeSection';
+import { TimeConflictAlert } from '../TimeConflictAlert';
 
 import type {
   EntryOrigin,
+  EntryState,
   EntryWithTags,
   FulfillmentScore,
   RecurrenceType,
-} from '@/core/types/entry';
-import type { EntryState } from '@/lib/entry-status';
+} from '../../../types/entry';
 
 import { Bell, Repeat } from 'lucide-react';
 

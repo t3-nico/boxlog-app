@@ -16,10 +16,10 @@ import { Input } from '@/components/ui/input';
 import { useHasMounted } from '@/hooks/useHasMounted';
 import { useSubmitShortcut } from '@/hooks/useSubmitShortcut';
 import { logger } from '@/lib/logger';
-import { buildColonTagName, parseColonTag } from '@/lib/tag-colon';
 import { cn } from '@/lib/utils';
 import { ChevronDown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { buildColonTagName, parseColonTag } from '../lib/tag-colon';
 
 import {
   DEFAULT_TAG_COLOR,

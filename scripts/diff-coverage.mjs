@@ -15,7 +15,7 @@ import { resolve } from 'path';
 const CRITICAL_PATHS = [
   'src/features/auth/',
   'src/server/',
-  'src/lib/supabase/',
+  'src/platform/supabase/',
 ];
 
 // 重要領域のカバレッジ閾値

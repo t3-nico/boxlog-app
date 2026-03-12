@@ -14,15 +14,13 @@ import { isSameDay } from 'date-fns';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
-import { useCreateTag } from '@/hooks/mutations/useTagCrudMutations';
-import { useEntryMutations } from '@/hooks/useEntryMutations';
+import { useEntryMutations } from '@/features/entry';
+import { TagQuickSelector, useCreateTag } from '@/features/tags';
 import { convertFromTimezone } from '@/lib/date/timezone';
 import { logger } from '@/lib/logger';
 import { resolveTagColor } from '@/lib/tag-colors';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
-import { useInlineCreateStore } from '@/stores/useInlineCreateStore';
-
-import { TagQuickSelector } from '@/components/tags/TagQuickSelector';
+import { useInlineCreateStore } from '../../../../../stores/useInlineCreateStore';
 
 import { Z_INDEX } from '../../constants/grid.constants';
 

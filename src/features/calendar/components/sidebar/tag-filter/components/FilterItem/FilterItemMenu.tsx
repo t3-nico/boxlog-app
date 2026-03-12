@@ -12,8 +12,8 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from '@/components/ui/dropdown-menu';
-import type { TagColorName } from '@/config/ui/colors';
-import { getTagColorClasses } from '@/config/ui/colors';
+import type { TagColorName } from '@/lib/tag-colors';
+import { getTagColorClasses } from '@/lib/tag-colors';
 import { cn } from '@/lib/utils';
 
 export interface GroupOption {

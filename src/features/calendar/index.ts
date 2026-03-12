@@ -13,7 +13,6 @@ export { CalendarController } from './components/CalendarController';
 // =============================================================================
 // Layout Components
 // =============================================================================
-export { DateNavigator } from '@/core/components/DateNavigator';
 export { CalendarLayout } from './components/layout/CalendarLayout';
 export { DateRangeDisplay } from './components/layout/Header/DateRangeDisplay';
 export { ViewSwitcher } from './components/layout/Header/ViewSwitcher';
@@ -52,11 +51,6 @@ export type {
 } from './types/calendar.types';
 
 // =============================================================================
-// Stores (Re-export from shared stores for backward compatibility)
-// =============================================================================
-export { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
-
-// =============================================================================
 // Contexts
 // =============================================================================
 export { CalendarProvider, useCalendar } from './contexts/CalendarContext';
@@ -69,7 +63,6 @@ export {
 // =============================================================================
 // Hooks
 // =============================================================================
-export { useResizeHandle } from '@/hooks/useResizeHandle';
 export { useCalendarLayout } from './hooks/ui/useCalendarLayout';
 export { useCalendarProviderProps } from './hooks/useCalendarProviderProps';
 export { useWeekendNavigation } from './hooks/useWeekendNavigation';

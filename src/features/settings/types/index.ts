@@ -2,29 +2,16 @@
 
 import type { LucideIcon } from 'lucide-react';
 
-import type { TranslatedString } from '@/lib/i18n';
+import type { SettingsCategory } from '@/shell/types/settings';
+
+import type { TranslatedString } from '@/platform/i18n';
 
 // ========================================
 // Settings Dialog Types
 // ========================================
 
-/**
- * 設定カテゴリの識別子（ChatGPT風7カテゴリ）
- *
- * 設計思想:
- * - 頻度が高いものを上に配置
- * - 関連する設定をグループ化
- * - カテゴリ数は7（認知負荷を軽減）
- */
-export type SettingsCategory =
-  | 'general' // 言語、テーマ、起動画面
-  | 'calendar' // カレンダー設定（タイムゾーン、表示、デフォルトビュー）
-  | 'personalization' // クロノタイプ
-  | 'notifications' // 通知設定
-  | 'data-controls' // エクスポート、バックアップ
-  | 'integrations' // AI連携、外部サービス
-  | 'account' // プロフィール、セキュリティ
-  | 'subscription'; // プラン、課金
+// SettingsCategory は @/types/settings.ts で定義（複数featureから参照されるため）
+export type { SettingsCategory };
 
 /**
  * 設定セクションの識別子（スクロールターゲット用）

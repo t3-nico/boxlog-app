@@ -20,7 +20,7 @@ messages/
 └── ja/                    # 日本語
     └── (同構造)
 
-src/i18n/
+src/platform/i18n/
 ├── routing.ts             # ルーティング設定
 ├── request.ts             # メッセージローダー（NAMESPACES定義）
 └── navigation.ts          # next-intl ナビゲーション
@@ -147,7 +147,7 @@ t('toolbar.today'); // → calendar.toolbar.today
 
 ### 基本ルール
 
-各JSONファイルは**ネームスペース名と一致するトップレベルキー**を持つ。`src/i18n/request.ts` が全ファイルを `Object.assign` でフラットにマージするため、トップレベルキーがそのままグローバルなネームスペースになる。
+各JSONファイルは**ネームスペース名と一致するトップレベルキー**を持つ。`src/platform/i18n/request.ts` が全ファイルを `Object.assign` でフラットにマージするため、トップレベルキーがそのままグローバルなネームスペースになる。
 
 ```json
 // messages/en/calendar.json
@@ -244,7 +244,7 @@ const messages = {
 
 1. `messages/en/{namespace}.json` を作成
 2. `messages/ja/{namespace}.json` を作成
-3. `src/i18n/request.ts` の `NAMESPACES` 配列に追加
+3. `src/platform/i18n/request.ts` の `NAMESPACES` 配列に追加
 
 ```typescript
 const NAMESPACES = [
@@ -268,7 +268,7 @@ npm run i18n:unused   # 未使用キーの検出
 
 - [ ] すべてのUI文字列を翻訳キーに置き換え
 - [ ] `messages/ja/` と `messages/en/` 両方に翻訳ファイルを追加
-- [ ] `src/i18n/request.ts` の `NAMESPACES` に追加
+- [ ] `src/platform/i18n/request.ts` の `NAMESPACES` に追加
 - [ ] Server Component → `getTranslations()`
 - [ ] Client Component → `useTranslations()`
 - [ ] ハードコードされた日本語・英語が残っていないか確認

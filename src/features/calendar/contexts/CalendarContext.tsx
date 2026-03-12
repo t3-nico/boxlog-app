@@ -14,10 +14,6 @@ import { createContext, useContext } from 'react';
 
 import type { CalendarEvent, CalendarViewType, ViewDateRange } from '../types/calendar.types';
 
-// AsideType は stores/useLayoutStore から来るが、features/ からは直接importできない。
-// 型だけここで再定義する（string literal union）。
-type AsideType = 'none' | 'chat' | 'reflection';
-
 // =============================================================================
 // Context Value Type
 // =============================================================================
@@ -38,10 +34,6 @@ export interface CalendarContextValue {
 
   // --- Plan state ---
   disabledPlanId: string | null;
-
-  // --- Aside ---
-  currentAside: AsideType;
-  onAsideChange: (aside: AsideType) => void;
 
   // --- Plan click handlers ---
   onPlanClick: (plan: CalendarEvent) => void;

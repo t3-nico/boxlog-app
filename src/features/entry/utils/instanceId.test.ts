@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import type { CalendarEvent } from '@/core/types/calendar-event';
-
-import { decodeInstanceId, encodeInstanceId, getInstanceRef } from '@/lib/instance-id';
+import {
+  decodeInstanceId,
+  encodeInstanceId,
+  getInstanceRef,
+  type InstanceRefSource,
+} from '../lib/instance-id';
 
 describe('instanceId', () => {
   describe('encodeInstanceId', () => {
@@ -60,19 +63,14 @@ describe('instanceId', () => {
   });
 
   describe('getInstanceRef', () => {
-    const createMockCalendarEvent = (overrides: Partial<CalendarEvent> = {}): CalendarEvent =>
-      ({
-        id: 'plan-1',
-        title: 'Test',
-        startDate: new Date('2025-01-15T09:00:00Z'),
-        endDate: new Date('2025-01-15T10:00:00Z'),
-        status: 'open',
-        isRecurring: false,
-        ...overrides,
-      }) as CalendarEvent;
+    const createMockSource = (overrides: Partial<InstanceRefSource> = {}): InstanceRefSource => ({
+      id: 'plan-1',
+      startDate: new Date('2025-01-15T09:00:00Z'),
+      ...overrides,
+    });
 
     it('優先度1: originalEntryIdとinstanceDateがある場合はそれを使用', () => {
-      const plan = createMockCalendarEvent({
+      const plan = createMockSource({
         id: 'parent-plan_2025-01-15',
         originalEntryId: 'parent-plan',
         instanceDate: '2025-01-15',
@@ -87,7 +85,7 @@ describe('instanceId', () => {
     });
 
     it('優先度2: 合成IDからデコード（calendarIdがあればそちらを使用）', () => {
-      const plan = createMockCalendarEvent({
+      const plan = createMockSource({
         id: 'some-plan_2025-02-10',
         calendarId: 'real-parent-id',
         originalEntryId: undefined,
@@ -102,7 +100,7 @@ describe('instanceId', () => {
     });
 
     it('優先度2: calendarIdがない場合はデコードされたparentEntryIdを使用', () => {
-      const plan = createMockCalendarEvent({
+      const plan = createMockSource({
         id: 'decoded-plan_2025-03-05',
         calendarId: undefined,
         originalEntryId: undefined,
@@ -117,7 +115,7 @@ describe('instanceId', () => {
     });
 
     it('優先度3: calendarId + startDateフォールバック', () => {
-      const plan = createMockCalendarEvent({
+      const plan = createMockSource({
         id: 'non-composite-id',
         calendarId: 'parent-plan',
         originalEntryId: undefined,
@@ -133,7 +131,7 @@ describe('instanceId', () => {
     });
 
     it('情報不足の場合はnullを返す', () => {
-      const plan = createMockCalendarEvent({
+      const plan = createMockSource({
         id: 'plain-id',
         calendarId: undefined,
         originalEntryId: undefined,

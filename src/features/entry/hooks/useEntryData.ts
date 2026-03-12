@@ -6,11 +6,11 @@
 
 import { useMemo } from 'react';
 
-import type { EntryWithTags } from '@/core/types/entry';
-import { useEntries } from '@/hooks/useEntries';
 import type { DateRangeFilter } from '@/lib/date';
 import { matchesDateRangeFilter } from '@/lib/date';
-import { getEntryState } from '@/lib/entry-status';
+import { getEntryState } from '../lib/entry-status';
+import type { EntryWithTags } from '../types/entry';
+import { useEntries } from './useEntries';
 
 import type {
   RecurrenceFilter,

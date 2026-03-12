@@ -10,20 +10,20 @@ const mockUtils = {
   },
 };
 
-vi.mock('@/lib/trpc', () => ({
+vi.mock('@/platform/trpc', () => ({
   api: {
     useUtils: () => mockUtils,
   },
 }));
 
 let mockMutationCount = 0;
-vi.mock('@/stores/useTagCacheStore', () => ({
+vi.mock('@/features/tags/stores/useTagCacheStore', () => ({
   useTagCacheStore: (selector: (state: { mutationCount: number }) => boolean) =>
     selector({ mutationCount: mockMutationCount }),
 }));
 
 const mockUseRealtimeSubscription = vi.fn();
-vi.mock('@/lib/supabase/realtime/useRealtimeSubscription', () => ({
+vi.mock('@/platform/supabase/realtime/useRealtimeSubscription', () => ({
   useRealtimeSubscription: (config: Record<string, unknown>) => mockUseRealtimeSubscription(config),
 }));
 

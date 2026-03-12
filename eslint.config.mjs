@@ -46,15 +46,146 @@ const eslintConfig = defineConfig([
     },
   },
 
-  // Feature boundary enforcement: features cannot import from other features
+  // =========================================================================
+  // Feature Boundary: DAG（有向非循環グラフ）モデル
+  //
+  // Layer 0 (Domain/基盤): tags, chronotype       — 他featureに依存しない
+  // Layer 1 (Domain/中核): entry                  — Layer 0 の barrel を使える
+  // Layer 2 (Feature/体験): calendar, stats, ai, search — Layer 0+1 の barrel を使える
+  // Cross-cutting:    settings                 — 全feature の barrel を使える
+  // Independent:      auth, navigation, notifications — 他featureに依存しない
+  //
+  // ルール: 上位→下位の barrel import のみ許可。同層・下位→上位は禁止。
+  // deep import（@/features/X/components/*）は常に禁止。
+  // =========================================================================
+
+  // Layer 0 (tags, chronotype): 他featureへの依存ゼロ
   {
-    files: ['src/features/**/*.{ts,tsx}'],
+    files: [
+      'src/features/tags/**/*.{ts,tsx}',
+      'src/features/chronotype/**/*.{ts,tsx}',
+    ],
     rules: {
       'no-restricted-imports': ['error', {
         patterns: [
           {
             group: ['@/features/*', '@/features/**'],
-            message: 'Feature間の直接importは禁止。core型とコールバックを使用。',
+            message: 'Layer 0（基盤feature）は他featureに依存不可。',
+          },
+        ],
+      }],
+    },
+  },
+
+  // Layer 1 (entry): Layer 0 barrel のみ許可
+  {
+    files: ['src/features/entry/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': ['error', {
+        patterns: [
+          // 上位層禁止
+          { group: ['@/features/calendar', '@/features/calendar/**'], message: '上位層featureのimport禁止。' },
+          { group: ['@/features/stats', '@/features/stats/**'], message: '上位層featureのimport禁止。' },
+          { group: ['@/features/ai', '@/features/ai/**'], message: '上位層featureのimport禁止。' },
+          { group: ['@/features/search', '@/features/search/**'], message: '上位層featureのimport禁止。' },
+          // Cross-cutting・Independent禁止
+          { group: ['@/features/settings', '@/features/settings/**'], message: 'settingsのimport禁止。' },
+          { group: ['@/features/auth', '@/features/auth/**'], message: '独立featureのimport禁止。' },
+          { group: ['@/features/navigation', '@/features/navigation/**'], message: '独立featureのimport禁止。' },
+          { group: ['@/features/notifications', '@/features/notifications/**'], message: '独立featureのimport禁止。' },
+          // Layer 0 deep import禁止（barrel のみ許可）
+          { group: ['@/features/tags/**'], message: 'barrel import（@/features/tags）のみ使用。' },
+          { group: ['@/features/chronotype/**'], message: 'barrel import（@/features/chronotype）のみ使用。' },
+        ],
+      }],
+    },
+  },
+
+  // Layer 2 (calendar, stats, search): Layer 0+1 barrel のみ許可
+  {
+    files: [
+      'src/features/calendar/**/*.{ts,tsx}',
+      'src/features/stats/**/*.{ts,tsx}',
+      'src/features/search/**/*.{ts,tsx}',
+    ],
+    rules: {
+      'no-restricted-imports': ['error', {
+        patterns: [
+          // 同層間禁止
+          { group: ['@/features/calendar', '@/features/calendar/**'], message: '同層featureのimport禁止。' },
+          { group: ['@/features/stats', '@/features/stats/**'], message: '同層featureのimport禁止。' },
+          { group: ['@/features/search', '@/features/search/**'], message: '同層featureのimport禁止。' },
+          { group: ['@/features/ai', '@/features/ai/**'], message: '同層featureのimport禁止。' },
+          // Cross-cutting・Independent禁止
+          { group: ['@/features/settings', '@/features/settings/**'], message: 'settingsのimport禁止。' },
+          { group: ['@/features/auth', '@/features/auth/**'], message: '独立featureのimport禁止。' },
+          { group: ['@/features/navigation', '@/features/navigation/**'], message: '独立featureのimport禁止。' },
+          { group: ['@/features/notifications', '@/features/notifications/**'], message: '独立featureのimport禁止。' },
+          // Layer 0+1 deep import禁止（barrel のみ許可）
+          { group: ['@/features/tags/**'], message: 'barrel import（@/features/tags）のみ使用。' },
+          { group: ['@/features/chronotype/**'], message: 'barrel import（@/features/chronotype）のみ使用。' },
+          { group: ['@/features/entry/**'], message: 'barrel import（@/features/entry）のみ使用。' },
+        ],
+      }],
+    },
+  },
+
+  // Layer 2 (ai): サーバー合成層（ai/server）は例外
+  {
+    files: ['src/features/ai/**/*.{ts,tsx}'],
+    ignores: ['src/features/ai/server/**'],  // サーバー合成層は全feature import可
+    rules: {
+      'no-restricted-imports': ['error', {
+        patterns: [
+          // 同層間禁止
+          { group: ['@/features/calendar', '@/features/calendar/**'], message: '同層featureのimport禁止。' },
+          { group: ['@/features/stats', '@/features/stats/**'], message: '同層featureのimport禁止。' },
+          { group: ['@/features/search', '@/features/search/**'], message: '同層featureのimport禁止。' },
+          { group: ['@/features/ai', '@/features/ai/**'], message: '自己import禁止。' },
+          // Cross-cutting・Independent禁止
+          { group: ['@/features/settings', '@/features/settings/**'], message: 'settingsのimport禁止。' },
+          { group: ['@/features/auth', '@/features/auth/**'], message: '独立featureのimport禁止。' },
+          { group: ['@/features/navigation', '@/features/navigation/**'], message: '独立featureのimport禁止。' },
+          { group: ['@/features/notifications', '@/features/notifications/**'], message: '独立featureのimport禁止。' },
+          // Lower layer deep import禁止
+          { group: ['@/features/tags/**'], message: 'barrel import（@/features/tags）のみ使用。' },
+          { group: ['@/features/chronotype/**'], message: 'barrel import（@/features/chronotype）のみ使用。' },
+          { group: ['@/features/entry/**'], message: 'barrel import（@/features/entry）のみ使用。' },
+        ],
+      }],
+    },
+  },
+
+  // Cross-cutting (settings): 全feature barrel を使用可能、deep importのみ禁止
+  {
+    files: ['src/features/settings/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': ['error', {
+        patterns: [
+          {
+            group: ['@/features/*/components/*', '@/features/*/hooks/*', '@/features/*/stores/*',
+                    '@/features/*/lib/*', '@/features/*/server/*', '@/features/*/types/*',
+                    '@/features/*/constants/*', '@/features/*/contexts/*', '@/features/*/adapters/*'],
+            message: 'barrel import（@/features/featureName）のみ使用。deep importは禁止。',
+          },
+        ],
+      }],
+    },
+  },
+
+  // Independent (auth, navigation, notifications): 他featureへの依存ゼロ
+  {
+    files: [
+      'src/features/auth/**/*.{ts,tsx}',
+      'src/features/navigation/**/*.{ts,tsx}',
+      'src/features/notifications/**/*.{ts,tsx}',
+    ],
+    rules: {
+      'no-restricted-imports': ['error', {
+        patterns: [
+          {
+            group: ['@/features/*', '@/features/**'],
+            message: '独立featureは他featureに依存不可。',
           },
         ],
       }],
@@ -67,13 +198,18 @@ const eslintConfig = defineConfig([
       'src/components/**/*.{ts,tsx}',
       'src/hooks/**/*.{ts,tsx}',
       'src/stores/**/*.{ts,tsx}',
+      'src/shell/**/*.{ts,tsx}',
+      'src/platform/**/*.{ts,tsx}',
     ],
     ignores: [
-      'src/components/layout/**',       // Layout Composition Layer
-      'src/components/providers/**',     // Provider Composition Layer
-      'src/components/providers.tsx',    // Provider root
+      'src/shell/layout/**',            // Layout Composition Layer
+      'src/shell/providers/**',          // Provider Composition Layer
+      'src/shell/providers.tsx',         // Provider root
+      'src/shell/hooks/**',             // Realtime等のComposition hooks
+      'src/platform/trpc/root.ts',      // Server Composition Layer (router aggregator)
       'src/components/dnd/**',           // DnD (stories only)
       'src/components/**/*.stories.*',   // Storybook files
+      'src/shell/**/*.stories.*',        // Storybook files
     ],
     rules: {
       'no-restricted-imports': ['error', {

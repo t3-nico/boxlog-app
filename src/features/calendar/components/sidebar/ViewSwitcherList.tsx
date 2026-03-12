@@ -13,7 +13,7 @@ import {
 import { useTranslations } from 'next-intl';
 
 import { cn } from '@/lib/utils';
-import { useLayoutStore } from '@/stores/useLayoutStore';
+import { useLayoutStore } from '@/shell/stores/useLayoutStore';
 import { useCalendarNavigation } from '../../contexts/CalendarNavigationContext';
 import type { CalendarViewType } from '../../types/calendar.types';
 import { isMultiDayView } from '../../types/calendar.types';

@@ -1,10 +1,8 @@
 import { useCallback } from 'react';
 
-import { useEntryInstanceMutations } from '@/hooks/useEntryInstances';
-import { useEntryMutations } from '@/hooks/useEntryMutations';
-import { decodeInstanceId } from '@/lib/instance-id';
+import { decodeInstanceId, useEntryInstanceMutations, useEntryMutations } from '@/features/entry';
 import { logger } from '@/lib/logger';
-import { api } from '@/lib/trpc';
+import { api } from '@/platform/trpc';
 
 import type { CalendarEvent } from '../types/calendar.types';
 

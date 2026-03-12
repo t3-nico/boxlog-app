@@ -1,0 +1,385 @@
+/**
+ * tRPCサーバー設定
+ * プロシージャ定義とコンテキスト管理
+ */
+
+import { timingSafeEqual } from 'crypto';
+
+import { SupabaseClient } from '@supabase/supabase-js';
+import { initTRPC, TRPCError } from '@trpc/server';
+import type { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
+import superjson from 'superjson';
+import { z } from 'zod';
+
+import { createAppError, ERROR_CODES } from '@/lib/errors/error-patterns';
+import { logger } from '@/lib/logger';
+import { apiRateLimit, withUpstashRateLimit } from '@/lib/rate-limit/upstash';
+import { extractClientIp } from '@/platform/security/ip-validation';
+import {
+  AuthMode,
+  createServiceRoleClient,
+  detectAuthMode,
+  extractBearerToken,
+  OAuthError,
+  verifyOAuthToken,
+} from '@/platform/supabase/oauth';
+
+import type { Database } from '@/lib/database.types';
+
+/**
+ * リクエストコンテキストの型定義
+ */
+export interface TrpcRequestLike {
+  headers: Record<string, string | undefined>;
+  cookies: Record<string, string | undefined>;
+  socket?: {
+    remoteAddress?: string | undefined;
+  };
+}
+
+export interface TrpcResponseLike {
+  headers?: Headers;
+  setHeader?: (name: string, value: string | readonly string[]) => void;
+  end?: (...args: unknown[]) => void;
+}
+
+export interface Context {
+  req: TrpcRequestLike;
+  res: TrpcResponseLike;
+  userId?: string | undefined;
+  sessionId?: string | undefined;
+  supabase: SupabaseClient<Database>;
+  /** 認証モード（session, oauth, service-role） */
+  authMode: AuthMode;
+  /** OAuth 2.1トークン（oauth modeの場合のみ） */
+  accessToken?: string | undefined;
+}
+
+/**
+ * コンテキスト作成関数
+ *
+ * 3つの認証モードをサポート：
+ * 1. session: Cookie認証（既存、ブラウザ用）
+ * 2. oauth: OAuth 2.1トークン認証（MCP用）
+ * 3. service-role: Service Role Key認証（管理者用）
+ */
+export async function createTRPCContext(opts: {
+  req: TrpcRequestLike;
+  res: TrpcResponseLike;
+}): Promise<Context> {
+  const { req, res } = opts;
+
+  // リクエストヘッダーから認証モードを自動検出
+  const authMode = detectAuthMode(req.headers as Record<string, string>);
+
+  // 認証情報の取得
+  let userId: string | undefined;
+  let sessionId: string | undefined;
+  let accessToken: string | undefined;
+  let supabase: SupabaseClient<Database>;
+
+  // 1. OAuth 2.1トークン認証（MCP用）
+  if (authMode === 'oauth') {
+    try {
+      const authHeader =
+        typeof req.headers['authorization'] === 'string' ? req.headers['authorization'] : null;
+      const token = extractBearerToken(authHeader);
+
+      const verificationResult = await verifyOAuthToken(token);
+
+      userId = verificationResult.userId;
+      accessToken = verificationResult.accessToken;
+      sessionId = verificationResult.accessToken;
+      supabase = verificationResult.client;
+    } catch (error) {
+      if (error instanceof OAuthError) {
+        logger.error('OAuth token verification failed', { message: error.message });
+      }
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: error instanceof OAuthError ? error.message : 'OAuth authentication failed',
+        cause: error,
+      });
+    }
+  }
+  // 2. Service Role認証（管理者用）
+  else if (authMode === 'service-role') {
+    try {
+      const apiKey = typeof req.headers['x-api-key'] === 'string' ? req.headers['x-api-key'] : null;
+      const expectedKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+      if (!apiKey || !expectedKey || !safeCompare(apiKey, expectedKey)) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Invalid or missing API key',
+        });
+      }
+
+      // Service Role Client作成（RLSバイパス）
+      supabase = createServiceRoleClient();
+      userId = undefined; // Admin操作ではuserIdはundefined
+    } catch (error) {
+      logger.error('Service role authentication failed', { error });
+      throw error;
+    }
+  }
+  // 3. Session Cookie認証（既存、ブラウザ用）
+  else {
+    const { createServerClient } = await import('@supabase/ssr');
+
+    supabase = createServerClient<Database>(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return Object.entries(req.cookies).map(([name, value]) => ({
+              name,
+              value: value ?? '',
+            }));
+          },
+          setAll() {
+            // tRPC API routes cannot set cookies (read-only context)
+          },
+        },
+      },
+    );
+
+    try {
+      // getUser()はSupabase Authサーバーに問い合わせてJWTを検証する（getSession()は署名未検証）
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        userId = user.id;
+        // セッションからアクセストークンを取得（ログ・追跡用）
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        sessionId = session?.access_token;
+      }
+    } catch {
+      // 認証エラーは無視（ゲストユーザーとして扱う）
+    }
+  }
+
+  return {
+    req,
+    res,
+    userId,
+    sessionId,
+    accessToken,
+    supabase,
+    authMode,
+  };
+}
+
+export async function createFetchTRPCContext(opts: FetchCreateContextFnOptions): Promise<Context> {
+  return createTRPCContext({
+    req: createRequestLike(opts.req),
+    res: { headers: opts.resHeaders },
+  });
+}
+
+/**
+ * tRPCインスタンス初期化
+ */
+const t = initTRPC.context<Context>().create({
+  transformer: superjson,
+  errorFormatter({ shape, error }) {
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    // エラーの詳細情報をプロダクションでは非表示
+    const message =
+      isProduction && error.code === 'INTERNAL_SERVER_ERROR'
+        ? 'サーバーエラーが発生しました'
+        : shape.message;
+
+    return {
+      ...shape,
+      message,
+      data: {
+        ...shape.data,
+        // 開発環境でのみスタックトレースを含める
+        stack: isProduction ? undefined : error.stack,
+      },
+    };
+  },
+});
+
+/**
+ * 公開プロシージャ（認証不要）
+ */
+export const publicProcedure = t.procedure;
+
+/**
+ * 認証が必要なプロシージャ
+ */
+export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
+  if (!ctx.userId) {
+    throw new TRPCError({
+      code: 'UNAUTHORIZED',
+      message: 'ログインが必要です',
+      cause: createAppError('認証が必要です', ERROR_CODES.INVALID_TOKEN, {
+        source: 'trpc_middleware',
+      }),
+    });
+  }
+
+  return next({
+    ctx: {
+      ...ctx,
+      userId: ctx.userId, // TypeScriptの型保証のため
+    },
+  });
+});
+
+/**
+ * 管理者権限が必要なプロシージャ
+ */
+export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
+  // ここで管理者権限の確認を行う
+  const isAdmin = await checkAdminPermission(ctx.userId);
+
+  if (!isAdmin) {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: '管理者権限が必要です',
+      cause: createAppError('管理者権限が必要です', ERROR_CODES.NO_PERMISSION, {
+        source: 'trpc_middleware',
+        userId: ctx.userId,
+      }),
+    });
+  }
+
+  return next({ ctx });
+});
+
+/**
+ * レート制限付きプロシージャ
+ */
+export const rateLimitedProcedure = publicProcedure.use(async ({ ctx, next }) => {
+  const clientIp = getClientIP(ctx.req);
+  const isAllowed = await checkRateLimit(clientIp);
+
+  if (!isAllowed) {
+    throw new TRPCError({
+      code: 'TOO_MANY_REQUESTS',
+      message: 'リクエストが多すぎます。しばらく待ってからお試しください。',
+      cause: createAppError('レート制限に達しました', ERROR_CODES.RATE_LIMIT_EXCEEDED, {
+        source: 'trpc_middleware',
+        ip: clientIp,
+      }),
+    });
+  }
+
+  return next({ ctx });
+});
+
+/**
+ * ルーター作成関数
+ */
+export const createTRPCRouter = t.router;
+
+/**
+ * プロシージャのマージ関数
+ */
+export const mergeRouters = t.mergeRouters;
+
+/**
+ * ヘルパー関数
+ */
+
+async function checkAdminPermission(_userId: string): Promise<boolean> {
+  // 実際の管理者権限確認ロジックを実装
+  // データベースからユーザーの権限を確認
+  return false; // 仮実装
+}
+
+async function checkRateLimit(ip: string): Promise<boolean> {
+  if (!apiRateLimit) {
+    // Upstash未設定の場合はレート制限をスキップ（開発環境向け）
+    return true;
+  }
+
+  // Requestオブジェクトを簡易的に作成してUpstashレート制限を利用
+  const dummyRequest = new Request('http://localhost', {
+    headers: { 'x-real-ip': ip },
+  });
+
+  const result = await withUpstashRateLimit(dummyRequest, apiRateLimit);
+  if (result === null) {
+    // Upstashエラー時はフォールバック（可用性優先）
+    return true;
+  }
+  return result.success;
+}
+
+/**
+ * タイミング攻撃耐性のある文字列比較
+ */
+function safeCompare(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  return timingSafeEqual(Buffer.from(a), Buffer.from(b));
+}
+
+function getClientIP(req: TrpcRequestLike): string {
+  const forwarded =
+    typeof req.headers['x-forwarded-for'] === 'string' ? req.headers['x-forwarded-for'] : null;
+  const realIp = typeof req.headers['x-real-ip'] === 'string' ? req.headers['x-real-ip'] : null;
+  const remoteAddress = req.socket?.remoteAddress;
+
+  return extractClientIp(forwarded, realIp) || remoteAddress || 'unknown';
+}
+
+/**
+ * 入力スキーマ用のヘルパー
+ */
+export const createInputSchema = <T extends z.ZodRawShape>(shape: T) => {
+  return z.object(shape).strict(); // 厳密モードで未知のプロパティを拒否
+};
+
+/**
+ * ページネーション用の共通スキーマ
+ */
+export const paginationSchema = z.object({
+  page: z.number().min(1).default(1),
+  limit: z.number().min(1).max(100).default(20),
+  sortBy: z.string().optional(),
+  sortOrder: z.enum(['asc', 'desc']).default('desc'),
+});
+
+export type PaginationInput = z.infer<typeof paginationSchema>;
+
+function createRequestLike(req: Request): TrpcRequestLike {
+  const headers = Object.fromEntries(
+    Array.from(req.headers.entries(), ([key, value]) => [key.toLowerCase(), value]),
+  );
+
+  return {
+    headers,
+    cookies: parseCookieHeader(req.headers.get('cookie')),
+  };
+}
+
+function parseCookieHeader(cookieHeader: string | null): Record<string, string> {
+  if (!cookieHeader) return {};
+
+  const cookies: Record<string, string> = {};
+
+  for (const cookie of cookieHeader.split(';')) {
+    const [rawName, ...rawValue] = cookie.trim().split('=');
+    if (!rawName) continue;
+
+    const value = rawValue.join('=') || '';
+
+    try {
+      cookies[rawName] = decodeURIComponent(value);
+    } catch {
+      cookies[rawName] = value;
+    }
+  }
+
+  return cookies;
+}

@@ -24,6 +24,10 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+*.log
+
+# Sentry CLI config (may contain tokens)
+.sentryclirc
 
 # Environment variables
 .env

@@ -9,12 +9,12 @@ import React, { memo, useCallback, useEffect, useMemo } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import { MEDIA_QUERIES } from '@/config/ui/breakpoints';
-import { getTagColorClasses } from '@/config/ui/colors';
+import { useEntryInspectorStore } from '@/features/entry';
+import { useTagsMap } from '@/features/tags';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { useTagsMap } from '@/hooks/useTagsMap';
+import { MEDIA_QUERIES } from '@/lib/breakpoints';
+import { getTagColorClasses } from '@/lib/tag-colors';
 import { cn } from '@/lib/utils';
-import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 
 import { HOUR_HEIGHT, MIN_EVENT_HEIGHT, Z_INDEX } from '../../constants/grid.constants';
 import type { PlanCardProps } from '../../types/plan.types';

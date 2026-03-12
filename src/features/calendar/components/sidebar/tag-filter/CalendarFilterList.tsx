@@ -6,14 +6,11 @@ import { useTranslations } from 'next-intl';
 
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 
-import { TagDeleteStrategyDialog } from '@/components/common/TagDeleteStrategyDialog';
-import { SidebarSection } from '@/components/layout/SidebarSection';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useDeleteTag } from '@/hooks/mutations/useTagMutations';
-import { useTagModalNavigation } from '@/hooks/useTagModalNavigation';
-import { useTags } from '@/hooks/useTagsQuery';
-import { api } from '@/lib/trpc';
-import { useTagCacheStore } from '@/stores/useTagCacheStore';
+import { TagDeleteStrategyDialog, useDeleteTag, useTagCacheStore, useTags } from '@/features/tags';
+import { api } from '@/platform/trpc';
+import { SidebarSection } from '@/shell/layout/SidebarSection';
+import { useTagModalNavigation } from '../../../hooks/useTagModalNavigation';
 
 import { CreateTagButton } from './components/CreateTagButton';
 import { TagFlatList } from './components/TagFlatList';

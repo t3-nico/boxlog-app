@@ -7,8 +7,8 @@
 import { Bell } from 'lucide-react';
 import { memo } from 'react';
 
-import { RecurringIndicatorFromFlag } from '@/components/common/RecurringIndicator';
 import { useTranslations } from 'next-intl';
+import { RecurringIndicatorFromFlag } from '../../../../RecurringIndicator';
 
 import { formatTimeRange } from '@/lib/date';
 import type { CalendarEvent } from '../../../../../types/calendar.types';

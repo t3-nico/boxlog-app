@@ -2,19 +2,21 @@
 
 import { useCallback, useRef } from 'react';
 
-import { useEntryMutations } from '@/hooks/useEntryMutations';
-import { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
-import { getInstanceRef } from '@/lib/instance-id';
+import {
+  getInstanceRef,
+  useEntryInspectorStore,
+  useEntryMutations,
+  useRecurringScopeMutations,
+} from '@/features/entry';
 import { logger } from '@/lib/logger';
-import { useEntryClipboardStore } from '@/stores/useEntryClipboardStore';
-import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import {
   openDeleteConfirm,
   openRecurringEditConfirm,
   type RecurringEditScope,
-} from '@/stores/useModalStore';
+} from '@/shell/stores/useModalStore';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
+import { useEntryClipboardStore } from '../stores/useEntryClipboardStore';
 import type { CalendarEvent } from '../types/calendar.types';
 
 export function usePlanContextActions() {

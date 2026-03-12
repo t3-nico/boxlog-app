@@ -5,12 +5,15 @@
 
 import { useCallback, useEffect } from 'react';
 
-import { CACHE_5_MINUTES } from '@/constants/time';
-import { api } from '@/lib/trpc';
+import type {
+  ChronotypeSettings as ChronotypeSettingsState,
+  ProductivityZone,
+} from '@/features/chronotype';
+import { CACHE_5_MINUTES } from '@/lib/date';
+import { api } from '@/platform/trpc';
 
 import type { DateFormatType } from '@/stores/useCalendarSettingsStore';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
-import type { ProductivityZone } from '@/types/chronotype';
 
 /**
  * ユーザー設定をDBと同期するhook
@@ -44,14 +47,7 @@ export function useUserSettings() {
   // DBから取得した設定をStoreに反映（初回のみ）
   useEffect(() => {
     if (dbSettings && !isPending) {
-      // chronotype設定の構築
-      const chronotypeSettings: {
-        enabled: boolean;
-        type: 'bear' | 'lion' | 'wolf' | 'dolphin' | 'custom';
-        displayMode: 'border' | 'background' | 'both';
-        opacity: number;
-        customZones?: ProductivityZone[];
-      } = {
+      const chronotypeSettings: ChronotypeSettingsState = {
         enabled: dbSettings.chronotype.enabled,
         type: dbSettings.chronotype.type,
         displayMode: dbSettings.chronotype.displayMode,
@@ -76,6 +72,8 @@ export function useUserSettings() {
         snapInterval: dbSettings.snapInterval,
         chronotype: chronotypeSettings,
         planRecordMode: dbSettings.planRecordMode,
+        ...(dbSettings.defaultView && { defaultView: dbSettings.defaultView }),
+        ...(dbSettings.hourHeightDensity && { hourHeightDensity: dbSettings.hourHeightDensity }),
       });
     }
   }, [dbSettings, isPending, updateSettings]);
@@ -107,6 +105,9 @@ export function useUserSettings() {
         dbInput.chronotypeDisplayMode = settings.chronotype.displayMode;
         dbInput.chronotypeOpacity = settings.chronotype.opacity;
       }
+      if (settings.defaultView !== undefined) dbInput.defaultView = settings.defaultView;
+      if (settings.hourHeightDensity !== undefined)
+        dbInput.hourHeightDensity = settings.hourHeightDensity;
       if (settings.planRecordMode !== undefined) dbInput.planRecordMode = settings.planRecordMode;
 
       // DB保存対象のフィールドがある場合のみmutationを実行

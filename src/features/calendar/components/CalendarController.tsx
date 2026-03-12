@@ -45,8 +45,6 @@ export function CalendarController({
     allCalendarEvents,
     showWeekends,
     disabledPlanId,
-    currentAside,
-    onAsideChange,
     onPlanClick,
     onTimeRangeSelect,
     onUpdatePlan,
@@ -139,8 +137,6 @@ export function CalendarController({
           start: viewDateRange.start,
           end: viewDateRange.end,
         }}
-        currentAside={currentAside}
-        onAsideChange={onAsideChange}
         rightSlot={rightSlot}
       >
         <CalendarViewRenderer viewType={viewType} commonProps={commonProps} />

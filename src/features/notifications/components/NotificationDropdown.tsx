@@ -12,9 +12,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import type { NotificationType } from '@/schemas/notifications';
-import { openSettingsModal } from '@/stores/useModalStore';
 import { useLocale, useTranslations } from 'next-intl';
+import type { NotificationType } from '../schemas';
+
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { MEDIA_QUERIES } from '@/lib/breakpoints';
+import { useRouter } from '@/platform/i18n/navigation';
+import { useSettingsStore } from '@/shell/stores/useSettingsStore';
 
 import {
   useNotificationMutations,
@@ -93,10 +97,17 @@ export function NotificationDropdown({
     }
   }, [deleteAllRead, t]);
 
+  const settingsRouter = useRouter();
+  const isMobile = useMediaQuery(MEDIA_QUERIES.mobile);
+  const openSettings = useSettingsStore((s) => s.open);
   const handleOpenSettings = useCallback(() => {
     setIsOpen(false);
-    openSettingsModal('notifications');
-  }, []);
+    if (isMobile) {
+      settingsRouter.push('/settings/notifications');
+    } else {
+      openSettings('notifications');
+    }
+  }, [settingsRouter, isMobile, openSettings]);
 
   // 通知リストのレンダリング
   const renderNotificationList = () => {

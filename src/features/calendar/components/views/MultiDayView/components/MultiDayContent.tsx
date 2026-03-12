@@ -2,22 +2,17 @@
 
 import React, { useCallback } from 'react';
 
+import { useEntryInspectorStore } from '@/features/entry';
 import { cn } from '@/lib/utils';
-import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { useCalendarDragStore } from '../../../../stores/useCalendarDragStore';
 import type { CalendarEvent } from '../../../../types/calendar.types';
 
-import {
-  calculatePlanGhostStyle,
-  calculatePreviewTime,
-  CalendarDragSelection,
-  type DateTimeSelection,
-  PlanCard,
-  useGlobalDragCursor,
-} from '../../shared';
+import type { InteractionState } from '../../../../interaction';
+import { useInteraction } from '../../../../interaction';
+import { GhostRenderer } from '../../../../interaction/GhostRenderer';
+import { CalendarDragSelection, type DateTimeSelection, PlanCard } from '../../shared';
 import { InlineTagPalette } from '../../shared/components/InlineTagPalette';
 import { PanelDragPreview } from '../../shared/components/PanelDragPreview';
-import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop';
 import { useResponsiveHourHeight } from '../../shared/hooks/useResponsiveHourHeight';
 
 interface MultiDayContentProps {
@@ -35,6 +30,42 @@ interface MultiDayContentProps {
   disabledPlanId?: string | null | undefined;
   viewMode: string;
 }
+
+// ========================================
+// Helpers
+// ========================================
+
+function getAdjustedStyle(
+  originalStyle: React.CSSProperties,
+  planId: string,
+  state: InteractionState,
+): React.CSSProperties {
+  if (state.mode === 'dragging' && state.entryId === planId) {
+    return { ...originalStyle, opacity: 0.3, zIndex: 1 };
+  }
+  if (state.mode === 'resizing' && state.entryId === planId) {
+    return {
+      ...originalStyle,
+      height: `${state.snappedHeight}px`,
+      zIndex: 1000,
+    };
+  }
+  return originalStyle;
+}
+
+function getPreviewTime(
+  planId: string,
+  state: InteractionState,
+): { start: Date; end: Date } | null {
+  if (state.mode === 'resizing' && state.entryId === planId) {
+    return state.previewTime;
+  }
+  return null;
+}
+
+// ========================================
+// Component
+// ========================================
 
 export function MultiDayContent({
   date,
@@ -54,9 +85,7 @@ export function MultiDayContent({
   const inspectorPlanId = useEntryInspectorStore((state) => state.entryId);
   const isInspectorOpen = useEntryInspectorStore((state) => state.isOpen);
 
-  // レスポンシブな高さ
   const HOUR_HEIGHT = useResponsiveHourHeight();
-
   const gridHeight = 24 * HOUR_HEIGHT;
 
   const isGlobalDragging = useCalendarDragStore((s) => s.isDragging);
@@ -64,7 +93,8 @@ export function MultiDayContent({
   const globalTargetDateIndex = useCalendarDragStore((s) => s.targetDateIndex);
   const globalOriginalDateIndex = useCalendarDragStore((s) => s.originalDateIndex);
 
-  const handlePlanUpdate = useCallback(
+  // onPlanUpdate → onEventUpdate 変換
+  const handleEventUpdate = useCallback(
     async (planId: string, updates: { startTime: Date; endTime: Date }) => {
       if (!onPlanUpdate) return;
       return await onPlanUpdate(planId, {
@@ -75,27 +105,29 @@ export function MultiDayContent({
     [onPlanUpdate],
   );
 
-  const { dragState, handlers } = useDragAndDrop({
-    onPlanUpdate: handlePlanUpdate,
-    onPlanClick,
+  // 統合インタラクション
+  const { state, handlers } = useInteraction({
     date,
     events: plans,
-    allEventsForOverlapCheck,
-    displayDates,
+    ...(allEventsForOverlapCheck ? { allEventsForOverlapCheck } : {}),
+    ...(displayDates ? { displayDates } : {}),
     viewMode,
-    disabledPlanId,
+    hourHeight: HOUR_HEIGHT,
+    onEventUpdate: handleEventUpdate,
+    ...(onPlanClick ? { onEventClick: onPlanClick } : {}),
+    ...(disabledPlanId != null ? { disabledPlanId } : {}),
   });
 
-  useGlobalDragCursor(dragState, handlers);
+  const isActive = state.mode !== 'idle';
+  const isDragging = state.mode === 'dragging';
+  const isResizing = state.mode === 'resizing';
 
   const handlePlanContextMenu = useCallback(
     (plan: CalendarEvent, mouseEvent: React.MouseEvent) => {
-      if (dragState.isDragging || dragState.isResizing) {
-        return;
-      }
+      if (isDragging || isResizing) return;
       onPlanContextMenu?.(plan, mouseEvent);
     },
-    [onPlanContextMenu, dragState.isDragging, dragState.isResizing],
+    [onPlanContextMenu, isDragging, isResizing],
   );
 
   const timeGrid = React.useMemo(
@@ -120,7 +152,7 @@ export function MultiDayContent({
         date={date}
         className="absolute inset-0"
         onTimeRangeSelect={onTimeRangeSelect}
-        disabled={dragState.isPending || dragState.isDragging || dragState.isResizing}
+        disabled={isActive}
         plans={allEventsForOverlapCheck ?? plans}
       >
         <div className="absolute inset-0" style={{ height: gridHeight }}>
@@ -135,17 +167,17 @@ export function MultiDayContent({
           const style = planStyles[plan.id];
           if (!style) return null;
 
-          const isDragging = dragState.draggedEventId === plan.id && dragState.isDragging;
+          const planDragging = isDragging && (state as { entryId: string }).entryId === plan.id;
           const isMovingToOtherDate =
             isGlobalDragging &&
             globalDraggedPlan?.id === plan.id &&
             globalTargetDateIndex !== globalOriginalDateIndex;
 
-          const isResizingThis = dragState.isResizing && dragState.draggedEventId === plan.id;
+          const planResizing = isResizing && (state as { entryId: string }).entryId === plan.id;
           const currentTop = parseFloat(style.top?.toString() || '0');
           const currentHeight = parseFloat(style.height?.toString() || '20');
 
-          const adjustedStyle = calculatePlanGhostStyle(style, plan.id, dragState);
+          const adjustedStyle = getAdjustedStyle(style, plan.id, state);
           const finalStyle = isMovingToOtherDate
             ? { ...adjustedStyle, opacity: 0.3 }
             : adjustedStyle;
@@ -162,7 +194,7 @@ export function MultiDayContent({
                 data-plan-block="true"
                 onMouseDown={(e) => {
                   if (e.button === 0) {
-                    handlers.handleMouseDown(
+                    handlers.handlePointerDown(
                       plan.id,
                       e,
                       {
@@ -196,41 +228,42 @@ export function MultiDayContent({
                     left: 0,
                     width: 100,
                     height:
-                      isResizingThis && dragState.snappedPosition
-                        ? (dragState.snappedPosition.height ?? currentHeight)
+                      planResizing && state.mode === 'resizing'
+                        ? state.snappedHeight
                         : currentHeight,
                   }}
-                  onContextMenu={(plan: CalendarEvent, e: React.MouseEvent) =>
-                    handlePlanContextMenu(plan, e)
+                  onContextMenu={(p: CalendarEvent, e: React.MouseEvent) =>
+                    handlePlanContextMenu(p, e)
                   }
                   onResizeStart={(
-                    plan: CalendarEvent,
+                    p: CalendarEvent,
                     direction: 'top' | 'bottom',
                     e: React.MouseEvent,
-                    _position: { top: number; left: number; width: number; height: number },
                   ) =>
-                    handlers.handleResizeStart(plan.id, direction, e, {
+                    handlers.handleResizeStart(p.id, direction, e, {
                       top: currentTop,
                       left: 0,
                       width: 100,
                       height: currentHeight,
                     })
                   }
-                  isDragging={isDragging}
-                  isResizing={isResizingThis}
+                  isDragging={planDragging}
+                  isResizing={planResizing}
                   isActive={isInspectorOpen && inspectorPlanId === plan.id}
-                  previewTime={calculatePreviewTime(plan.id, dragState)}
+                  previewTime={getPreviewTime(plan.id, state)}
                   hourHeight={HOUR_HEIGHT}
-                  className={`h-full w-full ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+                  className={`h-full w-full ${planDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
                 />
               </div>
             </div>
           );
         })}
 
-        {/* インラインタグパレット（ドラッグ/タップ後のタグ選択UI） */}
         <InlineTagPalette hourHeight={HOUR_HEIGHT} date={date} />
       </div>
+
+      {/* React Portal ゴースト */}
+      <GhostRenderer state={state} />
     </div>
   );
 }

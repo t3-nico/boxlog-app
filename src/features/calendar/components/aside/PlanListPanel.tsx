@@ -4,11 +4,10 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import { useEntries } from '@/hooks/useEntries';
-import { useTagsMap } from '@/hooks/useTagsMap';
+import { useEntries, useEntryInspectorStore } from '@/features/entry';
+import { useTagsMap } from '@/features/tags';
 import { groupItems } from '@/lib/entry-grouping';
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
-import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import { usePanelDrag } from '../../hooks/usePanelDrag';
 
 import { PlanListCard } from './PlanListCard';
@@ -81,7 +80,7 @@ export function PlanListPanel() {
       }
 
       // タグフィルター
-      if (!isEntryVisible(plan.tagId ?? null)) {
+      if (!isEntryVisible('planned', plan.tagId ?? null)) {
         return false;
       }
 

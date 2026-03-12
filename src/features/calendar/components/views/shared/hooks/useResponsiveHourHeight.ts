@@ -10,7 +10,9 @@ import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 import { HOUR_HEIGHT, HOUR_HEIGHT_DENSITIES } from '../constants/grid.constants';
 
 export function useResponsiveHourHeight(): number {
-  const density = useCalendarSettingsStore((s) => s.hourHeightDensity);
+  const density = useCalendarSettingsStore(
+    (s) => s.sessionOverrides.hourHeightDensity ?? s.hourHeightDensity,
+  );
   const config = HOUR_HEIGHT_DENSITIES[density];
 
   const [hourHeight, setHourHeight] = useState<number>(HOUR_HEIGHT);

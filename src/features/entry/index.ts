@@ -21,42 +21,65 @@ export type {
 } from './types/entry';
 
 // =============================================================================
-// Stores (Re-export from shared stores)
+// Schemas (Zod validation)
 // =============================================================================
-export { useEntryCacheStore } from '@/stores/useEntryCacheStore';
-export { useEntryClipboardStore } from '@/stores/useEntryClipboardStore';
-export type { ClipboardEntry, LastClickedPosition } from '@/stores/useEntryClipboardStore';
-export { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
+export {
+  bulkDeleteEntrySchema,
+  bulkUpdateEntrySchema,
+  createEntrySchema,
+  entryFilterSchema,
+  entryIdSchema,
+  entryOriginSchema,
+  fulfillmentScoreSchema,
+  getEntryByIdSchema,
+  recurrenceTypeSchema,
+  updateEntrySchema,
+} from './schemas/entry';
+export type { EntryFilter, GetEntryByIdInput } from './schemas/entry';
 
 // =============================================================================
 // Hooks
 // =============================================================================
-export { useEntries } from '@/hooks/useEntries';
-export {
-  instancesToExceptionsMap,
-  useEntryInstanceMutations,
-  useEntryInstances,
-} from '@/hooks/useEntryInstances';
-export { useEntryMutations } from '@/hooks/useEntryMutations';
-export { useEntryTags } from '@/hooks/useEntryTags';
-export { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
+export { useEntries } from './hooks/useEntries';
 export { useEntry, usePlan, useplan } from './hooks/useEntry';
+export { useEntryInstanceMutations, useEntryInstances } from './hooks/useEntryInstances';
+export { useEntryMutations } from './hooks/useEntryMutations';
+export { useRecurringScopeMutations } from './hooks/useRecurringScopeMutations';
 
 // =============================================================================
-// Utils
+// Stores
+// =============================================================================
+export { useEntryCacheStore } from './stores/useEntryCacheStore';
+export { useEntryInspectorStore } from './stores/useEntryInspectorStore';
+export type { AnchorRect } from './stores/useEntryInspectorStore';
+
+// =============================================================================
+// Lib (entry-status utilities)
+// =============================================================================
+export type { EntryState } from '@/types/entry';
+export {
+  computeOriginTransition,
+  getEntryState,
+  isEntryPast,
+  isTimePast,
+} from './lib/entry-status';
+
+// =============================================================================
+// Lib (recurrence utilities)
 // =============================================================================
 export {
   expandRecurrence,
   getEntryRecurrenceConfig,
   isRecurringEntry,
-} from '@/lib/entry-recurrence';
-export type { EntryInstanceException, ExpandedOccurrence } from '@/lib/entry-recurrence';
+} from './lib/entry-recurrence';
+export type { EntryInstanceException, ExpandedOccurrence } from './lib/entry-recurrence';
+export { configToRRule, configToReadable, ruleToConfig } from './lib/rrule';
 
-export { decodeInstanceId, encodeInstanceId, getInstanceRef } from '@/lib/instance-id';
-export type { RecurrenceInstanceRef } from '@/lib/instance-id';
-
-export { groupItems } from '@/lib/entry-grouping';
-export type { GroupByField, GroupedData } from '@/lib/entry-grouping';
+// =============================================================================
+// Lib (instance-id utilities)
+// =============================================================================
+export { decodeInstanceId, encodeInstanceId, getInstanceRef } from './lib/instance-id';
+export type { InstanceRefSource, RecurrenceInstanceRef } from './lib/instance-id';
 
 // =============================================================================
 // Components

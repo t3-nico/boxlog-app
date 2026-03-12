@@ -22,7 +22,7 @@ const BASE_PLAN = {
 };
 
 const meta = {
-  title: 'Features/Aside/Plan/ListCard',
+  title: 'Features/Calendar/Aside/Plan/ListCard',
   component: PlanListCard,
   tags: ['autodocs'],
   parameters: {

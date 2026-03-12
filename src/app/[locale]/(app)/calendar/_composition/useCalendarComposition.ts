@@ -25,13 +25,13 @@ import {
   useRecurringPlanDrag,
   useWeekendToggleShortcut,
 } from '@/features/calendar';
+import { useEntryInspectorStore } from '@/features/entry';
 import { useNotifications } from '@/features/notifications';
-import { useCalendarNavigationStore } from '@/stores/useCalendarNavigationStore';
-import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
-import { useLayoutStore, type AsideType } from '@/stores/useLayoutStore';
+import { useCalendarNavigationStore } from '@/shell/stores/useCalendarNavigationStore';
 
-import { getCurrentTimezone, setUserTimezone, useCalendarSettingsStore } from '@/features/settings';
+import { getCurrentTimezone, setUserTimezone } from '@/features/settings';
 import { logger } from '@/lib/logger';
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
 // =============================================================================
 // Types
@@ -61,10 +61,6 @@ export interface CalendarCompositionResult {
 
   // === Plan state ===
   disabledPlanId: string | null;
-
-  // === Aside ===
-  currentAside: AsideType;
-  onAsideChange: (aside: AsideType) => void;
 
   // === Plan click handlers ===
   onPlanClick: (plan: CalendarEvent) => void;
@@ -116,7 +112,9 @@ export function useCalendarComposition({
   // Settings
   // =========================================================================
   const timezone = useCalendarSettingsStore((state) => state.timezone);
-  const showWeekends = useCalendarSettingsStore((state) => state.showWeekends);
+  const showWeekends = useCalendarSettingsStore(
+    (s) => s.sessionOverrides.showWeekends ?? s.showWeekends,
+  );
   const updateSettings = useCalendarSettingsStore((state) => state.updateSettings);
 
   // タイムゾーン設定の初期化（マウント時のみ）
@@ -129,12 +127,6 @@ export function useCalendarComposition({
       }
     }
   }, [timezone, updateSettings]);
-
-  // =========================================================================
-  // Aside state
-  // =========================================================================
-  const currentAside = useLayoutStore.use.asideType();
-  const setCurrentAside = useLayoutStore.use.setAside();
 
   // =========================================================================
   // Plan Inspector state
@@ -315,10 +307,6 @@ export function useCalendarComposition({
       // Plan state
       disabledPlanId,
 
-      // Aside
-      currentAside,
-      onAsideChange: setCurrentAside,
-
       // Plan click handlers
       onPlanClick: handlePlanClick,
       onTimeRangeSelect: handleDateTimeRangeSelect,
@@ -350,8 +338,6 @@ export function useCalendarComposition({
       allCalendarEvents,
       showWeekends,
       disabledPlanId,
-      currentAside,
-      setCurrentAside,
       handlePlanClick,
       handleDateTimeRangeSelect,
       handleUpdatePlan,

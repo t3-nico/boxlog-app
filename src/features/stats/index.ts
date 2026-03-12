@@ -15,7 +15,7 @@ export { StatsView } from './components/StatsView';
 // Stores
 // =============================================================================
 export { useStatsFilterStore } from './stores/useStatsFilterStore';
-export type { StatsGranularity } from './stores/useStatsFilterStore';
+export type { StatsGranularity, StatsTab } from './stores/useStatsFilterStore';
 
 // =============================================================================
 // Types

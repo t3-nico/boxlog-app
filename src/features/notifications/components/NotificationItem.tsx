@@ -1,10 +1,10 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import type { NotificationType } from '@/schemas/notifications';
 import { formatDistanceToNow } from 'date-fns';
 import { enUS, ja } from 'date-fns/locale';
 import { AlertTriangle, Bell, Brain, Lightbulb, Sparkles, Trash2, Zap } from 'lucide-react';
+import type { NotificationType } from '../schemas';
 
 interface NotificationItemProps {
   id: string;

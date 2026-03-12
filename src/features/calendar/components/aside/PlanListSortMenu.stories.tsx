@@ -11,7 +11,7 @@ import { PlanListSortMenu } from './PlanListSortMenu';
  * - デフォルトから変更がある場合はリセット行が表示される
  */
 const meta = {
-  title: 'Features/Aside/Plan/SortMenu',
+  title: 'Features/Calendar/Aside/Plan/SortMenu',
   component: PlanListSortMenu,
   tags: ['autodocs'],
   parameters: {

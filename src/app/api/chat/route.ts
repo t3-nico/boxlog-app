@@ -16,13 +16,13 @@ import { createOpenAI } from '@ai-sdk/openai';
 import { convertToModelMessages, stepCountIs, streamText } from 'ai';
 import { NextResponse } from 'next/server';
 
+import { buildAIContext, buildSystemPrompt, createAITools } from '@/features/ai/server';
+import { DEFAULT_MODELS, FREE_TIER_MODEL, SUPPORTED_MODELS } from '@/features/ai/server/types';
+import { createAIUsageService } from '@/features/ai/server/usage-service';
 import { logger } from '@/lib/logger';
-import { createClient } from '@/lib/supabase/server';
-import { buildAIContext, buildSystemPrompt, createAITools } from '@/server/services/ai';
-import { DEFAULT_MODELS, FREE_TIER_MODEL, SUPPORTED_MODELS } from '@/server/services/ai/types';
-import { createAIUsageService } from '@/server/services/ai/usage-service';
+import { createClient } from '@/platform/supabase/server';
 
-import type { AIProviderId } from '@/server/services/ai/types';
+import type { AIProviderId } from '@/features/ai/server/types';
 import type { UIMessage } from 'ai';
 
 export const maxDuration = 60;

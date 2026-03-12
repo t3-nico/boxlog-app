@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { CalendarEvent } from '@/core/types/calendar-event';
+import type { CalendarEvent } from '../../../../types/calendar.types';
 
 import type { TimedPlan } from '../types/plan.types';
 

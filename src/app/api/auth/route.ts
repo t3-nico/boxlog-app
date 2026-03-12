@@ -11,13 +11,14 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
+import { getAppUrl } from '@/lib/app-url';
 import { logger } from '@/lib/logger';
 import {
   loginRateLimit,
   passwordResetRateLimit,
   withUpstashRateLimit,
 } from '@/lib/rate-limit/upstash';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/platform/supabase/server';
 
 /**
  * レート制限チェック用ヘルパー
@@ -130,7 +131,7 @@ export async function POST(request: NextRequest) {
 
       case 'reset-password':
         const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password`,
+          redirectTo: `${getAppUrl()}/auth/reset-password`,
         });
         if (resetError) throw resetError;
         return NextResponse.json({ success: true });

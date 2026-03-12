@@ -21,27 +21,29 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { useTranslations } from 'next-intl';
 
-import type { Tag } from '@/core/types/tag';
-import {
-  useDeleteGroup,
-  useRenameGroup,
-  useReorderTags,
-  useUngroupTags,
-} from '@/hooks/mutations/useTagCrudMutations';
-import { useMergeTag, useUpdateTag } from '@/hooks/mutations/useTagMutations';
-import { useTagModalNavigation } from '@/hooks/useTagModalNavigation';
-import { buildColonTagName, getTagDisplayLabel, parseColonTag } from '@/lib/tag-colon';
-import type { TagColorName } from '@/lib/tag-colors';
-import { resolveTagColor } from '@/lib/tag-colors';
-import { cn } from '@/lib/utils';
-import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
-
-import { TagDeleteStrategyDialog } from '@/components/common/TagDeleteStrategyDialog';
-import { TagRenameDialog } from '@/components/tags/TagRenameDialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { HoverTooltip } from '@/components/ui/tooltip';
+import type { Tag } from '@/features/tags';
+import {
+  TagDeleteStrategyDialog,
+  buildColonTagName,
+  getTagDisplayLabel,
+  parseColonTag,
+  useDeleteGroup,
+  useMergeTag,
+  useRenameGroup,
+  useReorderTags,
+  useUngroupTags,
+  useUpdateTag,
+} from '@/features/tags';
+import type { TagColorName } from '@/lib/tag-colors';
+import { resolveTagColor } from '@/lib/tag-colors';
+import { cn } from '@/lib/utils';
+import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
+import { useTagModalNavigation } from '../../../../hooks/useTagModalNavigation';
+import { TagRenameDialog } from '../../../TagRenameDialog';
 
 import { FilterItemMenu, type GroupOption } from './FilterItem/FilterItemMenu';
 import { useFilterItemEdit } from './FilterItem/useFilterItemEdit';

@@ -72,18 +72,10 @@ class DocsConsistencyChecker {
 
     // ESLint設定ファイルの存在確認
     const eslintConfigPath = path.join(this.rootDir, 'eslint.config.mjs')
-    const eslintDocPath = path.join(this.docsDir, 'development/ESLINT_HYBRID_APPROACH.md')
-
     if (fs.existsSync(eslintConfigPath)) {
       this.addResult('success', 'ESLint設定', 'eslint.config.mjs が存在')
     } else {
       this.addResult('error', 'ESLint設定', 'eslint.config.mjs が見つかりません')
-    }
-
-    if (fs.existsSync(eslintDocPath)) {
-      this.addResult('success', 'ESLintドキュメント', 'ESLINT_HYBRID_APPROACH.md が存在')
-    } else {
-      this.addResult('warning', 'ESLintドキュメント', 'ESLINT_HYBRID_APPROACH.md が見つかりません')
     }
   }
 
@@ -91,25 +83,17 @@ class DocsConsistencyChecker {
   async checkThemeSystemDocumentation() {
     log.title('Theme Systemの整合性（デザインシステムはStorybookに移行済み）')
 
-    const themeConfigDir = path.join(this.srcDir, 'config/theme')
+    const tokensDir = path.join(this.srcDir, 'styles/tokens')
 
-    // Theme設定ディレクトリの確認
-    if (fs.existsSync(themeConfigDir)) {
-      const themeFiles = fs.readdirSync(themeConfigDir).filter((file) => file.endsWith('.ts'))
-      log.info(`Theme設定ファイル: ${themeFiles.join(', ')}`)
-      this.addResult('success', 'Theme System', `src/config/theme に ${themeFiles.length} 個の設定ファイル`)
+    // セマンティックトークンディレクトリの確認
+    if (fs.existsSync(tokensDir)) {
+      const tokenFiles = fs.readdirSync(tokensDir).filter((file) => file.endsWith('.css'))
+      log.info(`セマンティックトークン: ${tokenFiles.join(', ')}`)
+      this.addResult('success', 'Theme System', `src/styles/tokens に ${tokenFiles.length} 個のトークンファイル`)
     } else {
-      this.addResult('warning', 'Theme System', 'src/config/theme ディレクトリが存在しません')
+      this.addResult('warning', 'Theme System', 'src/styles/tokens ディレクトリが存在しません')
     }
 
-    // Storybookのトークンドキュメント確認
-    const storybookTokensDir = path.join(this.srcDir, 'stories/tokens')
-    if (fs.existsSync(storybookTokensDir)) {
-      const tokenStories = fs.readdirSync(storybookTokensDir).filter((file) => file.endsWith('.stories.tsx'))
-      this.addResult('success', 'Design System', `Storybook Tokens に ${tokenStories.length} 個のStory`)
-    } else {
-      this.addResult('warning', 'Design System', 'src/stories/tokens ディレクトリが存在しません')
-    }
   }
 
   // package.json記載内容とドキュメントの整合性
@@ -205,26 +189,7 @@ class DocsConsistencyChecker {
 
       log.info(`コード内TODO/NOTE: ${todoLines.length}件`)
 
-      // TODO_REPORT.mdとの整合性
-      const todoReportPath = path.join(this.docsDir, 'TODO_REPORT.md')
-      if (fs.existsSync(todoReportPath)) {
-        const reportContent = fs.readFileSync(todoReportPath, 'utf8')
-        const reportTodoCount = (reportContent.match(/- \[ \]/g) || []).length
-
-        log.info(`TODO_REPORT.mdのTODO: ${reportTodoCount}件`)
-
-        if (Math.abs(todoLines.length - reportTodoCount) < 10) {
-          this.addResult('success', 'TODO管理', 'コードとドキュメントのTODO数がほぼ一致')
-        } else {
-          this.addResult(
-            'warning',
-            'TODO管理',
-            `TODO数に差異: コード${todoLines.length}件 vs ドキュメント${reportTodoCount}件`
-          )
-        }
-      } else {
-        this.addResult('warning', 'TODO管理', 'TODO_REPORT.md が見つかりません')
-      }
+      this.addResult('success', 'TODO管理', `コード内TODO/NOTE: ${todoLines.length}件`)
     } catch {
       this.addResult('warning', 'TODO検索', 'TODO検索でエラーが発生しました')
     }

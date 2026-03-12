@@ -12,7 +12,7 @@ import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 
 import { logger } from '@/lib/logger';
-import { extractClientIp } from '@/lib/security/ip-validation';
+import { extractClientIp } from '@/platform/security/ip-validation';
 
 /**
  * 環境変数チェック

@@ -11,12 +11,12 @@
 
 import { useCallback, useMemo, useRef, useState } from 'react';
 
-import { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
-import { isRecurringEntry } from '@/lib/entry-recurrence';
 import { logger } from '@/lib/logger';
-import { openRecurringEditConfirm, type RecurringEditScope } from '@/stores/useModalStore';
+import { openRecurringEditConfirm, type RecurringEditScope } from '@/shell/stores/useModalStore';
+import { useRecurringScopeMutations } from '../../../hooks/useRecurringScopeMutations';
+import { isRecurringEntry } from '../../../lib/entry-recurrence';
 
-import type { EntryWithTags } from '@/core/types/entry';
+import type { EntryWithTags } from '../../../types/entry';
 
 // オーバーライド可能なフィールド
 type OverrideableField = 'title' | 'description' | 'start_time' | 'end_time';

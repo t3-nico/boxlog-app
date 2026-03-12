@@ -6,7 +6,7 @@ import { expect, userEvent, within } from 'storybook/test';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { FieldError, FieldGroup } from '@/components/ui/field';
-import { Link } from '@/i18n/navigation';
+import { Link } from '@/platform/i18n/navigation';
 
 import { PasswordResetForm } from './PasswordResetForm';
 

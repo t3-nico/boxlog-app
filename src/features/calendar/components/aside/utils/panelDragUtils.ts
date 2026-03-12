@@ -1,5 +1,5 @@
+import { snapToGrid } from '../../../interaction/machine';
 import { HOUR_HEIGHT } from '../../views/shared/constants/grid.constants';
-import { snapToQuarterHour } from '../../views/shared/hooks/drag-and-drop/utils/position';
 
 /**
  * カレンダーグリッド要素の情報
@@ -63,7 +63,7 @@ export function calculateTimeFromGridPosition(
   // グリッド相対位置（スクロール考慮）
   const relativeY = clientY - rect.top + scrollTop;
 
-  return snapToQuarterHour(Math.max(0, relativeY), hourHeight);
+  return snapToGrid(Math.max(0, relativeY), hourHeight);
 }
 
 /**

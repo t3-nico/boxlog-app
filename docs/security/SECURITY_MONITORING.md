@@ -283,10 +283,8 @@ LIMIT 20;
 
 ## 📚 関連ドキュメント
 
-- [CSRF Protection](./CSRF_PROTECTION.md)
-- [Session Management](../../src/lib/auth/session-config.ts)
-- [Rate Limiting](../../src/lib/rate-limit/upstash.ts)
 - [Error Handling](../../src/lib/errors/secure-error-handler.ts)
+- [Rate Limiting](../../src/lib/rate-limit/upstash.ts)
 - [Issue #487](https://github.com/t3-nico/dayopt/issues/487)
 
 ---

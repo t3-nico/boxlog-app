@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import NextImage from 'next/image';
 
-import { Link } from '@/i18n/navigation';
+import { Link } from '@/platform/i18n/navigation';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';

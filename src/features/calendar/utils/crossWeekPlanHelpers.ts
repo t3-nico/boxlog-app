@@ -9,7 +9,7 @@ import {
   startOfDay,
 } from 'date-fns';
 
-import { MS_PER_DAY, MS_PER_MINUTE } from '@/constants/time';
+import { MS_PER_DAY, MS_PER_MINUTE } from '@/lib/date';
 import { CalendarEvent } from '../types/calendar.types';
 
 export interface PlanSegment extends CalendarEvent {

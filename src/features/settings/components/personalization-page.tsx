@@ -1,7 +1,8 @@
 'use client';
 
+import { ChronotypeSettingsPanel as ChronotypeSettings } from '@/features/chronotype';
+
 import { AIStyleSettings } from './ai-style-settings';
-import { ChronotypeSettings } from './chronotype-settings';
 import { ValueRankingSettings } from './value-ranking-settings';
 import { ValuesSettings } from './values-settings';
 

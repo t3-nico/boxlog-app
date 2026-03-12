@@ -1,11 +1,12 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
-import type { HourHeightDensity } from '@/lib/calendar-constants';
+import type { CalendarViewType, HourHeightDensity } from '@/lib/calendar-constants';
+import { DEFAULT_CHRONOTYPE_SETTINGS } from '@/lib/chronotype-defaults';
 import { listenToTimezoneChange } from '@/lib/timezone-listener';
-import type { ChronotypeType, ProductivityZone } from '@/types/chronotype';
+import type { ChronotypeSettings as ChronotypeSettingsState } from '@/types/chronotype';
 
-export type CalendarViewType = 'day' | '3day' | '5day' | 'week';
+export type { CalendarViewType } from '@/lib/calendar-constants';
 
 // 日付フォーマット型
 export type DateFormatType = 'yyyy/MM/dd' | 'MM/dd/yyyy' | 'dd/MM/yyyy' | 'yyyy-MM-dd';
@@ -33,13 +34,7 @@ interface CalendarSettings {
   showWeekends: boolean;
 
   // クロノタイプ設定
-  chronotype: {
-    enabled: boolean;
-    type: ChronotypeType;
-    customZones?: ProductivityZone[];
-    displayMode: 'border' | 'background' | 'both';
-    opacity: number; // 0-100
-  };
+  chronotype: ChronotypeSettingsState;
 
   // Plan/Record表示設定
   planRecordMode: 'plan' | 'record' | 'both';
@@ -55,8 +50,21 @@ interface CalendarSettings {
   hourHeightDensity: HourHeightDensity;
 }
 
+/**
+ * セッション中のみ有効な一時的なオーバーライド
+ * ヘッダーのViewSwitcherやキーボードショートカットで変更される
+ * リロード時にリセットされ、Settingsで設定したデフォルト値に戻る
+ */
+export interface SessionOverrides {
+  showWeekends?: boolean;
+  showWeekNumbers?: boolean;
+  hourHeightDensity?: HourHeightDensity;
+}
+
 interface CalendarSettingsStore extends CalendarSettings {
+  sessionOverrides: SessionOverrides;
   updateSettings: (settings: Partial<CalendarSettings>) => void;
+  updateSessionOverride: (overrides: Partial<SessionOverrides>) => void;
   resetSettings: () => void;
 }
 
@@ -71,12 +79,7 @@ const defaultSettings: CalendarSettings = {
   snapInterval: 15, // デフォルトは15分間隔
   showWeekNumbers: false,
   showWeekends: true, // デフォルトは週末も表示
-  chronotype: {
-    enabled: false,
-    type: 'bear', // デフォルト選択肢（enabled: false なので未設定扱い）
-    displayMode: 'border',
-    opacity: 90,
-  },
+  chronotype: { ...DEFAULT_CHRONOTYPE_SETTINGS },
   planRecordMode: 'both',
   sleepSchedule: {
     enabled: true,
@@ -105,6 +108,7 @@ export const useCalendarSettingsStore = create<CalendarSettingsStore>()(
 
         return {
           ...defaultSettings,
+          sessionOverrides: {},
 
           updateSettings: (newSettings) =>
             set((state) => ({
@@ -112,11 +116,27 @@ export const useCalendarSettingsStore = create<CalendarSettingsStore>()(
               ...newSettings,
             })),
 
-          resetSettings: () => set(defaultSettings),
+          updateSessionOverride: (overrides) =>
+            set((state) => ({
+              sessionOverrides: { ...state.sessionOverrides, ...overrides },
+            })),
+
+          resetSettings: () => set({ ...defaultSettings, sessionOverrides: {} }),
         };
       },
       {
         name: 'calendar-settings',
+        partialize: (state) => {
+          // sessionOverrides はリロード時にリセットするため永続化しない
+          const {
+            sessionOverrides: _session,
+            updateSettings: _u,
+            updateSessionOverride: _us,
+            resetSettings: _r,
+            ...persisted
+          } = state;
+          return persisted;
+        },
       },
     ),
     {

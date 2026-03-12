@@ -5,13 +5,13 @@ import { useCallback, useState } from 'react';
 import { MoreHorizontal } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { getTagColorClasses } from '@/config/ui/colors';
+import { getTagColorClasses } from '@/lib/tag-colors';
 import { cn } from '@/lib/utils';
 
-import { TagRenameDialog } from '@/components/tags/TagRenameDialog';
-import { useUpdateTag } from '@/hooks/mutations/useTagMutations';
-import { useTagModalNavigation } from '@/hooks/useTagModalNavigation';
+import { useUpdateTag } from '@/features/tags';
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
+import { useTagModalNavigation } from '../../../../../hooks/useTagModalNavigation';
+import { TagRenameDialog } from '../../../../TagRenameDialog';
 
 import { Checkbox } from '@/components/ui/checkbox';
 import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';

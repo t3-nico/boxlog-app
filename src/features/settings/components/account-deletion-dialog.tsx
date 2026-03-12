@@ -6,6 +6,7 @@ import { AlertTriangle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
+import { LabeledRow } from '@/components/common/LabeledRow';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,7 +20,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { logger } from '@/lib/logger';
-import { api } from '@/lib/trpc';
+import { api } from '@/platform/trpc';
 
 /**
  * 🗑️ Account Deletion Dialog Component
@@ -76,39 +77,21 @@ export function AccountDeletionDialog() {
 
   return (
     <>
-      <div className="border-destructive rounded-2xl border p-4">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex-1 space-y-2">
-            <div className="flex items-center gap-2">
-              <div className="bg-destructive h-2 w-2 animate-pulse rounded-full"></div>
-              <div className="text-destructive font-normal">
-                {t('settings.account.deletion.title')}
-              </div>
-            </div>
-            <p className="text-destructive text-sm leading-relaxed">
-              ⚠️ <strong>{t('settings.account.deletion.warningTitle')}</strong>
-              <br />
-              {t('settings.account.deletion.warningMessage')}
-            </p>
-            <ul className="text-destructive ml-4 space-y-1 text-xs">
-              <li>• {t('settings.account.deletion.consequence1')}</li>
-              <li>• {t('settings.account.deletion.consequence2')}</li>
-              <li>• {t('settings.account.deletion.consequence3')}</li>
-            </ul>
-          </div>
-          <Button
-            type="button"
-            onClick={() => setIsOpen(true)}
-            variant="destructive"
-            className="ml-4"
-            disabled={deleteAccountMutation.isPending}
-          >
-            {deleteAccountMutation.isPending
-              ? t('settings.account.deletion.deleting')
-              : `🗑️ ${t('settings.account.deletion.buttonText')}`}
-          </Button>
-        </div>
-      </div>
+      <LabeledRow
+        label={t('settings.account.deletion.title')}
+        description={t('settings.account.deletion.warningMessage')}
+      >
+        <Button
+          type="button"
+          onClick={() => setIsOpen(true)}
+          variant="outline"
+          disabled={deleteAccountMutation.isPending}
+        >
+          {deleteAccountMutation.isPending
+            ? t('settings.account.deletion.deleting')
+            : t('settings.account.deletion.buttonText')}
+        </Button>
+      </LabeledRow>
 
       <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
         <AlertDialogContent className="max-w-lg">

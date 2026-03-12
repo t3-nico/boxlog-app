@@ -19,11 +19,11 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { ApiKeyStorage } from '@/lib/security/encryption';
+import { ApiKeyStorage } from '@/platform/security/encryption';
 import { useAuthStore } from '@/stores/useAuthStore';
 
-import { SettingRow } from './fields/SettingRow';
-import { SettingsCard } from './SettingsCard';
+import { LabeledRow } from '@/components/common/LabeledRow';
+import { SectionCard } from '@/components/common/SectionCard';
 
 interface Integration {
   id: string;
@@ -153,7 +153,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
   return (
     <div className="space-y-8">
       {/* AI設定 */}
-      <SettingsCard title={t('settings.integrations.ai.title')}>
+      <SectionCard title={t('settings.integrations.ai.title')}>
         <div className="space-y-4">
           <div className="bg-card border-border rounded-lg border p-4">
             <p className="text-muted-foreground text-sm">
@@ -236,10 +236,10 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
             </div>
           ))}
         </div>
-      </SettingsCard>
+      </SectionCard>
 
       {/* 連携サービス一覧 */}
-      <SettingsCard title={t('settings.integrations.services.title')}>
+      <SectionCard title={t('settings.integrations.services.title')}>
         <div className="space-y-4">
           {INTEGRATIONS.map((integration) => (
             <div
@@ -264,14 +264,14 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
             </div>
           ))}
         </div>
-      </SettingsCard>
+      </SectionCard>
 
       {/* 同期設定 */}
-      <SettingsCard title={t('settings.integrations.sync.title')}>
+      <SectionCard title={t('settings.integrations.sync.title')}>
         <div className="space-y-0">
-          <SettingRow label={t('settings.integrations.sync.enableLabel')}>
+          <LabeledRow label={t('settings.integrations.sync.enableLabel')}>
             <Switch checked={syncEnabled} onCheckedChange={handleSyncChange} />
-          </SettingRow>
+          </LabeledRow>
         </div>
         {syncEnabled && (
           <div className="bg-card border-border mt-4 rounded-lg border p-4">
@@ -280,10 +280,10 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
             </p>
           </div>
         )}
-      </SettingsCard>
+      </SectionCard>
 
       {/* API連携 */}
-      <SettingsCard title={t('settings.integrations.api.title')}>
+      <SectionCard title={t('settings.integrations.api.title')}>
         <div className="space-y-4">
           <div className="bg-card border-border rounded-lg border p-4">
             <p className="text-muted-foreground text-sm">
@@ -295,7 +295,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
             {t('settings.integrations.api.openPortal')}
           </Button>
         </div>
-      </SettingsCard>
+      </SectionCard>
     </div>
   );
 });

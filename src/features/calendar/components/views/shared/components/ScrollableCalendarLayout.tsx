@@ -11,10 +11,10 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 
+import { ChronotypeBackground } from '@/features/chronotype';
 import { cn } from '@/lib/utils';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
-import { ChronotypeBackground } from '../grid/ChronotypeBackground';
 import { TimeColumn } from '../grid/TimeColumn/TimeColumn';
 import { useCurrentTimeLine } from '../hooks/useCurrentTimeLine';
 import { useResponsiveHourHeight } from '../hooks/useResponsiveHourHeight';
@@ -59,7 +59,9 @@ export const CalendarDateHeader = ({
   timeColumnWidth = TIME_COLUMN_WIDTH,
   weekNumber,
 }: CalendarDateHeaderProps) => {
-  const showWeekNumbers = useCalendarSettingsStore((state) => state.showWeekNumbers);
+  const showWeekNumbers = useCalendarSettingsStore(
+    (s) => s.sessionOverrides.showWeekNumbers ?? s.showWeekNumbers,
+  );
 
   // 設定がオンで週番号が渡されている場合のみ表示
   const shouldShowWeekNumber = showWeekNumbers && weekNumber != null;
@@ -214,7 +216,7 @@ export const ScrollableCalendarLayout = ({
               {/* 現在時刻ラベル（Apple Calendar風） */}
               {shouldShowCurrentTimeLine && hasToday && (
                 <div
-                  className="pointer-events-none absolute right-0 z-20 rounded px-2 py-1 text-xs font-bold text-white"
+                  className="pointer-events-none absolute right-0 z-20 rounded px-2 py-1 text-sm font-bold text-white"
                   style={{
                     top: `${currentTimePosition}px`,
                     transform: 'translateY(-50%)',

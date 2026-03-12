@@ -1,4 +1,4 @@
-import { MS_PER_DAY, MS_PER_HOUR, MS_PER_MINUTE } from '@/constants/time';
+import { MS_PER_DAY, MS_PER_HOUR, MS_PER_MINUTE } from '@/lib/date';
 
 /**
  * プラン番号のフォーマット

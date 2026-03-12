@@ -2,8 +2,8 @@
 
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { getTimeZones } from '@/lib/timezone-utils';
-import { api } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
+import { api } from '@/platform/trpc';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 
 interface TimezoneOffsetProps {

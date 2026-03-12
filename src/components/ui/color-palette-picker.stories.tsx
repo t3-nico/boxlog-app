@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
-import { TAG_COLOR_MAP } from '@/config/ui/colors';
+import { TAG_COLOR_MAP } from '@/lib/tag-colors';
 import { cn } from '@/lib/utils';
 
-import type { TagColorName } from '@/config/ui/colors';
+import type { TagColorName } from '@/lib/tag-colors';
 
 import { Button } from './button';
 import { COLOR_DISPLAY_NAMES, ColorPaletteMenuItems } from './color-palette-picker';

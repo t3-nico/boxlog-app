@@ -2,23 +2,57 @@
 
 import React, { useCallback } from 'react';
 
+import { ChronotypeBackground } from '@/features/chronotype';
+import { useEntryInspectorStore } from '@/features/entry';
 import { cn } from '@/lib/utils';
-import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 
-import {
-  CalendarDragSelection,
-  PlanCard,
-  calculatePlanGhostStyle,
-  calculatePreviewTime,
-} from '../../shared';
+import type { InteractionState } from '../../../../interaction';
+import { useInteraction } from '../../../../interaction';
+import { GhostRenderer } from '../../../../interaction/GhostRenderer';
+import { CalendarDragSelection, PlanCard } from '../../shared';
 import { InlineTagPalette } from '../../shared/components/InlineTagPalette';
 import { PanelDragPreview } from '../../shared/components/PanelDragPreview';
-import { ChronotypeBackground } from '../../shared/grid/ChronotypeBackground';
-import { useGlobalDragCursor } from '../../shared/hooks/useGlobalDragCursor';
 import { useResponsiveHourHeight } from '../../shared/hooks/useResponsiveHourHeight';
 import type { CalendarEvent } from '../../shared/types/base.types';
 import type { DayContentProps } from '../DayView.types';
-import { useDragAndDrop } from '../hooks/useDragAndDrop';
+
+// ========================================
+// Helpers
+// ========================================
+
+/** Compute adjusted style for plan ghost during drag/resize */
+function getAdjustedStyle(
+  originalStyle: React.CSSProperties,
+  planId: string,
+  state: InteractionState,
+): React.CSSProperties {
+  if (state.mode === 'dragging' && state.entryId === planId) {
+    return { ...originalStyle, opacity: 0.3, zIndex: 1 };
+  }
+  if (state.mode === 'resizing' && state.entryId === planId) {
+    return {
+      ...originalStyle,
+      height: `${state.snappedHeight}px`,
+      zIndex: 1000,
+    };
+  }
+  return originalStyle;
+}
+
+/** Get preview time for resize (drag shows time on ghost, not on original) */
+function getPreviewTime(
+  planId: string,
+  state: InteractionState,
+): { start: Date; end: Date } | null {
+  if (state.mode === 'resizing' && state.entryId === planId) {
+    return state.previewTime;
+  }
+  return null;
+}
+
+// ========================================
+// Component
+// ========================================
 
 export const DayContent = ({
   date,
@@ -31,55 +65,36 @@ export const DayContent = ({
   disabledPlanId,
   className,
 }: DayContentProps) => {
-  // Inspectorで開いているプランのIDを取得
   const inspectorPlanId = useEntryInspectorStore((state) => state.entryId);
   const isInspectorOpen = useEntryInspectorStore((state) => state.isOpen);
 
-  // レスポンシブな高さ
   const HOUR_HEIGHT = useResponsiveHourHeight();
-
-  // グリッド高さ（24時間）
   const gridHeight = 24 * HOUR_HEIGHT;
 
-  // ドラッグ&ドロップ機能用にonEventUpdateを変換
-  const handleEventUpdate = useCallback(
-    async (eventId: string, updates: { startTime: Date; endTime: Date }) => {
-      if (!onEventUpdate) return;
-
-      // handleUpdatePlan形式で呼び出し（返り値を伝播）
-      return await onEventUpdate(eventId, {
-        startTime: updates.startTime,
-        endTime: updates.endTime,
-      });
-    },
-    [onEventUpdate],
-  );
-
-  // ドラッグ&ドロップ機能
-  const { dragState, handlers } = useDragAndDrop({
-    onEventUpdate: handleEventUpdate,
-    ...(onPlanClick && { onEventClick: onPlanClick }),
+  // 統合インタラクション（drag/resize/click）
+  const { state, handlers } = useInteraction({
     date,
     events: events ?? [],
-    disabledPlanId,
+    hourHeight: HOUR_HEIGHT,
+    ...(onEventUpdate ? { onEventUpdate } : {}),
+    ...(onPlanClick ? { onEventClick: onPlanClick } : {}),
+    ...(disabledPlanId != null ? { disabledPlanId } : {}),
   });
 
-  // グローバルドラッグカーソー管理（共通化）
-  useGlobalDragCursor(dragState, handlers);
+  const isActive = state.mode !== 'idle';
+  const isDragging = state.mode === 'dragging';
+  const isResizing = state.mode === 'resizing';
 
   // プラン右クリックハンドラー
   const handlePlanContextMenu = useCallback(
     (plan: CalendarEvent, mouseEvent: React.MouseEvent) => {
-      // ドラッグ操作中またはリサイズ操作中は右クリックを無視
-      if (dragState.isDragging || dragState.isResizing) {
-        return;
-      }
+      if (isDragging || isResizing) return;
       onPlanContextMenu?.(plan, mouseEvent);
     },
-    [onPlanContextMenu, dragState.isDragging, dragState.isResizing],
+    [onPlanContextMenu, isDragging, isResizing],
   );
 
-  // 時間グリッドの生成
+  // 時間グリッド
   const timeGrid = React.useMemo(
     () =>
       Array.from({ length: 24 }, (_, hour) => (
@@ -98,115 +113,107 @@ export const DayContent = ({
       data-calendar-grid
       data-calendar-day-index="0"
     >
-      {/* CalendarDragSelectionを使用（ドラッグ操作のみでプラン作成） */}
+      {/* CalendarDragSelection: グリッド選択 + dnd-kit droppable */}
       <CalendarDragSelection
         date={date}
         className="absolute inset-0"
         onTimeRangeSelect={onTimeRangeSelect}
-        disabled={dragState.isPending || dragState.isDragging || dragState.isResizing}
+        disabled={isActive}
         plans={events}
       >
-        {/* 背景グリッド */}
         <div className="absolute inset-0" style={{ height: gridHeight }}>
           <ChronotypeBackground startHour={0} endHour={24} hourHeight={HOUR_HEIGHT} />
           {timeGrid}
         </div>
       </CalendarDragSelection>
 
-      {/* プラン表示エリア - CalendarDragSelectionより上にz-indexを設定 */}
+      {/* プラン表示エリア */}
       <div className="pointer-events-none absolute inset-0 z-20" style={{ height: gridHeight }}>
-        {/* パネルドラッグのプレビュー */}
         <PanelDragPreview dayIndex={0} />
 
-        {events &&
-          Array.isArray(events) &&
-          events.map((plan) => {
-            const style = eventStyles?.[plan.id];
-            if (!style) return null;
+        {events?.map((plan) => {
+          const style = eventStyles?.[plan.id];
+          if (!style) return null;
 
-            const isDragging = dragState.draggedEventId === plan.id && dragState.isDragging;
-            const isResizingThis = dragState.isResizing && dragState.draggedEventId === plan.id;
-            const currentTop = parseFloat(style.top?.toString() || '0');
-            const currentHeight = parseFloat(style.height?.toString() || '20');
+          const planDragging = isDragging && (state as { entryId: string }).entryId === plan.id;
+          const planResizing = isResizing && (state as { entryId: string }).entryId === plan.id;
+          const currentTop = parseFloat(style.top?.toString() || '0');
+          const currentHeight = parseFloat(style.height?.toString() || '20');
 
-            // ゴースト表示スタイル（共通化）
-            const adjustedStyle = calculatePlanGhostStyle(style, plan.id, dragState);
+          const adjustedStyle = getAdjustedStyle(style, plan.id, state);
 
-            return (
+          return (
+            <div
+              key={plan.id}
+              style={adjustedStyle}
+              className="pointer-events-none absolute"
+              data-plan-wrapper="true"
+            >
               <div
-                key={plan.id}
-                style={adjustedStyle}
-                className="pointer-events-none absolute"
-                data-plan-wrapper="true"
-              >
-                {/* PlanCardの内容部分のみクリック可能 */}
-                <div
-                  className="pointer-events-auto absolute inset-0 rounded"
-                  data-plan-block="true"
-                  onMouseDown={(e) => {
-                    // 左クリックのみドラッグ開始
-                    if (e.button === 0) {
-                      handlers.handleMouseDown(plan.id, e, {
-                        top: currentTop,
-                        left: 0,
-                        width: 100,
-                        height: currentHeight,
-                      });
-                    }
-                  }}
-                  onTouchStart={(e) => {
-                    // モバイル: タッチでドラッグ開始（長押しで開始）
-                    handlers.handleTouchStart(plan.id, e, {
+                className="pointer-events-auto absolute inset-0 rounded"
+                data-plan-block="true"
+                onMouseDown={(e) => {
+                  if (e.button === 0) {
+                    handlers.handlePointerDown(plan.id, e, {
                       top: currentTop,
                       left: 0,
                       width: 100,
                       height: currentHeight,
                     });
+                  }
+                }}
+                onTouchStart={(e) => {
+                  handlers.handleTouchStart(plan.id, e, {
+                    top: currentTop,
+                    left: 0,
+                    width: 100,
+                    height: currentHeight,
+                  });
+                }}
+              >
+                <PlanCard
+                  plan={plan}
+                  position={{
+                    top: 0,
+                    left: 0,
+                    width: 100,
+                    height:
+                      planResizing && state.mode === 'resizing'
+                        ? state.snappedHeight
+                        : currentHeight,
                   }}
-                >
-                  <PlanCard
-                    plan={plan}
-                    position={{
-                      top: 0,
+                  onContextMenu={(p: CalendarEvent, e: React.MouseEvent) =>
+                    handlePlanContextMenu(p, e)
+                  }
+                  onResizeStart={(
+                    p: CalendarEvent,
+                    direction: 'top' | 'bottom',
+                    e: React.MouseEvent,
+                  ) =>
+                    handlers.handleResizeStart(p.id, direction, e, {
+                      top: currentTop,
                       left: 0,
                       width: 100,
-                      height:
-                        isResizingThis && dragState.snappedPosition
-                          ? (dragState.snappedPosition.height ?? currentHeight)
-                          : currentHeight,
-                    }}
-                    // クリックは useDragAndDrop で処理されるため削除
-                    onContextMenu={(p: CalendarEvent, e: React.MouseEvent) =>
-                      handlePlanContextMenu(p, e)
-                    }
-                    onResizeStart={(
-                      p: CalendarEvent,
-                      direction: 'top' | 'bottom',
-                      e: React.MouseEvent,
-                      _position: { top: number; left: number; width: number; height: number },
-                    ) =>
-                      handlers.handleResizeStart(p.id, direction, e, {
-                        top: currentTop,
-                        left: 0,
-                        width: 100,
-                        height: currentHeight,
-                      })
-                    }
-                    isDragging={isDragging}
-                    isResizing={isResizingThis}
-                    isActive={isInspectorOpen && inspectorPlanId === plan.id}
-                    previewTime={calculatePreviewTime(plan.id, dragState)}
-                    hourHeight={HOUR_HEIGHT}
-                    className={`h-full w-full ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
-                  />
-                </div>
+                      height: currentHeight,
+                    })
+                  }
+                  isDragging={planDragging}
+                  isResizing={planResizing}
+                  isActive={isInspectorOpen && inspectorPlanId === plan.id}
+                  previewTime={getPreviewTime(plan.id, state)}
+                  hourHeight={HOUR_HEIGHT}
+                  className={`h-full w-full ${planDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+                />
               </div>
-            );
-          })}
+            </div>
+          );
+        })}
 
-        {/* インラインタグパレット（ドラッグ/タップ後のタグ選択UI） */}
         <InlineTagPalette hourHeight={HOUR_HEIGHT} />
       </div>
+
+      {/* React Portal ゴースト（DOM clone廃止） */}
+      <GhostRenderer state={state} />
     </div>
   );
 };

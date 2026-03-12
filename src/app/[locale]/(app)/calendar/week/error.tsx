@@ -1,3 +1,3 @@
 'use client';
 
-export { CalendarError as default } from '../_helpers/CalendarError';
+export { CalendarError as default } from '../_server/CalendarError';

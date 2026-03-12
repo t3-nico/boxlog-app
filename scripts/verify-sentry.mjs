@@ -90,10 +90,10 @@ const checks = [
   {
     name: 'パフォーマンス監視コード確認',
     async check() {
-      const performancePath = join(process.cwd(), 'src/lib/sentry/performance.ts')
+      const performancePath = join(process.cwd(), 'src/platform/sentry/performance.ts')
 
       if (!existsSync(performancePath)) {
-        throw new Error('src/lib/sentry/performance.ts が見つかりません')
+        throw new Error('src/platform/sentry/performance.ts が見つかりません')
       }
 
       const content = readFileSync(performancePath, 'utf-8')
@@ -112,7 +112,7 @@ const checks = [
   {
     name: 'WebVitalsレポーター確認',
     async check() {
-      const reporterPath = join(process.cwd(), 'src/components/WebVitalsReporter.tsx')
+      const reporterPath = join(process.cwd(), 'src/platform/sentry/WebVitalsReporter.tsx')
 
       if (!existsSync(reporterPath)) {
         console.warn('  ⚠️ 警告: WebVitalsReporter.tsx が見つかりません')

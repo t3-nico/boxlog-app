@@ -13,19 +13,19 @@
 
 import { useCallback, useEffect, useRef } from 'react';
 
-import type { EntryWithTags } from '@/core/types/entry';
-import { useRecurringScopeMutations } from '@/hooks/useRecurringScopeMutations';
 import { logger } from '@/lib/logger';
-import { useEntryCacheStore } from '@/stores/useEntryCacheStore';
-import { useEntryInspectorStore } from '@/stores/useEntryInspectorStore';
 import {
   closeModal,
   openDeleteConfirm,
   openRecurringEditConfirm,
   useModalStore,
   type RecurringEditScope,
-} from '@/stores/useModalStore';
+} from '@/shell/stores/useModalStore';
 import { useEntry } from '../../../hooks/useEntry';
+import { useRecurringScopeMutations } from '../../../hooks/useRecurringScopeMutations';
+import { useEntryCacheStore } from '../../../stores/useEntryCacheStore';
+import { useEntryInspectorStore } from '../../../stores/useEntryInspectorStore';
+import type { EntryWithTags } from '../../../types/entry';
 import { useInspectorAutoSave, useInspectorNavigation, useRecurringEntryEdit } from '../hooks';
 import { useInspectorSaveClose } from './useInspectorSaveClose';
 import { useInspectorTagState } from './useInspectorTagState';

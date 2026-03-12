@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { useTagCacheStore } from '@/stores/useTagCacheStore';
+import { useTagCacheStore } from './useTagCacheStore';
 
 describe('useTagCacheStore', () => {
   beforeEach(() => {
