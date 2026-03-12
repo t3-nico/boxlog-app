@@ -91,15 +91,15 @@ class DocsConsistencyChecker {
   async checkThemeSystemDocumentation() {
     log.title('Theme Systemの整合性（デザインシステムはStorybookに移行済み）')
 
-    const themeConfigDir = path.join(this.srcDir, 'config/theme')
+    const tokensDir = path.join(this.srcDir, 'styles/tokens')
 
-    // Theme設定ディレクトリの確認
-    if (fs.existsSync(themeConfigDir)) {
-      const themeFiles = fs.readdirSync(themeConfigDir).filter((file) => file.endsWith('.ts'))
-      log.info(`Theme設定ファイル: ${themeFiles.join(', ')}`)
-      this.addResult('success', 'Theme System', `src/config/theme に ${themeFiles.length} 個の設定ファイル`)
+    // セマンティックトークンディレクトリの確認
+    if (fs.existsSync(tokensDir)) {
+      const tokenFiles = fs.readdirSync(tokensDir).filter((file) => file.endsWith('.css'))
+      log.info(`セマンティックトークン: ${tokenFiles.join(', ')}`)
+      this.addResult('success', 'Theme System', `src/styles/tokens に ${tokenFiles.length} 個のトークンファイル`)
     } else {
-      this.addResult('warning', 'Theme System', 'src/config/theme ディレクトリが存在しません')
+      this.addResult('warning', 'Theme System', 'src/styles/tokens ディレクトリが存在しません')
     }
 
     // Storybookのトークンドキュメント確認
