@@ -1,11 +1,10 @@
 'use client';
 
-import { PanelLeft, Search } from 'lucide-react';
+import { PanelLeft } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { useGlobalSearch } from '@/shell/contexts/use-global-search';
 import { useLayoutStore } from '@/shell/stores/useLayoutStore';
 
 import { MobileMenuButton } from '@/features/navigation';
@@ -35,7 +34,6 @@ interface AppHeaderProps {
  */
 export function AppHeader({ children, controls, rightSlot, mobileRightSlot }: AppHeaderProps) {
   const t = useTranslations();
-  const { open: openSearch } = useGlobalSearch();
   const isSidebarOpen = useLayoutStore.use.sidebarOpen();
   const openSidebar = useLayoutStore.use.openSidebar();
 
@@ -76,22 +74,8 @@ export function AppHeader({ children, controls, rightSlot, mobileRightSlot }: Ap
             <div className="flex items-center gap-1 md:hidden">{mobileRightSlot}</div>
           )}
 
-          {/* デスクトップ右側: 検索 + スロット */}
-          <div className="hidden items-center gap-2 md:flex">
-            <HoverTooltip content={t('sidebar.navigation.search')} side="bottom">
-              <Button
-                variant="ghost"
-                icon
-                className="size-8"
-                onClick={() => openSearch()}
-                aria-label={t('sidebar.navigation.search')}
-              >
-                <Search className="size-4" />
-              </Button>
-            </HoverTooltip>
-
-            {rightSlot}
-          </div>
+          {/* デスクトップ右側スロット */}
+          {rightSlot && <div className="hidden items-center gap-2 md:flex">{rightSlot}</div>}
         </div>
       </div>
     </header>

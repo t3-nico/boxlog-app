@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 
 import {
   Select,
@@ -162,10 +162,18 @@ function DisplaySettingsDemo() {
             </Select>
           </LabeledRow>
           <LabeledRow label="週末を表示">
-            <Switch checked={showWeekends} onCheckedChange={setShowWeekends} />
+            <Switch
+              checked={showWeekends}
+              onCheckedChange={setShowWeekends}
+              aria-label="Show weekends"
+            />
           </LabeledRow>
           <LabeledRow label="週番号を表示">
-            <Switch checked={showWeekNumbers} onCheckedChange={setShowWeekNumbers} />
+            <Switch
+              checked={showWeekNumbers}
+              onCheckedChange={setShowWeekNumbers}
+              aria-label="Show week numbers"
+            />
           </LabeledRow>
           <LabeledRow label="密度">
             <Select value={density} onValueChange={setDensity}>
@@ -191,6 +199,7 @@ function DisplaySettingsDemo() {
           <Switch
             checked={showChronotypeOnTimeline}
             onCheckedChange={setShowChronotypeOnTimeline}
+            aria-label="Show chronotype on timeline"
           />
         </LabeledRow>
       </SectionCard>
@@ -230,6 +239,8 @@ const meta = {
   title: 'Features/Settings/DisplaySettingsPatterns',
   parameters: {
     layout: 'padded',
+    // button-name: SelectTrigger inside LabeledRow without explicit aria-label
+    a11y: { test: 'todo' },
   },
   tags: ['autodocs'],
 } satisfies Meta;

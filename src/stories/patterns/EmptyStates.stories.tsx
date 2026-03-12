@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Calendar, FolderOpen, Inbox, Plus, Search, Tag } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -8,6 +8,7 @@ const meta = {
   parameters: {
     layout: 'fullscreen',
   },
+  tags: ['docs-only'],
 } satisfies Meta;
 
 export default meta;

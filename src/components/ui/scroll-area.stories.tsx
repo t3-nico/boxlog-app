@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 
 import { ScrollArea, ScrollBar } from './scroll-area';
 import { Separator } from './separator';
@@ -10,6 +10,8 @@ const meta = {
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',
+    // scrollable-region-focusable: Radix ScrollArea internal scroll container
+    a11y: { test: 'todo' },
   },
 } satisfies Meta<typeof ScrollArea>;
 

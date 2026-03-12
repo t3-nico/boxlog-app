@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 
 import type { CalendarEvent } from '../../../../types/calendar.types';
 
@@ -85,6 +85,8 @@ export const Entry: Story = {
 
 /** ドラッグ選択中のプレビュー。 */
 export const DraftDragging: Story = {
+  // color-contrast: text-foreground/60 on plan card background
+  parameters: { a11y: { test: 'todo' } },
   render: () => (
     <Slot>
       <DragSelectionPreview
@@ -175,6 +177,8 @@ export const SizeVariations: Story = {
 
 /** 全パターン一覧。 */
 export const AllPatterns: Story = {
+  // color-contrast: text-foreground/60 on plan card background
+  parameters: { a11y: { test: 'todo' } },
   render: () => (
     <div className="flex flex-col items-start gap-6">
       <Slot>

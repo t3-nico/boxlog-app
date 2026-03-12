@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 
@@ -20,7 +20,7 @@ export const Default: Story = {
     const [value, setValue] = useState('daily');
     return (
       <Select value={value} onValueChange={setValue}>
-        <SelectTrigger className="h-8 w-24">
+        <SelectTrigger className="h-8 w-24" aria-label="Period">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -67,7 +67,7 @@ export const PeriodSelector: Story = {
     return (
       <div className="flex items-center gap-2">
         <Select value={periodType} onValueChange={setPeriodType}>
-          <SelectTrigger className="h-8 w-24">
+          <SelectTrigger className="h-8 w-24" aria-label="Period type">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -80,7 +80,7 @@ export const PeriodSelector: Story = {
         </Select>
 
         <Select value={comparePeriod} onValueChange={setComparePeriod}>
-          <SelectTrigger className="h-8 w-28">
+          <SelectTrigger className="h-8 w-28" aria-label="Compare period">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -103,7 +103,7 @@ export const AllPatterns: Story = {
     return (
       <div className="flex flex-col items-start gap-6">
         <Select value={value} onValueChange={setValue}>
-          <SelectTrigger className="h-8 w-24">
+          <SelectTrigger className="h-8 w-24" aria-label="Period">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

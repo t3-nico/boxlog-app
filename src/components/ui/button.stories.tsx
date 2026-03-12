@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { ChevronLeft, ChevronRight, Plus, Settings, Trash2, X } from 'lucide-react';
 
 import { Button } from './button';
@@ -173,6 +173,7 @@ export const AllPatterns: Story = {
               <button
                 type="button"
                 className="text-muted-foreground hover:bg-state-hover flex h-full w-8 items-center justify-center transition-colors"
+                aria-label="Previous"
               >
                 <ChevronLeft className="size-4" />
               </button>
@@ -185,6 +186,7 @@ export const AllPatterns: Story = {
               <button
                 type="button"
                 className="text-muted-foreground hover:bg-state-hover flex h-full w-8 items-center justify-center transition-colors"
+                aria-label="Next"
               >
                 <ChevronRight className="size-4" />
               </button>
@@ -193,12 +195,14 @@ export const AllPatterns: Story = {
               <button
                 type="button"
                 className="text-muted-foreground hover:bg-state-hover flex h-full w-8 items-center justify-center transition-colors"
+                aria-label="Previous"
               >
                 <ChevronLeft className="size-4" />
               </button>
               <button
                 type="button"
                 className="text-muted-foreground hover:bg-state-hover flex h-full w-8 items-center justify-center transition-colors"
+                aria-label="Next"
               >
                 <ChevronRight className="size-4" />
               </button>

@@ -6,7 +6,7 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { createMockSupabase } from '@/test/trpc-test-helpers';
+import { createChainableMock, createMockSupabase } from '@/test/trpc-test-helpers';
 
 import { createTagService, TagService, TagServiceError } from '../tag-service';
 
@@ -325,41 +325,7 @@ describe('TagService', () => {
 
 // ヘルパー関数
 
-function createChainableMock(
-  data: unknown,
-  error: { message: string; code?: string } | null = null,
-) {
-  const mock: Record<string, ReturnType<typeof vi.fn>> = {
-    select: vi.fn().mockReturnThis(),
-    insert: vi.fn().mockReturnThis(),
-    update: vi.fn().mockReturnThis(),
-    delete: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
-    neq: vi.fn().mockReturnThis(),
-    in: vi.fn().mockReturnThis(),
-    is: vi.fn().mockReturnThis(),
-    or: vi.fn().mockReturnThis(),
-    order: vi.fn().mockReturnThis(),
-    limit: vi.fn().mockReturnThis(),
-    range: vi.fn().mockReturnThis(),
-    single: vi.fn().mockResolvedValue({ data, error }),
-    maybeSingle: vi.fn().mockResolvedValue({ data, error }),
-    then: vi.fn().mockImplementation((resolve) =>
-      resolve({
-        data: Array.isArray(data) ? data : data ? [data] : [],
-        error,
-      }),
-    ),
-  };
-
-  Object.keys(mock).forEach((key) => {
-    if (!['single', 'maybeSingle', 'then'].includes(key)) {
-      mock[key]!.mockReturnValue(mock);
-    }
-  });
-
-  return mock;
-}
+// createChainableMock is imported from @/test/trpc-test-helpers
 
 function setupMockQuery(mockFrom: ReturnType<typeof vi.fn>, data: unknown[]) {
   const mock = createChainableMock(data);

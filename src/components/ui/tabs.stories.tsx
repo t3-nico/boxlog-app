@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { BarChart3, Calendar, CircleCheckBig, Clock, Settings, User } from 'lucide-react';
 import { expect, userEvent, within } from 'storybook/test';
 
@@ -73,6 +73,8 @@ export const ThreeTabs: Story = {
 };
 
 export const AllPatterns: Story = {
+  // nested-interactive: TabsTrigger containing icon buttons; Radix internal structure
+  parameters: { a11y: { test: 'todo' } },
   render: () => (
     <div className="flex flex-col items-start gap-6">
       <Tabs defaultValue="tab1" className="w-full max-w-md">

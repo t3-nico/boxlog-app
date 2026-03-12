@@ -32,7 +32,7 @@ const SUPABASE_ANON_KEY =
 
 const TEST_USER_A_ID = crypto.randomUUID();
 const TEST_USER_B_ID = crypto.randomUUID();
-const SKIP_INTEGRATION = process.env.SKIP_INTEGRATION_TESTS === 'true' || process.env.CI !== 'true';
+const SKIP_INTEGRATION = process.env.SKIP_INTEGRATION_TESTS === 'true';
 
 describe.skipIf(SKIP_INTEGRATION)('RLS: profiles テーブル', () => {
   let adminSupabase: ReturnType<typeof createClient<Database>>;
@@ -62,6 +62,7 @@ describe.skipIf(SKIP_INTEGRATION)('RLS: profiles テーブル', () => {
 
     await adminSupabase.from('profiles').upsert({
       id: TEST_USER_A_ID,
+      email: TEST_EMAIL_A,
       username: `testuser_a_${Date.now()}`,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
@@ -80,6 +81,7 @@ describe.skipIf(SKIP_INTEGRATION)('RLS: profiles テーブル', () => {
 
     await adminSupabase.from('profiles').upsert({
       id: TEST_USER_B_ID,
+      email: TEST_EMAIL_B,
       username: `testuser_b_${Date.now()}`,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),

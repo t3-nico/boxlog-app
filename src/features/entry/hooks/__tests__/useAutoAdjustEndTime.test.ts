@@ -109,8 +109,11 @@ describe('useAutoAdjustEndTime', () => {
       const onEndTimeChange = vi.fn();
       const { result } = renderHook(() => useAutoAdjustEndTime('09:00', '10:00', onEndTimeChange));
 
-      const returned = result.current.handleEndTimeChange('12:00');
-      expect(returned).toBe('12:00');
+      let returned: string;
+      act(() => {
+        returned = result.current.handleEndTimeChange('12:00');
+      });
+      expect(returned!).toBe('12:00');
     });
   });
 

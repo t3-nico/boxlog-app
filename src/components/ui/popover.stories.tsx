@@ -1,5 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState } from 'react';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { Button } from './button';
 import { Input } from './input';
@@ -18,6 +19,8 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
+  // aria-dialog-name: Radix Popover portal has role="dialog" without accessible name
+  parameters: { a11y: { test: 'todo' } },
   render: () => (
     <Popover>
       <PopoverTrigger asChild>
@@ -28,6 +31,16 @@ export const Default: Story = {
       </PopoverContent>
     </Popover>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole('button', { name: 'ポップオーバーを開く' });
+    await userEvent.click(trigger);
+
+    const body = within(document.body);
+    await expect(
+      await body.findByText('これはポップオーバーのコンテンツです。'),
+    ).toBeInTheDocument();
+  },
 };
 
 export const WithForm: Story = {
@@ -163,6 +176,7 @@ export const WithAnchor: Story = {
             onFocus={() => setIsOpen(true)}
             className="w-24"
             placeholder="--:--"
+            aria-label="Time"
           />
         </PopoverAnchor>
         <PopoverContent className="w-24 p-1" align="start">

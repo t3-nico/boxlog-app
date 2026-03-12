@@ -89,26 +89,26 @@ describe('SignupForm', () => {
   describe('バリデーション', () => {
     // DADS準拠: バリデーションは送信時に行われる（リアルタイムインジケーターは削除）
 
-    // TODO: SignupForm DADS準拠リファクタリング後にテスト更新が必要
-    // バリデーションモードがonChangeからonSubmitに変更されたため動作確認が必要
-    it.skip('パスワードが一致しない場合エラーが表示される', async () => {
+    it('パスワードが一致しない場合エラーが表示される', async () => {
       const user = userEvent.setup();
       renderWithProviders(<SignupForm />);
 
       await user.type(screen.getByLabelText(/auth\.signupForm\.email/), 'test@example.com');
-      await user.type(screen.getByLabelText(/auth\.signupForm\.password/), 'password123');
-      await user.type(screen.getByLabelText(/auth\.signupForm\.confirmPassword/), 'password456');
+      await user.type(screen.getByLabelText(/auth\.signupForm\.password/), 'Password1234');
+      await user.type(screen.getByLabelText(/auth\.signupForm\.confirmPassword/), 'Password5678');
       await user.click(screen.getByRole('checkbox'));
       await user.click(screen.getByRole('button', { name: 'auth.signupForm.createAccountButton' }));
 
-      // Zodスキーマからのエラーメッセージ（日本語）
-      // findByTextはwaitForを内包し、要素が見つかるまで待機
+      // onSubmitバリデーション: Zodスキーマからのハードコードメッセージ（FieldErrorが「＊」prefix付与）
       const errorElement = await screen.findByText(
-        'パスワードが一致しません',
+        (content) => content.includes('パスワードが一致しません'),
         {},
         { timeout: 3000 },
       );
       expect(errorElement).toBeInTheDocument();
+
+      // パスワード不一致ではサインアップは呼ばれない
+      expect(mockSignUp).not.toHaveBeenCalled();
     });
 
     it('送信ボタンは常に有効（DADS準拠）', () => {

@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import { fn } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { expect, fn, within } from 'storybook/test';
 
 import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
@@ -17,6 +17,8 @@ const meta = {
   tags: ['autodocs'],
   parameters: {
     layout: 'padded',
+    // aria-required-children / button-name: Radix DropdownMenuTrigger internal structure
+    a11y: { test: 'todo' },
   },
   args: {
     displayColor: 'green',
@@ -40,7 +42,15 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /** 独立タグ用メニュー（色変更あり、グループ変更なし）。 */
-export const StandaloneTag: Story = {};
+export const StandaloneTag: Story = {
+  play: async () => {
+    const body = within(document.body);
+    // Menu is already open via defaultOpen decorator (text is Japanese via next-intl)
+    await expect(body.getByText('名前を変更')).toBeInTheDocument();
+    await expect(body.getByText('他のタグに統合')).toBeInTheDocument();
+    await expect(body.getByText('このタグだけ表示')).toBeInTheDocument();
+  },
+};
 
 /** グループ内タグ用メニュー（色変更非表示、グループ変更あり）。 */
 export const GroupedTag: Story = {

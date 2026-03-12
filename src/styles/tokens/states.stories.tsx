@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +8,7 @@ const meta = {
   parameters: {
     layout: 'fullscreen',
   },
+  tags: ['docs-only'],
 } satisfies Meta;
 
 export default meta;

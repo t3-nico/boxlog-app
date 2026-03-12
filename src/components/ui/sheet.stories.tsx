@@ -1,6 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Calendar, CheckSquare, Menu, Settings } from 'lucide-react';
 import { useState } from 'react';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { Button } from './button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from './sheet';
@@ -85,5 +86,18 @@ export const AllPatterns: Story = {
         </Sheet>
       </div>
     );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = await canvas.findByRole('button', { name: 'メニュー' });
+    await userEvent.click(trigger);
+
+    const body = within(document.body);
+    await expect(await body.findByText('メニュー')).toBeVisible();
+
+    const closeButton = await body.findByRole('button', { name: /close/i });
+    await userEvent.click(closeButton);
+
+    await expect(body.queryByRole('dialog', { name: 'ナビゲーション' })).not.toBeInTheDocument();
   },
 };

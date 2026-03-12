@@ -49,6 +49,13 @@ describe('useServiceWorker', () => {
       delete: vi.fn().mockResolvedValue(true),
     });
 
+    // CI環境でバージョン付きURLにならないようenv変数をクリア
+    delete process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA;
+    delete process.env.NEXT_PUBLIC_BUILD_ID;
+
+    // NODE_ENV を production に設定（development だと早期returnされる）
+    vi.stubEnv('NODE_ENV', 'production');
+
     // document.readyState のモック
     Object.defineProperty(document, 'readyState', {
       value: 'complete',

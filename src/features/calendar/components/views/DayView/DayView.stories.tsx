@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { fn } from 'storybook/test';
 
 import type { CalendarEvent, ViewDateRange } from '../../../types/calendar.types';
@@ -10,6 +10,8 @@ const meta = {
   title: 'Features/Calendar/Views/DayView',
   parameters: {
     layout: 'fullscreen',
+    // scrollable-region-focusable: calendar grid scroll container
+    a11y: { test: 'todo' },
   },
   tags: ['autodocs'],
 } satisfies Meta;

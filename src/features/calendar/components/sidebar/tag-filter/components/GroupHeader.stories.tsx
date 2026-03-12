@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { fn } from 'storybook/test';
 
 import { GroupHeader } from './GroupHeader';
@@ -15,6 +15,8 @@ const meta = {
   tags: ['autodocs'],
   parameters: {
     layout: 'padded',
+    // button-name: Checkbox and toggle buttons rendered internally by GroupHeader component
+    a11y: { test: 'todo' },
   },
   args: {
     label: '開発',

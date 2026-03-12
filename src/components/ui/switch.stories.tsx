@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 
@@ -29,7 +29,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: function DefaultSwitch() {
     const [checked, setChecked] = useState(false);
-    return <Switch checked={checked} onCheckedChange={setChecked} />;
+    return <Switch checked={checked} onCheckedChange={setChecked} aria-label="Toggle switch" />;
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -49,13 +49,14 @@ export const Default: Story = {
 export const Checked: Story = {
   render: function CheckedSwitch() {
     const [checked, setChecked] = useState(true);
-    return <Switch checked={checked} onCheckedChange={setChecked} />;
+    return <Switch checked={checked} onCheckedChange={setChecked} aria-label="Toggle switch" />;
   },
 };
 
 export const Disabled: Story = {
   args: {
     disabled: true,
+    'aria-label': 'Disabled switch',
   },
 };
 

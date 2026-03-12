@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { AlertCircle } from 'lucide-react';
 import type { ReactNode } from 'react';
 
@@ -21,7 +21,7 @@ const meta = {
   parameters: {
     layout: 'fullscreen',
   },
-  tags: ['autodocs'],
+  tags: ['autodocs', 'docs-only'],
 } satisfies Meta;
 
 export default meta;

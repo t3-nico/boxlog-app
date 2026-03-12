@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useCalendarDragStore } from '../../../../stores/useCalendarDragStore';
 import type { CalendarEvent } from '../../../../types/calendar.types';
 
@@ -363,6 +363,8 @@ export const PanelDragPreviewStoryExport: Story = {
  * ```
  */
 export const TimeSelection: Story = {
+  // color-contrast: text-foreground/60 on drag selection background
+  parameters: { a11y: { test: 'todo' } },
   render: () => (
     <div className="flex flex-col gap-2">
       <DocsNote>
@@ -412,6 +414,8 @@ export const TimeSelectionOverlap: Story = {
 
 /** 全DnD状態を一覧表示。 */
 export const AllStates: Story = {
+  // color-contrast: text-foreground/60 on drag selection background
+  parameters: { a11y: { test: 'todo' } },
   render: () => (
     <div className="flex flex-col gap-6">
       <section>

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState } from 'react';
 
 import { Textarea } from './textarea';
@@ -18,6 +18,7 @@ export const Default: Story = {
   args: {
     placeholder: 'メモを入力...',
     className: 'w-80',
+    'aria-label': 'Memo',
   },
 };
 
@@ -34,15 +35,26 @@ export const AllPatterns: Story = {
           placeholder="メモを入力..."
           maxLength={MAX_LENGTH}
           className="min-h-[80px] w-80 resize-none"
+          aria-label="Memo with counter"
         />
 
         <div className="w-80 space-y-4">
-          <Textarea placeholder="通常" className="min-h-[80px] resize-none" />
-          <Textarea placeholder="無効" disabled className="min-h-[80px] resize-none" />
+          <Textarea
+            placeholder="通常"
+            className="min-h-[80px] resize-none"
+            aria-label="Normal textarea"
+          />
+          <Textarea
+            placeholder="無効"
+            disabled
+            className="min-h-[80px] resize-none"
+            aria-label="Disabled textarea"
+          />
           <Textarea
             placeholder="エラー状態"
             aria-invalid="true"
             className="min-h-[80px] resize-none"
+            aria-label="Error textarea"
           />
         </div>
       </div>

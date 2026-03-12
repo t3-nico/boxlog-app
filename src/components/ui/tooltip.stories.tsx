@@ -1,5 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Filter, Info, Search, Settings, SortAsc } from 'lucide-react';
+import { expect, within } from 'storybook/test';
 
 import { Button } from './button';
 import { HoverTooltip } from './tooltip';
@@ -20,6 +21,16 @@ export const AllPatterns: Story = {
   args: {
     content: 'Tooltip',
     children: <span>Trigger</span>,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    // Verify tooltip trigger buttons render
+    await expect(canvas.getByRole('button', { name: '検索' })).toBeInTheDocument();
+    await expect(canvas.getByRole('button', { name: 'フィルター' })).toBeInTheDocument();
+    await expect(canvas.getByRole('button', { name: 'ソート' })).toBeInTheDocument();
+    // '設定' appears twice in the render, so use getAllByRole
+    const settingsButtons = canvas.getAllByRole('button', { name: '設定' });
+    await expect(settingsButtons.length).toBe(2);
   },
   render: () => (
     <div className="flex flex-col items-start gap-6">

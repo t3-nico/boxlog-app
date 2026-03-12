@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import {
   LogOut,
   Mail,
@@ -43,6 +43,8 @@ type Story = StoryObj<typeof meta>;
 
 /** アクションメニュー（ラベルなし）。編集/複製/削除などのアクションリスト、アクションは自明なのでラベル不要。 */
 export const Default: Story = {
+  // aria-hidden-focus: Radix DropdownMenu portal aria-hidden during play interaction
+  parameters: { a11y: { test: 'todo' } },
   render: () => (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -240,6 +242,7 @@ export const WithSearch: Story = {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="h-8"
+              aria-label="Search tags"
             />
           </div>
           <div className="max-h-48 overflow-y-auto">
@@ -343,7 +346,7 @@ export const AllPatterns: Story = {
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56 p-0">
           <div className="p-2">
-            <Input placeholder="検索..." className="h-8" />
+            <Input placeholder="検索..." className="h-8" aria-label="Search" />
           </div>
           <DropdownMenuItem className="p-2">仕事</DropdownMenuItem>
           <DropdownMenuItem className="p-2">プライベート</DropdownMenuItem>

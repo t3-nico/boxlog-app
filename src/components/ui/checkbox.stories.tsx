@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 
@@ -28,18 +28,21 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     checked: false,
+    'aria-label': 'Example checkbox',
   },
 };
 
 export const Checked: Story = {
   args: {
     checked: true,
+    'aria-label': 'Example checkbox',
   },
 };
 
 export const Disabled: Story = {
   args: {
     disabled: true,
+    'aria-label': 'Disabled checkbox',
   },
 };
 

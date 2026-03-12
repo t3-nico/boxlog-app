@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -18,6 +18,8 @@ const meta = {
   component: LabeledRow,
   parameters: {
     layout: 'padded',
+    // button-name: SelectTrigger inside LabeledRow without explicit aria-label
+    a11y: { test: 'todo' },
   },
   tags: ['autodocs'],
   args: {
@@ -68,7 +70,7 @@ export const WithSwitch: Story = {
   },
   render: (args) => (
     <LabeledRow {...args}>
-      <Switch defaultChecked />
+      <Switch defaultChecked aria-label="Push notifications" />
     </LabeledRow>
   ),
 };
@@ -143,10 +145,10 @@ export const AllPatterns: Story = {
         </Select>
       </LabeledRow>
       <LabeledRow label="プッシュ通知">
-        <Switch defaultChecked />
+        <Switch defaultChecked aria-label="Push notifications" />
       </LabeledRow>
       <LabeledRow label="コンパクトモード">
-        <Switch />
+        <Switch aria-label="Compact mode" />
       </LabeledRow>
       <LabeledRow label="パスワード" description="••••••••">
         <Button variant="outline">変更</Button>

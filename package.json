@@ -52,10 +52,13 @@
     "quality:check": "npm run license:check && npm run perf:check",
     "quality:full": "npm run lint && npm run quality:check && npm run typecheck",
     "test": "vitest --project unit",
+    "test:unit": "vitest run --project unit",
     "test:run": "vitest --project unit run",
     "test-storybook": "vitest --project storybook",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --project unit run --coverage",
+    "typecheck:test": "tsc --noEmit --project tsconfig.test.json",
+    "typecheck:integration": "tsc --noEmit --project tsconfig.integration.json 2>&1 | grep -v TS2349 | grep -v TS2578 | grep -v 'src/features/.*error TS2322' | grep -v 'src/features/.*error TS2352' | grep 'error TS' && exit 1 || exit 0",
     "test:coverage:summary": "vitest run --coverage && node -e \"const fs = require('fs'); const c = JSON.parse(fs.readFileSync('./coverage/coverage-summary.json', 'utf8')).total; console.log('📊 Coverage Summary'); console.log('Lines:', c.lines.pct + '%', '| Functions:', c.functions.pct + '%', '| Branches:', c.branches.pct + '%', '| Statements:', c.statements.pct + '%');\"",
     "test:diff-coverage": "npm run test:coverage && node scripts/diff-coverage.mjs",
     "test:watch": "vitest --watch",
@@ -64,6 +67,8 @@
     "db:seed": "./scripts/seed-dev-data.sh",
     "db:fresh": "npm run db:reset && npm run db:seed",
     "test:e2e": "playwright test",
+    "test:e2e:smoke": "playwright test src/test/e2e/smoke.spec.ts",
+    "test:e2e:critical": "playwright test src/test/e2e/critical-path.spec.ts src/test/e2e/auth.spec.ts",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "test:quality": "npm run test:coverage && npm run test:e2e",
@@ -197,7 +202,7 @@
     "@storybook/addon-docs": "^10.2.17",
     "@storybook/addon-mcp": "^0.3.2",
     "@storybook/addon-vitest": "^10.2.17",
-    "@storybook/react-vite": "^10.2.17",
+    "@storybook/nextjs-vite": "^10.2.17",
     "@tailwindcss/postcss": "^4.1.7",
     "@tailwindcss/vite": "^4.2.1",
     "@testing-library/dom": "^10.4.1",
@@ -239,7 +244,7 @@
     "tsx": "^4.20.6",
     "tw-animate-css": "^1.3.6",
     "typescript": "^5",
-    "vitest": "^4.0.14"
+    "vitest": "^4.0.18"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [

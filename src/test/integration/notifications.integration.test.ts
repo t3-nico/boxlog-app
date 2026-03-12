@@ -24,7 +24,7 @@ const SUPABASE_SERVICE_KEY =
 
 const TEST_USER_ID = crypto.randomUUID();
 const TEST_PLAN_ID = crypto.randomUUID();
-const SKIP_INTEGRATION = process.env.SKIP_INTEGRATION_TESTS === 'true' || process.env.CI !== 'true';
+const SKIP_INTEGRATION = process.env.SKIP_INTEGRATION_TESTS === 'true';
 
 describe.skipIf(SKIP_INTEGRATION)('Notifications Router Integration', () => {
   let adminSupabase: ReturnType<typeof createClient<Database>>;
@@ -54,6 +54,7 @@ describe.skipIf(SKIP_INTEGRATION)('Notifications Router Integration', () => {
 
     await adminSupabase.from('profiles').upsert({
       id: TEST_USER_ID,
+      email: TEST_EMAIL,
       username: `testuser_notifications_${Date.now()}`,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),

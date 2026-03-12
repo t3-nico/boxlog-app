@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { fn } from 'storybook/test';
 
 import { NotificationItem } from './NotificationItem';
@@ -12,6 +12,8 @@ const meta = {
   component: NotificationItem,
   parameters: {
     layout: 'padded',
+    // button-name: internal action buttons (mark as read, delete) rendered by component
+    a11y: { test: 'todo' },
     docs: {
       description: {
         component: '通知アイテムコンポーネント。リマインダー・期限超過など各種通知タイプに対応。',

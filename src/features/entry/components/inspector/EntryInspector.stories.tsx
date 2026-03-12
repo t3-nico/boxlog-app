@@ -1,8 +1,9 @@
 import { useState } from 'react';
 
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Bell, ChevronDown, Plus, Repeat, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { expect, within } from 'storybook/test';
 
 import { cn } from '@/lib/utils';
 import type { EntryOrigin, EntryState, FulfillmentScore } from '../../types/entry';
@@ -50,8 +51,10 @@ const meta = {
   title: 'Recipes/Inspector/EntryInspector',
   parameters: {
     layout: 'fullscreen',
+    // button-name / color-contrast / aria-progressbar-name: internal inspector components
+    a11y: { test: 'todo' },
   },
-  tags: ['autodocs'],
+  tags: ['autodocs', 'critical'],
 } satisfies Meta;
 
 export default meta;
@@ -73,6 +76,7 @@ function MockTagRow({
       <button
         type="button"
         className="hover:bg-state-hover -mt-1 -ml-1.5 flex items-center gap-2 rounded-lg py-1 pr-2 pl-1.5 text-base font-semibold transition-colors"
+        aria-label={tagName ? `Tag: ${tagName}` : 'Add tag'}
       >
         {tagName ? (
           <>
@@ -176,6 +180,7 @@ function InspectorContent({
                   <button
                     type="button"
                     className="text-muted-foreground hover:bg-state-hover inline-flex h-8 items-center gap-1 rounded-lg px-2 text-sm transition-colors"
+                    aria-label="Set recurrence"
                   >
                     {t('common.recurrence.none')}
                   </button>
@@ -196,6 +201,7 @@ function InspectorContent({
                   <button
                     type="button"
                     className="text-muted-foreground hover:bg-state-hover inline-flex h-8 items-center gap-1 rounded-lg px-2 text-sm transition-colors"
+                    aria-label="Add reminder"
                   >
                     {t('common.reminder.add')}
                   </button>
@@ -257,6 +263,13 @@ export const UpcomingPlanned: Story = {
       initialNote="Prepare slides for the meeting"
     />
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    // Verify the inspector renders with the note textarea (placeholder is Japanese)
+    const noteTextarea = canvas.getByPlaceholderText('メモを追加...');
+    await expect(noteTextarea).toBeInTheDocument();
+    await expect(noteTextarea).toHaveValue('Prepare slides for the meeting');
+  },
 };
 
 /**

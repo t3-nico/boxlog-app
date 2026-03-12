@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 
 import { Button } from '@/components/ui/button';
 
@@ -11,6 +11,8 @@ const meta = {
   title: 'Features/Entry/RecurrenceDialog',
   parameters: {
     layout: 'padded',
+    // button-name / label: internal SelectTrigger and number inputs without explicit labels
+    a11y: { test: 'todo' },
   },
   tags: ['autodocs'],
 } satisfies Meta;

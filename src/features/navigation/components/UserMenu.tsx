@@ -85,7 +85,7 @@ export function UserMenu({
       <DropdownMenuContent
         className="border-input w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-2xl"
         side="right"
-        align="start"
+        align="end"
         sideOffset={4}
       >
         <DropdownMenuLabel className="p-0 font-normal">

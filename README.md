@@ -108,8 +108,11 @@ npm run lint:fix    # 自動修正可能な問題を修正
 npm run typecheck   # TypeScript型チェック
 
 # テスト
-npm run test:run    # ユニットテスト
-npm run test:e2e    # E2Eテスト
+npm run test:unit          # ユニットテスト（happy-dom環境）
+npm run test:integration   # 統合テスト（要: supabase start）
+npm run test:e2e:smoke     # E2E smoke（ルーティング・認証フロー）
+npm run test:e2e:critical  # E2E critical-path（カレンダー・エントリ操作）
+npm run test:e2e           # E2E 全件
 
 # コミット時（自動実行）
 # 1. ESLint全ルール適用

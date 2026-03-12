@@ -1,11 +1,13 @@
 'use client';
 
-import { PanelLeftClose } from 'lucide-react';
+import { PanelLeft, Search } from 'lucide-react';
+import Image from 'next/image';
 import type { ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { getAvatarUrl, getDisplayName } from '@/lib/user';
+import { useGlobalSearch } from '@/shell/contexts/use-global-search';
 import { useLayoutStore } from '@/shell/stores/useLayoutStore';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useTranslations } from 'next-intl';
@@ -15,26 +17,21 @@ import { UserMenu } from './UserMenu';
 interface SidebarProps {
   /** Sidebarのコンテンツ（composition layerから注入） */
   children: ReactNode;
-  /** ヘッダー右側に配置するアクション（通知アイコン等） */
-  headerActions?: ReactNode;
+  /** フッターに配置するアクション（通知アイコン等） */
+  footerActions?: ReactNode;
 }
 
 /**
  * サイドバーコンテナ
  *
- * 全ページのSidebarで共通の外枠を提供する。
- * 各ページはchildrenとして独自のコンテンツを渡す。
- *
- * @example
- * ```tsx
- * <Sidebar headerActions={<NotificationDropdown />}>
- *   <SidebarContent />
- * </Sidebar>
- * ```
+ * ヘッダー: Dayoptロゴ + 閉じるボタン
+ * コンテンツ: composition layerから注入
+ * フッター: UserMenu + アクション
  */
-export function Sidebar({ children, headerActions }: SidebarProps) {
+export function Sidebar({ children, footerActions }: SidebarProps) {
   const user = useAuthStore((state) => state.user);
-  const toggle = useLayoutStore.use.toggleSidebar();
+  const closeSidebar = useLayoutStore.use.closeSidebar();
+  const { open: openSearch } = useGlobalSearch();
   const t = useTranslations();
 
   const userData = {
@@ -44,29 +41,50 @@ export function Sidebar({ children, headerActions }: SidebarProps) {
   };
 
   return (
-    <aside className="group border-border bg-surface-container text-foreground flex h-full w-full flex-col border-r">
-      {/* Header - UserMenu + Actions */}
+    <aside className="border-border bg-surface-container text-foreground flex h-full w-full flex-col border-r">
+      {/* Header - Logo + Close */}
       <div className="flex h-12 shrink-0 items-center justify-between px-2">
-        <UserMenu user={userData} />
+        <div className="flex items-center gap-2 pl-2">
+          <Image src="/icon-192.png" alt="Dayopt" width={20} height={20} className="rounded" />
+          <span className="text-foreground text-sm font-semibold tracking-tight">Dayopt</span>
+        </div>
         <div className="flex items-center">
+          <HoverTooltip content={t('sidebar.navigation.search')} side="bottom">
+            <Button
+              variant="ghost"
+              icon
+              className="size-8"
+              onClick={() => openSearch()}
+              aria-label={t('sidebar.navigation.search')}
+            >
+              <Search className="size-4" />
+            </Button>
+          </HoverTooltip>
           <HoverTooltip content={t('sidebar.closeSidebar')} side="bottom">
             <Button
               variant="ghost"
               icon
-              className="size-8 opacity-0 transition-opacity group-hover:opacity-100"
-              onClick={toggle}
+              className="size-8"
+              onClick={closeSidebar}
               aria-label={t('sidebar.closeSidebar')}
             >
-              <PanelLeftClose className="size-4" />
+              <PanelLeft className="size-4" />
             </Button>
           </HoverTooltip>
-          {headerActions}
         </div>
       </div>
 
       {/* Content */}
       <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-auto">
         {children}
+      </div>
+
+      {/* Footer - UserMenu + Actions */}
+      <div className="shrink-0 px-2 py-2">
+        <div className="flex items-center justify-between">
+          <UserMenu user={userData} />
+          <div className="flex items-center">{footerActions}</div>
+        </div>
       </div>
     </aside>
   );

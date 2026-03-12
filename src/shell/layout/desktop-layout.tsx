@@ -48,7 +48,7 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
           )}
         >
           <div className="h-full w-64">
-            <Sidebar headerActions={<NotificationDropdown size="sm" />}>
+            <Sidebar footerActions={<NotificationDropdown size="sm" />}>
               <SidebarContent />
             </Sidebar>
           </div>

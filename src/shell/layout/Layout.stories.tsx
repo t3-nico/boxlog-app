@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 
 /**
  * ## Layout (`src/shell/layout/`)
@@ -46,6 +46,8 @@ const meta = {
   title: 'Primitives/Layout/Overview',
   parameters: {
     layout: 'padded',
+    // color-contrast: text-muted-foreground/50 on layout diagram
+    a11y: { test: 'todo' },
   },
   tags: ['autodocs'],
 } satisfies Meta;

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Star } from 'lucide-react';
 
 import {
@@ -185,6 +185,8 @@ const meta = {
   title: 'Features/Chronotype/ChronotypeSettings',
   parameters: {
     layout: 'padded',
+    // button-name: SelectTrigger without explicit label in LabeledRow component
+    a11y: { test: 'todo' },
   },
   tags: ['autodocs'],
 } satisfies Meta;

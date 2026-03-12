@@ -1,10 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 
 const meta = {
   title: 'Foundations/Typography',
   parameters: {
     layout: 'fullscreen',
   },
+  tags: ['docs-only'],
 } satisfies Meta;
 
 export default meta;
