@@ -59,25 +59,36 @@ feature 固有のモジュールは共有層ではなく feature 内に配置し
 ### 共有層に残すもの
 
 共有型（`src/types/`）から feature をimportできないため、複数 feature で使われる型は共有層に残す。
+業務語彙を持つファイルは可能な限り feature/shell に移動し、root には純粋基盤のみを置く。
 
-| 場所              | 用途                            | 例                                                        |
-| ----------------- | ------------------------------- | --------------------------------------------------------- |
-| `src/types/`      | 複数featureが使う共有型         | CalendarEvent, Tag, Entry, ChronotypeSettings, EntryState |
-| `src/stores/`     | 複数featureが使う設定store      | useCalendarSettingsStore, useModalStore                   |
-| `src/hooks/`      | 真に汎用なhook                  | useAutoSaveSettings, useDebounce, useMediaQuery           |
-| `src/lib/`        | 共有ユーティリティ              | date-utils, tag-colors, chronotype-defaults, logger       |
-| `src/components/` | feature横断の共有コンポーネント | common (SettingRow, TimeSelect), ui (shadcn)              |
+| 場所              | 用途                    | 例                                                           |
+| ----------------- | ----------------------- | ------------------------------------------------------------ |
+| `src/types/`      | 共有storeが依存する型   | EntryState, EntryOrigin, ChronotypeSettings                  |
+| `src/stores/`     | cross-cutting 設定store | useCalendarSettingsStore, useCalendarFilterStore             |
+| `src/hooks/`      | 真に汎用なhook          | useDebounce, useMediaQuery, useIsMobile, useHasMounted       |
+| `src/lib/`        | 純粋ユーティリティ      | utils, logger, date-utils, breakpoints, browser-notification |
+| `src/components/` | feature横断の共有UI     | common (DateNavigator, TimeSelect), ui (shadcn)              |
+
+### Shell層（UIシェルの状態管理）
+
+| 場所                  | 用途                    | 例                                              |
+| --------------------- | ----------------------- | ----------------------------------------------- |
+| `src/shell/stores/`   | UIシェル系ストア        | useSettingsStore, useModalStore, useLayoutStore |
+| `src/shell/types/`    | シェル固有の型          | SettingsCategory                                |
+| `src/shell/contexts/` | シェルが提供するContext | useGlobalSearch                                 |
 
 ## Composition Layer（3層 + hooks）
 
 featureを組み合わせてアプリを構築する層。`@/features/` をimport可能（ESLintで除外済み）。
 
-| 層                       | パス                      | 責務                                   |
-| ------------------------ | ------------------------- | -------------------------------------- |
-| **Logic Composition**    | `src/app/*/_composition/` | ビジネスロジックの統合、hook間の橋渡し |
-| **Layout Composition**   | `src/shell/layout/`       | UIシェル構築、feature UIの配置         |
-| **Provider Composition** | `src/shell/providers/`    | Realtime購読・Auth初期化の接続         |
-| **Composition Hooks**    | `src/shell/hooks/`        | Realtime等のComposition用フック        |
+| 層                       | パス                      | 責務                                       |
+| ------------------------ | ------------------------- | ------------------------------------------ |
+| **Logic Composition**    | `src/app/*/_composition/` | ビジネスロジックの統合、hook間の橋渡し     |
+| **Layout Composition**   | `src/shell/layout/`       | UIシェル構築、feature UIの配置             |
+| **Provider Composition** | `src/shell/providers/`    | Realtime購読・Auth初期化の接続             |
+| **Composition Hooks**    | `src/shell/hooks/`        | Realtime等のComposition用フック            |
+| **Shell State**          | `src/shell/stores/`       | UIシェル系ストア（モーダル・サイドバー等） |
+| **Shell Contexts**       | `src/shell/contexts/`     | シェルが提供するContext（検索等）          |
 
 - Composition Layer 同士は依存しない
 - feature は Composition Layer に依存しない
