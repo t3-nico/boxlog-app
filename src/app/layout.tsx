@@ -21,9 +21,9 @@ import type { Metadata, Viewport } from 'next';
 import { Inter, Noto_Sans_JP } from 'next/font/google';
 import { Suspense } from 'react';
 
-import { WebVitalsReporter } from '@/components/WebVitalsReporter';
 import { cn } from '@/lib/utils';
 import { DeferredAnalytics } from '@/platform/analytics/DeferredAnalytics';
+import { WebVitalsReporter } from '@/platform/sentry/WebVitalsReporter';
 
 // next/font による最適化されたフォント読み込み（Variable Font: optical size軸有効）
 // preload: true でLCP改善（デフォルトでtrueだが明示的に指定）

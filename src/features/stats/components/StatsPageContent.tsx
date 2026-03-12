@@ -2,8 +2,8 @@
 
 import { useTranslations } from 'next-intl';
 
-import { DateNavigator } from '@/components/DateNavigator';
-import { FeatureErrorBoundary } from '@/components/error-boundary';
+import { DateNavigator } from '@/components/common/DateNavigator';
+import { FeatureErrorBoundary } from '@/components/common/error-boundary';
 import { Tabs, TabsContent, TabsList, UnderlineTabsTrigger } from '@/components/ui/tabs';
 import { AppHeader } from '@/shell/layout/AppHeader';
 

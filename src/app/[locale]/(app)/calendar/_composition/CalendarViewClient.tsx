@@ -16,7 +16,7 @@ import { usePathname } from 'next/navigation';
 
 import { format } from 'date-fns';
 
-import { FeatureErrorBoundary } from '@/components/error-boundary';
+import { FeatureErrorBoundary } from '@/components/common/error-boundary';
 import type { CalendarViewType } from '@/features/calendar';
 import {
   CalendarController,
