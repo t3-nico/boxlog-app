@@ -21,3 +21,20 @@ export function getDisplayName(user: User | null | undefined, fallback = ''): st
 
   return fallback;
 }
+
+/**
+ * ユーザーのアバターURLを取得する
+ */
+/**
+ * ユーザーのアバターURLを取得する
+ */
+export function getAvatarUrl(user: User | null | undefined): string | null {
+  return (user?.user_metadata?.avatar_url as string) || null;
+}
+
+/**
+ * 表示名からイニシャル（先頭1文字）を取得する
+ */
+export function getInitials(name: string): string {
+  return name.charAt(0).toUpperCase();
+}

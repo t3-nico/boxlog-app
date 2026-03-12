@@ -1,13 +1,13 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 
 import { Camera, ChevronDown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ChronotypeSettingsPanel as ChronotypeSettings } from '@/features/chronotype';
-import { getAvatarUrl, getDisplayName } from '@/lib/user';
+import { getAvatarUrl, getDisplayName, getInitials } from '@/lib/user';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { LabeledRow } from './fields/LabeledRow';
 import { SectionCard } from './SectionCard';
@@ -32,10 +32,6 @@ export function ProfileSettings() {
   const avatarUrl = getAvatarUrl(user);
   const displayName = getDisplayName(user);
 
-  const getInitials = useCallback((name: string) => {
-    return name.slice(0, 2).toUpperCase();
-  }, []);
-
   return (
     <div className="space-y-8">
       {/* アバター・表示名 */}
@@ -47,7 +43,7 @@ export function ProfileSettings() {
             onClick={() => setShowAvatarDialog(true)}
             aria-label={t('settings.account.avatar')}
           >
-            <Avatar size="lg">
+            <Avatar size="sm">
               <AvatarImage src={avatarUrl || undefined} alt={displayName} />
               <AvatarFallback className="bg-foreground text-background text-xs">
                 {getInitials(displayName)}

@@ -33,6 +33,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { MEDIA_QUERIES } from '@/lib/breakpoints';
+import { getInitials } from '@/lib/user';
 import { useRouter } from '@/platform/i18n/navigation';
 import { useSettingsStore } from '@/stores/useSettingsStore';
 import { useLocale, useTranslations } from 'next-intl';
@@ -74,7 +75,7 @@ export function UserMenu({
           <Avatar size="xs" className="rounded-2xl">
             {user.avatar ? <AvatarImage src={user.avatar} alt={user.name} /> : null}
             <AvatarFallback className="bg-foreground text-background rounded-2xl text-xs">
-              {user.name.charAt(0).toUpperCase()}
+              {getInitials(user.name)}
             </AvatarFallback>
           </Avatar>
           <span className="max-w-20 truncate font-normal">{user.name}</span>
@@ -92,7 +93,7 @@ export function UserMenu({
             <Avatar size="xs" className="rounded-2xl">
               {user.avatar ? <AvatarImage src={user.avatar} alt={user.name} /> : null}
               <AvatarFallback className="bg-foreground text-background rounded-2xl text-xs">
-                {user.name.charAt(0).toUpperCase()}
+                {getInitials(user.name)}
               </AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
