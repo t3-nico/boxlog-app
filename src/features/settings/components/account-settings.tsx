@@ -15,10 +15,10 @@ import { useAuthStore } from '@/stores/useAuthStore';
 
 import { AccountDeletionDialog } from './account-deletion-dialog';
 import { EmailChangeDialog } from './email-change-dialog';
-import { SettingRow } from './fields/SettingRow';
+import { LabeledRow } from './fields/LabeledRow';
 import { PasswordChangeDialog } from './password-change-dialog';
+import { SectionCard } from './SectionCard';
 import { MFASection } from './sections/MFASection';
-import { SettingsCard } from './SettingsCard';
 
 /**
  * アカウント設定コンポーネント
@@ -54,29 +54,29 @@ export function AccountSettings() {
   return (
     <div className="space-y-8">
       {/* メールアドレス */}
-      <SettingsCard title={t('settings.account.email')}>
-        <SettingRow label={email}>
+      <SectionCard title={t('settings.account.email')}>
+        <LabeledRow label={email}>
           <Button variant="outline" onClick={() => setShowEmailDialog(true)}>
             {t('common.change')}
           </Button>
-        </SettingRow>
-      </SettingsCard>
+        </LabeledRow>
+      </SectionCard>
 
       {/* パスワード */}
-      <SettingsCard title={t('settings.account.password')}>
-        <SettingRow label="••••••••">
+      <SectionCard title={t('settings.account.password')}>
+        <LabeledRow label="••••••••">
           <Button variant="outline" onClick={() => setShowPasswordDialog(true)}>
             {t('common.change')}
           </Button>
-        </SettingRow>
-      </SettingsCard>
+        </LabeledRow>
+      </SectionCard>
 
       {/* 2段階認証 */}
       <MFASection />
 
       {/* ソーシャルログイン連携 */}
-      <SettingsCard title={t('settings.account.socialLogin')}>
-        <SettingRow
+      <SectionCard title={t('settings.account.socialLogin')}>
+        <LabeledRow
           label={
             <span className="flex items-center gap-2">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-4 w-4">
@@ -93,8 +93,8 @@ export function AccountSettings() {
           <Button variant="outline" disabled>
             {t('settings.account.connect')}
           </Button>
-        </SettingRow>
-        <SettingRow
+        </LabeledRow>
+        <LabeledRow
           label={
             <span className="flex items-center gap-2">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-4 w-4">
@@ -111,8 +111,8 @@ export function AccountSettings() {
           <Button variant="outline" disabled>
             {t('settings.account.connect')}
           </Button>
-        </SettingRow>
-        <SettingRow
+        </LabeledRow>
+        <LabeledRow
           label={
             <span className="flex items-center gap-2">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-4 w-4">
@@ -129,29 +129,29 @@ export function AccountSettings() {
           <Button variant="outline" disabled>
             {t('settings.account.connect')}
           </Button>
-        </SettingRow>
+        </LabeledRow>
         <p className="text-muted-foreground text-xs">
           <Badge variant="secondary" className="mr-1">
             {t('settings.account.comingSoon')}
           </Badge>
           {t('settings.account.socialLoginDesc')}
         </p>
-      </SettingsCard>
+      </SectionCard>
 
       {/* セッション */}
-      <SettingsCard title={t('settings.account.session')}>
-        <SettingRow label={t('navUser.logout')}>
+      <SectionCard title={t('settings.account.session')}>
+        <LabeledRow label={t('navUser.logout')}>
           <Button variant="outline" onClick={handleLogout} disabled={isLoggingOut}>
             <LogOut className="mr-2 h-4 w-4" />
             {isLoggingOut ? t('navUser.loggingOut') : t('navUser.logout')}
           </Button>
-        </SettingRow>
-      </SettingsCard>
+        </LabeledRow>
+      </SectionCard>
 
       {/* 危険な操作 */}
-      <SettingsCard title={t('settings.account.dangerZone')}>
+      <SectionCard title={t('settings.account.dangerZone')}>
         <AccountDeletionDialog />
-      </SettingsCard>
+      </SectionCard>
 
       {/* Dialogs */}
       <EmailChangeDialog

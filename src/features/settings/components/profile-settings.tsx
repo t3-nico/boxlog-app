@@ -7,10 +7,10 @@ import { useTranslations } from 'next-intl';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ChronotypeSettingsPanel as ChronotypeSettings } from '@/features/chronotype';
-import { getDisplayName } from '@/lib/user';
+import { getAvatarUrl, getDisplayName } from '@/lib/user';
 import { useAuthStore } from '@/stores/useAuthStore';
-import { SettingRow } from './fields/SettingRow';
-import { SettingsCard } from './SettingsCard';
+import { LabeledRow } from './fields/LabeledRow';
+import { SectionCard } from './SectionCard';
 
 import { AvatarChangeDialog } from './avatar-change-dialog';
 import { DisplayNameDialog } from './display-name-dialog';
@@ -29,7 +29,7 @@ export function ProfileSettings() {
   const [showAvatarDialog, setShowAvatarDialog] = useState(false);
   const [showDisplayNameDialog, setShowDisplayNameDialog] = useState(false);
 
-  const avatarUrl = user?.user_metadata?.avatar_url || null;
+  const avatarUrl = getAvatarUrl(user);
   const displayName = getDisplayName(user);
 
   const getInitials = useCallback((name: string) => {
@@ -39,8 +39,8 @@ export function ProfileSettings() {
   return (
     <div className="space-y-8">
       {/* アバター・表示名 */}
-      <SettingsCard title={t('settings.account.profile')}>
-        <SettingRow label={t('settings.account.avatar')}>
+      <SectionCard title={t('settings.account.profile')}>
+        <LabeledRow label={t('settings.account.avatar')}>
           <button
             type="button"
             className="group relative cursor-pointer"
@@ -49,14 +49,16 @@ export function ProfileSettings() {
           >
             <Avatar size="lg">
               <AvatarImage src={avatarUrl || undefined} alt={displayName} />
-              <AvatarFallback>{getInitials(displayName)}</AvatarFallback>
+              <AvatarFallback className="bg-foreground text-background text-xs">
+                {getInitials(displayName)}
+              </AvatarFallback>
             </Avatar>
             <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/0 transition-colors group-hover:bg-black/40">
               <Camera className="h-4 w-4 text-white opacity-0 transition-opacity group-hover:opacity-100" />
             </div>
           </button>
-        </SettingRow>
-        <SettingRow label={t('settings.account.displayName')}>
+        </LabeledRow>
+        <LabeledRow label={t('settings.account.displayName')}>
           <button
             type="button"
             className="text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
@@ -65,8 +67,8 @@ export function ProfileSettings() {
             <span className="text-sm">{displayName}</span>
             <ChevronDown className="h-4 w-4" />
           </button>
-        </SettingRow>
-      </SettingsCard>
+        </LabeledRow>
+      </SectionCard>
 
       {/* クロノタイプ */}
       <ChronotypeSettings />

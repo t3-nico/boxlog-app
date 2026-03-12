@@ -39,8 +39,8 @@ import {
 } from '@/components/ui/select';
 import { api } from '@/platform/trpc';
 
-import { SettingRow } from './fields/SettingRow';
-import { SettingsCard } from './SettingsCard';
+import { LabeledRow } from './fields/LabeledRow';
+import { SectionCard } from './SectionCard';
 
 type ExportFormat = 'json' | 'csv';
 type ExportRange = 'all' | 'custom';
@@ -100,11 +100,11 @@ function ExportSection() {
   const isExporting = exportDataQuery.isLoading || exportDataQuery.isFetching;
 
   return (
-    <SettingsCard title={t('title')}>
+    <SectionCard title={t('title')}>
       <p className="text-muted-foreground mb-2 text-sm">{t('description')}</p>
 
       <div className="space-y-0">
-        <SettingRow label={t('format')}>
+        <LabeledRow label={t('format')}>
           <Select value={format} onValueChange={(v) => setFormat(v as ExportFormat)}>
             <SelectTrigger variant="ghost">
               <SelectValue />
@@ -114,9 +114,9 @@ function ExportSection() {
               <SelectItem value="csv">{t('formatCsv')}</SelectItem>
             </SelectContent>
           </Select>
-        </SettingRow>
+        </LabeledRow>
 
-        <SettingRow label={t('range')}>
+        <LabeledRow label={t('range')}>
           <Select value={range} onValueChange={(v) => setRange(v as ExportRange)}>
             <SelectTrigger variant="ghost">
               <SelectValue />
@@ -126,10 +126,10 @@ function ExportSection() {
               <SelectItem value="custom">{t('rangeCustom')}</SelectItem>
             </SelectContent>
           </Select>
-        </SettingRow>
+        </LabeledRow>
 
         {range === 'custom' && (
-          <SettingRow label={t('startDate')}>
+          <LabeledRow label={t('startDate')}>
             <div className="flex items-center gap-2">
               <Input
                 type="date"
@@ -147,16 +147,16 @@ function ExportSection() {
                 aria-label={t('endDate')}
               />
             </div>
-          </SettingRow>
+          </LabeledRow>
         )}
-        <SettingRow label={t('exportButton')}>
+        <LabeledRow label={t('exportButton')}>
           <Button variant="outline" onClick={handleExport} disabled={isExporting}>
             <Download className="mr-2 h-4 w-4" />
             {isExporting ? t('exporting') : t('exportButton')}
           </Button>
-        </SettingRow>
+        </LabeledRow>
       </div>
-    </SettingsCard>
+    </SectionCard>
   );
 }
 
@@ -167,7 +167,7 @@ function RestoreSection() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <SettingsCard title={t('title')}>
+    <SectionCard title={t('title')}>
       <p className="text-muted-foreground mb-4 text-sm">{t('description')}</p>
 
       <div className="border-border flex flex-col items-center justify-center rounded-xl border-2 border-dashed p-8">
@@ -190,7 +190,7 @@ function RestoreSection() {
       </div>
 
       <p className="text-muted-foreground mt-2 text-xs italic">{t('comingSoon')}</p>
-    </SettingsCard>
+    </SectionCard>
   );
 }
 
@@ -219,7 +219,7 @@ function McpApiSection() {
 
   if (!isPro) {
     return (
-      <SettingsCard title={t('title')}>
+      <SectionCard title={t('title')}>
         <p className="text-muted-foreground mb-4 text-sm">{t('description')}</p>
         <div className="bg-muted/50 flex items-center gap-3 rounded-lg p-4">
           <Crown className="text-muted-foreground h-5 w-5 shrink-0" />
@@ -228,17 +228,17 @@ function McpApiSection() {
             {t('upgrade')}
           </Button>
         </div>
-      </SettingsCard>
+      </SectionCard>
     );
   }
 
   return (
-    <SettingsCard title={t('title')}>
+    <SectionCard title={t('title')}>
       <p className="text-muted-foreground mb-2 text-sm">{t('description')}</p>
 
       <div className="space-y-0">
         {/* Server URL */}
-        <SettingRow label={t('serverUrl')}>
+        <LabeledRow label={t('serverUrl')}>
           <div className="flex items-center gap-2">
             <code className="text-muted-foreground font-mono text-sm">{mcpServerUrl}</code>
             <CopyButton
@@ -247,10 +247,10 @@ function McpApiSection() {
               label="Copy URL"
             />
           </div>
-        </SettingRow>
+        </LabeledRow>
 
         {/* API Key */}
-        <SettingRow label={t('apiKey')}>
+        <LabeledRow label={t('apiKey')}>
           {apiKey ? (
             <div className="flex items-center gap-2">
               <code className="text-muted-foreground font-mono text-sm">{apiKey}</code>
@@ -274,7 +274,7 @@ function McpApiSection() {
               {t('generateKey')}
             </Button>
           )}
-        </SettingRow>
+        </LabeledRow>
       </div>
 
       {/* Connection guide */}
@@ -290,7 +290,7 @@ function McpApiSection() {
           </a>
         </p>
       </div>
-    </SettingsCard>
+    </SectionCard>
   );
 }
 
@@ -336,9 +336,9 @@ function DeletionSection() {
   }, []);
 
   return (
-    <SettingsCard title={t('title')}>
+    <SectionCard title={t('title')}>
       <div className="space-y-0">
-        <SettingRow label={t('deleteBlocks')} description={t('deleteBlocksDesc')}>
+        <LabeledRow label={t('deleteBlocks')} description={t('deleteBlocksDesc')}>
           <Button
             variant="outline"
             size="sm"
@@ -348,9 +348,9 @@ function DeletionSection() {
             <Trash2 className="mr-2 h-4 w-4" />
             {t('deleteBlocks')}
           </Button>
-        </SettingRow>
+        </LabeledRow>
 
-        <SettingRow label={t('deleteAllData')} description={t('deleteAllDataDesc')}>
+        <LabeledRow label={t('deleteAllData')} description={t('deleteAllDataDesc')}>
           <Button
             variant="outline"
             size="sm"
@@ -360,7 +360,7 @@ function DeletionSection() {
             <Trash2 className="mr-2 h-4 w-4" />
             {t('deleteAllData')}
           </Button>
-        </SettingRow>
+        </LabeledRow>
       </div>
 
       <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -394,6 +394,6 @@ function DeletionSection() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </SettingsCard>
+    </SectionCard>
   );
 }

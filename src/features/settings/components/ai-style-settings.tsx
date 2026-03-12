@@ -12,7 +12,7 @@ import { CACHE_5_MINUTES } from '@/lib/date';
 import { cn } from '@/lib/utils';
 import { api } from '@/platform/trpc';
 import { useAutoSaveSettings } from '../hooks/useAutoSaveSettings';
-import { SettingsCard } from './SettingsCard';
+import { SectionCard } from './SectionCard';
 
 import type { AICommunicationStyle } from '../types/personalization';
 import { AI_COMMUNICATION_STYLES } from '../types/personalization';
@@ -78,19 +78,19 @@ export function AIStyleSettings() {
 
   if (isPending) {
     return (
-      <SettingsCard title={t('settings.aiStyle.title')}>
+      <SectionCard title={t('settings.aiStyle.title')}>
         <Skeleton className="mb-4 h-4 w-64" />
         <div className="space-y-3">
           {Array.from({ length: 4 }, (_, i) => (
             <Skeleton key={i} className="h-16 w-full rounded-2xl" />
           ))}
         </div>
-      </SettingsCard>
+      </SectionCard>
     );
   }
 
   return (
-    <SettingsCard title={t('settings.aiStyle.title')}>
+    <SectionCard title={t('settings.aiStyle.title')}>
       <p className="text-muted-foreground mb-4 text-sm">{t('settings.aiStyle.description')}</p>
 
       <RadioGroup
@@ -118,7 +118,7 @@ export function AIStyleSettings() {
           />
         </div>
       )}
-    </SettingsCard>
+    </SectionCard>
   );
 }
 

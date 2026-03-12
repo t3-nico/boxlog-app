@@ -16,8 +16,8 @@ import { Switch } from '@/components/ui/switch';
 
 import { useUserSettings } from '../hooks/useUserSettings';
 
-import { SettingRow } from './fields/SettingRow';
-import { SettingsCard } from './SettingsCard';
+import { LabeledRow } from './fields/LabeledRow';
+import { SectionCard } from './SectionCard';
 
 /**
  * カレンダー設定コンポーネント
@@ -70,12 +70,12 @@ export function CalendarSettings() {
     return (
       <div className="space-y-8">
         {Array.from({ length: 2 }, (_, i) => (
-          <SettingsCard key={i}>
+          <SectionCard key={i}>
             <div className="space-y-4">
               <Skeleton className="h-12 w-full" />
               <Skeleton className="h-12 w-full" />
             </div>
-          </SettingsCard>
+          </SectionCard>
         ))}
       </div>
     );
@@ -84,9 +84,9 @@ export function CalendarSettings() {
   return (
     <div className="space-y-8">
       {/* Default View Section */}
-      <SettingsCard title={t('settings.calendar.defaultViewSection')}>
+      <SectionCard title={t('settings.calendar.defaultViewSection')}>
         <div className="space-y-0">
-          <SettingRow label={t('settings.calendar.defaultView')}>
+          <LabeledRow label={t('settings.calendar.defaultView')}>
             <Select value={settings.defaultView} onValueChange={handleDefaultViewChange}>
               <SelectTrigger variant="ghost">
                 <SelectValue placeholder={t('settings.calendar.selectDefaultView')} />
@@ -98,29 +98,29 @@ export function CalendarSettings() {
                 <SelectItem value="week">{t('settings.calendar.viewWeek')}</SelectItem>
               </SelectContent>
             </Select>
-          </SettingRow>
+          </LabeledRow>
         </div>
-      </SettingsCard>
+      </SectionCard>
 
       {/* Display Section */}
-      <SettingsCard title={t('settings.calendar.weekAndCalendar')}>
+      <SectionCard title={t('settings.calendar.weekAndCalendar')}>
         <div className="space-y-0">
-          <SettingRow label={t('settings.calendar.showWeekNumbers')}>
+          <LabeledRow label={t('settings.calendar.showWeekNumbers')}>
             <Switch
               checked={settings.showWeekNumbers}
               onCheckedChange={handleShowWeekNumbersChange}
             />
-          </SettingRow>
-          <SettingRow label={t('settings.calendar.showWeekends')}>
+          </LabeledRow>
+          <LabeledRow label={t('settings.calendar.showWeekends')}>
             <Switch checked={settings.showWeekends} onCheckedChange={handleShowWeekendsChange} />
-          </SettingRow>
+          </LabeledRow>
         </div>
-      </SettingsCard>
+      </SectionCard>
 
       {/* Default Task Settings Section */}
-      <SettingsCard title={t('settings.calendar.defaultTaskSettings')}>
+      <SectionCard title={t('settings.calendar.defaultTaskSettings')}>
         <div className="space-y-0">
-          <SettingRow label={t('settings.calendar.defaultDuration')}>
+          <LabeledRow label={t('settings.calendar.defaultDuration')}>
             <Select
               value={String(settings.defaultDuration)}
               onValueChange={handleDefaultDurationChange}
@@ -136,8 +136,8 @@ export function CalendarSettings() {
                 <SelectItem value="120">{t('settings.calendar.duration2hours')}</SelectItem>
               </SelectContent>
             </Select>
-          </SettingRow>
-          <SettingRow label={t('settings.calendar.snapInterval')}>
+          </LabeledRow>
+          <LabeledRow label={t('settings.calendar.snapInterval')}>
             <Select value={String(settings.snapInterval)} onValueChange={handleSnapIntervalChange}>
               <SelectTrigger variant="ghost">
                 <SelectValue placeholder={t('settings.calendar.selectInterval')} />
@@ -149,9 +149,9 @@ export function CalendarSettings() {
                 <SelectItem value="30">{t('settings.calendar.interval30min')}</SelectItem>
               </SelectContent>
             </Select>
-          </SettingRow>
+          </LabeledRow>
         </div>
-      </SettingsCard>
+      </SectionCard>
     </div>
   );
 }

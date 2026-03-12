@@ -5,7 +5,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp
 import { useTranslations } from 'next-intl';
 
 import { useMFA } from '../../hooks/useMFA';
-import { SettingsCard } from '../SettingsCard';
+import { SectionCard } from '../SectionCard';
 
 /**
  * MFA（二段階認証）セクション
@@ -35,7 +35,7 @@ export function MFASection() {
   } = useMFA();
 
   return (
-    <SettingsCard title={t('settings.account.twoFactor')}>
+    <SectionCard title={t('settings.account.twoFactor')}>
       <div className="space-y-4">
         {/* エラー・成功メッセージ */}
         {error && (
@@ -206,6 +206,6 @@ export function MFASection() {
           </div>
         )}
       </div>
-    </SettingsCard>
+    </SectionCard>
   );
 }

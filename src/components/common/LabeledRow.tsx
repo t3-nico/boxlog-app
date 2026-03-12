@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react';
 
-interface SettingRowProps {
+interface LabeledRowProps {
   label: ReactNode;
   description?: string;
   children: ReactNode;
@@ -12,7 +12,7 @@ interface SettingRowProps {
  * 設定画面の行コンポーネント（2カラム: ラベル | コントロール）
  * Apple Settings / ChatGPT 設定画面の標準パターン
  */
-export function SettingRow({ label, description, children }: SettingRowProps) {
+export function LabeledRow({ label, description, children }: LabeledRowProps) {
   return (
     <div className="flex min-w-[400px] items-center justify-between gap-4 py-2">
       <div className="min-w-[120px] flex-1">

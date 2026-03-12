@@ -15,8 +15,8 @@ import {
 } from '@/lib/notification-helpers';
 import { api } from '@/platform/trpc';
 
-import { SettingRow } from './fields/SettingRow';
-import { SettingsCard } from './SettingsCard';
+import { LabeledRow } from './fields/LabeledRow';
+import { SectionCard } from './SectionCard';
 
 export function NotificationSettings() {
   const t = useTranslations();
@@ -92,13 +92,13 @@ export function NotificationSettings() {
   if (isLoading) {
     return (
       <div className="space-y-8">
-        <SettingsCard>
+        <SectionCard>
           <div className="space-y-4">
             {Array.from({ length: 4 }, (_, i) => (
               <Skeleton key={i} className="h-12 w-full rounded-lg" />
             ))}
           </div>
-        </SettingsCard>
+        </SectionCard>
       </div>
     );
   }
@@ -107,9 +107,9 @@ export function NotificationSettings() {
 
   return (
     <div className="space-y-8">
-      <SettingsCard>
+      <SectionCard>
         <div className="space-y-0">
-          <SettingRow
+          <LabeledRow
             label={t('notification.settings.browserNotifications.label')}
             description={
               isBrowserPermissionDenied
@@ -122,8 +122,8 @@ export function NotificationSettings() {
               onCheckedChange={handleBrowserToggle}
               disabled={updateBrowserNotifications.isPending || isBrowserPermissionDenied}
             />
-          </SettingRow>
-          <SettingRow
+          </LabeledRow>
+          <LabeledRow
             label={t('notification.settings.emailNotifications.label')}
             description={t('notification.settings.emailNotifications.description')}
           >
@@ -132,8 +132,8 @@ export function NotificationSettings() {
               onCheckedChange={(checked) => updateEmailNotifications.mutate({ enabled: checked })}
               disabled={updateEmailNotifications.isPending}
             />
-          </SettingRow>
-          <SettingRow
+          </LabeledRow>
+          <LabeledRow
             label={
               <span className="flex items-center gap-2">
                 {t('notification.settings.pushNotifications.label')}
@@ -149,8 +149,8 @@ export function NotificationSettings() {
               onCheckedChange={(checked) => updatePushNotifications.mutate({ enabled: checked })}
               disabled={updatePushNotifications.isPending}
             />
-          </SettingRow>
-          <SettingRow
+          </LabeledRow>
+          <LabeledRow
             label={t('notification.settings.defaultReminder.label')}
             description={t('notification.settings.defaultReminder.description')}
           >
@@ -160,9 +160,9 @@ export function NotificationSettings() {
               variant="button"
               disabled={updateDefaultReminder.isPending}
             />
-          </SettingRow>
+          </LabeledRow>
         </div>
-      </SettingsCard>
+      </SectionCard>
 
       {/* ヒント情報 */}
       <div className="bg-card border-border rounded-lg border p-4">

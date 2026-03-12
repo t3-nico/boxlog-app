@@ -13,8 +13,8 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 
-import { SettingRow } from '@/components/common/SettingRow';
-import { SettingsCard } from '@/components/common/SettingsCard';
+import { LabeledRow } from '@/components/common/LabeledRow';
+import { SectionCard } from '@/components/common/SectionCard';
 
 import {
   CHRONOTYPE_EMOJI,
@@ -109,9 +109,9 @@ function ChronotypeSettingsDemo({
 
   return (
     <div className="max-w-2xl space-y-8">
-      <SettingsCard title="Chronotype">
+      <SectionCard title="Chronotype">
         <div className="space-y-0">
-          <SettingRow label="Chronotype">
+          <LabeledRow label="Chronotype">
             <Select value={selectValue} onValueChange={handleTypeSelect}>
               <SelectTrigger variant="ghost">
                 <SelectValue />
@@ -125,12 +125,12 @@ function ChronotypeSettingsDemo({
                 ))}
               </SelectContent>
             </Select>
-          </SettingRow>
+          </LabeledRow>
         </div>
-      </SettingsCard>
+      </SectionCard>
 
       {selectedProfile ? (
-        <SettingsCard title="Details">
+        <SectionCard title="Details">
           <div className="space-y-4">
             <div className="flex items-start gap-4">
               <span className="text-3xl">
@@ -157,7 +157,7 @@ function ChronotypeSettingsDemo({
               </div>
             </div>
           </div>
-        </SettingsCard>
+        </SectionCard>
       ) : null}
     </div>
   );
@@ -170,9 +170,9 @@ function ChronotypeSettingsDemo({
 function ChronotypeSettingsLoadingDemo() {
   return (
     <div className="max-w-2xl">
-      <SettingsCard title="Chronotype">
+      <SectionCard title="Chronotype">
         <Skeleton className="h-12 w-full rounded-lg" />
-      </SettingsCard>
+      </SectionCard>
     </div>
   );
 }

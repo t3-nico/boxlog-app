@@ -10,8 +10,8 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { api } from '@/platform/trpc';
 
-import { SettingRow } from './fields/SettingRow';
-import { SettingsCard } from './SettingsCard';
+import { LabeledRow } from './fields/LabeledRow';
+import { SectionCard } from './SectionCard';
 
 export const DataExportSettings = memo(function DataExportSettings() {
   const t = useTranslations();
@@ -54,7 +54,7 @@ export const DataExportSettings = memo(function DataExportSettings() {
   return (
     <div className="space-y-8">
       {/* データエクスポート */}
-      <SettingsCard title={t('settings.dataControls.export.title')}>
+      <SectionCard title={t('settings.dataControls.export.title')}>
         <div className="space-y-4">
           {/* エクスポート対象の説明 */}
           <div className="bg-card border-border rounded-lg border p-4">
@@ -84,10 +84,10 @@ export const DataExportSettings = memo(function DataExportSettings() {
               : t('settings.dataControls.export.exportButton')}
           </Button>
         </div>
-      </SettingsCard>
+      </SectionCard>
 
       {/* データインポート */}
-      <SettingsCard title={t('settings.dataControls.import.title')}>
+      <SectionCard title={t('settings.dataControls.import.title')}>
         <div className="space-y-4">
           <div className="border-border flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-8">
             <Upload className="text-muted-foreground mb-2 h-8 w-8" />
@@ -102,14 +102,14 @@ export const DataExportSettings = memo(function DataExportSettings() {
             {t('settings.dataControls.import.comingSoon')}
           </p>
         </div>
-      </SettingsCard>
+      </SectionCard>
 
       {/* 自動バックアップ */}
-      <SettingsCard title={t('settings.dataControls.backup.title')}>
+      <SectionCard title={t('settings.dataControls.backup.title')}>
         <div className="space-y-0">
-          <SettingRow label={t('settings.dataControls.backup.enableLabel')}>
+          <LabeledRow label={t('settings.dataControls.backup.enableLabel')}>
             <Switch checked={autoBackup} onCheckedChange={handleAutoBackupChange} disabled />
-          </SettingRow>
+          </LabeledRow>
         </div>
         {autoBackup && (
           <div className="bg-card border-border mt-4 rounded-lg border p-4">
@@ -119,7 +119,7 @@ export const DataExportSettings = memo(function DataExportSettings() {
             </div>
           </div>
         )}
-      </SettingsCard>
+      </SectionCard>
     </div>
   );
 });

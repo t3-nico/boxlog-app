@@ -10,13 +10,13 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 
-import { SettingRow } from './fields/SettingRow';
-import { SettingsCard } from './SettingsCard';
+import { LabeledRow } from './fields/LabeledRow';
+import { SectionCard } from './SectionCard';
 
-/** SettingsCard - 設定セクションコンポーネント */
+/** SectionCard - 設定セクションコンポーネント */
 const meta = {
-  title: 'Features/Settings/SettingsCard',
-  component: SettingsCard,
+  title: 'Features/Settings/SectionCard',
+  component: SectionCard,
   parameters: {
     layout: 'padded',
   },
@@ -39,7 +39,7 @@ const meta = {
       table: { disable: true },
     },
   },
-} satisfies Meta<typeof SettingsCard>;
+} satisfies Meta<typeof SectionCard>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -51,8 +51,8 @@ export const Default: Story = {
   },
   render: (args) => (
     <div className="max-w-2xl">
-      <SettingsCard {...args}>
-        <SettingRow label="言語">
+      <SectionCard {...args}>
+        <LabeledRow label="言語">
           <Select defaultValue="ja">
             <SelectTrigger variant="ghost">
               <SelectValue />
@@ -62,8 +62,8 @@ export const Default: Story = {
               <SelectItem value="en">English</SelectItem>
             </SelectContent>
           </Select>
-        </SettingRow>
-        <SettingRow label="テーマ">
+        </LabeledRow>
+        <LabeledRow label="テーマ">
           <Select defaultValue="system">
             <SelectTrigger variant="ghost">
               <SelectValue />
@@ -74,8 +74,8 @@ export const Default: Story = {
               <SelectItem value="dark">ダーク</SelectItem>
             </SelectContent>
           </Select>
-        </SettingRow>
-      </SettingsCard>
+        </LabeledRow>
+      </SectionCard>
     </div>
   ),
 };
@@ -85,14 +85,14 @@ export const WithoutTitle: Story = {
   args: {},
   render: (args) => (
     <div className="max-w-2xl">
-      <SettingsCard {...args}>
-        <SettingRow label="プッシュ通知">
+      <SectionCard {...args}>
+        <LabeledRow label="プッシュ通知">
           <Switch defaultChecked />
-        </SettingRow>
-        <SettingRow label="サウンド">
+        </LabeledRow>
+        <LabeledRow label="サウンド">
           <Switch />
-        </SettingRow>
-      </SettingsCard>
+        </LabeledRow>
+      </SectionCard>
     </div>
   ),
 };
@@ -109,14 +109,14 @@ export const WithActions: Story = {
   },
   render: (args) => (
     <div className="max-w-2xl">
-      <SettingsCard {...args}>
-        <SettingRow label="メールアドレス" description="john@example.com">
+      <SectionCard {...args}>
+        <LabeledRow label="メールアドレス" description="john@example.com">
           <Button variant="outline">変更</Button>
-        </SettingRow>
-        <SettingRow label="パスワード" description="••••••••">
+        </LabeledRow>
+        <LabeledRow label="パスワード" description="••••••••">
           <Button variant="outline">変更</Button>
-        </SettingRow>
-      </SettingsCard>
+        </LabeledRow>
+      </SectionCard>
     </div>
   ),
 };
@@ -126,8 +126,8 @@ export const AllPatterns: Story = {
   args: {},
   render: () => (
     <div className="w-full max-w-2xl space-y-6">
-      <SettingsCard title="言語とテーマ">
-        <SettingRow label="言語">
+      <SectionCard title="言語とテーマ">
+        <LabeledRow label="言語">
           <Select defaultValue="ja">
             <SelectTrigger variant="ghost">
               <SelectValue />
@@ -137,8 +137,8 @@ export const AllPatterns: Story = {
               <SelectItem value="en">English</SelectItem>
             </SelectContent>
           </Select>
-        </SettingRow>
-        <SettingRow label="テーマ">
+        </LabeledRow>
+        <LabeledRow label="テーマ">
           <Select defaultValue="dark">
             <SelectTrigger variant="ghost">
               <SelectValue />
@@ -148,19 +148,19 @@ export const AllPatterns: Story = {
               <SelectItem value="dark">ダーク</SelectItem>
             </SelectContent>
           </Select>
-        </SettingRow>
-      </SettingsCard>
+        </LabeledRow>
+      </SectionCard>
 
-      <SettingsCard title="通知">
-        <SettingRow label="プッシュ通知">
+      <SectionCard title="通知">
+        <LabeledRow label="プッシュ通知">
           <Switch defaultChecked />
-        </SettingRow>
-        <SettingRow label="サウンド">
+        </LabeledRow>
+        <LabeledRow label="サウンド">
           <Switch defaultChecked />
-        </SettingRow>
-      </SettingsCard>
+        </LabeledRow>
+      </SectionCard>
 
-      <SettingsCard
+      <SectionCard
         title="アカウント"
         actions={
           <Button variant="ghost" size="sm">
@@ -168,18 +168,18 @@ export const AllPatterns: Story = {
           </Button>
         }
       >
-        <SettingRow label="メールアドレス" description="john@example.com">
+        <LabeledRow label="メールアドレス" description="john@example.com">
           <Button variant="outline">変更</Button>
-        </SettingRow>
-      </SettingsCard>
+        </LabeledRow>
+      </SectionCard>
 
-      <SettingsCard title="危険な操作">
-        <SettingRow label="アカウント削除">
+      <SectionCard title="危険な操作">
+        <LabeledRow label="アカウント削除">
           <Button variant="destructive" size="sm">
             削除
           </Button>
-        </SettingRow>
-      </SettingsCard>
+        </LabeledRow>
+      </SectionCard>
     </div>
   ),
 };

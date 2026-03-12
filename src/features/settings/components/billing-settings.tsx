@@ -9,8 +9,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-import { SettingRow } from './fields/SettingRow';
-import { SettingsCard } from './SettingsCard';
+import { LabeledRow } from './fields/LabeledRow';
+import { SectionCard } from './SectionCard';
 
 interface Plan {
   id: string;
@@ -75,7 +75,7 @@ export function BillingSettings() {
   return (
     <div className="space-y-8">
       {/* 現在のプラン */}
-      <SettingsCard title={t('settings.subscription.currentPlan')}>
+      <SectionCard title={t('settings.subscription.currentPlan')}>
         <div className="flex items-center gap-4 py-2">
           <div className="bg-state-active flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl">
             <Zap className="text-primary h-6 w-6" />
@@ -90,10 +90,10 @@ export function BillingSettings() {
             </p>
           </div>
         </div>
-      </SettingsCard>
+      </SectionCard>
 
       {/* プラン変更 */}
-      <SettingsCard
+      <SectionCard
         title={t('settings.subscription.selectPlan')}
         actions={
           <div className="bg-surface-inset flex gap-1 rounded-2xl p-1">
@@ -168,39 +168,39 @@ export function BillingSettings() {
             </div>
           ))}
         </div>
-      </SettingsCard>
+      </SectionCard>
 
       {/* お支払い方法 */}
-      <SettingsCard title={t('settings.subscription.paymentMethod')}>
-        <SettingRow label={t('settings.subscription.noCard')}>
+      <SectionCard title={t('settings.subscription.paymentMethod')}>
+        <LabeledRow label={t('settings.subscription.noCard')}>
           <Button variant="outline" disabled>
             <CreditCard className="mr-2 h-4 w-4" />
             {t('settings.subscription.addCard')}
           </Button>
-        </SettingRow>
+        </LabeledRow>
         <p className="text-muted-foreground text-xs">
           {t('settings.subscription.paymentComingSoon')}
         </p>
-      </SettingsCard>
+      </SectionCard>
 
       {/* 請求履歴・領収書 */}
-      <SettingsCard title={t('settings.subscription.billingHistory')}>
+      <SectionCard title={t('settings.subscription.billingHistory')}>
         <div className="flex h-32 flex-col items-center justify-center">
           <Receipt className="text-muted-foreground mb-2 h-8 w-8" />
           <p className="text-muted-foreground text-sm">
             {t('settings.subscription.noBillingHistory')}
           </p>
         </div>
-      </SettingsCard>
+      </SectionCard>
 
       {/* プランキャンセル */}
-      <SettingsCard title={t('settings.billing.cancelPlan')}>
-        <SettingRow label={t('settings.billing.cancelPlanDescription')}>
+      <SectionCard title={t('settings.billing.cancelPlan')}>
+        <LabeledRow label={t('settings.billing.cancelPlanDescription')}>
           <Button variant="outline" disabled>
             {t('settings.billing.cancelPlanComingSoon')}
           </Button>
-        </SettingRow>
-      </SettingsCard>
+        </LabeledRow>
+      </SectionCard>
     </div>
   );
 }

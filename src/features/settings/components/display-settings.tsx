@@ -21,8 +21,8 @@ import type { DateFormatType } from '@/stores/useCalendarSettingsStore';
 import { useUserSettings } from '../hooks/useUserSettings';
 import { getTimeZones } from '../utils/timezone-utils';
 
-import { SettingRow } from './fields/SettingRow';
-import { SettingsCard } from './SettingsCard';
+import { LabeledRow } from './fields/LabeledRow';
+import { SectionCard } from './SectionCard';
 
 /**
  * 表示設定コンポーネント
@@ -118,12 +118,12 @@ export function DisplaySettings() {
     return (
       <div className="space-y-8">
         {Array.from({ length: 3 }, (_, i) => (
-          <SettingsCard key={i}>
+          <SectionCard key={i}>
             <div className="space-y-4">
               <Skeleton className="h-12 w-full" />
               <Skeleton className="h-12 w-full" />
             </div>
-          </SettingsCard>
+          </SectionCard>
         ))}
       </div>
     );
@@ -132,9 +132,9 @@ export function DisplaySettings() {
   return (
     <div className="space-y-8">
       {/* Language & Theme */}
-      <SettingsCard title={t('settings.preferences.languageAndTheme')}>
+      <SectionCard title={t('settings.preferences.languageAndTheme')}>
         <div className="space-y-0">
-          <SettingRow label={t('settings.preferences.language')}>
+          <LabeledRow label={t('settings.preferences.language')}>
             <Select value={locale} onValueChange={handleLanguageChange}>
               <SelectTrigger variant="ghost">
                 <SelectValue placeholder={t('settings.preferences.selectLanguage')} />
@@ -147,8 +147,8 @@ export function DisplaySettings() {
                 ))}
               </SelectContent>
             </Select>
-          </SettingRow>
-          <SettingRow label={t('settings.preferences.themeLabel')}>
+          </LabeledRow>
+          <LabeledRow label={t('settings.preferences.themeLabel')}>
             <Select value={theme} onValueChange={handleThemeChange}>
               <SelectTrigger variant="ghost">
                 <SelectValue placeholder={t('settings.preferences.selectTheme')} />
@@ -159,14 +159,14 @@ export function DisplaySettings() {
                 <SelectItem value="dark">{t('settings.preferences.themeDark')}</SelectItem>
               </SelectContent>
             </Select>
-          </SettingRow>
+          </LabeledRow>
         </div>
-      </SettingsCard>
+      </SectionCard>
 
       {/* Region & Format */}
-      <SettingsCard title={t('settings.calendar.timeAndTimezone')}>
+      <SectionCard title={t('settings.calendar.timeAndTimezone')}>
         <div className="space-y-0">
-          <SettingRow label={t('settings.calendar.timezone')}>
+          <LabeledRow label={t('settings.calendar.timezone')}>
             <Select value={settings.timezone} onValueChange={handleTimezoneChange}>
               <SelectTrigger variant="ghost">
                 <SelectValue placeholder={t('settings.calendar.selectTimezone')} />
@@ -179,8 +179,8 @@ export function DisplaySettings() {
                 ))}
               </SelectContent>
             </Select>
-          </SettingRow>
-          <SettingRow label={t('settings.calendar.timeFormat')}>
+          </LabeledRow>
+          <LabeledRow label={t('settings.calendar.timeFormat')}>
             <Select value={settings.timeFormat} onValueChange={handleTimeFormatChange}>
               <SelectTrigger variant="ghost">
                 <SelectValue placeholder={t('settings.calendar.selectTimeFormat')} />
@@ -190,8 +190,8 @@ export function DisplaySettings() {
                 <SelectItem value="12h">{t('settings.calendar.timeFormat12h')}</SelectItem>
               </SelectContent>
             </Select>
-          </SettingRow>
-          <SettingRow label={t('settings.calendar.dateFormat')}>
+          </LabeledRow>
+          <LabeledRow label={t('settings.calendar.dateFormat')}>
             <Select value={settings.dateFormat} onValueChange={handleDateFormatChange}>
               <SelectTrigger variant="ghost">
                 <SelectValue placeholder={t('settings.calendar.selectDateFormat')} />
@@ -203,8 +203,8 @@ export function DisplaySettings() {
                 <SelectItem value="yyyy-MM-dd">{t('settings.calendar.dateFormatISO')}</SelectItem>
               </SelectContent>
             </Select>
-          </SettingRow>
-          <SettingRow label={t('settings.calendar.weekStartsOn')}>
+          </LabeledRow>
+          <LabeledRow label={t('settings.calendar.weekStartsOn')}>
             <Select value={String(settings.weekStartsOn)} onValueChange={handleWeekStartsOnChange}>
               <SelectTrigger variant="ghost">
                 <SelectValue placeholder={t('settings.calendar.selectStartDay')} />
@@ -215,14 +215,14 @@ export function DisplaySettings() {
                 <SelectItem value="6">{t('settings.calendar.saturday')}</SelectItem>
               </SelectContent>
             </Select>
-          </SettingRow>
+          </LabeledRow>
         </div>
-      </SettingsCard>
+      </SectionCard>
 
       {/* Default View & Duration */}
-      <SettingsCard title={t('settings.calendar.defaultViewSection')}>
+      <SectionCard title={t('settings.calendar.defaultViewSection')}>
         <div className="space-y-0">
-          <SettingRow label={t('settings.calendar.defaultView')}>
+          <LabeledRow label={t('settings.calendar.defaultView')}>
             <Select value={settings.defaultView} onValueChange={handleDefaultViewChange}>
               <SelectTrigger variant="ghost">
                 <SelectValue placeholder={t('settings.calendar.selectDefaultView')} />
@@ -234,8 +234,8 @@ export function DisplaySettings() {
                 <SelectItem value="week">{t('settings.calendar.viewWeek')}</SelectItem>
               </SelectContent>
             </Select>
-          </SettingRow>
-          <SettingRow label={t('settings.calendar.defaultDuration')}>
+          </LabeledRow>
+          <LabeledRow label={t('settings.calendar.defaultDuration')}>
             <Select
               value={String(settings.defaultDuration)}
               onValueChange={handleDefaultDurationChange}
@@ -251,14 +251,14 @@ export function DisplaySettings() {
                 <SelectItem value="120">{t('settings.calendar.duration2hours')}</SelectItem>
               </SelectContent>
             </Select>
-          </SettingRow>
+          </LabeledRow>
         </div>
-      </SettingsCard>
+      </SectionCard>
 
       {/* Chronotype Display */}
       {settings.chronotype?.enabled && (
-        <SettingsCard title={t('settings.chronotype.title')}>
-          <SettingRow
+        <SectionCard title={t('settings.chronotype.title')}>
+          <LabeledRow
             label={t('settings.chronotype.showOnTimeline')}
             description={t('settings.chronotype.showOnTimelineDesc')}
           >
@@ -266,8 +266,8 @@ export function DisplaySettings() {
               checked={showChronotypeOnTimeline}
               onCheckedChange={handleChronotypeTimelineToggle}
             />
-          </SettingRow>
-        </SettingsCard>
+          </LabeledRow>
+        </SectionCard>
       )}
     </div>
   );

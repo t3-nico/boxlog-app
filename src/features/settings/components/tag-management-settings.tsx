@@ -14,7 +14,7 @@ import { TAG_COLOR_MAP, TAG_COLOR_NAMES, type TagColorName } from '@/lib/tag-col
 import { cn } from '@/lib/utils';
 import { api } from '@/platform/trpc';
 
-import { SettingsCard } from './SettingsCard';
+import { SectionCard } from './SectionCard';
 
 /**
  * タグ管理設定コンポーネント
@@ -103,13 +103,13 @@ export function TagManagementSettings() {
 
   if (isPending) {
     return (
-      <SettingsCard>
+      <SectionCard>
         <div className="space-y-4">
           <Skeleton className="h-12 w-full" />
           <Skeleton className="h-12 w-full" />
           <Skeleton className="h-12 w-full" />
         </div>
-      </SettingsCard>
+      </SectionCard>
     );
   }
 
@@ -117,7 +117,7 @@ export function TagManagementSettings() {
 
   return (
     <div className="space-y-8">
-      <SettingsCard
+      <SectionCard
         title={t('settings.dialog.categories.tags')}
         actions={
           !isCreating ? (
@@ -216,7 +216,7 @@ export function TagManagementSettings() {
             ))}
           </div>
         )}
-      </SettingsCard>
+      </SectionCard>
     </div>
   );
 }

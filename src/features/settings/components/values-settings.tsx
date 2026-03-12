@@ -12,7 +12,7 @@ import { CACHE_5_MINUTES } from '@/lib/date';
 import { cn } from '@/lib/utils';
 import { api } from '@/platform/trpc';
 import { useAutoSaveSettings } from '../hooks/useAutoSaveSettings';
-import { SettingsCard } from './SettingsCard';
+import { SectionCard } from './SectionCard';
 
 import type { PersonalizationCategory, PersonalizationValues } from '../types/personalization';
 import { PERSONALIZATION_CATEGORIES } from '../types/personalization';
@@ -112,18 +112,18 @@ export function ValuesSettings() {
 
   if (isPending) {
     return (
-      <SettingsCard title={t('settings.values.title')}>
+      <SectionCard title={t('settings.values.title')}>
         <div className="space-y-4">
           {Array.from({ length: 3 }, (_, i) => (
             <Skeleton key={i} className="h-12 w-full rounded-lg" />
           ))}
         </div>
-      </SettingsCard>
+      </SectionCard>
     );
   }
 
   return (
-    <SettingsCard title={t('settings.values.title')}>
+    <SectionCard title={t('settings.values.title')}>
       <p className="text-muted-foreground mb-2 text-sm">{t('settings.values.description')}</p>
       <p className="text-muted-foreground mb-4 text-xs">
         {t('settings.values.filledCount', {
@@ -149,7 +149,7 @@ export function ValuesSettings() {
           );
         })}
       </div>
-    </SettingsCard>
+    </SectionCard>
   );
 }
 

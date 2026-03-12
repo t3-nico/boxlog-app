@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 
 import { cn } from '@/lib/utils';
 
-interface SettingsCardProps {
+interface SectionCardProps {
   title?: ReactNode;
   children: ReactNode;
   className?: string;
@@ -17,7 +17,7 @@ interface SettingsCardProps {
  * カード風UIではなく、セパレーターで区切るフラットなスタイル。
  * ChatGPT設定画面風のシンプルなデザイン。
  */
-export function SettingsCard({ title, children, className, actions }: SettingsCardProps) {
+export function SectionCard({ title, children, className, actions }: SectionCardProps) {
   return (
     <section className={cn('text-foreground', className)}>
       <div>

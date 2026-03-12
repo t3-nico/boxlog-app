@@ -28,7 +28,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 
-import { SettingsCard } from './SettingsCard';
+import { SectionCard } from './SectionCard';
 
 import type { DragEndEvent, DropAnimation, Modifier } from '@dnd-kit/core';
 import type { AnimateLayoutChanges } from '@dnd-kit/sortable';
@@ -295,7 +295,7 @@ function ValuesSettingsDemo() {
   const [categories, setCategories] = useState(MOCK_CATEGORIES);
 
   return (
-    <SettingsCard title="価値評定スケール">
+    <SectionCard title="価値評定スケール">
       <p className="text-muted-foreground mb-4 text-sm">
         ACTに基づく12領域の価値観を記録してください。AIがパーソナライズされたアドバイスをする際の最重要コンテキストになります。
       </p>
@@ -330,7 +330,7 @@ function ValuesSettingsDemo() {
           </div>
         ))}
       </div>
-    </SettingsCard>
+    </SectionCard>
   );
 }
 
@@ -356,7 +356,7 @@ function ValueRankingDemo() {
   };
 
   return (
-    <SettingsCard title="価値観キーワードランキング">
+    <SectionCard title="価値観キーワードランキング">
       <p className="text-muted-foreground mb-4 text-sm">
         共感するキーワードを選び、大事な順にトップ10を並べてください。
       </p>
@@ -441,7 +441,7 @@ function ValueRankingDemo() {
           </DndContext>
         </div>
       )}
-    </SettingsCard>
+    </SectionCard>
   );
 }
 
@@ -449,7 +449,7 @@ function AIStyleDemo() {
   const [style, setStyle] = useState('coach');
 
   return (
-    <SettingsCard title="AIコミュニケーションスタイル">
+    <SectionCard title="AIコミュニケーションスタイル">
       <p className="text-muted-foreground mb-4 text-sm">
         チャットパネルでAIがどのようにコミュニケーションするかを選んでください。
       </p>
@@ -485,7 +485,7 @@ function AIStyleDemo() {
           />
         </div>
       )}
-    </SettingsCard>
+    </SectionCard>
   );
 }
 
@@ -546,7 +546,7 @@ export const AIStyle: Story = {
 export const SavingState: Story = {
   render: () => (
     <div className="mx-auto max-w-2xl space-y-8">
-      <SettingsCard title="価値評定スケール">
+      <SectionCard title="価値評定スケール">
         <div className="border-border rounded-2xl border p-4">
           <div className="mb-2 flex items-center justify-between">
             <div>
@@ -564,9 +564,9 @@ export const SavingState: Story = {
             rows={2}
           />
         </div>
-      </SettingsCard>
+      </SectionCard>
 
-      <SettingsCard title="価値観キーワードランキング">
+      <SectionCard title="価値観キーワードランキング">
         <div className="text-muted-foreground mb-2 text-xs">5 / 10 選択中</div>
         <div className="flex flex-wrap gap-2">
           {['誠実さ', '好奇心', '規律', '成長', 'バランス'].map((label) => (
@@ -580,7 +580,7 @@ export const SavingState: Story = {
             </Badge>
           ))}
         </div>
-      </SettingsCard>
+      </SectionCard>
     </div>
   ),
 };

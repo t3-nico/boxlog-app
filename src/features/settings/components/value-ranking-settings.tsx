@@ -31,7 +31,7 @@ import { CACHE_5_MINUTES } from '@/lib/date';
 import { cn } from '@/lib/utils';
 import { api } from '@/platform/trpc';
 import { useAutoSaveSettings } from '../hooks/useAutoSaveSettings';
-import { SettingsCard } from './SettingsCard';
+import { SectionCard } from './SectionCard';
 
 import type { DragEndEvent, DropAnimation, Modifier } from '@dnd-kit/core';
 import type { AnimateLayoutChanges } from '@dnd-kit/sortable';
@@ -176,21 +176,21 @@ export function ValueRankingSettings() {
 
   if (isPending) {
     return (
-      <SettingsCard title={t('settings.values.ranking.title')}>
+      <SectionCard title={t('settings.values.ranking.title')}>
         <Skeleton className="mb-4 h-4 w-48" />
         <div className="flex flex-wrap gap-2">
           {Array.from({ length: 12 }, (_, i) => (
             <Skeleton key={i} className="h-7 w-16 rounded-full" />
           ))}
         </div>
-      </SettingsCard>
+      </SectionCard>
     );
   }
 
   // Editing state
   if (view === 'editing') {
     return (
-      <SettingsCard title={t('settings.values.ranking.title')}>
+      <SectionCard title={t('settings.values.ranking.title')}>
         <p className="text-muted-foreground mb-4 text-sm">
           {t('settings.values.ranking.description')}
         </p>
@@ -213,14 +213,14 @@ export function ValueRankingSettings() {
             {t('settings.values.ranking.done')}
           </Button>
         </div>
-      </SettingsCard>
+      </SectionCard>
     );
   }
 
   // Empty state
   if (view === 'empty') {
     return (
-      <SettingsCard title={t('settings.values.ranking.title')}>
+      <SectionCard title={t('settings.values.ranking.title')}>
         <div className="space-y-4 py-2">
           <p className="text-muted-foreground text-sm">
             {t('settings.values.ranking.notSelected')}
@@ -229,13 +229,13 @@ export function ValueRankingSettings() {
             {t('settings.values.ranking.select')}
           </Button>
         </div>
-      </SettingsCard>
+      </SectionCard>
     );
   }
 
   // Idle state (result display)
   return (
-    <SettingsCard title={t('settings.values.ranking.title')}>
+    <SectionCard title={t('settings.values.ranking.title')}>
       <p className="text-muted-foreground mb-4 text-sm">
         {t('settings.values.ranking.idleDescription')}
       </p>
@@ -255,7 +255,7 @@ export function ValueRankingSettings() {
           {t('settings.values.ranking.edit')}
         </Button>
       </div>
-    </SettingsCard>
+    </SectionCard>
   );
 }
 

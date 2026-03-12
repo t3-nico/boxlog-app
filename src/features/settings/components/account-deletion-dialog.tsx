@@ -20,7 +20,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { logger } from '@/lib/logger';
 import { api } from '@/platform/trpc';
-import { SettingRow } from './fields/SettingRow';
+import { LabeledRow } from './fields/LabeledRow';
 
 /**
  * 🗑️ Account Deletion Dialog Component
@@ -77,7 +77,7 @@ export function AccountDeletionDialog() {
 
   return (
     <>
-      <SettingRow
+      <LabeledRow
         label={t('settings.account.deletion.title')}
         description={t('settings.account.deletion.warningMessage')}
       >
@@ -91,7 +91,7 @@ export function AccountDeletionDialog() {
             ? t('settings.account.deletion.deleting')
             : t('settings.account.deletion.buttonText')}
         </Button>
-      </SettingRow>
+      </LabeledRow>
 
       <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
         <AlertDialogContent className="max-w-lg">

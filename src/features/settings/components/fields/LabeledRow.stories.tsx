@@ -10,12 +10,12 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 
-import { SettingRow } from './SettingRow';
+import { LabeledRow } from './LabeledRow';
 
-/** SettingRow - 設定画面の行コンポーネント（2カラム: ラベル | コントロール） */
+/** LabeledRow - 設定画面の行コンポーネント（2カラム: ラベル | コントロール） */
 const meta = {
-  title: 'Features/Settings/SettingRow',
-  component: SettingRow,
+  title: 'Features/Settings/LabeledRow',
+  component: LabeledRow,
   parameters: {
     layout: 'padded',
   },
@@ -36,7 +36,7 @@ const meta = {
       table: { disable: true },
     },
   },
-} satisfies Meta<typeof SettingRow>;
+} satisfies Meta<typeof LabeledRow>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -47,7 +47,7 @@ export const WithSelect: Story = {
     label: '言語',
   },
   render: (args) => (
-    <SettingRow {...args}>
+    <LabeledRow {...args}>
       <Select defaultValue="ja">
         <SelectTrigger variant="ghost">
           <SelectValue />
@@ -57,7 +57,7 @@ export const WithSelect: Story = {
           <SelectItem value="en">English</SelectItem>
         </SelectContent>
       </Select>
-    </SettingRow>
+    </LabeledRow>
   ),
 };
 
@@ -67,9 +67,9 @@ export const WithSwitch: Story = {
     label: 'プッシュ通知',
   },
   render: (args) => (
-    <SettingRow {...args}>
+    <LabeledRow {...args}>
       <Switch defaultChecked />
-    </SettingRow>
+    </LabeledRow>
   ),
 };
 
@@ -80,9 +80,9 @@ export const WithDescription: Story = {
     description: '••••••••',
   },
   render: (args) => (
-    <SettingRow {...args}>
+    <LabeledRow {...args}>
       <Button variant="outline">変更</Button>
-    </SettingRow>
+    </LabeledRow>
   ),
 };
 
@@ -92,11 +92,11 @@ export const WithButton: Story = {
     label: 'アカウント削除',
   },
   render: (args) => (
-    <SettingRow {...args}>
+    <LabeledRow {...args}>
       <Button variant="destructive" size="sm">
         削除
       </Button>
-    </SettingRow>
+    </LabeledRow>
   ),
 };
 
@@ -106,9 +106,9 @@ export const TextOnly: Story = {
     label: 'タイムゾーン',
   },
   render: (args) => (
-    <SettingRow {...args}>
+    <LabeledRow {...args}>
       <span className="text-muted-foreground text-base">Asia/Tokyo (UTC+9)</span>
-    </SettingRow>
+    </LabeledRow>
   ),
 };
 
@@ -119,7 +119,7 @@ export const AllPatterns: Story = {
   },
   render: () => (
     <div className="w-full max-w-2xl space-y-0 divide-y">
-      <SettingRow label="言語">
+      <LabeledRow label="言語">
         <Select defaultValue="ja">
           <SelectTrigger variant="ghost">
             <SelectValue />
@@ -129,8 +129,8 @@ export const AllPatterns: Story = {
             <SelectItem value="en">English</SelectItem>
           </SelectContent>
         </Select>
-      </SettingRow>
-      <SettingRow label="テーマ">
+      </LabeledRow>
+      <LabeledRow label="テーマ">
         <Select defaultValue="system">
           <SelectTrigger variant="ghost">
             <SelectValue />
@@ -141,24 +141,24 @@ export const AllPatterns: Story = {
             <SelectItem value="dark">ダーク</SelectItem>
           </SelectContent>
         </Select>
-      </SettingRow>
-      <SettingRow label="プッシュ通知">
+      </LabeledRow>
+      <LabeledRow label="プッシュ通知">
         <Switch defaultChecked />
-      </SettingRow>
-      <SettingRow label="コンパクトモード">
+      </LabeledRow>
+      <LabeledRow label="コンパクトモード">
         <Switch />
-      </SettingRow>
-      <SettingRow label="パスワード" description="••••••••">
+      </LabeledRow>
+      <LabeledRow label="パスワード" description="••••••••">
         <Button variant="outline">変更</Button>
-      </SettingRow>
-      <SettingRow label="メールアドレス" description="user@example.com">
+      </LabeledRow>
+      <LabeledRow label="メールアドレス" description="user@example.com">
         <Button variant="outline">変更</Button>
-      </SettingRow>
-      <SettingRow label="アカウント削除">
+      </LabeledRow>
+      <LabeledRow label="アカウント削除">
         <Button variant="destructive" size="sm">
           削除
         </Button>
-      </SettingRow>
+      </LabeledRow>
     </div>
   ),
 };

@@ -13,8 +13,8 @@ import { Switch } from '@/components/ui/switch';
 
 import { getTimeZones } from '../utils/timezone-utils';
 
-import { SettingRow } from './fields/SettingRow';
-import { SettingsCard } from './SettingsCard';
+import { LabeledRow } from './fields/LabeledRow';
+import { SectionCard } from './SectionCard';
 
 // ─────────────────────────────────────────────────────────
 // Demo Components
@@ -27,8 +27,8 @@ function TimezoneSelectDemo() {
 
   return (
     <div className="max-w-2xl">
-      <SettingsCard title="時間とタイムゾーン">
-        <SettingRow label="タイムゾーン">
+      <SectionCard title="時間とタイムゾーン">
+        <LabeledRow label="タイムゾーン">
           <Select value={timezone} onValueChange={setTimezone}>
             <SelectTrigger variant="ghost">
               <SelectValue />
@@ -41,8 +41,8 @@ function TimezoneSelectDemo() {
               ))}
             </SelectContent>
           </Select>
-        </SettingRow>
-        <SettingRow label="時刻形式">
+        </LabeledRow>
+        <LabeledRow label="時刻形式">
           <Select defaultValue="24h">
             <SelectTrigger variant="ghost">
               <SelectValue />
@@ -52,8 +52,8 @@ function TimezoneSelectDemo() {
               <SelectItem value="12h">12時間 (2:00 PM)</SelectItem>
             </SelectContent>
           </Select>
-        </SettingRow>
-        <SettingRow label="日付形式">
+        </LabeledRow>
+        <LabeledRow label="日付形式">
           <Select defaultValue="yyyy/MM/dd">
             <SelectTrigger variant="ghost">
               <SelectValue />
@@ -65,8 +65,8 @@ function TimezoneSelectDemo() {
               <SelectItem value="yyyy-MM-dd">2025-01-22 (ISO)</SelectItem>
             </SelectContent>
           </Select>
-        </SettingRow>
-      </SettingsCard>
+        </LabeledRow>
+      </SectionCard>
     </div>
   );
 }
@@ -78,8 +78,8 @@ function FullCalendarSettingsDemo() {
 
   return (
     <div className="max-w-2xl space-y-8">
-      <SettingsCard title="時間とタイムゾーン">
-        <SettingRow label="タイムゾーン">
+      <SectionCard title="時間とタイムゾーン">
+        <LabeledRow label="タイムゾーン">
           <Select value={timezone} onValueChange={setTimezone}>
             <SelectTrigger variant="ghost">
               <SelectValue />
@@ -92,8 +92,8 @@ function FullCalendarSettingsDemo() {
               ))}
             </SelectContent>
           </Select>
-        </SettingRow>
-        <SettingRow label="時刻形式">
+        </LabeledRow>
+        <LabeledRow label="時刻形式">
           <Select defaultValue="24h">
             <SelectTrigger variant="ghost">
               <SelectValue />
@@ -103,8 +103,8 @@ function FullCalendarSettingsDemo() {
               <SelectItem value="12h">12時間 (2:00 PM)</SelectItem>
             </SelectContent>
           </Select>
-        </SettingRow>
-        <SettingRow label="日付形式">
+        </LabeledRow>
+        <LabeledRow label="日付形式">
           <Select defaultValue="yyyy/MM/dd">
             <SelectTrigger variant="ghost">
               <SelectValue />
@@ -116,11 +116,11 @@ function FullCalendarSettingsDemo() {
               <SelectItem value="yyyy-MM-dd">2025-01-22 (ISO)</SelectItem>
             </SelectContent>
           </Select>
-        </SettingRow>
-      </SettingsCard>
+        </LabeledRow>
+      </SectionCard>
 
-      <SettingsCard title="デフォルト表示">
-        <SettingRow label="デフォルトビュー">
+      <SectionCard title="デフォルト表示">
+        <LabeledRow label="デフォルトビュー">
           <Select defaultValue="week">
             <SelectTrigger variant="ghost">
               <SelectValue />
@@ -132,11 +132,11 @@ function FullCalendarSettingsDemo() {
               <SelectItem value="week">週</SelectItem>
             </SelectContent>
           </Select>
-        </SettingRow>
-      </SettingsCard>
+        </LabeledRow>
+      </SectionCard>
 
-      <SettingsCard title="週とカレンダー表示">
-        <SettingRow label="週の開始日">
+      <SectionCard title="週とカレンダー表示">
+        <LabeledRow label="週の開始日">
           <Select value={weekStartsOn} onValueChange={setWeekStartsOn}>
             <SelectTrigger variant="ghost">
               <SelectValue />
@@ -147,14 +147,14 @@ function FullCalendarSettingsDemo() {
               <SelectItem value="6">土曜日</SelectItem>
             </SelectContent>
           </Select>
-        </SettingRow>
-        <SettingRow label="週番号を表示">
+        </LabeledRow>
+        <LabeledRow label="週番号を表示">
           <Switch checked={showWeekNumbers} onCheckedChange={setShowWeekNumbers} />
-        </SettingRow>
-      </SettingsCard>
+        </LabeledRow>
+      </SectionCard>
 
-      <SettingsCard title="勤務時間">
-        <SettingRow label="開始">
+      <SectionCard title="勤務時間">
+        <LabeledRow label="開始">
           <Select defaultValue="9">
             <SelectTrigger variant="ghost">
               <SelectValue />
@@ -167,8 +167,8 @@ function FullCalendarSettingsDemo() {
               ))}
             </SelectContent>
           </Select>
-        </SettingRow>
-        <SettingRow label="終了">
+        </LabeledRow>
+        <LabeledRow label="終了">
           <Select defaultValue="18">
             <SelectTrigger variant="ghost">
               <SelectValue />
@@ -181,13 +181,13 @@ function FullCalendarSettingsDemo() {
               ))}
             </SelectContent>
           </Select>
-        </SettingRow>
+        </LabeledRow>
         <div className="bg-card border-border mt-4 rounded-lg border p-4">
           <p className="text-muted-foreground text-sm">
             営業時間プレビュー: <span className="text-foreground font-normal">9:00 - 18:00</span>
           </p>
         </div>
-      </SettingsCard>
+      </SectionCard>
     </div>
   );
 }
@@ -199,7 +199,7 @@ function FullCalendarSettingsDemo() {
 function TimezoneListReference() {
   return (
     <div className="max-w-2xl">
-      <SettingsCard title="対応タイムゾーン一覧 (17ゾーン)">
+      <SectionCard title="対応タイムゾーン一覧 (17ゾーン)">
         <div className="space-y-0">
           {TIMEZONES.map((tz) => (
             <div
@@ -211,7 +211,7 @@ function TimezoneListReference() {
             </div>
           ))}
         </div>
-      </SettingsCard>
+      </SectionCard>
     </div>
   );
 }

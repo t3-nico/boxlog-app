@@ -20,7 +20,7 @@ import {
 } from '../lib/constants';
 import { getPeakHours, getPresetChronotypeProfile } from '../lib/utils';
 
-import { SettingsCard } from '@/components/common/SettingsCard';
+import { SectionCard } from '@/components/common/SectionCard';
 import { useAutoSaveSettings } from '@/hooks/useAutoSaveSettings';
 
 import { ChronotypeQuiz } from './chronotype-quiz';
@@ -174,25 +174,25 @@ export function ChronotypeSettings() {
 
   if (isPending) {
     return (
-      <SettingsCard title={t('settings.chronotype.title')}>
+      <SectionCard title={t('settings.chronotype.title')}>
         <Skeleton className="h-12 w-full rounded-lg" />
-      </SettingsCard>
+      </SectionCard>
     );
   }
 
   // Quiz state
   if (view === 'quiz') {
     return (
-      <SettingsCard title={t('settings.chronotype.quiz.title')}>
+      <SectionCard title={t('settings.chronotype.quiz.title')}>
         <ChronotypeQuiz onComplete={handleQuizComplete} onCancel={handleCancelQuiz} />
-      </SettingsCard>
+      </SectionCard>
     );
   }
 
   // Empty state (not diagnosed yet)
   if (view === 'empty') {
     return (
-      <SettingsCard title={t('settings.chronotype.title')}>
+      <SectionCard title={t('settings.chronotype.title')}>
         <div className="space-y-4 py-2">
           <p className="text-muted-foreground text-sm">{t('settings.chronotype.notDiagnosed')}</p>
           <Button variant="outline" size="sm" onClick={handleStartQuiz}>
@@ -211,13 +211,13 @@ export function ChronotypeSettings() {
             <ExternalLink className="h-3 w-3" />
           </a>
         </div>
-      </SettingsCard>
+      </SectionCard>
     );
   }
 
   // Idle state (result display)
   return (
-    <SettingsCard title={t('settings.chronotype.title')}>
+    <SectionCard title={t('settings.chronotype.title')}>
       {selectedProfile ? (
         <div className="space-y-4">
           <div className="flex items-start gap-4">
@@ -262,6 +262,6 @@ export function ChronotypeSettings() {
           </div>
         </div>
       ) : null}
-    </SettingsCard>
+    </SectionCard>
   );
 }
