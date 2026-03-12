@@ -7,7 +7,7 @@ import { Search } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
-import { DateNavigator } from '@/components/DateNavigator';
+import { DateNavigator } from '@/components/common/DateNavigator';
 import { Button } from '@/components/ui/button';
 import { useGlobalSearch } from '@/hooks/use-global-search';
 import { AppHeader } from '@/shell/layout/AppHeader';
@@ -69,7 +69,9 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
   }) => {
     const t = useTranslations('calendar');
     const { open: openSearch } = useGlobalSearch();
-    const showWeekNumbers = useCalendarSettingsStore((state) => state.showWeekNumbers);
+    const showWeekNumbers = useCalendarSettingsStore(
+      (s) => s.sessionOverrides.showWeekNumbers ?? s.showWeekNumbers,
+    );
 
     // スワイプで前後の期間に移動
     const handleSwipeLeft = useCallback(() => {

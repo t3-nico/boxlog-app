@@ -6,7 +6,10 @@ import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
  * 週末表示切り替えのキーボードショートカット（Cmd/Ctrl + W）を管理するフック
  */
 export function useWeekendToggleShortcut() {
-  const { showWeekends, updateSettings } = useCalendarSettingsStore();
+  const showWeekends = useCalendarSettingsStore(
+    (s) => s.sessionOverrides.showWeekends ?? s.showWeekends,
+  );
+  const updateSessionOverride = useCalendarSettingsStore((s) => s.updateSessionOverride);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -35,7 +38,7 @@ export function useWeekendToggleShortcut() {
       if (hasOpenModal) return;
 
       // 週末表示を切り替え
-      updateSettings({ showWeekends: !showWeekends });
+      updateSessionOverride({ showWeekends: !showWeekends });
 
       // 成功フィードバック（短時間のトースト風通知）
       showToggleFeedback(!showWeekends);
@@ -46,11 +49,11 @@ export function useWeekendToggleShortcut() {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [showWeekends, updateSettings]);
+  }, [showWeekends, updateSessionOverride]);
 
   return {
     showWeekends,
-    toggleWeekends: () => updateSettings({ showWeekends: !showWeekends }),
+    toggleWeekends: () => updateSessionOverride({ showWeekends: !showWeekends }),
   };
 }
 

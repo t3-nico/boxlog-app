@@ -112,7 +112,9 @@ export function useCalendarComposition({
   // Settings
   // =========================================================================
   const timezone = useCalendarSettingsStore((state) => state.timezone);
-  const showWeekends = useCalendarSettingsStore((state) => state.showWeekends);
+  const showWeekends = useCalendarSettingsStore(
+    (s) => s.sessionOverrides.showWeekends ?? s.showWeekends,
+  );
   const updateSettings = useCalendarSettingsStore((state) => state.updateSettings);
 
   // タイムゾーン設定の初期化（マウント時のみ）

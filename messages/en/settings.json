@@ -196,8 +196,8 @@
       "sunday": "Sunday",
       "monday": "Monday",
       "saturday": "Saturday",
+      "showWeekends": "Show weekends",
       "showWeekNumbers": "Show week numbers",
-      "showWeekNumbersDesc": "Display week numbers in calendar view",
       "defaultTaskSettings": "Creation Defaults",
       "defaultTaskSettingsDesc": "Default behavior when creating new entries",
       "defaultDuration": "Default duration",
@@ -225,7 +225,11 @@
       "viewDay": "Day",
       "view3Day": "3 Days",
       "view5Day": "5 Days",
-      "viewWeek": "Week"
+      "viewWeek": "Week",
+      "density": "Density",
+      "densityCompact": "Compact",
+      "densityDefault": "Default",
+      "densitySpacious": "Spacious"
     },
     "chronotype": {
       "title": "Chronotype",

@@ -72,6 +72,8 @@ export function useUserSettings() {
         snapInterval: dbSettings.snapInterval,
         chronotype: chronotypeSettings,
         planRecordMode: dbSettings.planRecordMode,
+        ...(dbSettings.defaultView && { defaultView: dbSettings.defaultView }),
+        ...(dbSettings.hourHeightDensity && { hourHeightDensity: dbSettings.hourHeightDensity }),
       });
     }
   }, [dbSettings, isPending, updateSettings]);
@@ -103,6 +105,9 @@ export function useUserSettings() {
         dbInput.chronotypeDisplayMode = settings.chronotype.displayMode;
         dbInput.chronotypeOpacity = settings.chronotype.opacity;
       }
+      if (settings.defaultView !== undefined) dbInput.defaultView = settings.defaultView;
+      if (settings.hourHeightDensity !== undefined)
+        dbInput.hourHeightDensity = settings.hourHeightDensity;
       if (settings.planRecordMode !== undefined) dbInput.planRecordMode = settings.planRecordMode;
 
       // DB保存対象のフィールドがある場合のみmutationを実行

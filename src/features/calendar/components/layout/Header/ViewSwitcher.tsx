@@ -52,10 +52,16 @@ const DAY_COUNTS = [2, 3, 4, 5, 6, 7, 8, 9] as const;
  */
 export function ViewSwitcher({ currentView, onChange, className }: ViewSwitcherProps) {
   const t = useTranslations();
-  const showWeekends = useCalendarSettingsStore((s) => s.showWeekends);
-  const showWeekNumbers = useCalendarSettingsStore((s) => s.showWeekNumbers);
-  const hourHeightDensity = useCalendarSettingsStore((s) => s.hourHeightDensity);
-  const updateSettings = useCalendarSettingsStore((s) => s.updateSettings);
+  const showWeekends = useCalendarSettingsStore(
+    (s) => s.sessionOverrides.showWeekends ?? s.showWeekends,
+  );
+  const showWeekNumbers = useCalendarSettingsStore(
+    (s) => s.sessionOverrides.showWeekNumbers ?? s.showWeekNumbers,
+  );
+  const hourHeightDensity = useCalendarSettingsStore(
+    (s) => s.sessionOverrides.hourHeightDensity ?? s.hourHeightDensity,
+  );
+  const updateSessionOverride = useCalendarSettingsStore((s) => s.updateSessionOverride);
 
   const currentLabel = isMultiDayView(currentView)
     ? t('calendar.views.multiday', { count: parseInt(currentView) })
@@ -72,12 +78,12 @@ export function ViewSwitcher({ currentView, onChange, className }: ViewSwitcherP
   );
 
   const handleToggleWeekends = useCallback(() => {
-    updateSettings({ showWeekends: !showWeekends });
-  }, [showWeekends, updateSettings]);
+    updateSessionOverride({ showWeekends: !showWeekends });
+  }, [showWeekends, updateSessionOverride]);
 
   const handleToggleWeekNumbers = useCallback(() => {
-    updateSettings({ showWeekNumbers: !showWeekNumbers });
-  }, [showWeekNumbers, updateSettings]);
+    updateSessionOverride({ showWeekNumbers: !showWeekNumbers });
+  }, [showWeekNumbers, updateSessionOverride]);
 
   const DENSITY_OPTIONS = ['compact', 'default', 'spacious'] as const;
 
@@ -221,7 +227,7 @@ export function ViewSwitcher({ currentView, onChange, className }: ViewSwitcherP
                   <DropdownMenuCheckboxItem
                     key={d}
                     checked={hourHeightDensity === d}
-                    onCheckedChange={() => updateSettings({ hourHeightDensity: d })}
+                    onCheckedChange={() => updateSessionOverride({ hourHeightDensity: d })}
                   >
                     {t(`calendar.views.density_${d}`)}
                   </DropdownMenuCheckboxItem>

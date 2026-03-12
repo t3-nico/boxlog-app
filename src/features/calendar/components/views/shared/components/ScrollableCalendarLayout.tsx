@@ -59,7 +59,9 @@ export const CalendarDateHeader = ({
   timeColumnWidth = TIME_COLUMN_WIDTH,
   weekNumber,
 }: CalendarDateHeaderProps) => {
-  const showWeekNumbers = useCalendarSettingsStore((state) => state.showWeekNumbers);
+  const showWeekNumbers = useCalendarSettingsStore(
+    (s) => s.sessionOverrides.showWeekNumbers ?? s.showWeekNumbers,
+  );
 
   // 設定がオンで週番号が渡されている場合のみ表示
   const shouldShowWeekNumber = showWeekNumbers && weekNumber != null;

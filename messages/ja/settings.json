@@ -196,8 +196,8 @@
       "sunday": "日曜日",
       "monday": "月曜日",
       "saturday": "土曜日",
+      "showWeekends": "週末を表示",
       "showWeekNumbers": "週番号を表示",
-      "showWeekNumbersDesc": "カレンダービューで週番号を表示",
       "defaultTaskSettings": "作成時のデフォルト",
       "defaultTaskSettingsDesc": "新しいエントリー作成時のデフォルト動作",
       "defaultDuration": "デフォルト時間",
@@ -225,7 +225,11 @@
       "viewDay": "日表示",
       "view3Day": "3日表示",
       "view5Day": "5日表示",
-      "viewWeek": "週表示"
+      "viewWeek": "週表示",
+      "density": "密度",
+      "densityCompact": "コンパクト",
+      "densityDefault": "デフォルト",
+      "densitySpacious": "ゆったり"
     },
     "chronotype": {
       "title": "クロノタイプ",

@@ -97,6 +97,27 @@ export function DisplaySettings() {
     [saveSettings],
   );
 
+  const handleDensityChange = useCallback(
+    (value: string) => {
+      saveSettings({ hourHeightDensity: value as 'compact' | 'default' | 'spacious' });
+    },
+    [saveSettings],
+  );
+
+  const handleShowWeekendsChange = useCallback(
+    (checked: boolean) => {
+      saveSettings({ showWeekends: checked });
+    },
+    [saveSettings],
+  );
+
+  const handleShowWeekNumbersChange = useCallback(
+    (checked: boolean) => {
+      saveSettings({ showWeekNumbers: checked });
+    },
+    [saveSettings],
+  );
+
   const showChronotypeOnTimeline =
     settings.chronotype?.displayMode === 'background' ||
     settings.chronotype?.displayMode === 'both';
@@ -249,6 +270,27 @@ export function DisplaySettings() {
                 <SelectItem value="60">{t('settings.calendar.duration1hour')}</SelectItem>
                 <SelectItem value="90">{t('settings.calendar.duration1hour30min')}</SelectItem>
                 <SelectItem value="120">{t('settings.calendar.duration2hours')}</SelectItem>
+              </SelectContent>
+            </Select>
+          </LabeledRow>
+          <LabeledRow label={t('settings.calendar.showWeekends')}>
+            <Switch checked={settings.showWeekends} onCheckedChange={handleShowWeekendsChange} />
+          </LabeledRow>
+          <LabeledRow label={t('settings.calendar.showWeekNumbers')}>
+            <Switch
+              checked={settings.showWeekNumbers}
+              onCheckedChange={handleShowWeekNumbersChange}
+            />
+          </LabeledRow>
+          <LabeledRow label={t('settings.calendar.density')}>
+            <Select value={settings.hourHeightDensity} onValueChange={handleDensityChange}>
+              <SelectTrigger variant="ghost">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="compact">{t('settings.calendar.densityCompact')}</SelectItem>
+                <SelectItem value="default">{t('settings.calendar.densityDefault')}</SelectItem>
+                <SelectItem value="spacious">{t('settings.calendar.densitySpacious')}</SelectItem>
               </SelectContent>
             </Select>
           </LabeledRow>

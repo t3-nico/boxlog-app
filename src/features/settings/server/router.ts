@@ -53,6 +53,10 @@ const userSettingsSchema = z.object({
   chronotypeDisplayMode: chronotypeDisplayModeSchema.optional(),
   chronotypeOpacity: z.number().min(0).max(100).optional(),
 
+  // デフォルトビュー・密度（Settings = デフォルト、Header = セッション）
+  defaultView: z.enum(['day', '3day', '5day', 'week']).optional(),
+  hourHeightDensity: z.enum(['compact', 'default', 'spacious']).optional(),
+
   // Plan/Record表示設定
   planRecordMode: z.enum(['plan', 'record', 'both']).optional(),
 
@@ -134,6 +138,17 @@ export const userSettingsRouter = createTRPCRouter({
         displayMode: data.chronotype_display_mode as ChronotypeDisplayMode,
         opacity: data.chronotype_opacity,
       },
+      defaultView: (data as Record<string, unknown>).default_view as
+        | 'day'
+        | '3day'
+        | '5day'
+        | 'week'
+        | undefined,
+      hourHeightDensity: (data as Record<string, unknown>).hour_height_density as
+        | 'compact'
+        | 'default'
+        | 'spacious'
+        | undefined,
       planRecordMode: data.plan_record_mode as 'plan' | 'record' | 'both',
       theme: data.theme as 'light' | 'dark' | 'system',
       colorScheme: data.color_scheme as 'blue' | 'green' | 'purple' | 'orange' | 'red',
@@ -195,6 +210,10 @@ export const userSettingsRouter = createTRPCRouter({
       updateData.chronotype_display_mode = input.chronotypeDisplayMode;
     if (input.chronotypeOpacity !== undefined)
       updateData.chronotype_opacity = input.chronotypeOpacity;
+    if (input.defaultView !== undefined)
+      (updateData as Record<string, unknown>).default_view = input.defaultView;
+    if (input.hourHeightDensity !== undefined)
+      (updateData as Record<string, unknown>).hour_height_density = input.hourHeightDensity;
     if (input.planRecordMode !== undefined) updateData.plan_record_mode = input.planRecordMode;
     if (input.theme !== undefined) updateData.theme = input.theme;
     if (input.colorScheme !== undefined) updateData.color_scheme = input.colorScheme;
