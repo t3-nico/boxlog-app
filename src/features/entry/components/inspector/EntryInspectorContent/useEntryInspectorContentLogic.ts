@@ -20,7 +20,7 @@ import {
   openRecurringEditConfirm,
   useModalStore,
   type RecurringEditScope,
-} from '@/stores/useModalStore';
+} from '@/shell/stores/useModalStore';
 import { useEntry } from '../../../hooks/useEntry';
 import { useRecurringScopeMutations } from '../../../hooks/useRecurringScopeMutations';
 import { useEntryCacheStore } from '../../../stores/useEntryCacheStore';

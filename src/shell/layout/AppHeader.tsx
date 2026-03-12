@@ -5,8 +5,8 @@ import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { useGlobalSearch } from '@/hooks/use-global-search';
-import { useLayoutStore } from '@/stores/useLayoutStore';
+import { useGlobalSearch } from '@/shell/contexts/use-global-search';
+import { useLayoutStore } from '@/shell/stores/useLayoutStore';
 
 import { MobileMenuButton } from '@/features/navigation';
 

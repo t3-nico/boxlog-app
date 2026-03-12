@@ -18,8 +18,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+import { useSettingsStore } from '@/shell/stores/useSettingsStore';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
-import { useSettingsStore } from '@/stores/useSettingsStore';
 import type { CalendarViewType } from '../../../types/calendar.types';
 import { isMultiDayView } from '../../../types/calendar.types';
 

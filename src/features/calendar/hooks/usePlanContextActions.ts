@@ -13,7 +13,7 @@ import {
   openDeleteConfirm,
   openRecurringEditConfirm,
   type RecurringEditScope,
-} from '@/stores/useModalStore';
+} from '@/shell/stores/useModalStore';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { useEntryClipboardStore } from '../stores/useEntryClipboardStore';

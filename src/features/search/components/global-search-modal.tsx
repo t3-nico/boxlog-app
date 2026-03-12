@@ -15,8 +15,8 @@ import { useEntries, useEntryInspectorStore } from '@/features/entry';
 import { useTags } from '@/features/tags';
 import { formatDateShort, formatTimeRange } from '@/lib/date/format';
 import { getTagColorClasses } from '@/lib/tag-colors';
+import { useCalendarNavigationStore } from '@/shell/stores/useCalendarNavigationStore';
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
-import { useCalendarNavigationStore } from '@/stores/useCalendarNavigationStore';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
 import { HighlightedText } from '../lib/highlight-text';

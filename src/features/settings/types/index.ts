@@ -2,7 +2,7 @@
 
 import type { LucideIcon } from 'lucide-react';
 
-import type { SettingsCategory } from '@/types';
+import type { SettingsCategory } from '@/shell/types/settings';
 
 import type { TranslatedString } from '@/platform/i18n';
 

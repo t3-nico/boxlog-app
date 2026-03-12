@@ -1,6 +1,5 @@
 /**
- * Re-export from shared lib for backward compatibility
- * 実体は @/lib/notification-helpers に移動済み
+ * Re-export from lib within feature
  */
 export {
   checkBrowserNotificationSupport,
@@ -8,5 +7,5 @@ export {
   groupNotificationsByDate,
   requestNotificationPermission,
   showBrowserNotification,
-} from '@/lib/notification-helpers';
-export type { DateGroupKey, GroupedNotifications } from '@/lib/notification-helpers';
+} from '../lib/notification-helpers';
+export type { DateGroupKey, GroupedNotifications } from '../lib/notification-helpers';

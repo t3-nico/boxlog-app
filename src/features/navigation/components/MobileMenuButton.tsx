@@ -3,7 +3,7 @@
 import { Menu } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { useLayoutStore } from '@/stores/useLayoutStore';
+import { useLayoutStore } from '@/shell/stores/useLayoutStore';
 import { useTranslations } from 'next-intl';
 
 /**

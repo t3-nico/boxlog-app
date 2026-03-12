@@ -6,7 +6,6 @@
 export type SettingsCategory =
   | 'profile'
   | 'display'
-  | 'tags'
   | 'notifications'
   | 'data'
   | 'billing'

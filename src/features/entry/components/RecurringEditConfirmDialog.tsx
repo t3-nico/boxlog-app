@@ -10,7 +10,7 @@ import { useDialogKeyboard } from '@/hooks/useDialogKeyboard';
 import { useHasMounted } from '@/hooks/useHasMounted';
 import { useTranslations } from 'next-intl';
 
-import { closeModal, useModalStore, type RecurringEditScope } from '@/stores/useModalStore';
+import { closeModal, useModalStore, type RecurringEditScope } from '@/shell/stores/useModalStore';
 
 // Re-export type for barrel consumers
 export type { RecurringEditScope };

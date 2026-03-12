@@ -12,7 +12,7 @@ import { Switch } from '@/components/ui/switch';
 import {
   checkBrowserNotificationSupport,
   requestNotificationPermission,
-} from '@/lib/notification-helpers';
+} from '@/lib/browser-notification';
 import { api } from '@/platform/trpc';
 
 import { LabeledRow } from './fields/LabeledRow';

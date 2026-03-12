@@ -1,6 +1,13 @@
 import { isThisMonth, isThisWeek, isToday, isYesterday } from 'date-fns';
 
+import { checkBrowserNotificationSupport } from '@/lib/browser-notification';
 import { logger } from '@/lib/logger';
+
+// Browser Notification API ラッパーを re-export
+export {
+  checkBrowserNotificationSupport,
+  requestNotificationPermission,
+} from '@/lib/browser-notification';
 
 // 日付グループのキー
 export type DateGroupKey = 'today' | 'yesterday' | 'thisWeek' | 'thisMonth' | 'older';
@@ -40,13 +47,11 @@ export function groupNotificationsByDate<T extends { created_at: string }>(
     older: [],
   };
 
-  // 通知をグループに振り分け
   for (const notification of notifications) {
     const key = getDateGroupKey(notification.created_at);
     groups[key].push(notification);
   }
 
-  // ラベル付きのグループ配列を作成（空のグループは除外）
   const groupLabels: Record<DateGroupKey, string> = {
     today: t('common.time.today'),
     yesterday: t('common.time.yesterday'),
@@ -66,33 +71,6 @@ export function groupNotificationsByDate<T extends { created_at: string }>(
     }));
 }
 
-export const checkBrowserNotificationSupport = (): boolean => {
-  return typeof window !== 'undefined' && 'Notification' in window;
-};
-
-export const requestNotificationPermission = async (
-  t?: (key: string) => string,
-): Promise<NotificationPermission> => {
-  if (!checkBrowserNotificationSupport()) {
-    const message = t
-      ? t('notification.errors.notSupported')
-      : 'Browser notifications not supported';
-    logger.warn(message);
-    return 'denied';
-  }
-
-  try {
-    const result = await Notification.requestPermission();
-    return result;
-  } catch (error) {
-    const message = t
-      ? t('notification.errors.permissionFailed')
-      : 'Failed to request notification permission';
-    logger.error(message, error);
-    return 'denied';
-  }
-};
-
 export const showBrowserNotification = (
   title: string,
   options?: NotificationOptions,
@@ -110,7 +88,6 @@ export const showBrowserNotification = (
       ...options,
     });
 
-    // デフォルト10秒後に自動で閉じる
     setTimeout(() => {
       notification.close();
     }, 10000);
