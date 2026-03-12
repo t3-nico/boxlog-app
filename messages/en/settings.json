@@ -360,13 +360,19 @@
         "artDesc": "Creative expression is a human instinct spanning over 40,000 years"
       },
       "ranking": {
-        "title": "Value Keyword Ranking",
-        "description": "Select the keywords that resonate with you and rank your top 10 in order of importance.",
+        "title": "Value Keywords",
+        "description": "Select keywords that resonate with you and rank your top 5 in order of importance.",
         "settingsSaved": "Ranking saved",
         "selected": "{count} / {max} selected",
         "limit": "You can select up to {max}",
         "dragHint": "Drag to reorder",
-        "emptyState": "Select keywords above"
+        "emptyState": "Select keywords above",
+        "notSelected": "No keywords selected yet. Choose the values that resonate with you and rank them.",
+        "select": "Select keywords",
+        "edit": "Edit",
+        "done": "Done",
+        "cancel": "Cancel",
+        "idleDescription": "Choose 5 values that matter most to you and rank them by priority. AI uses these as a basis when analyzing how you spend your time."
       },
       "keywords": {
         "integrity": "Integrity",

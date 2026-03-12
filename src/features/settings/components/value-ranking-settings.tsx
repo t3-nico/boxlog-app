@@ -21,21 +21,24 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical } from 'lucide-react';
+import { GripVertical, Pencil } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { SettingsCard } from '@/components/common/SettingsCard';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useAutoSaveSettings } from '@/hooks/useAutoSaveSettings';
 import { CACHE_5_MINUTES } from '@/lib/date';
 import { cn } from '@/lib/utils';
 import { api } from '@/platform/trpc';
+import { useAutoSaveSettings } from '../hooks/useAutoSaveSettings';
+import { SettingsCard } from './SettingsCard';
 
 import type { DragEndEvent, DropAnimation, Modifier } from '@dnd-kit/core';
 import type { AnimateLayoutChanges } from '@dnd-kit/sortable';
 import type { ValueKeyword } from '../types/personalization';
 import { MAX_RANKED_VALUES, VALUE_KEYWORDS } from '../types/personalization';
+
+type ViewState = 'idle' | 'editing' | 'empty';
 
 /** ドラッグ中はレイアウトアニメーションを無効化（タグツリーと同じパターン） */
 const animateLayoutChanges: AnimateLayoutChanges = ({ isSorting, wasDragging }) =>
@@ -82,8 +85,7 @@ interface RankingAutoSaveSettings {
 /**
  * 価値観キーワードランキング設定
  *
- * ACTベースの ~50個のキーワードから共感するものを選び、
- * トップ10をドラッグ&ドロップで並び替えるコンポーネント
+ * 3つの状態: idle（結果表示）, editing（キーワード選択+並べ替え）, empty（未設定）
  */
 export function ValueRankingSettings() {
   const t = useTranslations();
@@ -99,11 +101,17 @@ export function ValueRankingSettings() {
     },
   });
 
+  const dbRankedValues = useMemo(
+    () =>
+      ((dbSettings?.personalization?.rankedValues ?? []) as string[]).slice(0, MAX_RANKED_VALUES),
+    [dbSettings?.personalization?.rankedValues],
+  );
+
   const initialValues = useMemo(
     () => ({
-      rankedValues: (dbSettings?.personalization?.rankedValues ?? []) as string[],
+      rankedValues: dbRankedValues,
     }),
-    [dbSettings?.personalization?.rankedValues],
+    [dbRankedValues],
   );
 
   const autoSave = useAutoSaveSettings<RankingAutoSaveSettings>({
@@ -116,6 +124,13 @@ export function ValueRankingSettings() {
     successMessage: t('settings.values.ranking.settingsSaved'),
     debounceMs: 800,
   });
+
+  // 編集開始時のスナップショット（キャンセル用）
+  const [snapshotValues, setSnapshotValues] = useState<string[]>([]);
+
+  const hasValues = autoSave.values.rankedValues.length > 0;
+  const initialView: ViewState = hasValues ? 'idle' : 'empty';
+  const [view, setView] = useState<ViewState>(initialView);
 
   const selectedSet = useMemo(
     () => new Set(autoSave.values.rankedValues),
@@ -144,6 +159,21 @@ export function ValueRankingSettings() {
     [autoSave],
   );
 
+  const handleStartEditing = useCallback(() => {
+    setSnapshotValues([...autoSave.values.rankedValues]);
+    setView('editing');
+  }, [autoSave.values.rankedValues]);
+
+  const handleDone = useCallback(() => {
+    // autoSaveが自動的に保存する
+    setView(autoSave.values.rankedValues.length > 0 ? 'idle' : 'empty');
+  }, [autoSave.values.rankedValues.length]);
+
+  const handleCancel = useCallback(() => {
+    autoSave.updateValue('rankedValues', snapshotValues);
+    setView(snapshotValues.length > 0 ? 'idle' : 'empty');
+  }, [autoSave, snapshotValues]);
+
   if (isPending) {
     return (
       <SettingsCard title={t('settings.values.ranking.title')}>
@@ -157,21 +187,74 @@ export function ValueRankingSettings() {
     );
   }
 
+  // Editing state
+  if (view === 'editing') {
+    return (
+      <SettingsCard title={t('settings.values.ranking.title')}>
+        <p className="text-muted-foreground mb-4 text-sm">
+          {t('settings.values.ranking.description')}
+        </p>
+
+        <KeywordGrid
+          selected={selectedSet}
+          onToggle={handleKeywordToggle}
+          count={autoSave.values.rankedValues.length}
+        />
+
+        {autoSave.values.rankedValues.length > 0 && (
+          <RankedList items={autoSave.values.rankedValues} onReorder={handleReorder} />
+        )}
+
+        <div className="mt-4 flex justify-end gap-2">
+          <Button variant="ghost" size="sm" onClick={handleCancel}>
+            {t('settings.values.ranking.cancel')}
+          </Button>
+          <Button variant="primary" size="sm" onClick={handleDone}>
+            {t('settings.values.ranking.done')}
+          </Button>
+        </div>
+      </SettingsCard>
+    );
+  }
+
+  // Empty state
+  if (view === 'empty') {
+    return (
+      <SettingsCard title={t('settings.values.ranking.title')}>
+        <div className="space-y-4 py-2">
+          <p className="text-muted-foreground text-sm">
+            {t('settings.values.ranking.notSelected')}
+          </p>
+          <Button variant="outline" size="sm" onClick={handleStartEditing}>
+            {t('settings.values.ranking.select')}
+          </Button>
+        </div>
+      </SettingsCard>
+    );
+  }
+
+  // Idle state (result display)
   return (
     <SettingsCard title={t('settings.values.ranking.title')}>
       <p className="text-muted-foreground mb-4 text-sm">
-        {t('settings.values.ranking.description')}
+        {t('settings.values.ranking.idleDescription')}
       </p>
-
-      <KeywordGrid
-        selected={selectedSet}
-        onToggle={handleKeywordToggle}
-        count={autoSave.values.rankedValues.length}
-      />
-
-      {autoSave.values.rankedValues.length > 0 && (
-        <RankedList items={autoSave.values.rankedValues} onReorder={handleReorder} />
-      )}
+      <div className="space-y-1">
+        {autoSave.values.rankedValues.map((keyword, index) => (
+          <div key={keyword} className="flex items-center gap-3 py-1.5">
+            <span className="text-muted-foreground w-5 text-right text-sm">{index + 1}.</span>
+            <span className="text-foreground text-sm">
+              {t(`settings.values.keywords.${keyword}`)}
+            </span>
+          </div>
+        ))}
+      </div>
+      <div className="flex justify-end pt-2">
+        <Button variant="outline" size="sm" onClick={handleStartEditing}>
+          <Pencil />
+          {t('settings.values.ranking.edit')}
+        </Button>
+      </div>
     </SettingsCard>
   );
 }

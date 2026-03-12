@@ -73,8 +73,8 @@ const userSettingsSchema = z.object({
   aiCommunicationStyle: z.enum(['coach', 'analyst', 'friendly', 'custom']).optional(),
   aiCustomStylePrompt: z.string().max(1000).optional(),
 
-  // 価値観キーワードランキング（トップ10）
-  rankedValues: z.array(z.string().max(50)).max(10).optional(),
+  // 価値観キーワードランキング（トップ5）
+  rankedValues: z.array(z.string().max(50)).max(5).optional(),
 });
 
 export const userSettingsRouter = createTRPCRouter({
