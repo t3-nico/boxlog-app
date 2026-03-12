@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import type { CalendarViewType } from '@/stores/useCalendarSettingsStore';
+import type { CalendarViewType } from '../types/calendar.types';
 
 /**
  * カレンダーのスクロール位置を管理するストア
@@ -10,12 +10,7 @@ import type { CalendarViewType } from '@/stores/useCalendarSettingsStore';
  * ビュー切り替え時に復元する
  */
 
-interface ScrollPositions {
-  day: number;
-  '3day': number;
-  '5day': number;
-  week: number;
-}
+type ScrollPositions = Partial<Record<CalendarViewType, number>>;
 
 interface CalendarScrollState {
   /** ビューごとのスクロール位置（px） */
@@ -38,12 +33,7 @@ interface CalendarScrollActions {
 const DEFAULT_SCROLL_POSITION = 0;
 
 const initialState: CalendarScrollState = {
-  scrollPositions: {
-    day: DEFAULT_SCROLL_POSITION,
-    '3day': DEFAULT_SCROLL_POSITION,
-    '5day': DEFAULT_SCROLL_POSITION,
-    week: DEFAULT_SCROLL_POSITION,
-  },
+  scrollPositions: {},
   lastActiveView: 'week',
 };
 

@@ -156,12 +156,6 @@ describe('useCalendarFilterStore', () => {
   });
 
   describe('クエリ系', () => {
-    it('isTypeVisible', () => {
-      expect(useCalendarFilterStore.getState().isTypeVisible('planned')).toBe(true);
-      useCalendarFilterStore.getState().toggleType('planned');
-      expect(useCalendarFilterStore.getState().isTypeVisible('planned')).toBe(false);
-    });
-
     it('isTagVisible', () => {
       useCalendarFilterStore.getState().showAllTags(['tag-1']);
       expect(useCalendarFilterStore.getState().isTagVisible('tag-1')).toBe(true);
@@ -196,11 +190,14 @@ describe('useCalendarFilterStore', () => {
 
     it('isEntryVisible: 起源＋タグの複合チェック', () => {
       useCalendarFilterStore.getState().showAllTags(['tag-1']);
-      expect(useCalendarFilterStore.getState().isEntryVisible('tag-1')).toBe(true);
+      expect(useCalendarFilterStore.getState().isEntryVisible('planned', 'tag-1')).toBe(true);
 
       // planned を非表示
       useCalendarFilterStore.getState().toggleType('planned');
-      expect(useCalendarFilterStore.getState().isEntryVisible('tag-1')).toBe(false);
+      expect(useCalendarFilterStore.getState().isEntryVisible('planned', 'tag-1')).toBe(false);
+
+      // unplanned は表示のまま
+      expect(useCalendarFilterStore.getState().isEntryVisible('unplanned', 'tag-1')).toBe(true);
     });
   });
 });

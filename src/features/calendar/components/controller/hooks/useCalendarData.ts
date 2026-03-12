@@ -86,8 +86,6 @@ export function useCalendarData({
 
   // フィルター関数と状態を取得（ストアに統一）
   const isEntryVisible = useCalendarFilterStore((state) => state.isEntryVisible);
-  const matchesTagFilter = useCalendarFilterStore((state) => state.matchesTagFilter);
-  const visibleTypes = useCalendarFilterStore((state) => state.visibleTypes);
   // タグフィルタ変更時に useMemo を再実行させるためのリアクティブ依存
   const visibleTagIds = useCalendarFilterStore((state) => state.visibleTagIds);
 
@@ -197,14 +195,9 @@ export function useCalendarData({
     });
 
     // サイドバーのフィルター設定を適用
-    // visibleTypes.planned → origin='planned' のエントリ
-    // visibleTypes.unplanned → origin='unplanned' のエントリ
     const visibilityFiltered = filtered.filter((event) => {
       const origin = event.origin ?? 'planned';
-      if (origin === 'unplanned') {
-        return visibleTypes.unplanned && matchesTagFilter(event.tagId ?? null);
-      }
-      return visibleTypes.planned && isEntryVisible(event.tagId ?? null);
+      return isEntryVisible(origin, event.tagId ?? null);
     });
 
     logger.log(`[useCalendarData] entriesフィルタリング:`, {
@@ -225,14 +218,7 @@ export function useCalendarData({
 
     return visibilityFiltered;
     // eslint-disable-next-line react-hooks/exhaustive-deps -- visibleTagIds はリアクティブ依存（関数参照は安定のため直接依存不可）
-  }, [
-    viewDateRange,
-    allCalendarEvents,
-    isEntryVisible,
-    matchesTagFilter,
-    visibleTypes,
-    visibleTagIds,
-  ]);
+  }, [viewDateRange, allCalendarEvents, isEntryVisible, visibleTagIds]);
 
   return {
     viewDateRange,

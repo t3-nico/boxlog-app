@@ -16,3 +16,18 @@ export const HOUR_HEIGHT_DENSITIES = {
 } as const;
 
 export type HourHeightDensity = keyof typeof HOUR_HEIGHT_DENSITIES;
+
+// カレンダービュー型（共有ストアとfeature双方が参照するため共有層に配置）
+export type MultiDayCount = 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+export type MultiDayViewType = `${MultiDayCount}day`;
+export type CalendarViewType = 'day' | 'week' | MultiDayViewType;
+
+/** MultiDayView（2day〜9day）かどうかを判定 */
+export function isMultiDayView(view: CalendarViewType): view is MultiDayViewType {
+  return /^\d+day$/.test(view) && view !== 'day';
+}
+
+/** MultiDayViewType から日数を取得 */
+export function getMultiDayCount(view: MultiDayViewType): MultiDayCount {
+  return parseInt(view) as MultiDayCount;
+}

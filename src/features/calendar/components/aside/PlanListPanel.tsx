@@ -80,7 +80,7 @@ export function PlanListPanel() {
       }
 
       // タグフィルター
-      if (!isEntryVisible(plan.tagId ?? null)) {
+      if (!isEntryVisible('planned', plan.tagId ?? null)) {
         return false;
       }
 
