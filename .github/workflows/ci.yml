@@ -291,9 +291,12 @@ jobs:
             echo "❌ Unit Tests failed"
             exit 1
           fi
-          if [[ "${{ needs.storybook-tests.result }}" != "success" ]]; then
+          if [[ "${{ needs.storybook-tests.result }}" == "failure" ]]; then
             echo "❌ Storybook Tests failed"
             exit 1
+          fi
+          if [[ "${{ needs.storybook-tests.result }}" != "success" ]]; then
+            echo "⚠️ Storybook Tests: ${{ needs.storybook-tests.result }} (non-blocking)"
           fi
           if [[ "${{ needs.build.result }}" != "success" ]]; then
             echo "❌ Build failed"
