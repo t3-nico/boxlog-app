@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useRef } from 'react';
 
-import type { EntryWithTags } from '@/types/entry';
 import { useEntryMutations } from '../../../hooks/useEntryMutations';
+import type { EntryWithTags } from '../../../types/entry';
 
 interface UseInspectorAutoSaveOptions {
   planId: string | null;

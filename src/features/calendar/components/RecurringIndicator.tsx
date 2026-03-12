@@ -3,7 +3,7 @@
 import { Repeat } from 'lucide-react';
 
 import { HoverTooltip } from '@/components/ui/tooltip';
-import { configToReadable, ruleToConfig } from '@/lib/rrule';
+import { configToReadable, ruleToConfig } from '@/features/entry';
 import { cn } from '@/lib/utils';
 import { useLocale } from 'next-intl';
 

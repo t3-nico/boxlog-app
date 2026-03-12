@@ -25,6 +25,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { HoverTooltip } from '@/components/ui/tooltip';
+import type { Tag } from '@/features/tags';
 import {
   TagDeleteStrategyDialog,
   buildColonTagName,
@@ -41,7 +42,6 @@ import type { TagColorName } from '@/lib/tag-colors';
 import { resolveTagColor } from '@/lib/tag-colors';
 import { cn } from '@/lib/utils';
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
-import type { Tag } from '@/types/tag';
 import { useTagModalNavigation } from '../../../../hooks/useTagModalNavigation';
 import { TagRenameDialog } from '../../../TagRenameDialog';
 

@@ -8,8 +8,8 @@ import { useMemo } from 'react';
 
 import type { DateRangeFilter } from '@/lib/date';
 import { matchesDateRangeFilter } from '@/lib/date';
-import type { EntryWithTags } from '@/types/entry';
 import { getEntryState } from '../lib/entry-status';
+import type { EntryWithTags } from '../types/entry';
 import { useEntries } from './useEntries';
 
 import type {

@@ -22,7 +22,7 @@ import type {
   EntryWithTags,
   FulfillmentScore,
   RecurrenceType,
-} from '@/types/entry';
+} from '../../../types/entry';
 
 import { Bell, Repeat } from 'lucide-react';
 

@@ -17,8 +17,8 @@
  */
 
 import type { Database } from '@/lib/database.types';
-import type { Tag, TagDeleteStrategy } from '@/types/tag';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Tag, TagDeleteStrategy } from '../types';
 
 /** DB タグ行の型 */
 type DbTagRow = Database['public']['Tables']['tags']['Row'];
@@ -830,7 +830,7 @@ export class TagService {
   }
 }
 
-export type { TagDeleteStrategy } from '@/types/tag';
+export type { TagDeleteStrategy } from '../types';
 
 /** タグ統計の型 */
 export interface TagStatsRow {

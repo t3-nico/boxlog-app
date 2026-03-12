@@ -23,7 +23,7 @@ import { cn } from '@/lib/utils';
 import { useTags } from '../hooks/useTagsQuery';
 import { parseColonTag } from '../lib/tag-colon';
 
-import type { Tag } from '@/types/tag';
+import type { Tag } from '../types';
 
 import { TagRadioItem } from './TagRadioItem';
 

@@ -7,8 +7,8 @@
 import { FolderOpen, X } from 'lucide-react';
 
 import { HoverTooltip } from '@/components/ui/tooltip';
+import type { Tag } from '@/features/tags';
 import { cn } from '@/lib/utils';
-import type { Tag } from '@/types/tag';
 
 /** Inspector風コンテナ（400px幅） */
 export function InspectorFrame({ children }: { children: React.ReactNode }) {

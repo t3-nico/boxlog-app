@@ -17,7 +17,7 @@ import { useTranslations } from 'next-intl';
 import { useAutoAdjustEndTime } from '@/hooks/useAutoAdjustEndTime';
 import { computeDuration } from '@/lib/time-utils';
 import { cn } from '@/lib/utils';
-import type { EntryOrigin, EntryState, FulfillmentScore } from '@/types/entry';
+import type { EntryOrigin, EntryState, FulfillmentScore } from '../../types/entry';
 
 import { DateNavigatorRow } from './DateNavigatorRow';
 import { FulfillmentRow } from './FulfillmentRow';

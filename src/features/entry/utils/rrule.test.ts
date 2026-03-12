@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { RecurrenceConfig } from '../types/entry';
 
-import { configToReadable, configToRRule, ruleToConfig } from '@/lib/rrule';
+import { configToReadable, configToRRule, ruleToConfig } from '../lib/rrule';
 
 describe('rrule', () => {
   describe('configToRRule', () => {

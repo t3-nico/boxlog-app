@@ -5,7 +5,7 @@
  * プランカードの位置計算、予定vs記録の差分オーバーレイ計算を提供。
  */
 
-import type { CalendarEvent } from '@/types/calendar-event';
+import type { CalendarEvent } from '../types/calendar.types';
 
 import type { PlanColumn, TimedPlan } from '../components/views/shared/types/plan.types';
 

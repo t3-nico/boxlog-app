@@ -8,16 +8,16 @@
 
 import { MS_PER_MINUTE } from '@/lib/date';
 
-import { getEntryState } from '@/features/entry';
+import type { EntryWithTags } from '@/features/entry';
 import {
+  encodeInstanceId,
   expandRecurrence,
+  getEntryState,
   isRecurringEntry,
   type EntryInstanceException,
   type ExpandedOccurrence,
-} from '@/lib/entry-recurrence';
-import { encodeInstanceId } from '@/lib/instance-id';
-import type { CalendarEvent } from '@/types/calendar-event';
-import type { EntryWithTags } from '@/types/entry';
+} from '@/features/entry';
+import type { CalendarEvent } from '../types/calendar.types';
 
 export type { EntryInstanceException };
 

@@ -9,8 +9,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useUpdateEntityTagsInCache } from '../../../hooks/useUpdateEntityTagsInCache';
 
-import type { EntryWithTags } from '@/types/entry';
 import { useEntryTags } from '../../../hooks/useEntryTags';
+import type { EntryWithTags } from '../../../types/entry';
 
 interface UseInspectorTagStateProps {
   planId: string | null;

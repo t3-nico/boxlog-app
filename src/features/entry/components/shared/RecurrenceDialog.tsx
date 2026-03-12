@@ -21,7 +21,7 @@ import {
 import { useDateFormat } from '@/hooks/useDateFormat';
 import { useSubmitShortcut } from '@/hooks/useSubmitShortcut';
 
-import { configToRRule, ruleToConfig } from '@/lib/rrule';
+import { configToRRule, ruleToConfig } from '../../lib/rrule';
 import type { RecurrenceConfig } from '../../types/entry';
 
 interface RecurrenceDialogProps {

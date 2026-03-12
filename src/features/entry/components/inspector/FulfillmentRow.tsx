@@ -12,7 +12,7 @@ import { useCallback } from 'react';
 
 import { cn } from '@/lib/utils';
 
-import type { FulfillmentScore } from '@/types/entry';
+import type { FulfillmentScore } from '../../types/entry';
 
 const SCORE_OPTIONS: { score: FulfillmentScore; icon: typeof Smile }[] = [
   { score: 1, icon: Frown },

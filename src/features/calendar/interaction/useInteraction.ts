@@ -11,8 +11,8 @@
 import type React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import type { CalendarEvent } from '@/types/calendar-event';
 import { useHapticFeedback } from '../hooks/useHapticFeedback';
+import type { CalendarEvent } from '../types/calendar.types';
 
 import { checkClientSideOverlap } from '../engine/overlap';
 import { useCalendarDragStore } from '../stores/useCalendarDragStore';

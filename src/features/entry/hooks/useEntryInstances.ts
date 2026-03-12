@@ -3,7 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { CACHE_2_MINUTES, CACHE_5_MINUTES } from '@/lib/date';
 import { api } from '@/platform/trpc';
 
-import type { EntryInstanceException } from '@/lib/entry-recurrence';
+import type { EntryInstanceException } from '../lib/entry-recurrence';
 
 // entry_instances テーブルの行型
 interface EntryInstance {

@@ -3,11 +3,11 @@
 import { useCallback, useRef } from 'react';
 
 import {
+  getInstanceRef,
   useEntryInspectorStore,
   useEntryMutations,
   useRecurringScopeMutations,
 } from '@/features/entry';
-import { getInstanceRef } from '@/lib/instance-id';
 import { logger } from '@/lib/logger';
 import {
   openDeleteConfirm,

@@ -65,6 +65,23 @@ export {
 } from './lib/entry-status';
 
 // =============================================================================
+// Lib (recurrence utilities)
+// =============================================================================
+export {
+  expandRecurrence,
+  getEntryRecurrenceConfig,
+  isRecurringEntry,
+} from './lib/entry-recurrence';
+export type { EntryInstanceException, ExpandedOccurrence } from './lib/entry-recurrence';
+export { configToRRule, configToReadable, ruleToConfig } from './lib/rrule';
+
+// =============================================================================
+// Lib (instance-id utilities)
+// =============================================================================
+export { decodeInstanceId, encodeInstanceId, getInstanceRef } from './lib/instance-id';
+export type { InstanceRefSource, RecurrenceInstanceRef } from './lib/instance-id';
+
+// =============================================================================
 // Components
 // =============================================================================
 export { EntryDeleteConfirmDialog } from './components/EntryDeleteConfirmDialog';

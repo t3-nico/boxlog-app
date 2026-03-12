@@ -5,7 +5,14 @@
  * エンコード・デコードを型安全に行う。
  */
 
-import type { CalendarEvent } from '@/types/calendar-event';
+/** getInstanceRef が必要とする最小フィールド */
+export interface InstanceRefSource {
+  id: string;
+  originalEntryId?: string | null | undefined;
+  instanceDate?: string | null | undefined;
+  calendarId?: string | null | undefined;
+  startDate: Date | null | undefined;
+}
 
 export interface RecurrenceInstanceRef {
   parentEntryId: string;
@@ -47,7 +54,7 @@ export function decodeInstanceId(compositeId: string): RecurrenceInstanceRef | n
  * 2. calendarId + ID末尾の日付パース（後方互換）
  * 3. calendarId + startDate（最終フォールバック）
  */
-export function getInstanceRef(entry: CalendarEvent): RecurrenceInstanceRef | null {
+export function getInstanceRef(entry: InstanceRefSource): RecurrenceInstanceRef | null {
   // 1. 明示的フィールドから取得
   if (entry.originalEntryId && entry.instanceDate) {
     return {

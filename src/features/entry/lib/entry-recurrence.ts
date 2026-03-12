@@ -18,9 +18,9 @@ import {
   startOfDay,
 } from 'date-fns';
 
-import type { Entry, RecurrenceConfig } from '@/types/entry';
+import type { Entry, RecurrenceConfig } from '../types/entry';
 
-import { ruleToConfig } from '@/lib/rrule';
+import { ruleToConfig } from './rrule';
 
 /**
  * 展開されたオカレンス

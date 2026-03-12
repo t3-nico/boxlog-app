@@ -8,9 +8,9 @@ import { InspectorShell } from './InspectorShell';
 import { useInspectorKeyboard } from './hooks';
 
 import { useModalStore } from '@/stores/useModalStore';
-import type { EntryWithTags } from '@/types/entry';
 import { useEntry } from '../../hooks/useEntry';
 import { useEntryInspectorStore } from '../../stores/useEntryInspectorStore';
+import type { EntryWithTags } from '../../types/entry';
 
 import { useInspectorURLSync } from '../../hooks/useInspectorURLSync';
 import { EntryInspectorContent } from './EntryInspectorContent';

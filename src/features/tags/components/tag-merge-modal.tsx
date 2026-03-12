@@ -26,7 +26,7 @@ import { TagRadioItem } from './TagRadioItem';
 
 import { useMergeTag, useTags } from '../hooks';
 
-import type { Tag } from '@/types/tag';
+import type { Tag } from '../types';
 
 interface TagMergeModalProps {
   open: boolean;

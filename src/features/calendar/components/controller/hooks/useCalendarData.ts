@@ -4,13 +4,12 @@ import { useEffect, useMemo } from 'react';
 
 import { addDays, format, subDays } from 'date-fns';
 
-import { useEntries } from '@/features/entry';
+import type { EntryWithTags } from '@/features/entry';
+import { isRecurringEntry, useEntries } from '@/features/entry';
 import { useTags } from '@/features/tags';
-import { isRecurringEntry } from '@/lib/entry-recurrence';
 import { logger } from '@/lib/logger';
 import { api } from '@/platform/trpc';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
-import type { EntryWithTags } from '@/types/entry';
 import {
   expandEntriesToCalendarEvents,
   type EntryInstanceException,
