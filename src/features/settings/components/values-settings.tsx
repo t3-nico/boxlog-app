@@ -219,8 +219,7 @@ function ValueCategoryCollapsible({
             className="min-h-[60px] resize-none text-sm"
             rows={2}
           />
-          <div className="flex items-center justify-between">
-            <span className="text-muted-foreground text-xs">{t('settings.values.importance')}</span>
+          <div className="flex justify-end">
             <ImportanceDots value={importance} onChange={(v) => onImportanceChange(category, v)} />
           </div>
         </div>

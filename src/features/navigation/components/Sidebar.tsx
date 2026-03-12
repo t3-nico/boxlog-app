@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { HoverTooltip } from '@/components/ui/tooltip';
+import { getDisplayName } from '@/lib/user';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useLayoutStore } from '@/stores/useLayoutStore';
 import { useTranslations } from 'next-intl';
@@ -37,7 +38,7 @@ export function Sidebar({ children, headerActions }: SidebarProps) {
   const t = useTranslations();
 
   const userData = {
-    name: user?.user_metadata?.username || user?.email?.split('@')[0] || 'User',
+    name: getDisplayName(user, 'User'),
     email: user?.email || '',
     avatar: user?.user_metadata?.avatar_url || null,
   };

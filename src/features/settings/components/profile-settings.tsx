@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ChronotypeSettingsPanel as ChronotypeSettings } from '@/features/chronotype';
+import { getDisplayName } from '@/lib/user';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { SettingRow } from './fields/SettingRow';
 import { SettingsCard } from './SettingsCard';
@@ -29,7 +30,7 @@ export function ProfileSettings() {
   const [showDisplayNameDialog, setShowDisplayNameDialog] = useState(false);
 
   const avatarUrl = user?.user_metadata?.avatar_url || null;
-  const displayName = user?.user_metadata?.username || user?.email?.split('@')[0] || '';
+  const displayName = getDisplayName(user);
 
   const getInitials = useCallback((name: string) => {
     return name.slice(0, 2).toUpperCase();
@@ -55,10 +56,7 @@ export function ProfileSettings() {
             </div>
           </button>
         </SettingRow>
-        <SettingRow
-          label={t('settings.account.displayName')}
-          description={t('settings.account.displayNameDesc')}
-        >
+        <SettingRow label={t('settings.account.displayName')}>
           <button
             type="button"
             className="text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"

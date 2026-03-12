@@ -1,0 +1,23 @@
+import type { User } from '@supabase/supabase-js';
+
+/**
+ * ユーザーの表示名を取得する
+ *
+ * 優先順位:
+ * 1. user_metadata.username（ユーザーが設定した表示名）
+ * 2. メールアドレスの@前のドット区切り最初のパート（先頭大文字）
+ * 3. フォールバック文字列
+ */
+export function getDisplayName(user: User | null | undefined, fallback = ''): string {
+  if (user?.user_metadata?.username) {
+    return user.user_metadata.username as string;
+  }
+
+  const local = user?.email?.split('@')[0] ?? '';
+  const first = local.split('.')[0] ?? '';
+  if (first) {
+    return first.charAt(0).toUpperCase() + first.slice(1);
+  }
+
+  return fallback;
+}
