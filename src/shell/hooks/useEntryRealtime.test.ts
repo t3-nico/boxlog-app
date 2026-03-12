@@ -17,7 +17,7 @@ vi.mock('@/platform/trpc', () => ({
 }));
 
 let mockIsMutating = false;
-vi.mock('@/stores/useEntryCacheStore', () => ({
+vi.mock('@/features/entry', () => ({
   useEntryCacheStore: (selector: (state: { isMutating: boolean }) => boolean) =>
     selector({ isMutating: mockIsMutating }),
 }));
@@ -93,7 +93,9 @@ describe('useEntryRealtime', () => {
       old: null,
     });
 
-    expect(mockUtils.entries.list.invalidate).toHaveBeenCalled();
+    expect(mockUtils.entries.list.invalidate).toHaveBeenCalledWith(undefined, {
+      refetchType: 'all',
+    });
     expect(mockUtils.entries.getById.invalidate).toHaveBeenCalledWith({ id: 'entry-1' });
     expect(mockUtils.entries.getInstances.invalidate).toHaveBeenCalled();
   });
