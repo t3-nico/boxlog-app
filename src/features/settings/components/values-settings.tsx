@@ -1,16 +1,18 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
+import { Check, ChevronDown, ChevronRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { SettingsCard } from '@/components/common/SettingsCard';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
-import { useAutoSaveSettings } from '@/hooks/useAutoSaveSettings';
 import { CACHE_5_MINUTES } from '@/lib/date';
 import { cn } from '@/lib/utils';
 import { api } from '@/platform/trpc';
+import { useAutoSaveSettings } from '../hooks/useAutoSaveSettings';
+import { SettingsCard } from './SettingsCard';
 
 import type { PersonalizationCategory, PersonalizationValues } from '../types/personalization';
 import { PERSONALIZATION_CATEGORIES } from '../types/personalization';
@@ -22,9 +24,8 @@ interface ValuesAutoSaveSettings {
 /**
  * 価値評定スケール（ACT 12領域）
  *
- * 「最高の体調」（鈴木祐）のACT価値評定スケールに基づく12カテゴリ
- * カテゴリごとにフリーテキスト + 重要度(1-10)で記録
- * useAutoSaveSettingsで自動保存
+ * 折りたたみ形式。記入済みを上に、未記入を下にソート。
+ * 各領域は問いかけ形式のプロンプトで記入を促す。
  */
 export function ValuesSettings() {
   const t = useTranslations();
@@ -91,12 +92,30 @@ export function ValuesSettings() {
     [autoSave],
   );
 
+  const isFilled = useCallback(
+    (category: PersonalizationCategory) => {
+      const value = autoSave.values.personalizationValues[category];
+      return Boolean(value?.text?.trim());
+    },
+    [autoSave.values.personalizationValues],
+  );
+
+  const sortedCategories = useMemo(() => {
+    return [...PERSONALIZATION_CATEGORIES].sort((a, b) => {
+      const aFilled = isFilled(a) ? 0 : 1;
+      const bFilled = isFilled(b) ? 0 : 1;
+      return aFilled - bFilled;
+    });
+  }, [isFilled]);
+
+  const filledCount = useMemo(() => PERSONALIZATION_CATEGORIES.filter(isFilled).length, [isFilled]);
+
   if (isPending) {
     return (
       <SettingsCard title={t('settings.values.title')}>
         <div className="space-y-4">
           {Array.from({ length: 3 }, (_, i) => (
-            <Skeleton key={i} className="h-24 w-full rounded-2xl" />
+            <Skeleton key={i} className="h-12 w-full rounded-lg" />
           ))}
         </div>
       </SettingsCard>
@@ -105,17 +124,25 @@ export function ValuesSettings() {
 
   return (
     <SettingsCard title={t('settings.values.title')}>
-      <p className="text-muted-foreground mb-4 text-sm">{t('settings.values.description')}</p>
+      <p className="text-muted-foreground mb-2 text-sm">{t('settings.values.description')}</p>
+      <p className="text-muted-foreground mb-4 text-xs">
+        {t('settings.values.filledCount', {
+          count: filledCount,
+          total: PERSONALIZATION_CATEGORIES.length,
+        })}
+      </p>
 
-      <div className="space-y-4">
-        {PERSONALIZATION_CATEGORIES.map((category) => {
+      <div className="space-y-1">
+        {sortedCategories.map((category) => {
           const value = autoSave.values.personalizationValues[category];
+          const filled = isFilled(category);
           return (
-            <ValueCategoryCard
+            <ValueCategoryCollapsible
               key={category}
               category={category}
               text={value?.text ?? ''}
               importance={value?.importance ?? 5}
+              filled={filled}
               onTextChange={handleTextChange}
               onImportanceChange={handleImportanceChange}
             />
@@ -128,8 +155,6 @@ export function ValuesSettings() {
 
 /**
  * 旧データ（priority: 1-5）から新データ（importance: 1-10）へのマイグレーション
- *
- * 旧priorityを2倍してimportanceに変換
  */
 function migrateValues(
   raw: Record<string, { text: string; importance?: number; priority?: number }>,
@@ -144,44 +169,63 @@ function migrateValues(
   return result;
 }
 
-interface ValueCategoryCardProps {
+interface ValueCategoryCollapsibleProps {
   category: PersonalizationCategory;
   text: string;
   importance: number;
+  filled: boolean;
   onTextChange: (category: PersonalizationCategory, text: string) => void;
   onImportanceChange: (category: PersonalizationCategory, importance: number) => void;
 }
 
-function ValueCategoryCard({
+function ValueCategoryCollapsible({
   category,
   text,
   importance,
+  filled,
   onTextChange,
   onImportanceChange,
-}: ValueCategoryCardProps) {
+}: ValueCategoryCollapsibleProps) {
   const t = useTranslations();
+  const [open, setOpen] = useState(false);
 
   return (
-    <div className="border-border rounded-2xl border p-4">
-      <div className="mb-2 flex items-center justify-between">
-        <div className="min-w-0 flex-1">
-          <h4 className="text-foreground text-sm font-normal">
-            {t(`settings.values.categories.${category}`)}
-          </h4>
+    <Collapsible open={open} onOpenChange={setOpen}>
+      <CollapsibleTrigger className="hover:bg-state-hover flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left transition-colors">
+        {open ? (
+          <ChevronDown className="text-muted-foreground size-4 shrink-0" />
+        ) : (
+          <ChevronRight className="text-muted-foreground size-4 shrink-0" />
+        )}
+        <span className="text-foreground flex-1 text-sm">
+          {t(`settings.values.categories.${category}`)}
+        </span>
+        {filled && (
+          <span className="text-success flex items-center gap-1 text-xs">
+            <Check className="size-3" />
+            {t('settings.values.filled')}
+          </span>
+        )}
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <div className="space-y-3 px-3 pt-1 pb-3 pl-9">
           <p className="text-muted-foreground text-xs">
-            {t(`settings.values.categories.${category}Desc`)}
+            {t(`settings.values.categories.${category}Prompt`)}
           </p>
+          <Textarea
+            value={text}
+            onChange={(e) => onTextChange(category, e.target.value)}
+            placeholder={t('settings.values.placeholder')}
+            className="min-h-[60px] resize-none text-sm"
+            rows={2}
+          />
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground text-xs">{t('settings.values.importance')}</span>
+            <ImportanceDots value={importance} onChange={(v) => onImportanceChange(category, v)} />
+          </div>
         </div>
-        <ImportanceDots value={importance} onChange={(v) => onImportanceChange(category, v)} />
-      </div>
-      <Textarea
-        value={text}
-        onChange={(e) => onTextChange(category, e.target.value)}
-        placeholder={t('settings.values.placeholder')}
-        className="min-h-[60px] resize-none text-sm"
-        rows={2}
-      />
-    </div>
+      </CollapsibleContent>
+    </Collapsible>
   );
 }
 
@@ -192,8 +236,6 @@ interface ImportanceDotsProps {
 
 /**
  * 1-10の重要度ドットバー
- *
- * 10個の小さな丸ボタン。選択済みは bg-primary、未選択は bg-muted。
  */
 function ImportanceDots({ value, onChange }: ImportanceDotsProps) {
   const t = useTranslations();
