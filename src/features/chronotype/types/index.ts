@@ -1,4 +1,4 @@
-// 共有層の型を re-export（feature barrel の API 維持）
+// 共有型からre-export
 export type {
   ChronotypeDisplayMode,
   ChronotypeProfile,

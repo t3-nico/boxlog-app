@@ -1,6 +1,6 @@
 import type { ChronotypeProfile, PresetChronotypeType, ProductivityLevel } from '../types';
 
-export { DEFAULT_CHRONOTYPE_SETTINGS } from '@/lib/chronotype-defaults';
+export { DEFAULT_CHRONOTYPE_SETTINGS } from './defaults';
 
 export const CHRONOTYPE_LEVEL_ORDER: ProductivityLevel[] = [
   'warmup',
