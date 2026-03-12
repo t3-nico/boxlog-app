@@ -14,9 +14,6 @@ const categoryComponents: Record<
 > = {
   profile: lazy(() => import('./profile-settings').then((m) => ({ default: m.ProfileSettings }))),
   display: lazy(() => import('./display-settings').then((m) => ({ default: m.DisplaySettings }))),
-  tags: lazy(() =>
-    import('./tag-management-settings').then((m) => ({ default: m.TagManagementSettings })),
-  ),
   notifications: lazy(() =>
     import('./notification-settings').then((m) => ({ default: m.NotificationSettings })),
   ),
@@ -28,7 +25,6 @@ const categoryComponents: Record<
 const VALID_CATEGORIES = new Set<string>([
   'profile',
   'display',
-  'tags',
   'notifications',
   'data',
   'billing',

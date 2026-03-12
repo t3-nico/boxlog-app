@@ -4,7 +4,6 @@ import {
   Database,
   Monitor,
   Settings as SettingsIcon,
-  Tag,
   User,
   type LucideIcon,
 } from 'lucide-react';
@@ -23,7 +22,7 @@ export interface SettingsCategoryMeta {
 }
 
 /**
- * 設定カテゴリの定義（7カテゴリ）
+ * 設定カテゴリの定義（6カテゴリ）
  */
 export const SETTINGS_CATEGORIES: readonly SettingsCategoryMeta[] = [
   {
@@ -37,12 +36,6 @@ export const SETTINGS_CATEGORIES: readonly SettingsCategoryMeta[] = [
     icon: Monitor,
     labelKey: 'settings.dialog.categories.display',
     descKey: 'settings.dialog.categories.displayDesc',
-  },
-  {
-    id: 'tags',
-    icon: Tag,
-    labelKey: 'settings.dialog.categories.tags',
-    descKey: 'settings.dialog.categories.tagsDesc',
   },
   {
     id: 'notifications',
