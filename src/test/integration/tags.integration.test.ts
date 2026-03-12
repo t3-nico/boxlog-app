@@ -28,7 +28,7 @@ const SUPABASE_SERVICE_KEY =
 const TEST_USER_ID = crypto.randomUUID();
 
 // テストをスキップするかどうか（CI環境でSupabaseが起動していない場合）
-const SKIP_INTEGRATION = process.env.SKIP_INTEGRATION_TESTS === 'true' || process.env.CI !== 'true';
+const SKIP_INTEGRATION = process.env.SKIP_INTEGRATION_TESTS === 'true';
 
 describe.skipIf(SKIP_INTEGRATION)('Tags Router Integration', () => {
   let adminSupabase: ReturnType<typeof createClient<Database>>;
@@ -65,6 +65,7 @@ describe.skipIf(SKIP_INTEGRATION)('Tags Router Integration', () => {
     // profilesテーブルは自動作成されるはずだが、念のためupsert
     await adminSupabase.from('profiles').upsert({
       id: TEST_USER_ID,
+      email: TEST_EMAIL,
       username: `testuser_${Date.now()}`,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
@@ -322,21 +323,22 @@ describe.skipIf(SKIP_INTEGRATION)('Tags Router Integration', () => {
       });
       createdTagIds.push(targetTag.id);
 
-      // 2. プランを作成してソースタグに紐付け（adminSupabaseでRLSバイパス）
-      const { data: plan } = await adminSupabase
-        .from('plans')
+      // 2. エントリを作成してソースタグに紐付け（adminSupabaseでRLSバイパス）
+      const { data: entry } = await adminSupabase
+        .from('entries')
         .insert({
           user_id: TEST_USER_ID,
-          title: 'Test Plan for Merge',
+          title: 'Test Entry for Merge',
+          origin: 'planned',
         })
         .select()
         .single();
 
-      if (!plan) throw new Error('Failed to create test plan');
+      if (!entry) throw new Error('Failed to create test entry');
 
-      await adminSupabase.from('plan_tags').insert({
+      await adminSupabase.from('entry_tags').insert({
         user_id: TEST_USER_ID,
-        plan_id: plan.id,
+        entry_id: entry.id,
         tag_id: sourceTag.id,
       });
 
@@ -350,22 +352,22 @@ describe.skipIf(SKIP_INTEGRATION)('Tags Router Integration', () => {
 
       expect(mergeResult.success).toBe(true);
 
-      // 4. プランがターゲットタグに紐付いていることを確認
-      const { data: planTags } = await adminSupabase
-        .from('plan_tags')
+      // 4. エントリがターゲットタグに紐付いていることを確認
+      const { data: entryTags } = await adminSupabase
+        .from('entry_tags')
         .select('tag_id')
-        .eq('plan_id', plan.id)
+        .eq('entry_id', entry.id)
         .eq('user_id', TEST_USER_ID);
 
-      expect(planTags?.some((pt) => pt.tag_id === targetTag.id)).toBe(true);
-      expect(planTags?.some((pt) => pt.tag_id === sourceTag.id)).toBe(false);
+      expect(entryTags?.some((et) => et.tag_id === targetTag.id)).toBe(true);
+      expect(entryTags?.some((et) => et.tag_id === sourceTag.id)).toBe(false);
 
       // 5. ソースタグが削除されていることを確認
       await expect(caller.getById({ id: sourceTag.id })).rejects.toThrow();
 
-      // クリーンアップ: plan_tagsとplanを削除
-      await adminSupabase.from('plan_tags').delete().eq('plan_id', plan.id);
-      await adminSupabase.from('plans').delete().eq('id', plan.id);
+      // クリーンアップ: entry_tagsとentryを削除
+      await adminSupabase.from('entry_tags').delete().eq('entry_id', entry.id);
+      await adminSupabase.from('entries').delete().eq('id', entry.id);
 
       // createdTagIdsからソースタグを削除（既に削除済み）
       createdTagIds = createdTagIds.filter((id) => id !== sourceTag.id);
@@ -387,22 +389,23 @@ describe.skipIf(SKIP_INTEGRATION)('Tags Router Integration', () => {
       });
       createdTagIds.push(targetTag.id);
 
-      // 2. プランを作成し、両方のタグに紐付け
-      const { data: plan } = await adminSupabase
-        .from('plans')
+      // 2. エントリを作成し、両方のタグに紐付け
+      const { data: entry } = await adminSupabase
+        .from('entries')
         .insert({
           user_id: TEST_USER_ID,
-          title: 'Test Plan for Duplicate',
+          title: 'Test Entry for Duplicate',
+          origin: 'planned',
         })
         .select()
         .single();
 
-      if (!plan) throw new Error('Failed to create test plan');
+      if (!entry) throw new Error('Failed to create test entry');
 
-      // 両方のタグをプランに紐付け
-      await adminSupabase.from('plan_tags').insert([
-        { user_id: TEST_USER_ID, plan_id: plan.id, tag_id: sourceTag.id },
-        { user_id: TEST_USER_ID, plan_id: plan.id, tag_id: targetTag.id },
+      // 両方のタグをエントリに紐付け
+      await adminSupabase.from('entry_tags').insert([
+        { user_id: TEST_USER_ID, entry_id: entry.id, tag_id: sourceTag.id },
+        { user_id: TEST_USER_ID, entry_id: entry.id, tag_id: targetTag.id },
       ]);
 
       // 3. マージ実行
@@ -414,18 +417,18 @@ describe.skipIf(SKIP_INTEGRATION)('Tags Router Integration', () => {
       });
 
       // 4. 重複なく1つの紐付けのみ存在することを確認
-      const { data: planTags, count } = await adminSupabase
-        .from('plan_tags')
+      const { data: entryTags, count } = await adminSupabase
+        .from('entry_tags')
         .select('*', { count: 'exact' })
-        .eq('plan_id', plan.id)
+        .eq('entry_id', entry.id)
         .eq('user_id', TEST_USER_ID);
 
       expect(count).toBe(1);
-      expect(planTags?.[0].tag_id).toBe(targetTag.id);
+      expect(entryTags?.[0]?.tag_id).toBe(targetTag.id);
 
       // クリーンアップ
-      await adminSupabase.from('plan_tags').delete().eq('plan_id', plan.id);
-      await adminSupabase.from('plans').delete().eq('id', plan.id);
+      await adminSupabase.from('entry_tags').delete().eq('entry_id', entry.id);
+      await adminSupabase.from('entries').delete().eq('id', entry.id);
       createdTagIds = createdTagIds.filter((id) => id !== sourceTag.id);
     });
   });

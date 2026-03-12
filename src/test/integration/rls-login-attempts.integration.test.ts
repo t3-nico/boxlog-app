@@ -30,7 +30,7 @@ const SUPABASE_ANON_KEY =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0';
 
 const TEST_USER_ID = crypto.randomUUID();
-const SKIP_INTEGRATION = process.env.SKIP_INTEGRATION_TESTS === 'true' || process.env.CI !== 'true';
+const SKIP_INTEGRATION = process.env.SKIP_INTEGRATION_TESTS === 'true';
 
 describe.skipIf(SKIP_INTEGRATION)('RLS: login_attempts テーブル', () => {
   let adminSupabase: ReturnType<typeof createClient<Database>>;
@@ -64,6 +64,7 @@ describe.skipIf(SKIP_INTEGRATION)('RLS: login_attempts テーブル', () => {
     // プロフィール作成
     await adminSupabase.from('profiles').upsert({
       id: TEST_USER_ID,
+      email: TEST_EMAIL,
       username: `testuser_rls_login_${Date.now()}`,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),

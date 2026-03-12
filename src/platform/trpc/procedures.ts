@@ -288,6 +288,11 @@ export const createTRPCRouter = t.router;
 export const mergeRouters = t.mergeRouters;
 
 /**
+ * テスト用callerファクトリ
+ */
+export const createCallerFactory = t.createCallerFactory;
+
+/**
  * ヘルパー関数
  */
 

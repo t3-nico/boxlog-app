@@ -22,7 +22,7 @@ const SUPABASE_SERVICE_KEY =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU';
 
 const TEST_USER_ID = crypto.randomUUID();
-const SKIP_INTEGRATION = process.env.SKIP_INTEGRATION_TESTS === 'true' || process.env.CI !== 'true';
+const SKIP_INTEGRATION = process.env.SKIP_INTEGRATION_TESTS === 'true';
 
 describe.skipIf(SKIP_INTEGRATION)('UserSettings Router Integration', () => {
   let adminSupabase: ReturnType<typeof createClient<Database>>;
@@ -51,6 +51,7 @@ describe.skipIf(SKIP_INTEGRATION)('UserSettings Router Integration', () => {
 
     await adminSupabase.from('profiles').upsert({
       id: TEST_USER_ID,
+      email: TEST_EMAIL,
       username: `testuser_settings_${Date.now()}`,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),

@@ -35,7 +35,7 @@ const SUPABASE_ANON_KEY =
 const TEST_USER_ID = crypto.randomUUID();
 
 // テストをスキップするかどうか（CI環境でSupabaseが起動していない場合）
-const SKIP_INTEGRATION = process.env.SKIP_INTEGRATION_TESTS === 'true' || process.env.CI !== 'true';
+const SKIP_INTEGRATION = process.env.SKIP_INTEGRATION_TESTS === 'true';
 
 describe.skipIf(SKIP_INTEGRATION)('GDPR Router Integration', () => {
   let adminSupabase: ReturnType<typeof createClient<Database>>;
@@ -71,6 +71,7 @@ describe.skipIf(SKIP_INTEGRATION)('GDPR Router Integration', () => {
     // profilesテーブルにレコード作成
     await adminSupabase.from('profiles').upsert({
       id: TEST_USER_ID,
+      email: TEST_EMAIL,
       username: `gdpr_test_${Date.now()}`,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
@@ -101,10 +102,10 @@ describe.skipIf(SKIP_INTEGRATION)('GDPR Router Integration', () => {
       color: 'red',
     });
 
-    await adminSupabase.from('plans').insert({
+    await adminSupabase.from('entries').insert({
       user_id: TEST_USER_ID,
-      title: 'GDPR Test Plan',
-      status: 'open',
+      title: 'GDPR Test Entry',
+      origin: 'planned',
     });
   });
 
@@ -113,7 +114,7 @@ describe.skipIf(SKIP_INTEGRATION)('GDPR Router Integration', () => {
     await supabase.auth.signOut();
 
     // テストデータをクリーンアップ
-    await adminSupabase.from('plans').delete().eq('user_id', TEST_USER_ID);
+    await adminSupabase.from('entries').delete().eq('user_id', TEST_USER_ID);
     await adminSupabase.from('tags').delete().eq('user_id', TEST_USER_ID);
 
     // テスト用ユーザーを削除（auth.usersから削除するとprofilesもカスケード削除される）
@@ -223,6 +224,7 @@ describe.skipIf(SKIP_INTEGRATION)('GDPR Router Integration', () => {
 
       await adminSupabase.from('profiles').upsert({
         id: deleteTestUserId,
+        email: deleteTestEmail,
         username: `delete_test_${Date.now()}`,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
@@ -304,7 +306,9 @@ describe.skipIf(SKIP_INTEGRATION)('GDPR Router Integration', () => {
       ).rejects.toThrow(TRPCError);
     });
 
-    // 注意: 実際の削除テストはデータを破壊するため、CI環境でのみ実行することを推奨
+    // skip理由: アカウント削除は auth.users を CASCADE DELETE するためテストDBを破壊する
+    // CI専用テストランナーでの実行を検討中
+    // TODO(#999): CI専用環境でのみ実行する仕組みを導入
     it.skip('should delete account immediately with correct credentials', async () => {
       const caller = createTestCaller(userRouter, deleteTestCtx);
 

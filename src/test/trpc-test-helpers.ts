@@ -6,12 +6,12 @@
  * @example
  * ```typescript
  * import { createTestCaller, createMockContext } from '@/test/trpc-test-helpers'
- * import { plansRouter } from '@/server/api/routers/plans'
+ * import { tagsRouter } from '@/features/tags/server/router'
  *
- * describe('plans.list', () => {
- *   it('should return plans for authenticated user', async () => {
+ * describe('tags.list', () => {
+ *   it('should return tags for authenticated user', async () => {
  *     const ctx = createMockContext({ userId: 'test-user-id' })
- *     const caller = createTestCaller(plansRouter, ctx)
+ *     const caller = createTestCaller(tagsRouter, ctx)
  *
  *     const result = await caller.list()
  *     expect(result).toBeDefined()
@@ -21,12 +21,14 @@
  */
 
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { initTRPC, type AnyRouter } from '@trpc/server';
-import superjson from 'superjson';
+import type { AnyRouter } from '@trpc/server';
 import { expect, vi } from 'vitest';
 
 import type { Database } from '@/lib/database.types';
-import type { Context } from '@/platform/trpc/procedures';
+import { createCallerFactory, type Context } from '@/platform/trpc/procedures';
+
+// Re-export factories for backward compatibility
+export { createMockEntry, createMockTag } from '@/test/factories';
 
 /**
  * モックコンテキストのオプション
@@ -125,13 +127,11 @@ export function createAuthenticatedContext(
   return createMockContext({ ...options, userId });
 }
 
-// tRPCインスタンス（テスト用）- createCallerFactoryの型推論に必要
-const testTrpc = initTRPC.context<Context>().create({
-  transformer: superjson,
-});
-
 /**
  * tRPCテスト用のcallerを作成
+ *
+ * アプリ本体と同じtRPCインスタンスの createCallerFactory を使用し、
+ * 型推論が正しく機能するようにする。
  *
  * @param router - テスト対象のルーター
  * @param ctx - モックコンテキスト
@@ -139,14 +139,13 @@ const testTrpc = initTRPC.context<Context>().create({
  *
  * @example
  * ```typescript
- * // 型安全な使用方法
- * const caller = createTestCaller(plansCrudRouter, ctx);
+ * const caller = createTestCaller(tagsRouter, ctx);
  * const result = await caller.list(); // 型推論される
  * ```
  */
 export function createTestCaller<TRouter extends AnyRouter>(router: TRouter, ctx: Context) {
-  const createCaller = testTrpc.createCallerFactory(router);
-  return createCaller(ctx);
+  const caller = createCallerFactory(router);
+  return caller(ctx);
 }
 
 /**
@@ -273,61 +272,46 @@ export function mockSupabaseError(
 }
 
 /**
- * テスト用のエントリデータを生成
+ * チェーン可能なSupabaseクエリビルダーモック
+ *
+ * `from('table').select().eq(...).single()` のようなチェーンを模倣。
+ * 全メソッドが `this` を返し、末端メソッド（single/maybeSingle/then）が結果を返す。
  */
-export function createMockEntry(
-  overrides: Partial<Database['public']['Tables']['entries']['Row']> = {},
-): Database['public']['Tables']['entries']['Row'] {
-  const now = new Date().toISOString();
-  return {
-    id: 'test-entry-id',
-    user_id: 'test-user-id',
-    title: 'Test Entry',
-    description: null,
-    origin: 'planned',
-    start_time: null,
-    end_time: null,
-    actual_start_time: null,
-    actual_end_time: null,
-    duration_minutes: null,
-    fulfillment_score: null,
-    recurrence_type: 'none',
-    recurrence_rule: null,
-    recurrence_end_date: null,
-    reminder_minutes: null,
-    reminder_at: null,
-    reminder_sent: false,
-    reviewed_at: null,
-    created_at: now,
-    updated_at: now,
-    ...overrides,
+export function createChainableMock(
+  data: unknown,
+  error: { message: string; code?: string } | null = null,
+) {
+  const mock: Record<string, ReturnType<typeof vi.fn>> = {
+    select: vi.fn().mockReturnThis(),
+    insert: vi.fn().mockReturnThis(),
+    update: vi.fn().mockReturnThis(),
+    delete: vi.fn().mockReturnThis(),
+    upsert: vi.fn().mockReturnThis(),
+    eq: vi.fn().mockReturnThis(),
+    neq: vi.fn().mockReturnThis(),
+    in: vi.fn().mockReturnThis(),
+    is: vi.fn().mockReturnThis(),
+    or: vi.fn().mockReturnThis(),
+    order: vi.fn().mockReturnThis(),
+    limit: vi.fn().mockReturnThis(),
+    range: vi.fn().mockReturnThis(),
+    single: vi.fn().mockResolvedValue({ data, error }),
+    maybeSingle: vi.fn().mockResolvedValue({ data, error }),
+    then: vi.fn().mockImplementation((resolve: (value: unknown) => void) =>
+      resolve({
+        data: Array.isArray(data) ? data : data ? [data] : [],
+        error,
+      }),
+    ),
   };
-}
 
-/**
- * テスト用のプランデータを生成（後方互換エイリアス）
- */
-export const createMockPlan = createMockEntry;
+  Object.keys(mock).forEach((key) => {
+    if (!['single', 'maybeSingle', 'then'].includes(key)) {
+      mock[key]!.mockReturnValue(mock);
+    }
+  });
 
-/**
- * テスト用のタグデータを生成
- */
-export function createMockTag(
-  overrides: Partial<Database['public']['Tables']['tags']['Row']> = {},
-): Database['public']['Tables']['tags']['Row'] {
-  const now = new Date().toISOString();
-  return {
-    id: 'test-tag-id',
-    user_id: 'test-user-id',
-    name: 'Test Tag',
-    description: null,
-    color: 'blue',
-    is_active: true,
-    sort_order: 0,
-    created_at: now,
-    updated_at: now,
-    ...overrides,
-  };
+  return mock;
 }
 
 /**

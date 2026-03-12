@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
+  },
+  "include": [
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "src/test/setup.ts",
+    "src/test/trpc-test-helpers.ts",
+    "src/test/factories/**/*.ts",
+    "src/test/e2e/**/*.ts"
+  ],
+  "exclude": ["node_modules", "src/test/integration/**"]
+}
