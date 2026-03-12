@@ -20,7 +20,7 @@ export const AllPatterns: Story = {
 
     return (
       <div className="flex flex-col items-start gap-6">
-        <InputOTP maxLength={6} value={value} onChange={setValue}>
+        <InputOTP maxLength={6} value={value} onChange={setValue} aria-label="One-time password">
           <InputOTPGroup>
             <InputOTPSlot index={0} />
             <InputOTPSlot index={1} />

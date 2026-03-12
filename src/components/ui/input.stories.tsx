@@ -23,20 +23,26 @@ export const AllPatterns: Story = {
     return (
       <div className="flex flex-col items-start gap-6">
         <div className="w-80 space-y-4">
-          <Input size="sm" placeholder="フィルター入力" />
-          <Input placeholder="標準入力" />
-          <Input size="lg" placeholder="検索バー" />
+          <Input size="sm" placeholder="フィルター入力" aria-label="Filter input" />
+          <Input placeholder="標準入力" aria-label="Standard input" />
+          <Input size="lg" placeholder="検索バー" aria-label="Search bar" />
         </div>
 
         <div className="w-80 space-y-4">
-          <Input type="text" placeholder="テキスト入力" />
-          <Input type="email" placeholder="you@example.com" autoComplete="email" />
+          <Input type="text" placeholder="テキスト入力" aria-label="Text input" />
+          <Input
+            type="email"
+            placeholder="you@example.com"
+            autoComplete="email"
+            aria-label="Email"
+          />
           <div className="relative">
             <Input
               type={showPassword ? 'text' : 'password'}
               placeholder="パスワード"
               className="pr-8"
               autoComplete="current-password"
+              aria-label="Password"
             />
             <button
               type="button"
@@ -50,9 +56,9 @@ export const AllPatterns: Story = {
         </div>
 
         <div className="w-80 space-y-4">
-          <Input placeholder="通常" />
-          <Input placeholder="無効" disabled />
-          <Input placeholder="エラー状態" aria-invalid="true" />
+          <Input placeholder="通常" aria-label="Normal input" />
+          <Input placeholder="無効" disabled aria-label="Disabled input" />
+          <Input placeholder="エラー状態" aria-invalid="true" aria-label="Error input" />
         </div>
 
         <div className="w-80 space-y-4">

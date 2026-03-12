@@ -26,6 +26,8 @@ const meta = {
     onShowOnlyTag: fn(),
     onDeleteTag: fn(),
   },
+  // aria-required-children / button-name: Radix DropdownMenuTrigger internal structure
+  parameters: { a11y: { test: 'todo' } },
   decorators: [
     (Story) => (
       <DropdownMenu defaultOpen>

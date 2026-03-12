@@ -185,6 +185,8 @@ const meta = {
   title: 'Features/Chronotype/ChronotypeSettings',
   parameters: {
     layout: 'padded',
+    // button-name: SelectTrigger without explicit label in LabeledRow component
+    a11y: { test: 'todo' },
   },
   tags: ['autodocs'],
 } satisfies Meta;

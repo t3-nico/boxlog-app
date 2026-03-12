@@ -10,7 +10,11 @@ const meta = {
   title: 'Primitives/MiniCalendar',
   component: MiniCalendar,
   tags: ['autodocs'],
-  parameters: { layout: 'fullscreen' },
+  parameters: {
+    layout: 'fullscreen',
+    // button-name: MiniCalendar navigation buttons (prev/next month) rendered by component
+    a11y: { test: 'todo' },
+  },
   argTypes: {
     asPopover: {
       control: 'boolean',

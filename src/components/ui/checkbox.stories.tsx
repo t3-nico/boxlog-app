@@ -28,18 +28,21 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     checked: false,
+    'aria-label': 'Example checkbox',
   },
 };
 
 export const Checked: Story = {
   args: {
     checked: true,
+    'aria-label': 'Example checkbox',
   },
 };
 
 export const Disabled: Story = {
   args: {
     disabled: true,
+    'aria-label': 'Disabled checkbox',
   },
 };
 

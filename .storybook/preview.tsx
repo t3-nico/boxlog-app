@@ -86,24 +86,22 @@ const preview: Preview = {
       config: {
         rules: [
           { id: 'color-contrast', enabled: true },
+          // Storybook iframe構造に起因する誤検出を無効化
           { id: 'html-has-lang', enabled: false },
           { id: 'landmark-one-main', enabled: false },
           { id: 'page-has-heading-one', enabled: false },
           { id: 'region', enabled: false },
+          // Story単体表示では見出し階層が不完全になるのは構造上正常
+          { id: 'heading-order', enabled: false },
+          // Radix UI の内部実装による aria-checked 等の誤検出
+          { id: 'aria-prohibited-attr', enabled: false },
         ],
-      },
-
-      options: {
-        runOnly: {
-          type: 'tag',
-          values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'],
-        },
       },
 
       // 'todo' - show a11y violations in the test UI only
       // 'error' - fail CI on a11y violations
       // 'off' - skip a11y checks entirely
-      test: 'todo',
+      test: 'error',
     },
   },
   decorators: [

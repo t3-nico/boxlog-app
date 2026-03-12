@@ -119,10 +119,14 @@ function AvatarUploadDemo({ initialUrl }: { initialUrl?: string }) {
 
 /** アップロード（空状態） */
 export const Upload: Story = {
+  // label: hidden file input inside AvatarUpload component
+  parameters: { a11y: { test: 'todo' } },
   render: () => <AvatarUploadDemo />,
 };
 
 /** アップロード（画像あり） */
 export const UploadWithImage: Story = {
+  // label: hidden file input inside AvatarUpload component
+  parameters: { a11y: { test: 'todo' } },
   render: () => <AvatarUploadDemo initialUrl="https://github.com/shadcn.png" />,
 };

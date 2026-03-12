@@ -163,6 +163,7 @@ export const WithAnchor: Story = {
             onFocus={() => setIsOpen(true)}
             className="w-24"
             placeholder="--:--"
+            aria-label="Time"
           />
         </PopoverAnchor>
         <PopoverContent className="w-24 p-1" align="start">

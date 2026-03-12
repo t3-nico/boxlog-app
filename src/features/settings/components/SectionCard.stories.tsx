@@ -19,6 +19,8 @@ const meta = {
   component: SectionCard,
   parameters: {
     layout: 'padded',
+    // button-name: SelectTrigger inside LabeledRow without explicit aria-label
+    a11y: { test: 'todo' },
   },
   tags: ['autodocs'],
   args: {
@@ -87,10 +89,10 @@ export const WithoutTitle: Story = {
     <div className="max-w-2xl">
       <SectionCard {...args}>
         <LabeledRow label="プッシュ通知">
-          <Switch defaultChecked />
+          <Switch defaultChecked aria-label="Push notifications" />
         </LabeledRow>
         <LabeledRow label="サウンド">
-          <Switch />
+          <Switch aria-label="Sound" />
         </LabeledRow>
       </SectionCard>
     </div>
@@ -153,10 +155,10 @@ export const AllPatterns: Story = {
 
       <SectionCard title="通知">
         <LabeledRow label="プッシュ通知">
-          <Switch defaultChecked />
+          <Switch defaultChecked aria-label="Push notifications" />
         </LabeledRow>
         <LabeledRow label="サウンド">
-          <Switch defaultChecked />
+          <Switch defaultChecked aria-label="Sound" />
         </LabeledRow>
       </SectionCard>
 

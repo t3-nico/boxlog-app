@@ -54,7 +54,7 @@ export const AllPatterns: Story = {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" icon>
+              <Button variant="outline" icon aria-label="Select color">
                 <span
                   className={cn('size-4 rounded-full', TAG_COLOR_MAP[color2].dot)}
                   aria-hidden

@@ -50,6 +50,8 @@ const meta = {
   title: 'Recipes/Inspector/EntryInspector',
   parameters: {
     layout: 'fullscreen',
+    // button-name / color-contrast / aria-progressbar-name: internal inspector components
+    a11y: { test: 'todo' },
   },
   tags: ['autodocs', 'critical'],
 } satisfies Meta;
@@ -73,6 +75,7 @@ function MockTagRow({
       <button
         type="button"
         className="hover:bg-state-hover -mt-1 -ml-1.5 flex items-center gap-2 rounded-lg py-1 pr-2 pl-1.5 text-base font-semibold transition-colors"
+        aria-label={tagName ? `Tag: ${tagName}` : 'Add tag'}
       >
         {tagName ? (
           <>
@@ -176,6 +179,7 @@ function InspectorContent({
                   <button
                     type="button"
                     className="text-muted-foreground hover:bg-state-hover inline-flex h-8 items-center gap-1 rounded-lg px-2 text-sm transition-colors"
+                    aria-label="Set recurrence"
                   >
                     {t('common.recurrence.none')}
                   </button>
@@ -196,6 +200,7 @@ function InspectorContent({
                   <button
                     type="button"
                     className="text-muted-foreground hover:bg-state-hover inline-flex h-8 items-center gap-1 rounded-lg px-2 text-sm transition-colors"
+                    aria-label="Add reminder"
                   >
                     {t('common.reminder.add')}
                   </button>

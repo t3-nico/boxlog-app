@@ -15,6 +15,8 @@ const meta = {
   tags: ['autodocs'],
   parameters: {
     layout: 'padded',
+    // button-name: Checkbox and toggle buttons rendered internally by GroupHeader component
+    a11y: { test: 'todo' },
   },
   args: {
     label: '開発',
