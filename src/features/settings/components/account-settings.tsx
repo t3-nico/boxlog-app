@@ -13,12 +13,12 @@ import { useRouter } from '@/platform/i18n/navigation';
 import { createClient } from '@/platform/supabase/client';
 import { useAuthStore } from '@/stores/useAuthStore';
 
-import { SettingRow } from '@/components/common/SettingRow';
-import { SettingsCard } from '@/components/common/SettingsCard';
 import { AccountDeletionDialog } from './account-deletion-dialog';
 import { EmailChangeDialog } from './email-change-dialog';
+import { SettingRow } from './fields/SettingRow';
 import { PasswordChangeDialog } from './password-change-dialog';
 import { MFASection } from './sections/MFASection';
+import { SettingsCard } from './SettingsCard';
 
 /**
  * アカウント設定コンポーネント

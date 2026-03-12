@@ -39,8 +39,8 @@ import {
 } from '@/components/ui/select';
 import { api } from '@/platform/trpc';
 
-import { SettingRow } from '@/components/common/SettingRow';
-import { SettingsCard } from '@/components/common/SettingsCard';
+import { SettingRow } from './fields/SettingRow';
+import { SettingsCard } from './SettingsCard';
 
 type ExportFormat = 'json' | 'csv';
 type ExportRange = 'all' | 'custom';

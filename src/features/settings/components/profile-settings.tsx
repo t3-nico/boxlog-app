@@ -5,11 +5,11 @@ import { useCallback, useState } from 'react';
 import { Camera, ChevronDown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { SettingRow } from '@/components/common/SettingRow';
-import { SettingsCard } from '@/components/common/SettingsCard';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ChronotypeSettingsPanel as ChronotypeSettings } from '@/features/chronotype';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { SettingRow } from './fields/SettingRow';
+import { SettingsCard } from './SettingsCard';
 
 import { AvatarChangeDialog } from './avatar-change-dialog';
 import { DisplayNameDialog } from './display-name-dialog';

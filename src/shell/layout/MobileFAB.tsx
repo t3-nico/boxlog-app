@@ -5,13 +5,13 @@ import { useCallback } from 'react';
 import { Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
+import { Button } from '@/components/ui/button';
+import { useEntryInspectorStore, useEntryMutations } from '@/features/entry';
 import {
   CreateActionSheet,
   useCreateActionSheet,
   type CreateActionType,
-} from '@/components/common/CreateActionSheet';
-import { Button } from '@/components/ui/button';
-import { useEntryInspectorStore, useEntryMutations } from '@/features/entry';
+} from './CreateActionSheet';
 
 /**
  * モバイル用FAB（Floating Action Button）+ CreateActionSheet

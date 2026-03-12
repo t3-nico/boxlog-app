@@ -16,8 +16,8 @@ import { Switch } from '@/components/ui/switch';
 
 import { useUserSettings } from '../hooks/useUserSettings';
 
-import { SettingRow } from '@/components/common/SettingRow';
-import { SettingsCard } from '@/components/common/SettingsCard';
+import { SettingRow } from './fields/SettingRow';
+import { SettingsCard } from './SettingsCard';
 
 /**
  * カレンダー設定コンポーネント

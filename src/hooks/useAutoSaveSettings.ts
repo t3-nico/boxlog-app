@@ -3,9 +3,9 @@ import { useCallback, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
+import { useDebouncedCallback } from '@/hooks/useDebounce';
 import { getErrorMessage } from '@/lib/errors';
 import { logger } from '@/lib/logger';
-import { useDebouncedCallback } from './useDebounce';
 
 interface UseAutoSaveSettingsOptions<T> {
   initialValues: T;
@@ -18,7 +18,7 @@ interface UseAutoSaveSettingsOptions<T> {
 export function useAutoSaveSettings<T>({
   initialValues,
   onSave,
-  debounceMs = 1000, // 1秒後に自動保存
+  debounceMs = 1000,
   successMessage,
   errorMessage,
 }: UseAutoSaveSettingsOptions<T>) {
@@ -27,9 +27,7 @@ export function useAutoSaveSettings<T>({
   const [isSaving, setIsSaving] = useState(false);
   const lastSavedValues = useRef<T>(initialValues);
 
-  // デバウンスされた保存関数
   const debouncedSave = useDebouncedCallback(async (newValues: T) => {
-    // 変更がない場合は保存しない
     if (JSON.stringify(newValues) === JSON.stringify(lastSavedValues.current)) {
       return;
     }
@@ -39,13 +37,9 @@ export function useAutoSaveSettings<T>({
     try {
       await onSave(newValues);
       lastSavedValues.current = newValues;
-
-      // 成功トースト
       toast.success(successMessage ?? t('settings.common.saved'));
     } catch (error) {
       logger.error('Failed to save settings:', error);
-
-      // エラートースト
       toast.error(errorMessage ?? t('settings.common.saveFailed'), {
         description: getErrorMessage(error),
       });
@@ -54,8 +48,6 @@ export function useAutoSaveSettings<T>({
     }
   }, debounceMs);
 
-  // 値が変更されたら自動保存
-  // useDebouncedCallbackは自動的にクリーンアップされる
   const prevValuesRef = useRef<T>(initialValues);
   if (JSON.stringify(values) !== JSON.stringify(prevValuesRef.current)) {
     prevValuesRef.current = values;

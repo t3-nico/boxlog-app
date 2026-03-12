@@ -6,9 +6,8 @@ import { useTranslations } from 'next-intl';
 
 import { useCalendarFilterStore } from '@/stores/useCalendarFilterStore';
 
-import { TagDeleteStrategyDialog } from '@/components/common/TagDeleteStrategyDialog';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useDeleteTag, useTagCacheStore, useTags } from '@/features/tags';
+import { TagDeleteStrategyDialog, useDeleteTag, useTagCacheStore, useTags } from '@/features/tags';
 import { api } from '@/platform/trpc';
 import { SidebarSection } from '@/shell/layout/SidebarSection';
 import { useTagModalNavigation } from '../../../hooks/useTagModalNavigation';

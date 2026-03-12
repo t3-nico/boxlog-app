@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 
-import { SettingRow } from '@/components/common/SettingRow';
+import { SettingRow } from './SettingRow';
 
 /** SettingRow - 設定画面の行コンポーネント（2カラム: ラベル | コントロール） */
 const meta = {

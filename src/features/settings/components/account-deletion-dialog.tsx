@@ -6,7 +6,6 @@ import { AlertTriangle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
-import { SettingRow } from '@/components/common/SettingRow';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,6 +20,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { logger } from '@/lib/logger';
 import { api } from '@/platform/trpc';
+import { SettingRow } from './fields/SettingRow';
 
 /**
  * 🗑️ Account Deletion Dialog Component

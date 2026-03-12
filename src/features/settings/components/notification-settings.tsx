@@ -15,8 +15,8 @@ import {
 } from '@/lib/notification-helpers';
 import { api } from '@/platform/trpc';
 
-import { SettingRow } from '@/components/common/SettingRow';
-import { SettingsCard } from '@/components/common/SettingsCard';
+import { SettingRow } from './fields/SettingRow';
+import { SettingsCard } from './SettingsCard';
 
 export function NotificationSettings() {
   const t = useTranslations();

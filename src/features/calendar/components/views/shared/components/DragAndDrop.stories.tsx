@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 
-import { useCalendarDragStore } from '@/features/calendar/stores/useCalendarDragStore';
 import type { CalendarEvent } from '@/types/calendar-event';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { useCalendarDragStore } from '../../../../stores/useCalendarDragStore';
 
-import { DragSelectionPreview } from '@/features/calendar/components/views/shared/components/CalendarDragSelection/DragSelectionPreview';
-import { PanelDragPreview } from '@/features/calendar/components/views/shared/components/PanelDragPreview';
-import { PlanCard } from '@/features/calendar/components/views/shared/components/PlanCard/PlanCard';
+import { DragSelectionPreview } from './CalendarDragSelection/DragSelectionPreview';
+import { PanelDragPreview } from './PanelDragPreview';
+import { PlanCard } from './PlanCard/PlanCard';
 
 /**
  * DnD（Drag & Drop）に関わる全ビジュアル状態のカタログ。
