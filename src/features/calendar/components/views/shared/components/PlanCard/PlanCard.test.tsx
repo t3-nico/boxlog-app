@@ -5,17 +5,8 @@ import type { CalendarEvent } from '../../../../../types/calendar.types';
 
 import { PlanCard } from './PlanCard';
 
-// useEntryMutations フックをモック
-vi.mock('@/hooks/useEntryMutations', () => ({
-  useEntryMutations: () => ({
-    updateEntry: { mutate: vi.fn(), isPending: false },
-    createEntry: { mutate: vi.fn(), isPending: false },
-    deleteEntry: { mutate: vi.fn(), isPending: false },
-  }),
-}));
-
 // useTagsMap フックをモック（tRPC依存を回避）
-vi.mock('@/hooks/useTagsMap', () => ({
+vi.mock('@/features/tags', () => ({
   useTagsMap: () => ({
     getTagById: () => undefined,
     getTagName: () => null,
@@ -25,7 +16,7 @@ vi.mock('@/hooks/useTagsMap', () => ({
 }));
 
 // useEntryInspectorStore をモック
-vi.mock('@/stores/useEntryInspectorStore', () => ({
+vi.mock('@/features/entry', () => ({
   useEntryInspectorStore: (selector: (s: Record<string, unknown>) => unknown) =>
     selector({ setAnchorRect: vi.fn(), selectedEntryId: null }),
 }));
