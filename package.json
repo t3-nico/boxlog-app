@@ -24,9 +24,7 @@
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
     "bundle:analyze": "ANALYZE=true npm run build",
-    "eslint:setup": "node .eslint/scripts/setup.js",
-    "setup:eslint-plugins": "node .eslint/scripts/setup.js",
-    "postinstall": "echo 'ESLint setup temporarily disabled for deployment'",
+    "postinstall": "echo 'postinstall: no-op'",
     "prepare": "husky",
     "log:feat": "git log --grep=\"^feat:\" --pretty=\"%s\"",
     "log:fix": "git log --grep=\"^fix:\" --pretty=\"%s\"",
@@ -42,8 +40,6 @@
     "docs:validate:links": "node scripts/validate-doc-references.js",
     "docs:validate:rules": "node scripts/validate-claude-rules.js",
     "docs:validate": "npm run docs:validate:links && npm run docs:validate:rules",
-    "lint:a11y": "eslint . -c .eslint/index.js --ext .tsx,.ts | grep -E '(jsx-a11y|accessibility)'",
-    "lint:a11y:fix": "eslint . -c .eslint/index.js --ext .tsx,.ts --fix | grep -E '(jsx-a11y|accessibility)'",
     "license:check": "npx license-checker --production --excludePackages \"boxlog-app@$(node -p 'require(\"./package.json\").version')\" --onlyAllow \"$(cat .licensrc.json | jq -r .onlyAllow)\"",
     "license:check:force": "npx license-checker --production --excludePackages \"boxlog-app@$(node -p 'require(\"./package.json\").version')\" --onlyAllow \"$(cat .licensrc.json | jq -r .onlyAllow)\" --failOn \"$(cat .licensrc.json | jq -r .onlyAllow)\"",
     "license:check-risks": "tsx scripts/check-license-risks.ts",
@@ -256,6 +252,5 @@
     "*.{json,md,yml,yaml}": [
       "prettier --write"
     ]
-  },
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+  }
 }
