@@ -49,14 +49,27 @@ describe('useServiceWorker', () => {
       delete: vi.fn().mockResolvedValue(true),
     });
 
+    // CI環境でバージョン付きURLにならないようenv変数をクリア
+    delete process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA;
+    delete process.env.NEXT_PUBLIC_BUILD_ID;
+
+    // NODE_ENV を production に設定（development だと早期returnされる）
+    const originalNodeEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'production';
+
     // document.readyState のモック
     Object.defineProperty(document, 'readyState', {
       value: 'complete',
       writable: true,
     });
+
+    // afterEach で NODE_ENV を復元するためクロージャに保持
+    (globalThis as Record<string, unknown>).__originalNodeEnv = originalNodeEnv;
   });
 
   afterEach(() => {
+    process.env.NODE_ENV = (globalThis as Record<string, unknown>).__originalNodeEnv as string;
+    delete (globalThis as Record<string, unknown>).__originalNodeEnv;
     vi.unstubAllGlobals();
     vi.clearAllMocks();
   });
