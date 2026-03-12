@@ -159,20 +159,17 @@ export async function GET() {
       <!-- タイトル -->
       <div class="title-section">
         <h1 class="title">Under Maintenance</h1>
-        <p class="subtitle">メンテナンス中</p>
       </div>
 
       <!-- 説明 -->
       <div class="description">
         <p class="description-text">We're currently performing system maintenance.</p>
-        <p class="description-sub">現在、システムメンテナンスを実施しています。</p>
+        <p class="description-sub">Please check back shortly.</p>
       </div>
 
       <!-- お詫びメッセージ -->
       <p class="footer">
         We apologize for the inconvenience.
-        <br>
-        <span class="footer-light">ご不便をおかけして申し訳ございません。</span>
       </p>
     </div>
   </div>
@@ -180,10 +177,11 @@ export async function GET() {
 </html>`;
 
   return new NextResponse(html, {
-    status: 200,
+    status: 503,
     headers: {
       'Content-Type': 'text/html; charset=utf-8',
       'Cache-Control': 'no-store, must-revalidate',
+      'Retry-After': '3600',
     },
   });
 }
