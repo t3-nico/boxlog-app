@@ -58,16 +58,16 @@ const zIndexLayers = [
   },
   { name: 'inspector', value: 1100, tailwind: 'z-inspector', description: 'ドラッグ可能Inspector' },
   {
-    name: 'overlay-popover',
-    value: 1200,
-    tailwind: 'z-overlay-popover',
-    description: 'Inspector上の日付選択・カラーピッカー',
-  },
-  {
     name: 'overlay-modal',
-    value: 1300,
+    value: 1200,
     tailwind: 'z-overlay-modal',
     description: 'Inspector上のモーダル',
+  },
+  {
+    name: 'overlay-popover',
+    value: 1300,
+    tailwind: 'z-overlay-popover',
+    description: 'モーダル上のポップオーバー（Select・日付選択等）',
   },
   {
     name: 'overlay-confirm',

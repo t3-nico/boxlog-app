@@ -18,8 +18,8 @@
   --z-index-inspector-backdrop: 1099;
   --z-index-inspector: 1100;
   /* Overlay系: Inspector上のUI */
-  --z-index-overlay-popover: 1200;
-  --z-index-overlay-modal: 1300;
+  --z-index-overlay-modal: 1200;
+  --z-index-overlay-popover: 1300;
   --z-index-overlay-confirm: 1400;
   --z-index-tooltip: 9999;
 }
