@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Clipboard, Copy, Edit, RotateCw, Trash2 } from 'lucide-react';
+import { expect, userEvent, within } from 'storybook/test';
 
 import {
   ContextMenu,
@@ -21,6 +22,33 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+export const WithInteraction: Story = {
+  render: () => (
+    <ContextMenu>
+      <ContextMenuTrigger asChild>
+        <div className="bg-card border-border flex h-20 w-64 cursor-context-menu items-center justify-center rounded-lg border">
+          <span>右クリックでメニュー</span>
+        </div>
+      </ContextMenuTrigger>
+      <ContextMenuContent>
+        <ContextMenuItem>編集</ContextMenuItem>
+        <ContextMenuItem>コピー</ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuItem variant="destructive">削除</ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByText('右クリックでメニュー');
+    await userEvent.pointer({ keys: '[MouseRight]', target: trigger });
+    const body = within(document.body);
+    await expect(body.getByText('編集')).toBeInTheDocument();
+    await expect(body.getByText('コピー')).toBeInTheDocument();
+    await expect(body.getByText('削除')).toBeInTheDocument();
+  },
+};
 
 export const AllPatterns: Story = {
   render: () => {

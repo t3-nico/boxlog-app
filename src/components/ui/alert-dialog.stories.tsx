@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { AlertTriangle, Clock, LogOut, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import { expect, userEvent, within } from 'storybook/test';
 
 import {
   AlertDialog,
@@ -185,6 +186,19 @@ export const Default: Story = {
       </AlertDialogContent>
     </AlertDialog>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = await canvas.findByRole('button', { name: '削除' });
+    await userEvent.click(trigger);
+
+    const body = within(document.body);
+    await expect(await body.findByText('本当に削除しますか？')).toBeVisible();
+
+    const cancelButton = await body.findByRole('button', { name: 'キャンセル' });
+    await userEvent.click(cancelButton);
+
+    await expect(body.queryByText('本当に削除しますか？')).not.toBeInTheDocument();
+  },
 };
 
 /** 削除確認ダイアログ。不可逆な削除アクションで使用。AlertDialogActionに `bg-destructive` スタイルを適用。実装例: TagDeleteConfirm */

@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { Button } from './button';
 import { ConfirmDialog } from './confirm-dialog';
@@ -62,6 +63,14 @@ export const Destructive: Story = {
       );
     }
     return <Demo />;
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole('button', { name: '削除確認を開く' });
+    await userEvent.click(trigger);
+
+    const body = within(document.body);
+    await expect(await body.findByText('このアイテムを削除しますか？')).toBeInTheDocument();
   },
 };
 

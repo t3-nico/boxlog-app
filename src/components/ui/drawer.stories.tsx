@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Calendar, CheckSquare, FileText, History } from 'lucide-react';
 import { useState } from 'react';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { Button } from './button';
 import {
@@ -145,5 +146,16 @@ export const AllPatterns: Story = {
         </Drawer>
       </div>
     );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = await canvas.findByRole('button', { name: 'Drawerを開く' });
+    await userEvent.click(trigger);
+
+    const body = within(document.body);
+    await expect(await body.findByText('アプリケーションの設定を変更します。')).toBeVisible();
+
+    const cancelButton = await body.findByRole('button', { name: 'キャンセル' });
+    await userEvent.click(cancelButton);
   },
 };

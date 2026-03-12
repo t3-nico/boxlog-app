@@ -3,6 +3,7 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Bell, ChevronDown, Plus, Repeat, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { expect, within } from 'storybook/test';
 
 import { cn } from '@/lib/utils';
 import type { EntryOrigin, EntryState, FulfillmentScore } from '../../types/entry';
@@ -262,6 +263,13 @@ export const UpcomingPlanned: Story = {
       initialNote="Prepare slides for the meeting"
     />
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    // Verify the inspector renders with the note textarea (placeholder is Japanese)
+    const noteTextarea = canvas.getByPlaceholderText('メモを追加...');
+    await expect(noteTextarea).toBeInTheDocument();
+    await expect(noteTextarea).toHaveValue('Prepare slides for the meeting');
+  },
 };
 
 /**
