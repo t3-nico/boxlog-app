@@ -1,54 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { ArrowLeftRight, Clock, Flame, Gauge, Ratio, Sparkles, Target, Timer } from 'lucide-react';
 
-import type { EstimationAccuracyData } from '../../types/metrics.types';
-import type { TagTimeData } from '../charts/TagTimeChart';
-import { TagTimeChartPure } from '../charts/TagTimeChart';
 import { MetricCard } from '../metrics/MetricCard';
-
-import { EstimationAccuracyChartPure } from './EstimationAccuracyChart';
-
-// =============================================================================
-// Mock Data
-// =============================================================================
-
-const mockEstimationData: EstimationAccuracyData[] = [
-  {
-    tagId: '1',
-    tagName: 'Development',
-    tagColor: 'blue',
-    avgPlannedMinutes: 90,
-    avgActualMinutes: 110,
-    avgDeviationMinutes: 20,
-    entryCount: 15,
-  },
-  {
-    tagId: '2',
-    tagName: 'Design',
-    tagColor: 'purple',
-    avgPlannedMinutes: 60,
-    avgActualMinutes: 55,
-    avgDeviationMinutes: 8,
-    entryCount: 8,
-  },
-  {
-    tagId: '3',
-    tagName: 'Meeting',
-    tagColor: 'green',
-    avgPlannedMinutes: 30,
-    avgActualMinutes: 45,
-    avgDeviationMinutes: 15,
-    entryCount: 12,
-  },
-];
-
-const mockTagTimeData: TagTimeData[] = [
-  { tagId: '1', name: 'Development', color: 'hsl(221, 83%, 53%)', hours: 18.5 },
-  { tagId: '2', name: 'Design', color: 'hsl(271, 91%, 65%)', hours: 8.2 },
-  { tagId: '3', name: 'Meeting', color: 'hsl(142, 71%, 45%)', hours: 6.8 },
-  { tagId: '4', name: 'Planning', color: 'hsl(38, 92%, 50%)', hours: 3.5 },
-  { tagId: '5', name: 'Review', color: 'hsl(0, 84%, 60%)', hours: 1.2 },
-];
 
 // =============================================================================
 // Meta
@@ -57,7 +10,7 @@ const mockTagTimeData: TagTimeData[] = [
 /**
  * ReviewView — 振り返りタブの全体レイアウト
  *
- * Layer 1: KPIメトリクスグリッド（8カード） + タグ別時間チャート + 見積もり精度チャート
+ * Layer 1: KPIメトリクスグリッド（8カード）
  * （このStoryはtRPCなしでモックデータを直接使用）
  */
 const meta = {
@@ -75,13 +28,12 @@ type Story = StoryObj<typeof meta>;
 // Stories
 // =============================================================================
 
-/** データありの典型的なInsightsタブ */
+/** データありの典型的な振り返りタブ */
 export const WithData: Story = {
   render: () => (
     <div className="bg-background flex min-h-0 flex-1 flex-col">
       <div className="flex-1 overflow-y-auto">
         <div className="flex flex-col gap-4 p-4">
-          {/* KPI Metrics Grid — 8 cards with hero variants */}
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <MetricCard
               label="Total Time"
@@ -141,12 +93,6 @@ export const WithData: Story = {
               progressStatus="warning"
             />
           </div>
-
-          {/* Tag Time Chart */}
-          <TagTimeChartPure data={mockTagTimeData} />
-
-          {/* Estimation Accuracy Chart */}
-          <EstimationAccuracyChartPure data={mockEstimationData} />
         </div>
       </div>
     </div>
@@ -191,8 +137,6 @@ export const Loading: Story = {
             />
             <MetricCard label="Blank Rate" valueParts={{ primary: '-', unit: '' }} isLoading />
           </div>
-          <TagTimeChartPure data={null} isLoading />
-          <EstimationAccuracyChartPure data={null} isLoading />
         </div>
       </div>
     </div>
@@ -241,8 +185,6 @@ export const Empty: Story = {
             />
             <MetricCard label="Blank Rate" valueParts={{ primary: '-', unit: '' }} icon={Ratio} />
           </div>
-          <TagTimeChartPure data={[]} />
-          <EstimationAccuracyChartPure data={[]} />
         </div>
       </div>
     </div>
@@ -314,36 +256,6 @@ export const HighPerformance: Story = {
               progressStatus="good"
             />
           </div>
-          <TagTimeChartPure
-            data={[
-              { tagId: '1', name: 'Deep Work', color: 'hsl(221, 83%, 53%)', hours: 28.5 },
-              { tagId: '2', name: 'Meeting', color: 'hsl(142, 71%, 45%)', hours: 12.0 },
-              { tagId: '3', name: 'Planning', color: 'hsl(38, 92%, 50%)', hours: 8.5 },
-              { tagId: '4', name: 'Review', color: 'hsl(271, 91%, 65%)', hours: 3.5 },
-            ]}
-          />
-          <EstimationAccuracyChartPure
-            data={[
-              {
-                tagId: '1',
-                tagName: 'Deep Work',
-                tagColor: 'blue',
-                avgPlannedMinutes: 90,
-                avgActualMinutes: 95,
-                avgDeviationMinutes: 5,
-                entryCount: 20,
-              },
-              {
-                tagId: '2',
-                tagName: 'Meeting',
-                tagColor: 'green',
-                avgPlannedMinutes: 30,
-                avgActualMinutes: 32,
-                avgDeviationMinutes: 3,
-                entryCount: 15,
-              },
-            ]}
-          />
         </div>
       </div>
     </div>

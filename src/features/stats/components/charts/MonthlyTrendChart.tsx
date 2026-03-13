@@ -32,7 +32,7 @@ export function MonthlyTrendChart() {
 
   if (isPending) {
     return (
-      <Card>
+      <Card className="border-none">
         <CardHeader>
           <CardTitle>Monthly Trend</CardTitle>
           <CardDescription>Past 12 months</CardDescription>
@@ -46,7 +46,7 @@ export function MonthlyTrendChart() {
 
   if (!data || data.length === 0) {
     return (
-      <Card>
+      <Card className="border-none">
         <CardHeader>
           <CardTitle>Monthly Trend</CardTitle>
           <CardDescription>Past 12 months</CardDescription>
@@ -72,7 +72,7 @@ export function MonthlyTrendChart() {
   }
 
   return (
-    <Card>
+    <Card className="border-none">
       <CardHeader>
         <CardTitle>Monthly Trend</CardTitle>
         <CardDescription>

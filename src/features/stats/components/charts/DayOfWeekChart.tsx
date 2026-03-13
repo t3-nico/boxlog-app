@@ -36,7 +36,7 @@ export function DayOfWeekChart() {
 
   if (isPending) {
     return (
-      <Card>
+      <Card className="border-none">
         <CardHeader>
           <CardTitle>Day of Week</CardTitle>
           <CardDescription>Activity by day</CardDescription>
@@ -50,7 +50,7 @@ export function DayOfWeekChart() {
 
   if (!data || data.length === 0) {
     return (
-      <Card>
+      <Card className="border-none">
         <CardHeader>
           <CardTitle>Day of Week</CardTitle>
           <CardDescription>Activity by day</CardDescription>
@@ -73,7 +73,7 @@ export function DayOfWeekChart() {
   const weekendHours = data.slice(5).reduce((sum, item) => sum + item.hours, 0);
 
   return (
-    <Card>
+    <Card className="border-none">
       <CardHeader>
         <CardTitle>Day of Week</CardTitle>
         <CardDescription>

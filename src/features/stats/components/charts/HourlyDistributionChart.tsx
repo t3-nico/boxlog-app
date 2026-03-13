@@ -36,7 +36,7 @@ export function HourlyDistributionChart() {
 
   if (isPending) {
     return (
-      <Card>
+      <Card className="border-none">
         <CardHeader>
           <CardTitle>Hourly Distribution</CardTitle>
           <CardDescription>When you work</CardDescription>
@@ -50,7 +50,7 @@ export function HourlyDistributionChart() {
 
   if (!data || data.length === 0) {
     return (
-      <Card>
+      <Card className="border-none">
         <CardHeader>
           <CardTitle>Hourly Distribution</CardTitle>
           <CardDescription>When you work</CardDescription>
@@ -71,7 +71,7 @@ export function HourlyDistributionChart() {
   const totalHours = data.reduce((sum, item) => sum + item.hours, 0);
 
   return (
-    <Card>
+    <Card className="border-none">
       <CardHeader>
         <CardTitle>Hourly Distribution</CardTitle>
         <CardDescription>
