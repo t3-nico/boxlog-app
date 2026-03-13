@@ -20,7 +20,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from './sheet';
  * フルスクリーン Sheet は `showCloseButton={false}` にして、ヘッダー内にカスタム閉じるボタンを配置する。
  */
 const meta = {
-  title: 'Primitives/Sheet',
+  title: 'Components/UI/Sheet',
   component: Sheet,
   tags: ['autodocs'],
   parameters: {

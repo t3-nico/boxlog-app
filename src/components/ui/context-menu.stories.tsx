@@ -12,7 +12,7 @@ import {
 } from './context-menu';
 
 const meta = {
-  title: 'Primitives/ContextMenu',
+  title: 'Components/UI/ContextMenu',
   component: ContextMenu,
   tags: ['autodocs'],
   parameters: {

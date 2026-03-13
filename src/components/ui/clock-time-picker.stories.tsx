@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { ClockTimePicker } from './clock-time-picker';
 
 const meta = {
-  title: 'Primitives/ClockTimePicker',
+  title: 'Components/UI/ClockTimePicker',
   component: ClockTimePicker,
   tags: ['autodocs'],
   parameters: {

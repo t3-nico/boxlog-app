@@ -16,7 +16,7 @@ import {
 } from './drawer';
 
 const meta = {
-  title: 'Primitives/Drawer',
+  title: 'Components/UI/Drawer',
   component: Drawer,
   tags: ['autodocs'],
   parameters: {

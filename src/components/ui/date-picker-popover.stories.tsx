@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { DatePickerPopover } from './date-picker-popover';
 
 const meta = {
-  title: 'Recipes/DatePickerPopover',
+  title: 'Components/UI/DatePickerPopover',
   component: DatePickerPopover,
   tags: ['autodocs'],
   parameters: {

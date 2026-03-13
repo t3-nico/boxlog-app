@@ -48,7 +48,7 @@ import { InspectorFrame } from './story-helpers';
  * `useMediaQuery` が反応し、自動的に PC（DraggableInspector）/ モバイル（Drawer）が切り替わる。
  */
 const meta = {
-  title: 'Recipes/Inspector/EntryInspector',
+  title: 'Features/Entry/Inspector/EntryInspector',
   parameters: {
     layout: 'fullscreen',
     // button-name / color-contrast / aria-progressbar-name: internal inspector components

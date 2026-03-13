@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, Plus, Settings, Trash2, X } from 'lucide-rea
 import { Button } from './button';
 
 const meta = {
-  title: 'Primitives/Button',
+  title: 'Components/UI/Button',
   component: Button,
   parameters: { layout: 'fullscreen' },
   tags: ['autodocs'],

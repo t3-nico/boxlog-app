@@ -11,7 +11,7 @@ import { COLOR_DISPLAY_NAMES, ColorPaletteMenuItems } from './color-palette-pick
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from './dropdown-menu';
 
 const meta = {
-  title: 'Primitives/ColorPaletteMenuItems',
+  title: 'Components/UI/ColorPaletteMenuItems',
   component: ColorPaletteMenuItems,
   tags: ['autodocs'],
   parameters: {

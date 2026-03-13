@@ -9,7 +9,7 @@ import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from './popove
 
 /** Popover - ポップオーバー。PopoverTrigger（ボタン開閉）とPopoverAnchor（Input開閉）の2パターンを提供。 */
 const meta = {
-  title: 'Primitives/Popover',
+  title: 'Components/UI/Popover',
   component: Popover,
   tags: ['autodocs'],
   parameters: { layout: 'fullscreen' },

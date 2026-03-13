@@ -41,7 +41,7 @@ import { PlanCard } from './PlanCard/PlanCard';
  * TagReorder / TagReorderNested でインタラクティブに操作可能。
  */
 const meta = {
-  title: 'Primitives/DragAndDrop',
+  title: 'Features/Calendar/DragAndDrop',
   parameters: {
     layout: 'padded',
   },

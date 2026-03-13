@@ -16,7 +16,7 @@ import { Label } from './label';
 import { Skeleton } from './skeleton';
 
 const meta = {
-  title: 'Primitives/Card',
+  title: 'Components/UI/Card',
   component: Card,
   tags: ['autodocs'],
   parameters: {

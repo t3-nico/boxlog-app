@@ -20,7 +20,7 @@ import { ActionFooter } from './action-footer';
  * | Sheet / Drawer | `ActionFooter`（このコンポーネント） |
  */
 const meta = {
-  title: 'Recipes/ActionFooter',
+  title: 'Components/UI/ActionFooter',
   component: ActionFooter,
   tags: ['autodocs'],
   parameters: {

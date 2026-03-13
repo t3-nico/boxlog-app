@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { MiniCalendar } from '@/components/ui/mini-calendar';
 
 const meta = {
-  title: 'Primitives/MiniCalendar',
+  title: 'Components/UI/MiniCalendar',
   component: MiniCalendar,
   tags: ['autodocs'],
   parameters: {

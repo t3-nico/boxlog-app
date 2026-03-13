@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Button } from './button';
 
 const meta = {
-  title: 'Recipes/CookieConsentBanner',
+  title: 'Components/UI/CookieConsentBanner',
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',

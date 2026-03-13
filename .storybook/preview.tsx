@@ -20,6 +20,7 @@ import errorMessages from '../messages/ja/error.json';
 import legalMessages from '../messages/ja/legal.json';
 import navigationMessages from '../messages/ja/navigation.json';
 import notificationMessages from '../messages/ja/notification.json';
+import onboardingMessages from '../messages/ja/onboarding.json';
 import planMessages from '../messages/ja/plan.json';
 import recordMessages from '../messages/ja/record.json';
 import settingsMessages from '../messages/ja/settings.json';
@@ -35,6 +36,7 @@ const messages = {
   ...legalMessages,
   ...navigationMessages,
   ...notificationMessages,
+  ...onboardingMessages,
   ...planMessages,
   ...recordMessages,
   ...settingsMessages,
@@ -75,7 +77,7 @@ const preview: Preview = {
     options: {
       storySort: {
         method: 'alphabetical',
-        order: ['Docs', 'Foundations', 'Primitives', 'Recipes', 'Features', 'Patterns'],
+        order: ['Docs', 'Foundations', 'Components', 'Features', 'Patterns'],
       },
     },
     darkMode: {

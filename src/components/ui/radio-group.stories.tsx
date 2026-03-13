@@ -6,7 +6,7 @@ import { RadioGroup, RadioGroupItem } from './radio-group';
 
 /** RadioGroup - ラジオボタングループ（単一選択）。2-4個の選択肢に適切、5個以上はSelectを使用。 */
 const meta = {
-  title: 'Primitives/RadioGroup',
+  title: 'Components/UI/RadioGroup',
   component: RadioGroup,
   tags: ['autodocs'],
   parameters: {
