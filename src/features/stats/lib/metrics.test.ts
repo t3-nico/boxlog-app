@@ -1,0 +1,297 @@
+import { describe, expect, it } from 'vitest';
+
+import type { EnergyMapRow, MetricDefinition } from '../types/metrics.types';
+
+import {
+  calculatePeakUtilization,
+  formatMetricValue,
+  getMetricTrend,
+  getThresholdStatus,
+} from './metrics';
+
+// =============================================================================
+// calculatePeakUtilization
+// =============================================================================
+
+describe('calculatePeakUtilization', () => {
+  it('returns zero when no peak zones are defined', () => {
+    const energyMap: EnergyMapRow[] = [
+      { hour: 9, dow: 1, avg_fulfillment: 2.5, total_minutes: 60, entry_count: 2 },
+    ];
+
+    const result = calculatePeakUtilization(energyMap, [], 7);
+    expect(result).toEqual({ peakMinutes: 0, totalPeakAvailable: 0, peakUtilization: 0 });
+  });
+
+  it('returns zero when daysInRange is 0', () => {
+    const result = calculatePeakUtilization([], [{ startHour: 9, endHour: 12 }], 0);
+    expect(result).toEqual({ peakMinutes: 0, totalPeakAvailable: 0, peakUtilization: 0 });
+  });
+
+  it('calculates peak utilization correctly', () => {
+    const energyMap: EnergyMapRow[] = [
+      { hour: 9, dow: 1, avg_fulfillment: 3, total_minutes: 45, entry_count: 1 },
+      { hour: 10, dow: 1, avg_fulfillment: 2, total_minutes: 30, entry_count: 1 },
+      { hour: 14, dow: 1, avg_fulfillment: 1, total_minutes: 60, entry_count: 1 }, // non-peak
+    ];
+
+    // Peak: 9:00-11:00 (2 hours)
+    const result = calculatePeakUtilization(energyMap, [{ startHour: 9, endHour: 11 }], 1);
+
+    expect(result.peakMinutes).toBe(75); // 45 + 30
+    expect(result.totalPeakAvailable).toBe(120); // 2 hours * 60 min * 1 day
+    expect(result.peakUtilization).toBeCloseTo(0.625); // 75/120
+  });
+
+  it('handles multiple peak zones', () => {
+    const energyMap: EnergyMapRow[] = [
+      { hour: 9, dow: 1, avg_fulfillment: 3, total_minutes: 60, entry_count: 1 },
+      { hour: 15, dow: 1, avg_fulfillment: 2, total_minutes: 30, entry_count: 1 },
+    ];
+
+    const peakZones = [
+      { startHour: 9, endHour: 10 },
+      { startHour: 15, endHour: 16 },
+    ];
+
+    const result = calculatePeakUtilization(energyMap, peakZones, 7);
+
+    expect(result.peakMinutes).toBe(90); // 60 + 30
+    expect(result.totalPeakAvailable).toBe(840); // 2 hours * 60 * 7 days
+  });
+
+  it('ignores non-peak hours in energy map', () => {
+    const energyMap: EnergyMapRow[] = [
+      { hour: 8, dow: 1, avg_fulfillment: 2, total_minutes: 60, entry_count: 1 },
+      { hour: 9, dow: 1, avg_fulfillment: 3, total_minutes: 45, entry_count: 1 },
+      { hour: 12, dow: 1, avg_fulfillment: 1, total_minutes: 30, entry_count: 1 },
+    ];
+
+    const result = calculatePeakUtilization(energyMap, [{ startHour: 9, endHour: 12 }], 1);
+
+    expect(result.peakMinutes).toBe(45); // only hour 9 (10,11 have no data)
+  });
+});
+
+// =============================================================================
+// formatMetricValue
+// =============================================================================
+
+describe('formatMetricValue', () => {
+  describe('percentage', () => {
+    it('formats 0.72 as 72%', () => {
+      expect(formatMetricValue(0.72, 'percentage')).toBe('72%');
+    });
+
+    it('formats 0 as 0%', () => {
+      expect(formatMetricValue(0, 'percentage')).toBe('0%');
+    });
+
+    it('formats 1 as 100%', () => {
+      expect(formatMetricValue(1, 'percentage')).toBe('100%');
+    });
+  });
+
+  describe('minutes', () => {
+    it('formats 45 as 45m', () => {
+      expect(formatMetricValue(45, 'minutes')).toBe('45m');
+    });
+
+    it('formats 90 as 1h 30m', () => {
+      expect(formatMetricValue(90, 'minutes')).toBe('1h 30m');
+    });
+
+    it('formats 120 as 2h', () => {
+      expect(formatMetricValue(120, 'minutes')).toBe('2h');
+    });
+
+    it('formats 0 as 0m', () => {
+      expect(formatMetricValue(0, 'minutes')).toBe('0m');
+    });
+  });
+
+  describe('duration', () => {
+    it('formats 2295 (38h 15m) correctly', () => {
+      expect(formatMetricValue(2295, 'duration')).toBe('38h 15m');
+    });
+
+    it('formats 60 as 1h', () => {
+      expect(formatMetricValue(60, 'duration')).toBe('1h');
+    });
+
+    it('formats 30 as 30m', () => {
+      expect(formatMetricValue(30, 'duration')).toBe('30m');
+    });
+  });
+
+  describe('count', () => {
+    it('formats integer as string', () => {
+      expect(formatMetricValue(5, 'count')).toBe('5');
+    });
+
+    it('formats decimal with one digit', () => {
+      expect(formatMetricValue(3.7, 'count')).toBe('3.7');
+    });
+
+    it('formats 0 as 0', () => {
+      expect(formatMetricValue(0, 'count')).toBe('0');
+    });
+  });
+
+  describe('score', () => {
+    it('formats 3.8 as 3.8', () => {
+      expect(formatMetricValue(3.8, 'score')).toBe('3.8');
+    });
+
+    it('formats integer with decimal', () => {
+      expect(formatMetricValue(4, 'score')).toBe('4.0');
+    });
+
+    it('formats 0 as 0.0', () => {
+      expect(formatMetricValue(0, 'score')).toBe('0.0');
+    });
+  });
+
+  describe('days', () => {
+    it('formats 23 as 23 days', () => {
+      expect(formatMetricValue(23, 'days')).toBe('23 days');
+    });
+
+    it('formats 1 as 1 days', () => {
+      expect(formatMetricValue(1, 'days')).toBe('1 days');
+    });
+
+    it('formats 0 as 0 days', () => {
+      expect(formatMetricValue(0, 'days')).toBe('0 days');
+    });
+  });
+});
+
+// =============================================================================
+// getMetricTrend
+// =============================================================================
+
+describe('getMetricTrend', () => {
+  it('returns flat when both values are 0', () => {
+    expect(getMetricTrend(0, 0)).toEqual({ direction: 'flat', delta: 0, isPositive: true });
+  });
+
+  it('returns up when previous is 0 and current is positive (trendPositive: up)', () => {
+    expect(getMetricTrend(5, 0, 'up')).toEqual({
+      direction: 'up',
+      delta: 1,
+      isPositive: true,
+    });
+  });
+
+  it('returns up when previous is 0 and current is positive (trendPositive: down)', () => {
+    expect(getMetricTrend(5, 0, 'down')).toEqual({
+      direction: 'up',
+      delta: 1,
+      isPositive: false,
+    });
+  });
+
+  it('returns up with isPositive=true for significant increase (trendPositive: up)', () => {
+    const result = getMetricTrend(120, 100, 'up');
+    expect(result.direction).toBe('up');
+    expect(result.isPositive).toBe(true);
+    expect(result.delta).toBeCloseTo(0.2);
+  });
+
+  it('returns down with isPositive=true for significant decrease (trendPositive: down)', () => {
+    const result = getMetricTrend(80, 100, 'down');
+    expect(result.direction).toBe('down');
+    expect(result.isPositive).toBe(true);
+    expect(result.delta).toBeCloseTo(-0.2);
+  });
+
+  it('returns down with isPositive=false for decrease (trendPositive: up)', () => {
+    const result = getMetricTrend(80, 100, 'up');
+    expect(result.direction).toBe('down');
+    expect(result.isPositive).toBe(false);
+  });
+
+  it('returns up with isPositive=false for increase (trendPositive: down)', () => {
+    const result = getMetricTrend(120, 100, 'down');
+    expect(result.direction).toBe('up');
+    expect(result.isPositive).toBe(false);
+  });
+
+  it('returns flat for small changes under 5%', () => {
+    const result = getMetricTrend(102, 100);
+    expect(result.direction).toBe('flat');
+    expect(result.isPositive).toBe(true);
+  });
+
+  it('defaults trendPositive to up', () => {
+    const result = getMetricTrend(120, 100);
+    expect(result.isPositive).toBe(true);
+  });
+});
+
+// =============================================================================
+// getThresholdStatus
+// =============================================================================
+
+describe('getThresholdStatus', () => {
+  const planRateDef: MetricDefinition = {
+    id: 'planRate',
+    format: 'percentage',
+    trendPositive: 'up',
+    thresholds: { good: 0.7, warning: 0.4 },
+  };
+
+  const blankRateDef: MetricDefinition = {
+    id: 'blankRate',
+    format: 'percentage',
+    trendPositive: 'down',
+    thresholds: { good: 0.15, warning: 0.4 },
+  };
+
+  const noThresholdDef: MetricDefinition = {
+    id: 'totalTime',
+    format: 'duration',
+    trendPositive: 'up',
+  };
+
+  describe('trendPositive: up (higher is better)', () => {
+    it('returns good when value >= good threshold', () => {
+      expect(getThresholdStatus(0.8, planRateDef)).toBe('good');
+    });
+
+    it('returns good at exact good threshold', () => {
+      expect(getThresholdStatus(0.7, planRateDef)).toBe('good');
+    });
+
+    it('returns warning when value >= warning but < good', () => {
+      expect(getThresholdStatus(0.5, planRateDef)).toBe('warning');
+    });
+
+    it('returns critical when value < warning', () => {
+      expect(getThresholdStatus(0.3, planRateDef)).toBe('critical');
+    });
+  });
+
+  describe('trendPositive: down (lower is better)', () => {
+    it('returns good when value <= good threshold', () => {
+      expect(getThresholdStatus(0.1, blankRateDef)).toBe('good');
+    });
+
+    it('returns good at exact good threshold', () => {
+      expect(getThresholdStatus(0.15, blankRateDef)).toBe('good');
+    });
+
+    it('returns warning when value <= warning but > good', () => {
+      expect(getThresholdStatus(0.3, blankRateDef)).toBe('warning');
+    });
+
+    it('returns critical when value > warning', () => {
+      expect(getThresholdStatus(0.5, blankRateDef)).toBe('critical');
+    });
+  });
+
+  it('returns null when no thresholds defined', () => {
+    expect(getThresholdStatus(100, noThresholdDef)).toBeNull();
+  });
+});
