@@ -6,7 +6,12 @@ import { useMemo } from 'react';
 import { api } from '@/platform/trpc';
 
 import { METRIC_DEFINITIONS, METRIC_ORDER } from '../../lib/metricDefinitions';
-import { calculatePeakUtilization, formatMetricValue, getThresholdStatus } from '../../lib/metrics';
+import {
+  calculatePeakUtilization,
+  formatMetricValueParts,
+  getMetricProgress,
+  getThresholdStatus,
+} from '../../lib/metrics';
 import { useStatsFilterStore } from '../../stores/useStatsFilterStore';
 import type { MetricData, MetricId } from '../../types/metrics.types';
 import { computeStatsDateRange } from '../../utils/computeDateRange';
@@ -117,15 +122,21 @@ export function StatsMetricsGrid() {
         const def = METRIC_DEFINITIONS[id];
         const data = metricsMap[id];
         const value = data?.value;
+        const progress = value != null ? getMetricProgress(value, def) : null;
+        const status = value != null ? getThresholdStatus(value, def) : null;
 
         return (
           <MetricCard
             key={id}
             label={t(id)}
-            value={value != null ? formatMetricValue(value, def.format) : '-'}
-            description={t(`${id}Desc`)}
+            valueParts={
+              value != null ? formatMetricValueParts(value, def.format) : { primary: '-', unit: '' }
+            }
+            icon={def.icon}
             trend={data?.trend || undefined}
-            status={value != null ? (getThresholdStatus(value, def) ?? undefined) : undefined}
+            variant={def.variant ?? 'default'}
+            progress={progress ?? undefined}
+            progressStatus={status ?? undefined}
             isLoading={isLoading}
           />
         );

@@ -30,6 +30,7 @@ export type {
   MetricFormat,
   MetricId,
   MetricTrend,
+  MetricValueParts,
   PeakUtilizationData,
   PlanRateData,
 } from './types/metrics.types';
@@ -42,7 +43,7 @@ export { METRIC_DEFINITIONS, METRIC_ORDER } from './lib/metricDefinitions';
 export {
   calculatePeakUtilization,
   formatMetricValue,
+  formatMetricValueParts,
   getMetricTrend,
-  getThresholdStatus,
 } from './lib/metrics';
 export { prefetchStatsData } from './lib/prefetch';

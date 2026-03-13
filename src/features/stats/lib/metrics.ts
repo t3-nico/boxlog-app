@@ -10,6 +10,7 @@ import type {
   MetricDefinition,
   MetricFormat,
   MetricTrend,
+  MetricValueParts,
   PeakUtilizationData,
 } from '../types/metrics.types';
 
@@ -94,6 +95,35 @@ export function formatMetricValue(value: number, type: MetricFormat): string {
   }
 }
 
+/**
+ * メトリクス値を数値と単位に分離してフォーマット
+ *
+ * weather.com 風に数値を大きく、単位を小さく表示するため
+ */
+export function formatMetricValueParts(value: number, type: MetricFormat): MetricValueParts {
+  switch (type) {
+    case 'percentage':
+      return { primary: String(Math.round(value * 100)), unit: '%' };
+    case 'duration':
+    case 'minutes': {
+      if (value >= 60) {
+        const hours = Math.floor(value / 60);
+        const mins = Math.round(value % 60);
+        return mins > 0
+          ? { primary: String(hours), unit: 'h', secondary: String(mins), secondaryUnit: 'm' }
+          : { primary: String(hours), unit: 'h' };
+      }
+      return { primary: String(Math.round(value)), unit: 'm' };
+    }
+    case 'count':
+      return { primary: value % 1 === 0 ? String(value) : value.toFixed(1), unit: '' };
+    case 'score':
+      return { primary: value.toFixed(1), unit: '' };
+    case 'days':
+      return { primary: String(Math.round(value)), unit: 'days' };
+  }
+}
+
 // =============================================================================
 // Trend Calculation
 // =============================================================================
@@ -165,4 +195,31 @@ export function getThresholdStatus(
   if (value <= good) return 'good';
   if (value <= warning) return 'warning';
   return 'critical';
+}
+
+/**
+ * メトリクス値をプログレスバー用の 0-1 に正規化
+ *
+ * - percentage フォーマット → value をそのまま使う（0-1）
+ * - その他（minutes 等） → warning 閾値を 1.0 としてスケーリング
+ * - thresholds がないメトリクスは null を返す
+ */
+export function getMetricProgress(value: number, definition: MetricDefinition): number | null {
+  if (!definition.thresholds) return null;
+
+  if (definition.format === 'percentage') {
+    // percentage は value 自体が 0-1
+    return Math.min(Math.max(value, 0), 1);
+  }
+
+  // minutes/count 等: warning 閾値を基準にスケーリング
+  const { warning } = definition.thresholds;
+  if (warning === 0) return null;
+
+  if (definition.trendPositive === 'down') {
+    // 低いほうが良い → value が小さいほど progress が大きい（良い）
+    return Math.min(Math.max(1 - value / (warning * 1.5), 0), 1);
+  }
+
+  return Math.min(Math.max(value / warning, 0), 1);
 }

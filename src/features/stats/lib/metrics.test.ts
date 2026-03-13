@@ -1,10 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
+import { Clock } from 'lucide-react';
+
 import type { EnergyMapRow, MetricDefinition } from '../types/metrics.types';
 
 import {
   calculatePeakUtilization,
   formatMetricValue,
+  formatMetricValueParts,
   getMetricTrend,
   getThresholdStatus,
 } from './metrics';
@@ -168,6 +171,84 @@ describe('formatMetricValue', () => {
 });
 
 // =============================================================================
+// formatMetricValueParts
+// =============================================================================
+
+describe('formatMetricValueParts', () => {
+  describe('percentage', () => {
+    it('returns primary and % unit', () => {
+      expect(formatMetricValueParts(0.72, 'percentage')).toEqual({ primary: '72', unit: '%' });
+    });
+
+    it('handles 0', () => {
+      expect(formatMetricValueParts(0, 'percentage')).toEqual({ primary: '0', unit: '%' });
+    });
+
+    it('handles 100%', () => {
+      expect(formatMetricValueParts(1, 'percentage')).toEqual({ primary: '100', unit: '%' });
+    });
+  });
+
+  describe('duration / minutes', () => {
+    it('formats minutes < 60 as primary + m', () => {
+      expect(formatMetricValueParts(45, 'minutes')).toEqual({ primary: '45', unit: 'm' });
+    });
+
+    it('formats hours+minutes with secondary', () => {
+      expect(formatMetricValueParts(90, 'duration')).toEqual({
+        primary: '1',
+        unit: 'h',
+        secondary: '30',
+        secondaryUnit: 'm',
+      });
+    });
+
+    it('formats exact hours without secondary', () => {
+      expect(formatMetricValueParts(120, 'duration')).toEqual({ primary: '2', unit: 'h' });
+    });
+
+    it('formats large duration with secondary', () => {
+      expect(formatMetricValueParts(2295, 'duration')).toEqual({
+        primary: '38',
+        unit: 'h',
+        secondary: '15',
+        secondaryUnit: 'm',
+      });
+    });
+
+    it('formats 0 as 0m', () => {
+      expect(formatMetricValueParts(0, 'minutes')).toEqual({ primary: '0', unit: 'm' });
+    });
+  });
+
+  describe('count', () => {
+    it('formats integer', () => {
+      expect(formatMetricValueParts(5, 'count')).toEqual({ primary: '5', unit: '' });
+    });
+
+    it('formats decimal', () => {
+      expect(formatMetricValueParts(3.7, 'count')).toEqual({ primary: '3.7', unit: '' });
+    });
+  });
+
+  describe('score', () => {
+    it('formats with one decimal', () => {
+      expect(formatMetricValueParts(3.8, 'score')).toEqual({ primary: '3.8', unit: '' });
+    });
+
+    it('formats integer with .0', () => {
+      expect(formatMetricValueParts(4, 'score')).toEqual({ primary: '4.0', unit: '' });
+    });
+  });
+
+  describe('days', () => {
+    it('formats days', () => {
+      expect(formatMetricValueParts(23, 'days')).toEqual({ primary: '23', unit: 'days' });
+    });
+  });
+});
+
+// =============================================================================
 // getMetricTrend
 // =============================================================================
 
@@ -240,6 +321,7 @@ describe('getThresholdStatus', () => {
     format: 'percentage',
     trendPositive: 'up',
     thresholds: { good: 0.7, warning: 0.4 },
+    icon: Clock,
   };
 
   const blankRateDef: MetricDefinition = {
@@ -247,12 +329,14 @@ describe('getThresholdStatus', () => {
     format: 'percentage',
     trendPositive: 'down',
     thresholds: { good: 0.15, warning: 0.4 },
+    icon: Clock,
   };
 
   const noThresholdDef: MetricDefinition = {
     id: 'totalTime',
     format: 'duration',
     trendPositive: 'up',
+    icon: Clock,
   };
 
   describe('trendPositive: up (higher is better)', () => {

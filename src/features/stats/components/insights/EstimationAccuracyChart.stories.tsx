@@ -62,7 +62,7 @@ const mockData: EstimationAccuracyData[] = [
 
 /** EstimationAccuracyChart — タグ別の予定 vs 実績時間を比較する棒グラフ */
 const meta = {
-  title: 'Features/Stats/Layer1/EstimationAccuracyChart',
+  title: 'Features/Stats/Components/EstimationAccuracyChart',
   component: EstimationAccuracyChartPure,
   parameters: {
     layout: 'padded',

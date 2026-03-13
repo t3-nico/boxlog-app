@@ -1,23 +1,19 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 
 import { Bar, BarChart, XAxis, YAxis } from 'recharts';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  type ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from '@/components/ui/chart';
 import { Skeleton } from '@/components/ui/skeleton';
 import { api } from '@/platform/trpc';
+import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '../ui/chart';
 
 import { useStatsFilterStore } from '../../stores/useStatsFilterStore';
 import { computeStatsDateRange } from '../../utils/computeDateRange';
 
-type TagTimeData = {
+export type TagTimeData = {
   tagId: string;
   name: string;
   color: string;
@@ -35,22 +31,31 @@ function formatHours(hours: number): string {
   return `${hours.toFixed(1)}h`;
 }
 
-export function TagTimeChart() {
-  const currentDate = useStatsFilterStore((s) => s.currentDate);
-  const granularity = useStatsFilterStore((s) => s.granularity);
-  const dateRange = useMemo(
-    () => computeStatsDateRange(currentDate, granularity),
-    [currentDate, granularity],
-  );
-  const queryInput = dateRange;
-  const { data, isPending } = api.entries.getTimeByTag.useQuery(queryInput);
+// =============================================================================
+// Pure Presentational Component (Storybook-friendly)
+// =============================================================================
 
-  if (isPending) {
+interface TagTimeChartPureProps {
+  data: TagTimeData[] | null;
+  isLoading?: boolean;
+  title?: string;
+  description?: string;
+  noDataLabel?: string;
+}
+
+export function TagTimeChartPure({
+  data,
+  isLoading,
+  title = 'Tag Time',
+  description = 'Hours by tag',
+  noDataLabel = 'No data',
+}: TagTimeChartPureProps) {
+  if (isLoading) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Tag Time</CardTitle>
-          <CardDescription>Hours by tag</CardDescription>
+          <CardTitle>{title}</CardTitle>
+          <CardDescription>{description}</CardDescription>
         </CardHeader>
         <CardContent>
           <Skeleton className="h-64 w-full" />
@@ -63,25 +68,25 @@ export function TagTimeChart() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Tag Time</CardTitle>
-          <CardDescription>Hours by tag</CardDescription>
+          <CardTitle>{title}</CardTitle>
+          <CardDescription>{description}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-muted-foreground flex h-32 items-center justify-center text-sm">
-            No data
+            {noDataLabel}
           </div>
         </CardContent>
       </Card>
     );
   }
 
-  const chartData: ChartDataItem[] = data.slice(0, 10).map((item: TagTimeData) => ({
+  const chartData: ChartDataItem[] = data.slice(0, 10).map((item) => ({
     name: item.name,
     hours: item.hours,
     fill: item.color,
   }));
 
-  const totalHours = data.reduce((sum: number, item: TagTimeData) => sum + item.hours, 0);
+  const totalHours = data.reduce((sum, item) => sum + item.hours, 0);
 
   const chartConfig = chartData.reduce((config: ChartConfig, item: ChartDataItem) => {
     config[item.name] = { label: item.name, color: item.fill };
@@ -91,7 +96,7 @@ export function TagTimeChart() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Tag Time</CardTitle>
+        <CardTitle>{title}</CardTitle>
         <CardDescription>
           Total {formatHours(totalHours)} - Top {Math.min(data.length, 10)}
         </CardDescription>
@@ -127,5 +132,31 @@ export function TagTimeChart() {
         </ChartContainer>
       </CardContent>
     </Card>
+  );
+}
+
+// =============================================================================
+// Connected Component (uses tRPC + store)
+// =============================================================================
+
+export function TagTimeChart() {
+  const t = useTranslations('calendar.stats.metrics');
+  const currentDate = useStatsFilterStore((s) => s.currentDate);
+  const granularity = useStatsFilterStore((s) => s.granularity);
+  const dateRange = useMemo(
+    () => computeStatsDateRange(currentDate, granularity),
+    [currentDate, granularity],
+  );
+
+  const { data, isPending } = api.entries.getTimeByTag.useQuery(dateRange);
+
+  return (
+    <TagTimeChartPure
+      data={data ?? null}
+      isLoading={isPending}
+      title={t('tagTimeChart')}
+      description={t('tagTimeChartDesc')}
+      noDataLabel={t('noData')}
+    />
   );
 }

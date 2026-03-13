@@ -9,6 +9,8 @@
  *   calendar.stats.metrics.{metricId}Desc
  */
 
+import { ArrowLeftRight, Clock, Flame, Gauge, Ratio, Sparkles, Target, Timer } from 'lucide-react';
+
 import type { MetricDefinition, MetricId } from '../types/metrics.types';
 
 export const METRIC_DEFINITIONS: Record<MetricId, MetricDefinition> = {
@@ -16,45 +18,55 @@ export const METRIC_DEFINITIONS: Record<MetricId, MetricDefinition> = {
     id: 'totalTime',
     format: 'duration',
     trendPositive: 'up',
+    icon: Clock,
+    variant: 'hero',
   },
   avgFulfillment: {
     id: 'avgFulfillment',
     format: 'score',
     trendPositive: 'up',
+    icon: Sparkles,
   },
   planRate: {
     id: 'planRate',
     format: 'percentage',
     trendPositive: 'up',
     thresholds: { good: 0.7, warning: 0.4 },
+    icon: Target,
   },
   streak: {
     id: 'streak',
     format: 'days',
     trendPositive: 'up',
+    icon: Flame,
+    variant: 'hero',
   },
   estimationAccuracy: {
     id: 'estimationAccuracy',
     format: 'minutes',
     trendPositive: 'down',
     thresholds: { good: 10, warning: 30 },
+    icon: Timer,
   },
   peakUtilization: {
     id: 'peakUtilization',
     format: 'percentage',
     trendPositive: 'up',
     thresholds: { good: 0.6, warning: 0.3 },
+    icon: Gauge,
   },
   contextSwitches: {
     id: 'contextSwitches',
     format: 'count',
     trendPositive: 'down',
+    icon: ArrowLeftRight,
   },
   blankRate: {
     id: 'blankRate',
     format: 'percentage',
     trendPositive: 'down',
     thresholds: { good: 0.15, warning: 0.4 },
+    icon: Ratio,
   },
 };
 

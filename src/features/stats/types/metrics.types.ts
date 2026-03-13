@@ -36,8 +36,23 @@ export interface MetricDefinition {
   format: MetricFormat;
   /** up が良い方向か down が良い方向か */
   trendPositive: 'up' | 'down';
-  /** 閾値ベースの色分け（天気予報の気温カード） */
+  /** 閾値ベースの色分け */
   thresholds?: { good: number; warning: number };
+  /** カードに表示するアイコン */
+  icon: LucideIconType;
+  /** hero: 主要メトリクス（大きい表示、2カラム幅） */
+  variant?: 'hero';
+}
+
+/** lucide-react のアイコンコンポーネント型 */
+type LucideIconType = React.ComponentType<{ className?: string }>;
+
+/** フォーマット済みの値パーツ（数値と単位を分離表示用） */
+export interface MetricValueParts {
+  primary: string;
+  unit: string;
+  secondary?: string;
+  secondaryUnit?: string;
 }
 
 /** 1カード分の正規化済みデータ */

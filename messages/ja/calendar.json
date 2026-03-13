@@ -270,6 +270,8 @@
         "blankRate": "空白率",
         "blankRateDesc": "未スケジュール時間の割合",
         "noData": "データなし",
+        "tagTimeChart": "タグ別時間",
+        "tagTimeChartDesc": "タグ別の記録時間",
         "estimationChart": "タグ別見積もり精度",
         "estimationChartDesc": "予定時間 vs 実績時間",
         "planned": "予定",

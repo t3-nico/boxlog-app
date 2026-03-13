@@ -270,6 +270,8 @@
         "blankRate": "Blank Rate",
         "blankRateDesc": "Unscheduled time ratio",
         "noData": "No data",
+        "tagTimeChart": "Tag Time",
+        "tagTimeChartDesc": "Hours by tag",
         "estimationChart": "Estimation Accuracy by Tag",
         "estimationChartDesc": "Planned vs actual duration",
         "planned": "Planned",

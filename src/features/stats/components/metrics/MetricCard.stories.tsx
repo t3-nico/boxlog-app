@@ -1,25 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { ArrowLeftRight, Clock, Flame, Gauge, Ratio, Sparkles, Target, Timer } from 'lucide-react';
 
 import { MetricCard } from './MetricCard';
 
-/** MetricCard — KPI数値を表示するカード */
+/** MetricCard — KPI数値を表示するカード（weather.com風の数値/単位分離デザイン） */
 const meta = {
-  title: 'Features/Stats/Layer1/MetricCard',
+  title: 'Features/Stats/Components/MetricCard',
   component: MetricCard,
   parameters: {
     layout: 'padded',
   },
   tags: ['autodocs'],
-  argTypes: {
-    label: { control: 'text', description: 'メトリクス名' },
-    value: { control: 'text', description: '表示値' },
-    description: { control: 'text', description: '補足説明' },
-    status: {
-      control: 'select',
-      options: [undefined, 'good', 'warning', 'critical'],
-      description: '閾値ベースの色分け',
-    },
-  },
 } satisfies Meta<typeof MetricCard>;
 
 export default meta;
@@ -29,8 +20,10 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     label: 'Plan Rate',
-    value: '72%',
-    description: 'Ratio of planned entries',
+    valueParts: { primary: '72', unit: '%' },
+    icon: Target,
+    progress: 0.72,
+    progressStatus: 'good',
   },
 };
 
@@ -38,9 +31,11 @@ export const Default: Story = {
 export const TrendUpPositive: Story = {
   args: {
     label: 'Peak Utilization',
-    value: '65%',
-    description: 'Activity during peak hours',
+    valueParts: { primary: '65', unit: '%' },
+    icon: Gauge,
     trend: { direction: 'up', delta: 0.12, isPositive: true },
+    progress: 0.65,
+    progressStatus: 'good',
   },
 };
 
@@ -48,10 +43,9 @@ export const TrendUpPositive: Story = {
 export const TrendDownPositive: Story = {
   args: {
     label: 'Blank Rate',
-    value: '15%',
-    description: 'Unscheduled time ratio',
+    valueParts: { primary: '15', unit: '%' },
+    icon: Ratio,
     trend: { direction: 'down', delta: -0.08, isPositive: true },
-    status: 'good',
   },
 };
 
@@ -59,8 +53,8 @@ export const TrendDownPositive: Story = {
 export const TrendUpNegative: Story = {
   args: {
     label: 'Context Switches',
-    value: '5.8',
-    description: 'Tag changes per day',
+    valueParts: { primary: '5.8', unit: '' },
+    icon: ArrowLeftRight,
     trend: { direction: 'up', delta: 0.25, isPositive: false },
   },
 };
@@ -69,10 +63,9 @@ export const TrendUpNegative: Story = {
 export const TrendDownNegative: Story = {
   args: {
     label: 'Plan Rate',
-    value: '35%',
-    description: 'Ratio of planned entries',
+    valueParts: { primary: '35', unit: '%' },
+    icon: Target,
     trend: { direction: 'down', delta: -0.15, isPositive: false },
-    status: 'critical',
   },
 };
 
@@ -80,41 +73,9 @@ export const TrendDownNegative: Story = {
 export const TrendFlat: Story = {
   args: {
     label: 'Context Switches',
-    value: '3.2',
-    description: 'Tag changes per day',
+    valueParts: { primary: '3.2', unit: '' },
+    icon: ArrowLeftRight,
     trend: { direction: 'flat', delta: 0.02, isPositive: true },
-  },
-};
-
-/** ステータス: Good（左ボーダー緑） */
-export const StatusGood: Story = {
-  args: {
-    label: 'Plan Rate',
-    value: '85%',
-    description: 'Ratio of planned entries',
-    status: 'good',
-    trend: { direction: 'up', delta: 0.05, isPositive: true },
-  },
-};
-
-/** ステータス: Warning（左ボーダー黄） */
-export const StatusWarning: Story = {
-  args: {
-    label: 'Plan Rate',
-    value: '55%',
-    description: 'Ratio of planned entries',
-    status: 'warning',
-  },
-};
-
-/** ステータス: Critical（左ボーダー赤） */
-export const StatusCritical: Story = {
-  args: {
-    label: 'Peak Utilization',
-    value: '20%',
-    description: 'Activity during peak hours',
-    status: 'critical',
-    trend: { direction: 'down', delta: -0.3, isPositive: false },
   },
 };
 
@@ -122,8 +83,7 @@ export const StatusCritical: Story = {
 export const Loading: Story = {
   args: {
     label: 'Plan Rate',
-    value: '-',
-    description: 'Loading...',
+    valueParts: { primary: '-', unit: '' },
     isLoading: true,
   },
 };
@@ -132,8 +92,8 @@ export const Loading: Story = {
 export const NoData: Story = {
   args: {
     label: 'Estimation Accuracy',
-    value: '-',
-    description: 'Avg deviation from planned time',
+    valueParts: { primary: '-', unit: '' },
+    icon: Timer,
   },
 };
 
@@ -141,19 +101,18 @@ export const NoData: Story = {
 export const MinutesValue: Story = {
   args: {
     label: 'Estimation Accuracy',
-    value: '12m',
-    description: 'Avg deviation from planned time',
+    valueParts: { primary: '12', unit: 'm' },
+    icon: Timer,
     trend: { direction: 'down', delta: -0.15, isPositive: true },
-    status: 'warning',
   },
 };
 
-/** 時間表示（時間+分） */
+/** 時間表示（時間+分） — secondary で分を表示 */
 export const HoursMinutesValue: Story = {
   args: {
     label: 'Estimation Accuracy',
-    value: '1h 30m',
-    description: 'Avg deviation from planned time',
+    valueParts: { primary: '1', unit: 'h', secondary: '30', secondaryUnit: 'm' },
+    icon: Timer,
   },
 };
 
@@ -161,86 +120,97 @@ export const HoursMinutesValue: Story = {
 export const FulfillmentValue: Story = {
   args: {
     label: 'Avg Fulfillment',
-    value: '3.8',
-    description: 'Average fulfillment score',
+    valueParts: { primary: '3.8', unit: '' },
+    icon: Sparkles,
     trend: { direction: 'up', delta: 0.1, isPositive: true },
   },
 };
 
-/** 合計時間 */
-export const TotalTimeValue: Story = {
+/** Hero: 合計時間（col-span-2） */
+export const HeroTotalTime: Story = {
   args: {
     label: 'Total Time',
-    value: '38h 15m',
-    description: 'Total tracked time',
+    valueParts: { primary: '38', unit: 'h', secondary: '15', secondaryUnit: 'm' },
+    icon: Clock,
+    variant: 'hero',
     trend: { direction: 'up', delta: 0.12, isPositive: true },
   },
 };
 
-/** ストリーク */
-export const StreakValue: Story = {
+/** Hero: ストリーク（col-span-2） */
+export const HeroStreak: Story = {
   args: {
     label: 'Streak',
-    value: '23 days',
-    description: 'Current streak',
+    valueParts: { primary: '23', unit: 'days' },
+    icon: Flame,
+    variant: 'hero',
   },
 };
 
-/** 8カード横並び（グリッドプレビュー） */
+/** 8カード横並び（グリッドプレビュー — hero含む） */
 export const GridPreview: Story = {
   args: {
     label: '',
-    value: '',
-    description: '',
+    valueParts: { primary: '', unit: '' },
   },
   render: () => (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
       <MetricCard
         label="Total Time"
-        value="38h 15m"
-        description="Total tracked time"
+        valueParts={{ primary: '38', unit: 'h', secondary: '15', secondaryUnit: 'm' }}
+        icon={Clock}
+        variant="hero"
         trend={{ direction: 'up', delta: 0.12, isPositive: true }}
       />
       <MetricCard
         label="Avg Fulfillment"
-        value="3.8"
-        description="Average fulfillment score"
+        valueParts={{ primary: '3.8', unit: '' }}
+        icon={Sparkles}
         trend={{ direction: 'up', delta: 0.1, isPositive: true }}
       />
       <MetricCard
         label="Plan Rate"
-        value="72%"
-        description="Ratio of planned entries"
+        valueParts={{ primary: '72', unit: '%' }}
+        icon={Target}
         trend={{ direction: 'up', delta: 0.05, isPositive: true }}
-        status="good"
+        progress={0.72}
+        progressStatus="good"
       />
-      <MetricCard label="Streak" value="23 days" description="Current streak" />
+      <MetricCard
+        label="Streak"
+        valueParts={{ primary: '23', unit: 'days' }}
+        icon={Flame}
+        variant="hero"
+      />
       <MetricCard
         label="Estimation Accuracy"
-        value="12m"
-        description="Avg deviation from planned time"
+        valueParts={{ primary: '12', unit: 'm' }}
+        icon={Timer}
         trend={{ direction: 'down', delta: -0.15, isPositive: true }}
-        status="warning"
+        progress={0.73}
+        progressStatus="good"
       />
       <MetricCard
         label="Peak Utilization"
-        value="65%"
-        description="Activity during peak hours"
+        valueParts={{ primary: '65', unit: '%' }}
+        icon={Gauge}
         trend={{ direction: 'up', delta: 0.08, isPositive: true }}
-        status="good"
+        progress={0.65}
+        progressStatus="good"
       />
       <MetricCard
         label="Context Switches"
-        value="3.2"
-        description="Tag changes per day"
+        valueParts={{ primary: '3.2', unit: '' }}
+        icon={ArrowLeftRight}
         trend={{ direction: 'flat', delta: 0.01, isPositive: true }}
       />
       <MetricCard
         label="Blank Rate"
-        value="28%"
-        description="Unscheduled time ratio"
+        valueParts={{ primary: '28', unit: '%' }}
+        icon={Ratio}
         trend={{ direction: 'down', delta: -0.03, isPositive: true }}
-        status="warning"
+        progress={0.28}
+        progressStatus="warning"
       />
     </div>
   ),
@@ -250,19 +220,23 @@ export const GridPreview: Story = {
 export const GridLoading: Story = {
   args: {
     label: '',
-    value: '',
-    description: '',
+    valueParts: { primary: '', unit: '' },
   },
   render: () => (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-      <MetricCard label="Total Time" value="-" description="" isLoading />
-      <MetricCard label="Avg Fulfillment" value="-" description="" isLoading />
-      <MetricCard label="Plan Rate" value="-" description="" isLoading />
-      <MetricCard label="Streak" value="-" description="" isLoading />
-      <MetricCard label="Estimation Accuracy" value="-" description="" isLoading />
-      <MetricCard label="Peak Utilization" value="-" description="" isLoading />
-      <MetricCard label="Context Switches" value="-" description="" isLoading />
-      <MetricCard label="Blank Rate" value="-" description="" isLoading />
+      <MetricCard
+        label="Total Time"
+        valueParts={{ primary: '-', unit: '' }}
+        variant="hero"
+        isLoading
+      />
+      <MetricCard label="Avg Fulfillment" valueParts={{ primary: '-', unit: '' }} isLoading />
+      <MetricCard label="Plan Rate" valueParts={{ primary: '-', unit: '' }} isLoading />
+      <MetricCard label="Streak" valueParts={{ primary: '-', unit: '' }} variant="hero" isLoading />
+      <MetricCard label="Estimation Accuracy" valueParts={{ primary: '-', unit: '' }} isLoading />
+      <MetricCard label="Peak Utilization" valueParts={{ primary: '-', unit: '' }} isLoading />
+      <MetricCard label="Context Switches" valueParts={{ primary: '-', unit: '' }} isLoading />
+      <MetricCard label="Blank Rate" valueParts={{ primary: '-', unit: '' }} isLoading />
     </div>
   ),
 };
