@@ -29,10 +29,10 @@ export const Default: Story = {
     children: (
       <div className="divide-border divide-y">
         <LabeledRow label="Notifications">
-          <Switch />
+          <Switch aria-label="Notifications" />
         </LabeledRow>
         <LabeledRow label="Sound">
-          <Switch />
+          <Switch aria-label="Sound" />
         </LabeledRow>
       </div>
     ),
@@ -72,10 +72,10 @@ export const AllPatterns: StoryObj = {
       <SectionCard title="General">
         <div className="divide-border divide-y">
           <LabeledRow label="Notifications">
-            <Switch />
+            <Switch aria-label="Notifications" />
           </LabeledRow>
           <LabeledRow label="Sound">
-            <Switch />
+            <Switch aria-label="Sound" />
           </LabeledRow>
         </div>
       </SectionCard>

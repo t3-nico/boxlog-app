@@ -24,7 +24,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     label: 'Notifications',
-    children: <Switch />,
+    children: <Switch aria-label="Notifications" />,
   },
 };
 
@@ -33,7 +33,7 @@ export const WithDescription: Story = {
   args: {
     label: 'Dark mode',
     description: 'Use dark theme across the app',
-    children: <Switch />,
+    children: <Switch aria-label="Dark mode" />,
   },
 };
 
@@ -42,10 +42,10 @@ export const AllPatterns: StoryObj = {
   render: () => (
     <div className="divide-border divide-y">
       <LabeledRow label="Notifications">
-        <Switch />
+        <Switch aria-label="Notifications" />
       </LabeledRow>
       <LabeledRow label="Dark mode" description="Use dark theme across the app">
-        <Switch />
+        <Switch aria-label="Dark mode" />
       </LabeledRow>
       <LabeledRow label="Language">
         <span className="text-muted-foreground text-sm">English</span>
