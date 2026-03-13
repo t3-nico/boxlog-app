@@ -35,8 +35,6 @@ const onClick: Function = handleClick;
 <div style={{ color: 'blue' }} />
 ```
 
-**詳細**: `.claude/skills/frontend-design/SKILL.md`
-
 ## コンポーネント
 
 named export を使い、tree-shaking と IDE補完を最適化する。

@@ -43,8 +43,6 @@ npm run test -- path  # 特定ファイル
 
 - 画像には必ず `alt` 属性を設定
 
-**詳細**: `.claude/skills/a11y/SKILL.md`
-
 ## パフォーマンス
 
 **p95だけを見る。平均は判断に使わない。**
@@ -63,8 +61,6 @@ const MemoizedChart = React.memo(Chart);
 ```
 
 最適化が**不要**: 単純なコンポーネント、propsが毎回変わる場合
-
-**詳細**: `.claude/skills/react-best-practices/SKILL.md`
 
 ### 速度指標（p95目標）
 
