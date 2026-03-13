@@ -96,6 +96,7 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
     <div
       ref={containerRef}
       aria-label={t('timeGrid.ariaLabel')}
+      data-tour-target="grid-drag"
       className={`relative overflow-auto ${GRID_BACKGROUND} ${className} ${isSelecting ? 'select-none' : ''}`}
       style={{ height: '100%' }}
       onClick={handleGridClick}

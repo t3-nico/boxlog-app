@@ -25,6 +25,7 @@ import planMessages from '../messages/ja/plan.json';
 import recordMessages from '../messages/ja/record.json';
 import settingsMessages from '../messages/ja/settings.json';
 import tagMessages from '../messages/ja/tag.json';
+import tourMessages from '../messages/ja/tour.json';
 
 const messages = {
   ...appMessages,
@@ -41,6 +42,7 @@ const messages = {
   ...recordMessages,
   ...settingsMessages,
   ...tagMessages,
+  ...tourMessages,
 };
 
 const preview: Preview = {

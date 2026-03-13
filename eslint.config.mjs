@@ -53,7 +53,7 @@ const eslintConfig = defineConfig([
   // Layer 1 (Domain/中核): entry                  — Layer 0 の barrel を使える
   // Layer 2 (Feature/体験): calendar, stats, ai, search — Layer 0+1 の barrel を使える
   // Cross-cutting:    settings                 — 全feature の barrel を使える
-  // Independent:      auth, notifications, onboarding — 他featureに依存しない
+  // Independent:      auth, notifications, onboarding, tour — 他featureに依存しない
   //
   // ルール: 上位→下位の barrel import のみ許可。同層・下位→上位は禁止。
   // deep import（@/features/X/components/*）は常に禁止。
@@ -170,12 +170,13 @@ const eslintConfig = defineConfig([
     },
   },
 
-  // Independent (auth, notifications, onboarding): 他featureへの依存ゼロ
+  // Independent (auth, notifications, onboarding, tour): 他featureへの依存ゼロ
   {
     files: [
       'src/features/auth/**/*.{ts,tsx}',
       'src/features/notifications/**/*.{ts,tsx}',
       'src/features/onboarding/**/*.{ts,tsx}',
+      'src/features/tour/**/*.{ts,tsx}',
     ],
     rules: {
       'no-restricted-imports': ['error', {

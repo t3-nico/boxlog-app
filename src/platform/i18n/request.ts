@@ -22,6 +22,7 @@ const NAMESPACES = [
   'onboarding',
   'settings',
   'tag',
+  'tour',
 ] as const;
 
 /**
