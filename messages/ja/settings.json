@@ -569,6 +569,16 @@
         "deleting": "削除中..."
       }
     },
+    "tour": {
+      "title": "プロダクトツアー",
+      "replayDescription": "カレンダーの使い方を紹介するツアーをもう一度見る",
+      "replayButton": "ツアーをもう一度見る"
+    },
+    "gettingStarted": {
+      "title": "はじめに",
+      "replayOnboardingDescription": "名前やクロノタイプを変更するために初期設定をやり直す",
+      "replayOnboardingButton": "初期設定をやり直す"
+    },
     "integrations": {
       "ai": {
         "title": "AI設定",

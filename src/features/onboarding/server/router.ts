@@ -97,4 +97,25 @@ export const onboardingRouter = createTRPCRouter({
 
       return { success: true };
     }),
+
+  /**
+   * オンボーディングリセット
+   * onboarding_completed_at を null にして再実行可能にする
+   */
+  reset: protectedProcedure.mutation(async ({ ctx }) => {
+    const { error } = await ctx.supabase
+      .from('profiles')
+      .update({ onboarding_completed_at: null })
+      .eq('id', ctx.userId);
+
+    if (error) {
+      logger.error('Onboarding reset error:', error);
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `オンボーディングのリセットに失敗しました: ${error.message}`,
+      });
+    }
+
+    return { success: true };
+  }),
 });

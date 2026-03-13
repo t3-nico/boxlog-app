@@ -569,6 +569,16 @@
         "deleting": "Deleting..."
       }
     },
+    "tour": {
+      "title": "Product Tour",
+      "replayDescription": "Replay the introductory tour to learn how the calendar works",
+      "replayButton": "Replay tour"
+    },
+    "gettingStarted": {
+      "title": "Getting Started",
+      "replayOnboardingDescription": "Redo the initial setup to change your name or chronotype",
+      "replayOnboardingButton": "Redo setup"
+    },
     "integrations": {
       "ai": {
         "title": "AI Settings",
