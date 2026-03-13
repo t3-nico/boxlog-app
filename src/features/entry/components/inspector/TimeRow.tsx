@@ -3,15 +3,16 @@
 /**
  * 汎用の時間入力行
  *
- * ラベル + ClockTimePicker × 2（開始→終了）+ Duration表示
+ * ラベル + TimeSelect × 2（開始→終了）+ Duration表示
  * 予定行にも記録行にも使える。
  */
 
 import type { LucideIcon } from 'lucide-react';
 import { ArrowRight } from 'lucide-react';
 
-import { ClockTimePicker } from '@/components/ui/clock-time-picker';
 import { cn } from '@/lib/utils';
+
+import { TimeSelect } from './TimeSelect';
 
 interface TimeRowProps {
   label: string;
@@ -51,14 +52,14 @@ export function TimeRow({
         </span>
       </div>
       <div className="-mr-2 flex items-center gap-1">
-        <ClockTimePicker
+        <TimeSelect
           value={startTime}
           onChange={onStartChange}
           disabled={disabled}
           hasError={hasError}
         />
         <ArrowRight className="text-muted-foreground size-3.5 flex-shrink-0" />
-        <ClockTimePicker
+        <TimeSelect
           value={endTime}
           onChange={onEndChange}
           disabled={disabled || !startTime}

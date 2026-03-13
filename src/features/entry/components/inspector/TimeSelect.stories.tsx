@@ -4,7 +4,7 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 import { TimeSelect } from './TimeSelect';
 
 const meta = {
-  title: 'Components/Common/TimeSelect',
+  title: 'Features/Entry/Inspector/TimeSelect',
   component: TimeSelect,
   tags: ['autodocs'],
 } satisfies Meta<typeof TimeSelect>;
