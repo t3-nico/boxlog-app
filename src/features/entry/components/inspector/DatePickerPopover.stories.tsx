@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState } from 'react';
 
-import { DatePickerPopover } from './date-picker-popover';
+import { DatePickerPopover } from './DatePickerPopover';
 
 const meta = {
-  title: 'Components/UI/DatePickerPopover',
+  title: 'Features/Entry/Inspector/DatePickerPopover',
   component: DatePickerPopover,
   tags: ['autodocs'],
   parameters: {

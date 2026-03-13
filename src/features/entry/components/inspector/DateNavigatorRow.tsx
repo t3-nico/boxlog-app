@@ -9,7 +9,7 @@
 import type { LucideIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { DatePickerPopover } from '@/components/ui/date-picker-popover';
+import { DatePickerPopover } from './DatePickerPopover';
 
 interface DateNavigatorRowProps {
   label: string;
