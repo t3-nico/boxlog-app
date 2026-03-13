@@ -8,7 +8,7 @@
 
 import { useCallback, useMemo } from 'react';
 
-import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 import {
   CHRONOTYPE_EMOJI,
@@ -16,12 +16,16 @@ import {
   ChronotypeQuiz,
 } from '@/features/chronotype';
 import { OnboardingWizard, useOnboardingStore } from '@/features/onboarding';
+import { logger } from '@/lib/logger';
+import { useRouter } from '@/platform/i18n/navigation';
 import { api } from '@/platform/trpc';
+import { toast } from 'sonner';
 
 import type { PresetChronotypeType } from '@/types/chronotype';
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const t = useTranslations();
 
   // Fetch profile for pre-filling name
   const { data: profile } = api.onboarding.getProfile.useQuery();
@@ -51,19 +55,21 @@ export default function OnboardingPage() {
   // Wizard complete handler
   const handleComplete = useCallback(
     async (data: { fullName: string; chronotypeType: PresetChronotypeType | null }) => {
-      // 1. Save onboarding data
-      await completeMutation.mutateAsync({
-        fullName: data.fullName,
-        chronotypeType: data.chronotypeType ?? undefined,
-      });
+      try {
+        // 1. Save onboarding data
+        await completeMutation.mutateAsync({
+          fullName: data.fullName,
+          chronotypeType: data.chronotypeType ?? undefined,
+        });
 
-      // 2. Set onboarding cookie
-      document.cookie = `dayopt_onboarded=1; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax`;
-
-      // 3. Navigate to calendar
-      router.push('/calendar/day');
+        // 2. Navigate to calendar (middleware will set httpOnly cookie on next request)
+        router.push('/calendar/day');
+      } catch (error) {
+        logger.error('Onboarding complete failed:', error);
+        toast.error(t('onboarding.error.completeFailed'));
+      }
     },
-    [completeMutation, router],
+    [completeMutation, router, t],
   );
 
   // Quiz component (rendered here in Composition Layer, passed as prop)

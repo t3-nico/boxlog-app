@@ -22,6 +22,7 @@ interface OnboardingActions {
   goToStep: (step: OnboardingStep) => void;
   goNext: () => void;
   goBack: () => void;
+  reset: () => void;
 }
 
 export const useOnboardingStore = create<OnboardingState & OnboardingActions>()(
@@ -54,6 +55,14 @@ export const useOnboardingStore = create<OnboardingState & OnboardingActions>()(
           set({ currentStep: prevStep });
         }
       },
+
+      reset: () =>
+        set({
+          currentStep: 'welcome',
+          displayName: '',
+          chronotypeType: null,
+          showQuiz: false,
+        }),
     }),
     { name: 'onboarding-store' },
   ),

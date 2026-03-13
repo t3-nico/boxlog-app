@@ -38,6 +38,9 @@
       },
       "quizLink": "Not sure? Take the quiz",
       "skipLink": "I'll set this up later"
+    },
+    "error": {
+      "completeFailed": "Failed to save. Please try again."
     }
   }
 }

@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect } from 'react';
+
 import { useOnboardingStore } from '../stores/useOnboardingStore';
 import { StepIndicator } from './shared/StepIndicator';
 
@@ -34,10 +36,14 @@ export function OnboardingWizard({
 }: OnboardingWizardProps) {
   const store = useOnboardingStore();
 
-  // Initialize displayName from profile on first render
-  if (!store.displayName && initialName) {
-    store.setDisplayName(initialName);
-  }
+  // Reset store on mount to prevent cross-user state leakage
+  useEffect(() => {
+    store.reset();
+    if (initialName) {
+      store.setDisplayName(initialName);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- reset once on mount
+  }, []);
 
   const handleComplete = (chronotypeType: PresetChronotypeType | null) => {
     onComplete({
@@ -75,7 +81,7 @@ export function OnboardingWizard({
               store.goBack();
             }
           }}
-          onSkip={() => handleComplete('bear')}
+          onSkip={() => handleComplete(null)}
           isCompleting={isCompleting}
         />
       )}
