@@ -251,7 +251,32 @@
       "periodAll": "全期間",
       "thisYear": "今年",
       "tabOverview": "概要",
-      "tabInsights": "インサイト"
+      "tabInsights": "インサイト",
+      "metrics": {
+        "totalTime": "合計時間",
+        "totalTimeDesc": "記録された合計時間",
+        "avgFulfillment": "充実度平均",
+        "avgFulfillmentDesc": "充実度スコアの平均",
+        "planRate": "計画率",
+        "planRateDesc": "計画済みエントリの割合",
+        "streak": "ストリーク",
+        "streakDesc": "現在の連続記録日数",
+        "estimationAccuracy": "見積もり精度",
+        "estimationAccuracyDesc": "予定時間との平均差",
+        "peakUtilization": "ピーク活用率",
+        "peakUtilizationDesc": "ピーク時間帯の活動率",
+        "contextSwitches": "コンテキストスイッチ",
+        "contextSwitchesDesc": "1日あたりのタグ切替回数",
+        "blankRate": "空白率",
+        "blankRateDesc": "未スケジュール時間の割合",
+        "noData": "データなし",
+        "estimationChart": "タグ別見積もり精度",
+        "estimationChartDesc": "予定時間 vs 実績時間",
+        "planned": "予定",
+        "actual": "実績",
+        "deviation": "差分",
+        "entries": "{count}件"
+      }
     },
     "collapsedSection": {
       "expandLabel": "{timeRange} を展開"

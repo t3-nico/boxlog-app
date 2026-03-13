@@ -20,9 +20,29 @@ export type { StatsGranularity, StatsTab } from './stores/useStatsFilterStore';
 // =============================================================================
 // Types
 // =============================================================================
+export type {
+  BlankRateData,
+  ContextSwitchData,
+  EnergyMapRow,
+  EstimationAccuracyData,
+  MetricData,
+  MetricDefinition,
+  MetricFormat,
+  MetricId,
+  MetricTrend,
+  PeakUtilizationData,
+  PlanRateData,
+} from './types/metrics.types';
 export type { StatsViewProps } from './types/stats.types';
 
 // =============================================================================
 // Lib
 // =============================================================================
+export { METRIC_DEFINITIONS, METRIC_ORDER } from './lib/metricDefinitions';
+export {
+  calculatePeakUtilization,
+  formatMetricValue,
+  getMetricTrend,
+  getThresholdStatus,
+} from './lib/metrics';
 export { prefetchStatsData } from './lib/prefetch';
