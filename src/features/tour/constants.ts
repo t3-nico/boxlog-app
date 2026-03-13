@@ -9,6 +9,15 @@ export const TOUR_STEPS: TourStep[] = [
     titleKey: 'tour.steps.gridDrag.title',
     descriptionKey: 'tour.steps.gridDrag.description',
     autoAdvance: 'dom-observe',
+    observeSelector: '[data-tag-palette]',
+  },
+  {
+    id: 'select-tag',
+    targetSelector: '[data-tour-target="grid-drag"]',
+    placement: 'bottom',
+    titleKey: 'tour.steps.selectTag.title',
+    descriptionKey: 'tour.steps.selectTag.description',
+    autoAdvance: 'dom-observe',
     observeSelector: '[data-plan-card]',
   },
   {

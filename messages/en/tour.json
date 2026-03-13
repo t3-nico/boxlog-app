@@ -2,8 +2,12 @@
   "tour": {
     "steps": {
       "gridDrag": {
-        "title": "Create by dragging",
-        "description": "Try dragging on the calendar to block time for a task"
+        "title": "Drag to select a time slot",
+        "description": "Drag on the calendar to choose when you want to work on something"
+      },
+      "selectTag": {
+        "title": "Pick a tag to create your plan",
+        "description": "Choose an existing tag, or create a new one — it becomes both the label and title of your plan"
       },
       "clickEntry": {
         "title": "Click to view details",

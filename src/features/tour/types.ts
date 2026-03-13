@@ -1,5 +1,5 @@
 /** ツアーステップID */
-export type TourStepId = 'grid-drag' | 'click-entry' | 'plan-vs-record';
+export type TourStepId = 'grid-drag' | 'select-tag' | 'click-entry' | 'plan-vs-record';
 
 /** ツアーステップの配置方向 */
 export type TourStepPlacement = 'top' | 'bottom' | 'left' | 'right' | 'center';
