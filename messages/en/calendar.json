@@ -250,8 +250,10 @@
       "periodYear": "Year",
       "periodAll": "All",
       "thisYear": "This year",
-      "tabOverview": "Overview",
+      "tabReview": "Review",
+      "tabProgress": "Progress",
       "tabInsights": "Insights",
+      "insightsComingSoon": "AI insights coming soon",
       "metrics": {
         "totalTime": "Total Time",
         "totalTimeDesc": "Total tracked time",

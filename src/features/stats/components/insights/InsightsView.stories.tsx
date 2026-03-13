@@ -55,13 +55,13 @@ const mockTagTimeData: TagTimeData[] = [
 // =============================================================================
 
 /**
- * InsightsView — Insightsタブの全体レイアウト
+ * ReviewView — 振り返りタブの全体レイアウト
  *
  * Layer 1: KPIメトリクスグリッド（8カード） + タグ別時間チャート + 見積もり精度チャート
  * （このStoryはtRPCなしでモックデータを直接使用）
  */
 const meta = {
-  title: 'Features/Stats/Layer1/InsightsView',
+  title: 'Features/Stats/Layer1/ReviewView',
   parameters: {
     layout: 'fullscreen',
   },

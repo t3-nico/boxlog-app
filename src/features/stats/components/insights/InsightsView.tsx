@@ -1,28 +1,23 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
+
 import { cn } from '@/lib/utils';
 
 import type { StatsViewProps } from '../../types/stats.types';
 
-import { TagTimeChart } from '../charts/TagTimeChart';
-
-import { EstimationAccuracyChart } from './EstimationAccuracyChart';
-import { StatsMetricsGrid } from './StatsMetricsGrid';
-
 /**
- * InsightsView — Insightsタブのメインコンテンツ
+ * InsightsView — AI分析・提案ビュー（Insights タブ）
  *
- * KPIメトリクスグリッド + タグ別時間チャート + 見積もり精度チャート
+ * TODO: AIレポート、パターン分析、シミュレーション機能を実装
  */
 export function InsightsView({ className }: StatsViewProps) {
+  const t = useTranslations('calendar.stats');
+
   return (
     <div className={cn('bg-background flex min-h-0 flex-1 flex-col', className)}>
-      <div className="flex-1 overflow-y-auto">
-        <div className="flex flex-col gap-4 p-4">
-          <StatsMetricsGrid />
-          <TagTimeChart />
-          <EstimationAccuracyChart />
-        </div>
+      <div className="flex flex-1 items-center justify-center p-8">
+        <p className="text-muted-foreground text-sm">{t('insightsComingSoon')}</p>
       </div>
     </div>
   );

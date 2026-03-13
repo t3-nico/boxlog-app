@@ -7,7 +7,6 @@ describe('useStatsFilterStore', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-03-10T12:00:00.000Z'));
     useStatsFilterStore.setState({
-      activeTab: 'overview',
       granularity: 'week',
       currentDate: new Date(),
     });
@@ -18,25 +17,8 @@ describe('useStatsFilterStore', () => {
   });
 
   describe('初期状態', () => {
-    it('activeTabがoverview', () => {
-      expect(useStatsFilterStore.getState().activeTab).toBe('overview');
-    });
-
     it('granularityがweek', () => {
       expect(useStatsFilterStore.getState().granularity).toBe('week');
-    });
-  });
-
-  describe('setActiveTab', () => {
-    it('insightsに切り替えできる', () => {
-      useStatsFilterStore.getState().setActiveTab('insights');
-      expect(useStatsFilterStore.getState().activeTab).toBe('insights');
-    });
-
-    it('overviewに戻せる', () => {
-      useStatsFilterStore.getState().setActiveTab('insights');
-      useStatsFilterStore.getState().setActiveTab('overview');
-      expect(useStatsFilterStore.getState().activeTab).toBe('overview');
     });
   });
 
@@ -100,16 +82,10 @@ describe('useStatsFilterStore', () => {
   });
 
   describe('状態の独立性', () => {
-    it('setActiveTabがgranularityに影響しない', () => {
+    it('navigateがgranularityに影響しない', () => {
       useStatsFilterStore.getState().setGranularity('month');
-      useStatsFilterStore.getState().setActiveTab('insights');
+      useStatsFilterStore.getState().navigate('next');
       expect(useStatsFilterStore.getState().granularity).toBe('month');
-    });
-
-    it('setGranularityがactiveTabに影響しない', () => {
-      useStatsFilterStore.getState().setActiveTab('insights');
-      useStatsFilterStore.getState().setGranularity('month');
-      expect(useStatsFilterStore.getState().activeTab).toBe('insights');
     });
   });
 });

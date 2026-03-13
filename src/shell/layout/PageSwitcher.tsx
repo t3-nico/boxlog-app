@@ -65,7 +65,7 @@ export function PageSwitcher({ className }: PageSwitcherProps) {
   const handleStatsClick = useCallback(() => {
     if (activePage === 'stats') return;
 
-    window.history.pushState(null, '', `/${locale}/stats`);
+    window.history.pushState(null, '', `/${locale}/stats/review`);
     switchToPage('stats');
   }, [activePage, locale, switchToPage]);
 

@@ -34,7 +34,7 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
   // ページ判定: 独自ヘッダーを持つページかどうか（AppHeader表示制御用）
   const hasOwnHeader = useMemo(() => {
     const pathWithoutLocale = pathname?.replace(new RegExp(`^/${locale}`), '') ?? '';
-    return isCalendarViewPath(pathWithoutLocale) || pathWithoutLocale === '/stats';
+    return isCalendarViewPath(pathWithoutLocale) || pathWithoutLocale.startsWith('/stats');
   }, [pathname, locale]);
 
   return (

@@ -58,7 +58,7 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
   // ページ判定: 独自ヘッダーを持つページかどうか（PageHeader表示制御用）
   const hasOwnHeader = useMemo(() => {
     const pathWithoutLocale = pathname?.replace(new RegExp(`^/${locale}`), '') ?? '';
-    return isCalendarViewPath(pathWithoutLocale) || pathWithoutLocale === '/stats';
+    return isCalendarViewPath(pathWithoutLocale) || pathWithoutLocale.startsWith('/stats');
   }, [pathname, locale]);
 
   return (

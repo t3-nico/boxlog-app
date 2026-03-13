@@ -250,8 +250,10 @@
       "periodYear": "年",
       "periodAll": "全期間",
       "thisYear": "今年",
-      "tabOverview": "概要",
+      "tabReview": "振り返り",
+      "tabProgress": "進捗",
       "tabInsights": "インサイト",
+      "insightsComingSoon": "AIインサイトは準備中です",
       "metrics": {
         "totalTime": "合計時間",
         "totalTimeDesc": "記録された合計時間",
