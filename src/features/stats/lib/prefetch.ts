@@ -16,11 +16,18 @@ export async function prefetchStatsData() {
   };
 
   await Promise.all([
+    // Overview charts
     helpers.entries.getDailyHours.prefetch({ year: now.getFullYear() }),
     helpers.entries.getTimeByTag.prefetch(dateRange),
     helpers.entries.getHourlyDistribution.prefetch(dateRange),
     helpers.entries.getDayOfWeekDistribution.prefetch(dateRange),
     helpers.entries.getMonthlyTrend.prefetch({ months: 3 }),
+    // Insights metrics
+    helpers.entries.getPlanRate.prefetch(dateRange),
+    helpers.entries.getEstimationAccuracy.prefetch(dateRange),
+    helpers.entries.getEnergyMap.prefetch(dateRange),
+    helpers.entries.getContextSwitches.prefetch(dateRange),
+    helpers.entries.getBlankRate.prefetch(dateRange),
   ]);
 
   return { helpers, dehydratedState: dehydrate(helpers.queryClient) };
