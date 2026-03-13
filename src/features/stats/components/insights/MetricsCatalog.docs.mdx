@@ -46,9 +46,13 @@ Layer 1で実装するKPIメトリクス。2行×4列グリッドに配置。
 | メトリクス | 計算式 | データソース | 意味 | 推奨度 | 備考 |
 |-----------|--------|-------------|------|--------|------|
 | **Completion Rate** | `actual_start IS NOT NULL / planned count` | entries.actual_start_time | 予定のうち実際に着手した割合 | ★★★ | Plan Rateと補完関係（計画→実行のファネル） |
+| **Active Days Rate** | `COUNT(DISTINCT date) / 期間日数` | entries.start_time | 期間内にエントリがある日数の割合 | ★★★ | Streakは「連続」、これは「カバレッジ」。途切れても記録率が高ければ問題ない |
+| **Entry Count** | `COUNT(*)` | entries | 期間内のエントリ総数 | ★★☆ | Total Timeと対で最も基本的な量指標。「何時間」だけでなく「何個」 |
 | **Avg Entry Duration** | `AVG(end - start)` | entries.start/end_time | 1エントリの平均時間 | ★★☆ | タイムボクシングの粒度。短すぎ/長すぎの判断 |
 | **Top Tag Concentration** | `MAX(tag_time) / total_time` | entries + tags | 上位タグへの時間集中度 | ★★☆ | 多角的 vs 一極集中の可視化 |
 | **Overrun Rate** | `actual > planned` の割合 | actual vs planned duration | 予定時間を超過したエントリの比率 | ★★☆ | Estimation Accuracyの補完（方向性あり） |
+| **Consistency** | `1 - CV(daily_hours)` | entries (日次集計) | 日次記録時間の安定性（変動係数の逆数） | ★★☆ | 毎日2h vs 0hと10hの交互は同じ平均5hでも全く違う |
+| **Chronotype Alignment** | 全フェーズの加重適合スコア | `getEnergyMap` + chronotype設定 | chronotypeとの全体的な一致度 | ★★☆ | Peak Utilはピークだけ。これは全5フェーズの適合度（dip帯に軽作業も評価） |
 
 ---
 
@@ -58,6 +62,8 @@ Layer 1で実装するKPIメトリクス。2行×4列グリッドに配置。
 
 | メトリクス | 計算式 | 意味 | 推奨度 | 備考 |
 |-----------|--------|------|--------|------|
+| **Review Rate** | `reviewed_at IS NOT NULL / total` | 振り返り完了率 | ★★☆ | Dayoptフローの完走率。データ品質にも直結 |
+| **Fulfillment Coverage** | `fulfillment_score IS NOT NULL / total` | 充実度の記録率 | ★★☆ | Avg Fulfillmentの信頼性指標。未記録が多いと平均の意味が薄れる |
 | **Morning/Evening Ratio** | 午前 vs 午後の記録割合 | 朝型/夜型の実態 | ★☆☆ | chronotypeとの答え合わせ |
 | **Weekend Activity** | 平日 vs 休日の記録量比 | ワークライフバランス | ★☆☆ | 判断が文化依存。良い/悪いが言えない |
 | **Fulfillment Variance** | `STDDEV(fulfillment_score)` | 充実度のばらつき | ★☆☆ | 安定性の指標だが解釈が難しい |
@@ -98,7 +104,7 @@ Layer 1メトリクスが依存する `entries` テーブルの主要カラム:
 | `start_time` / `end_time` | timestamptz | 予定時間（duration計算） |
 | `actual_start_time` / `actual_end_time` | timestamptz | 実績時間（精度計算） |
 | `origin` | text | `'planned'` / `'unplanned'`（計画率） |
-| `fulfillment_score` | int (1-5) | 充実度スコア |
+| `fulfillment_score` | int (1-3) | 充実度スコア（1=微妙, 2=普通, 3=良い） |
 | `tag_ids` | uuid[] | タグ配列（コンテキストスイッチ、タグ別集計） |
 | `user_id` | uuid | ユーザー識別 |
 
