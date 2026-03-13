@@ -4,48 +4,76 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 # Stats
 
-時間記録の統計・分析ビュー。ヒートマップ、チャート、タグ別分析で自己客観視を支援。
+時間記録の統計・分析ビュー。KPIメトリクス、トレンドチャート、パターン分析で自己客観視を支援。
 
 ---
 
 ## 概要
 
-独立 Feature（`@/features/stats`）として実装。アサイド（StatsPanel）とフルビュー（StatsView）の2モードを提供。カレンダーのビュー切替から遅延ロードされる。
+独立 Feature（`@/features/stats`）として実装。3タブ構成で段階的にデータを深掘りできる。
+
+| タブ | 説明 |
+|-----|------|
+| **Review（振り返り）** | 期間ベースのKPIメトリクス。日/週/月/年で切り替え |
+| **Progress（進捗）** | 累積・長期トレンド。ヒートマップ + 分布チャート |
+| **Insights（インサイト）** | AI分析・提案（将来実装） |
+
+### タブと Layer の関係
+
+タブは**データの性質**（期間振り返り / 累積）で分類し、Layer は**計算の複雑度**で分類する。
+両者は直交しており、Layer 1/2 のコンポーネントは Review・Progress どちらにも配置しうる。
+
+```
+タブ（UIの分類）        Layer（計算の分類）
+─────────────          ──────────────────
+Review  = 期間振り返り    Layer 1 = 自動計算（KPI数値）
+Progress = 累積データ     Layer 2 = パターン検出（チャート）
+Insights = AI分析        Layer 3 = LLMインサイト
+```
 
 ---
 
-## ビジュアライゼーション
+## 3層アーキテクチャ
 
-| チャート | コンポーネント | 説明 |
-|---------|--------------|------|
-| **ヒートマップ** | `YearlyHeatmap` | GitHub風の年間アクティビティ表示（react-calendar-heatmap） |
-| **タグ別時間** | `TagTimeChart` | 横棒グラフ、Top10タグの時間内訳 |
-| **月間トレンド** | `MonthlyTrendChart` | エリアチャート、月次推移 |
-| **時間帯分布** | `HourlyDistributionChart` | 横棒グラフ、2時間スロット |
-| **曜日分布** | `DayOfWeekChart` | 棒グラフ、平日 vs 週末 |
-| **睡眠統計** | `SleepStatsCard` | 作業-睡眠重複計算 |
+```
+Layer 1 (自動計算) — KPIメトリクス 8カード     ← 現在: Review タブ
+  ↓ データを提供
+Layer 2 (パターン検出) — チャート 4つ           ← 現在: Progress タブ
+  ↓ 構造化データを提供
+Layer 3 (LLMインサイト) — 自然言語の気づき生成  ← 現在: Insights タブ
+```
 
-チャートライブラリ: Recharts
+※ 上記は現在の配置。タブとLayerは1:1ではなく、今後コンポーネントがタブ間を移動する可能性がある。
+
+詳細: [Layer 1 Docs](?path=/docs/features-stats-layer1-docs--docs) | [Layer 2 Docs](?path=/docs/features-stats-layer2-docs--docs)
 
 ---
 
 ## コンポーネント構成
 
 ```
-StatsView/                      フルページ統計ビュー
-├── StatsHeroCards              3カードメトリクス（進捗%、先週比、ストリーク）
-├── StatsPeriodSelector         期間フィルター（Week/Month/Year/All）
-├── StatsTable                  タグ別ブレイクダウンテーブル
-└── charts/
-    ├── YearlyHeatmap           年間ヒートマップ
-    ├── TagTimeChart            タグ別時間チャート
-    ├── MonthlyTrendChart       月間トレンド
-    ├── HourlyDistributionChart 時間帯分布
-    ├── DayOfWeekChart          曜日分布
-    └── SleepStatsCard          睡眠統計
-
-StatsPanel                      アサイド版（週間サマリー）
+StatsPageContent                    タブ管理 + URL ルーティング
+├── Review タブ
+│   └── StatsView
+│       └── StatsMetricsGrid       8カード KPI（2行×4列）
+│           └── MetricCard         単一 KPI カード
+│
+├── Progress タブ
+│   └── ProgressView
+│       ├── YearlyHeatmap          年間ヒートマップ
+│       ├── MonthlyTrendChart      月次トレンド
+│       ├── DayOfWeekChart         曜日別分布
+│       └── HourlyDistributionChart 時間帯分布
+│
+└── Insights タブ
+    └── InsightsView               AI分析（プレースホルダー）
 ```
+
+### ヘッダーコントロール
+
+Review タブ選択時のみ表示:
+- `DateNavigator` — 前後・今日ナビゲーション
+- `StatsGranularitySelector` — 粒度切替（日/週/月/年）
 
 ---
 
@@ -53,70 +81,53 @@ StatsPanel                      アサイド版（週間サマリー）
 
 ### useStatsFilterStore
 
-| State | 説明 |
-|-------|------|
-| `selectedTagId` | 選択中タグ（null = 全タグ） |
-| `period` | 期間フィルター: week / month / year / all |
+| State | 型 | 説明 |
+|-------|----|------|
+| `granularity` | `'day' \| 'week' \| 'month' \| 'year'` | 表示粒度 |
+| `currentDate` | `Date` | ナビゲーション基準日 |
 
----
-
-## Hooks
-
-| Hook | 用途 |
-|------|------|
-| `useStatsViewData()` | メインデータ取得（現在週 + 前週を並列取得） |
+タブの状態は URL がソース・オブ・トゥルース（`/stats/review`, `/stats/progress`, `/stats/insights`）。
+`pushState` によるクライアントサイド遷移で高速切り替え。
 
 ---
 
 ## tRPC エンドポイント
 
-### plans.statistics ルーター
+### entries統計ルーター（`src/features/entry/server/statistics.ts`）
 
-| エンドポイント | 説明 |
-|-------------|------|
-| `getSummary` | 合計時間、今月、完了タスク数 |
-| `getStreak` | 現在/最長ストリーク |
-| `getTimeByTag` | タグ別時間（日付範囲フィルタ） |
-| `getDailyHours` | ヒートマップ用日次集計 |
-| `getHourlyDistribution` | 2時間スロット分布 |
-| `getDayOfWeekDistribution` | 曜日別分布 |
-| `getMonthlyTrend` | 月次集計（1/3/12/全期間） |
-| `getTotalTime` | 生涯合計時間 |
-| `getCumulativeTime` | 今週の Plans + Records 時間 |
+#### Layer 1: KPI メトリクス
 
-### plans.statsView ルーター
+| エンドポイント | Input | 説明 |
+|-------------|-------|------|
+| `getCumulativeTime` | dateRange | 期間内の記録時間合計 |
+| `getStreak` | — | 連続アクティビティ日数 |
+| `getPlanRate` | dateRange | 計画率 |
+| `getEstimationAccuracy` | dateRange | タグ別見積もり精度 |
+| `getEnergyMap` | dateRange | 時間帯×曜日エネルギー分布 |
+| `getContextSwitches` | dateRange | タスク切替回数 |
+| `getBlankRate` | dateRange + wake/sleep | 空白時間率 |
 
-| エンドポイント | 説明 |
-|-------------|------|
-| `getStatsViewData` | メイン集計（Hero + タグブレイクダウン） |
+#### Layer 2: チャート
+
+| エンドポイント | Input | 説明 |
+|-------------|-------|------|
+| `getDailyHours` | `{ year }` | ヒートマップ用日次集計 |
+| `getMonthlyTrend` | `{ months? }` | 月次推移 |
+| `getDayOfWeekDistribution` | dateRange? | 曜日別分布 |
+| `getHourlyDistribution` | dateRange? | 時間帯分布 |
 
 ---
 
 ## データフロー
 
 ```
-StatsView / StatsPanel
-├── useStatsViewData()
-│   └── api.plans.getStatsViewData（Hero + タグ内訳）
-├── useStatsFilterStore()（期間・タグ選択）
-└── 各チャート
-    ├── api.plans.getDailyHours（ヒートマップ）
-    ├── api.plans.getTimeByTag（タグチャート）
-    ├── api.plans.getMonthlyTrend（トレンド）
-    ├── api.plans.getHourlyDistribution（時間帯）
-    └── api.plans.getDayOfWeekDistribution（曜日）
+PostgreSQL RPC関数
+  → entries統計ルーター
+    → TanStack Query (並列取得・自動キャッシュ)
+      → 純粋計算関数 (metrics.ts) or Recharts チャート
+        → MetricCard / Chart コンポーネント
 ```
 
 ---
 
-## Hero カード
-
-| カード | 表示内容 |
-|-------|---------|
-| Progress | 計画時間 vs 実績時間（%表示） |
-| vs Last Week | 先週比の時間差分（矢印インジケーター） |
-| Streak | 連続アクティビティ日数 |
-
----
-
-**最終更新**: 2026-02-17
+**最終更新**: 2026-03-13

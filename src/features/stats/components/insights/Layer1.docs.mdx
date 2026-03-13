@@ -21,7 +21,9 @@ Layer 3 (LLMインサイト) — 自然言語の気づき生成
 - **対象ユーザー**: 全ユーザー（Free含む）
 - **AI依存**: なし
 - **データソース**: PostgreSQL RPC関数 → tRPC → TanStack Query
-- **表示場所**: Stats > Insights タブ
+- **現在の配置**: 主に Review タブ（期間振り返り）
+
+> **Note**: Layer とタブは直交する概念。タブはデータの性質（期間振り返り / 累積）で分類し、Layer は計算の複雑度で分類する。Layer 1 のメトリクスが Progress タブに配置される可能性もある。
 
 ---
 
@@ -70,14 +72,14 @@ src/features/stats/
 │   └── metrics.types.ts        型定義（PlanRateData等）
 ├── lib/
 │   ├── metrics.ts              純粋計算関数（ピーク活用率、フォーマット、トレンド）
-│   └── metrics.test.ts         ユニットテスト（20テスト）
+│   ├── metrics.test.ts         ユニットテスト（20テスト）
+│   └── metricDefinitions.ts    メトリクス定義マスター（8カード）
 └── components/
     ├── metrics/
-    │   └── MetricCard.tsx       KPIカード（値 + トレンド + 説明）
-    └── insights/
-        ├── StatsMetricsGrid.tsx 5カードのグリッド（tRPC接続）
-        ├── EstimationAccuracyChart.tsx  タグ別予定vs実績（Pure + Connected分離）
-        └── InsightsView.tsx     Insightsタブのレイアウト
+    │   └── MetricCard.tsx       KPIカード（値 + トレンド + プログレスバー）
+    ├── insights/
+    │   └── StatsMetricsGrid.tsx 8カードのグリッド（tRPC接続）
+    └── StatsView.tsx            Review タブのルート
 ```
 
 ### Feature Boundary
@@ -97,25 +99,21 @@ src/features/stats/
 | Prop | 型 | 説明 |
 |------|----|------|
 | `label` | `string` | メトリクス名（"Plan Rate"等） |
-| `value` | `string` | フォーマット済みの値（"72%", "12m"等） |
-| `description` | `string` | 補足説明 |
+| `valueParts` | `MetricValueParts` | フォーマット済みの値パーツ（primary, unit, secondary） |
+| `icon` | `LucideIcon?` | アイコンコンポーネント |
 | `trend` | `MetricTrend?` | 前期間比（up/down/flat + delta） |
+| `variant` | `'default' \| 'hero'?` | hero: 主要メトリクス（col-span-2） |
+| `progress` | `number?` | プログレスバー（0-1） |
+| `progressStatus` | `'good' \| 'warning' \| 'critical'?` | プログレスバーの色 |
 | `isLoading` | `boolean?` | スケルトン表示 |
-
-### EstimationAccuracyChart
-
-タグ別の予定時間 vs 実績時間を横棒グラフで比較。
-
-- `EstimationAccuracyChartPure`: props駆動（Storybook用）
-- `EstimationAccuracyChart`: tRPC接続版（アプリ用）
 
 ### StatsMetricsGrid
 
 8つのMetricCardを2行×4列グリッドに配置。各メトリクスのtRPCクエリを並列実行。
 
-### InsightsView
+### StatsView
 
-Insightsタブのルートコンポーネント。Phase 2でパターン検出コンポーネントが追加される。
+Review タブのルートコンポーネント。StatsMetricsGrid を配置。
 
 ---
 
