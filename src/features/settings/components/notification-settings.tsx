@@ -5,7 +5,6 @@ import { useCallback, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
-import { ReminderSelect } from '@/components/common/ReminderSelect';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Switch } from '@/components/ui/switch';
@@ -41,13 +40,6 @@ export function NotificationSettings() {
     },
     [t],
   );
-
-  // デフォルトリマインダーを更新
-  const updateDefaultReminder =
-    api.notificationPreferences.updateDefaultReminderMinutes.useMutation({
-      onSuccess: onSettingsSuccess,
-      onError: onSettingsError,
-    });
 
   // ブラウザ通知設定を更新
   const updateBrowserNotifications =
@@ -148,17 +140,6 @@ export function NotificationSettings() {
               checked={preferences?.enablePushNotifications ?? false}
               onCheckedChange={(checked) => updatePushNotifications.mutate({ enabled: checked })}
               disabled={updatePushNotifications.isPending}
-            />
-          </LabeledRow>
-          <LabeledRow
-            label={t('notification.settings.defaultReminder.label')}
-            description={t('notification.settings.defaultReminder.description')}
-          >
-            <ReminderSelect
-              value={preferences?.defaultReminderMinutes ?? null}
-              onChange={(minutes) => updateDefaultReminder.mutate({ minutes })}
-              variant="button"
-              disabled={updateDefaultReminder.isPending}
             />
           </LabeledRow>
         </div>

@@ -26,7 +26,7 @@ import type {
 
 import { Bell, Repeat } from 'lucide-react';
 
-import { ReminderSelect } from '@/components/common/ReminderSelect';
+import { ReminderSelect } from '../ReminderSelect';
 
 import { RecurrenceIconButton } from '../../shared/RecurrenceIconButton';
 
