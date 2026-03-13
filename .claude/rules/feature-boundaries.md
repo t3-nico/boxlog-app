@@ -10,7 +10,7 @@ Layer 0 (Domain/基盤): tags, chronotype       ← 他featureに依存しない
 Layer 1 (Domain/中核): entry                  ← Layer 0 の barrel を使える
 Layer 2 (Feature/体験): calendar, stats, ai, search ← Layer 0+1 の barrel を使える
 Cross-cutting:         settings               ← 全feature の barrel を使える
-Independent:           auth, navigation, notifications ← 他featureに依存しない
+Independent:           auth, notifications    ← 他featureに依存しない
 ```
 
 ### なぜ entry が calendar より下か

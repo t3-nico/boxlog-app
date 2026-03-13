@@ -5,10 +5,11 @@ import { useTranslations } from 'next-intl';
 import { DateNavigator } from '@/components/common/DateNavigator';
 import { FeatureErrorBoundary } from '@/components/common/error-boundary';
 import { Tabs, TabsContent, TabsList, UnderlineTabsTrigger } from '@/components/ui/tabs';
-import { AppHeader } from '@/shell/layout/AppHeader';
+import { AppHeader } from '@/shell/components/AppHeader';
 
 import type { StatsGranularity, StatsTab } from '../stores/useStatsFilterStore';
 import { useStatsFilterStore } from '../stores/useStatsFilterStore';
+import { InsightsView } from './insights/InsightsView';
 import { StatsDateDisplay } from './layout/StatsDateDisplay';
 import { StatsGranularitySelector } from './layout/StatsGranularitySelector';
 import { StatsView } from './StatsView';
@@ -87,9 +88,9 @@ export function StatsPageContent({ headerSlot }: StatsPageContentProps) {
         </TabsContent>
 
         <TabsContent value="insights" className="flex min-h-0 flex-1 flex-col">
-          <div className="text-muted-foreground flex flex-1 items-center justify-center">
-            <p className="text-sm">Insights — coming soon</p>
-          </div>
+          <FeatureErrorBoundary featureName="stats-insights">
+            <InsightsView />
+          </FeatureErrorBoundary>
         </TabsContent>
       </Tabs>
     </div>

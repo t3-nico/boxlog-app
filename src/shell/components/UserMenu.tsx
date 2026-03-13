@@ -35,9 +35,9 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { MEDIA_QUERIES } from '@/lib/breakpoints';
 import { getInitials } from '@/lib/user';
 import { useRouter } from '@/platform/i18n/navigation';
+import { useLogout } from '@/shell/hooks/useLogout';
 import { useSettingsStore } from '@/shell/stores/useSettingsStore';
 import { useLocale, useTranslations } from 'next-intl';
-import { useLogout } from '../hooks/useLogout';
 
 import type { SettingsCategory } from '@/shell/types/settings';
 

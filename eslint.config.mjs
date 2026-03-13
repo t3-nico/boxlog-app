@@ -53,7 +53,7 @@ const eslintConfig = defineConfig([
   // Layer 1 (Domain/中核): entry                  — Layer 0 の barrel を使える
   // Layer 2 (Feature/体験): calendar, stats, ai, search — Layer 0+1 の barrel を使える
   // Cross-cutting:    settings                 — 全feature の barrel を使える
-  // Independent:      auth, navigation, notifications — 他featureに依存しない
+  // Independent:      auth, notifications, onboarding — 他featureに依存しない
   //
   // ルール: 上位→下位の barrel import のみ許可。同層・下位→上位は禁止。
   // deep import（@/features/X/components/*）は常に禁止。
@@ -91,7 +91,6 @@ const eslintConfig = defineConfig([
           // Cross-cutting・Independent禁止
           { group: ['@/features/settings', '@/features/settings/**'], message: 'settingsのimport禁止。' },
           { group: ['@/features/auth', '@/features/auth/**'], message: '独立featureのimport禁止。' },
-          { group: ['@/features/navigation', '@/features/navigation/**'], message: '独立featureのimport禁止。' },
           { group: ['@/features/notifications', '@/features/notifications/**'], message: '独立featureのimport禁止。' },
           // Layer 0 deep import禁止（barrel のみ許可）
           { group: ['@/features/tags/**'], message: 'barrel import（@/features/tags）のみ使用。' },
@@ -119,7 +118,6 @@ const eslintConfig = defineConfig([
           // Cross-cutting・Independent禁止
           { group: ['@/features/settings', '@/features/settings/**'], message: 'settingsのimport禁止。' },
           { group: ['@/features/auth', '@/features/auth/**'], message: '独立featureのimport禁止。' },
-          { group: ['@/features/navigation', '@/features/navigation/**'], message: '独立featureのimport禁止。' },
           { group: ['@/features/notifications', '@/features/notifications/**'], message: '独立featureのimport禁止。' },
           // Layer 0+1 deep import禁止（barrel のみ許可）
           { group: ['@/features/tags/**'], message: 'barrel import（@/features/tags）のみ使用。' },
@@ -145,7 +143,6 @@ const eslintConfig = defineConfig([
           // Cross-cutting・Independent禁止
           { group: ['@/features/settings', '@/features/settings/**'], message: 'settingsのimport禁止。' },
           { group: ['@/features/auth', '@/features/auth/**'], message: '独立featureのimport禁止。' },
-          { group: ['@/features/navigation', '@/features/navigation/**'], message: '独立featureのimport禁止。' },
           { group: ['@/features/notifications', '@/features/notifications/**'], message: '独立featureのimport禁止。' },
           // Lower layer deep import禁止
           { group: ['@/features/tags/**'], message: 'barrel import（@/features/tags）のみ使用。' },
@@ -173,12 +170,12 @@ const eslintConfig = defineConfig([
     },
   },
 
-  // Independent (auth, navigation, notifications): 他featureへの依存ゼロ
+  // Independent (auth, notifications, onboarding): 他featureへの依存ゼロ
   {
     files: [
       'src/features/auth/**/*.{ts,tsx}',
-      'src/features/navigation/**/*.{ts,tsx}',
       'src/features/notifications/**/*.{ts,tsx}',
+      'src/features/onboarding/**/*.{ts,tsx}',
     ],
     rules: {
       'no-restricted-imports': ['error', {

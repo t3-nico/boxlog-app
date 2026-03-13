@@ -9,8 +9,8 @@ import { cn } from '@/lib/utils';
 
 import { DateNavigator } from '@/components/common/DateNavigator';
 import { Button } from '@/components/ui/button';
+import { AppHeader } from '@/shell/components/AppHeader';
 import { useGlobalSearch } from '@/shell/contexts/use-global-search';
-import { AppHeader } from '@/shell/layout/AppHeader';
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore';
 import { useSwipeGesture } from '../../hooks/useSwipeGesture';
 import type { CalendarViewType } from '../../types/calendar.types';

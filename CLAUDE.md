@@ -33,7 +33,6 @@
 | **Stats**         | `src/features/stats`         | 統計・分析、ヒートマップ                                |
 | **Auth**          | `src/features/auth`          | 認証、Supabase Auth連携                                 |
 | **Settings**      | `src/features/settings`      | ユーザー設定、通知設定                                  |
-| **Navigation**    | `src/features/navigation`    | サイドバー、ナビゲーションタブ                          |
 | **Search**        | `src/features/search`        | グローバル検索                                          |
 | **AI**            | `src/features/ai`            | AIチャット、インスペクタ統合                            |
 | **Notifications** | `src/features/notifications` | 通知管理、Realtime更新                                  |

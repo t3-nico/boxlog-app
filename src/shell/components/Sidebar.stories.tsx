@@ -9,7 +9,7 @@ import { Sidebar } from './Sidebar';
 
 /** サイドバーコンテナ。折りたたみ可能で、状態はlocalStorageに永続化される。 */
 const meta = {
-  title: 'Features/Navigation/Sidebar',
+  title: 'Components/Shell/Sidebar',
   component: Sidebar,
   parameters: {
     layout: 'fullscreen',

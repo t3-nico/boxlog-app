@@ -4,7 +4,7 @@ import { AppHeader } from './AppHeader';
 
 /** AppHeader - アプリ共通ヘッダーシェル */
 const meta = {
-  title: 'Primitives/Layout/AppHeader',
+  title: 'Components/Shell/AppHeader',
   parameters: {
     layout: 'padded',
   },

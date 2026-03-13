@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { HoverTooltip } from '@/components/ui/tooltip';
 import { useLayoutStore } from '@/shell/stores/useLayoutStore';
 
-import { MobileMenuButton } from '@/features/navigation';
+import { MobileMenuButton } from './MobileMenuButton';
 
 interface AppHeaderProps {
   /** 左コンテンツ: 日付表示、ページタイトル等 */
