@@ -1,0 +1,43 @@
+{
+  "onboarding": {
+    "step": "{current} / {total}",
+    "back": "戻る",
+    "continue": "続ける",
+    "skip": "スキップ",
+    "getStarted": "はじめる",
+    "welcome": {
+      "title": "Dayoptへようこそ！",
+      "subtitle": "あなたに合った体験をセットアップしましょう",
+      "nameLabel": "お名前は？",
+      "namePlaceholder": "名前を入力",
+      "confirmTitle": "お名前を確認してください",
+      "confirmSubtitle": "アカウントから取得しました"
+    },
+    "chronotype": {
+      "title": "あなたのクロノタイプは？",
+      "subtitle": "カレンダー上に生産性のピーク時間を表示します",
+      "lion": {
+        "name": "ライオン",
+        "trait": "超朝型",
+        "time": "ピーク: 7時〜12時"
+      },
+      "bear": {
+        "name": "ベア",
+        "trait": "安定型",
+        "time": "ピーク: 10時〜14時"
+      },
+      "wolf": {
+        "name": "ウルフ",
+        "trait": "夜型",
+        "time": "ピーク: 15時〜21時"
+      },
+      "dolphin": {
+        "name": "ドルフィン",
+        "trait": "浅眠型",
+        "time": "ピーク: 8時〜12時"
+      },
+      "quizLink": "わからない？診断クイズを受ける",
+      "skipLink": "あとで設定する"
+    }
+  }
+}
