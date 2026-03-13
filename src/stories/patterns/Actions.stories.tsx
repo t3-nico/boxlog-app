@@ -12,14 +12,6 @@ import {
 
 import { Button } from '@/components/ui/button';
 import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuSeparator,
-  ContextMenuShortcut,
-  ContextMenuTrigger,
-} from '@/components/ui/context-menu';
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -74,11 +66,6 @@ export const Overview: Story = {
                   <td className="py-3 font-bold">Dropdown Menu</td>
                   <td className="py-3">複数の関連アクション</td>
                   <td className="py-3">ボタンクリック</td>
-                </tr>
-                <tr className="border-border border-b">
-                  <td className="py-3 font-bold">Context Menu</td>
-                  <td className="py-3">要素固有のアクション</td>
-                  <td className="py-3">右クリック</td>
                 </tr>
                 <tr>
                   <td className="py-3 font-bold">Split Button</td>
@@ -294,58 +281,6 @@ export const Overview: Story = {
     </DropdownMenuItem>
   </DropdownMenuContent>
 </DropdownMenu>`}
-          </pre>
-        </section>
-
-        {/* コンテキストメニュー */}
-        <section className="bg-card border-border rounded-xl border p-6">
-          <h2 className="mb-4 text-lg font-bold">コンテキストメニュー</h2>
-          <p className="text-muted-foreground mb-4 text-sm">
-            右クリックで展開。要素固有のアクション。
-          </p>
-
-          <ContextMenu>
-            <ContextMenuTrigger asChild>
-              <div className="border-border bg-muted flex h-32 cursor-context-menu items-center justify-center rounded-lg border-2 border-dashed">
-                <p className="text-muted-foreground text-sm">右クリックしてメニューを表示</p>
-              </div>
-            </ContextMenuTrigger>
-            <ContextMenuContent>
-              <ContextMenuItem>
-                <Edit className="mr-2 size-4" />
-                編集
-                <ContextMenuShortcut>⌘E</ContextMenuShortcut>
-              </ContextMenuItem>
-              <ContextMenuItem>
-                <Copy className="mr-2 size-4" />
-                コピー
-                <ContextMenuShortcut>⌘C</ContextMenuShortcut>
-              </ContextMenuItem>
-              <ContextMenuItem>
-                <Share className="mr-2 size-4" />
-                共有
-              </ContextMenuItem>
-              <ContextMenuSeparator />
-              <ContextMenuItem className="text-destructive">
-                <Trash2 className="mr-2 size-4" />
-                削除
-                <ContextMenuShortcut>⌘⌫</ContextMenuShortcut>
-              </ContextMenuItem>
-            </ContextMenuContent>
-          </ContextMenu>
-
-          <pre className="bg-container mt-4 overflow-x-auto rounded-lg p-4 text-xs">
-            {`<ContextMenu>
-  <ContextMenuTrigger>
-    <div>右クリック対象の要素</div>
-  </ContextMenuTrigger>
-  <ContextMenuContent>
-    <ContextMenuItem>
-      編集
-      <ContextMenuShortcut>⌘E</ContextMenuShortcut>
-    </ContextMenuItem>
-  </ContextMenuContent>
-</ContextMenu>`}
           </pre>
         </section>
 

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage, AvatarUpload } from './avatar';
 
 const meta = {
-  title: 'Primitives/Avatar',
+  title: 'Components/UI/Avatar',
   component: Avatar,
   tags: ['autodocs'],
   parameters: { layout: 'centered' },

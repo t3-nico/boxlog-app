@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 
 import type { CalendarViewType } from '@/features/calendar';
 import { isCalendarViewPath } from '@/features/calendar';
+import type { StatsTab } from '@/features/stats';
 import { StatsPageContent } from '@/features/stats';
 import { PageSwitcher } from '@/shell/layout/PageSwitcher';
 import { useClientRouterStore } from '@/shell/stores/useClientRouterStore';
@@ -69,8 +70,22 @@ function CalendarClientView({ pathname }: { pathname: string }) {
   return <CalendarViewClient view={view} initialDate={null} translations={translations} />;
 }
 
-function StatsClientView() {
-  return <StatsPageContent headerSlot={<PageSwitcher />} />;
+const VALID_STATS_TABS: StatsTab[] = ['review', 'progress', 'insights'];
+
+function extractStatsTab(pathname: string): StatsTab {
+  const pathWithoutLocale = stripLocale(pathname);
+  const segments = pathWithoutLocale.split('/');
+  // /stats/overview → segments = ['', 'stats', 'overview']
+  const tab = segments[2];
+  if (tab && (VALID_STATS_TABS as string[]).includes(tab)) {
+    return tab as StatsTab;
+  }
+  return 'review';
+}
+
+function StatsClientView({ pathname }: { pathname: string }) {
+  const tab = extractStatsTab(pathname);
+  return <StatsPageContent tab={tab} headerSlot={<PageSwitcher />} />;
 }
 
 // ---------------------------------------------------------------------------
@@ -116,7 +131,7 @@ export function ClientPageRouter({ children }: ClientPageRouterProps) {
   }
 
   if (clientPage === 'stats') {
-    return <StatsClientView />;
+    return <StatsClientView pathname={pathname} />;
   }
 
   return <>{children}</>;

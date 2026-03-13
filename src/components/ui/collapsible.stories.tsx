@@ -4,7 +4,7 @@ import { ChevronDown, ChevronRight, Clock } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './collapsible';
 
 const meta = {
-  title: 'Primitives/Collapsible',
+  title: 'Components/UI/Collapsible',
   component: Collapsible,
   tags: ['autodocs'],
   parameters: {

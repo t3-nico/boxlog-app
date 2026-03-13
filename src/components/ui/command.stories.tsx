@@ -17,7 +17,7 @@ import {
 } from './command';
 
 const meta = {
-  title: 'Primitives/Command',
+  title: 'Components/UI/Command',
   component: Command,
   tags: ['autodocs'],
   parameters: {

@@ -14,6 +14,7 @@ const protectedPaths = [
   '/settings',
   '/calendar',
   '/stats',
+  '/onboarding',
 
   '/box',
   '/table',
@@ -23,6 +24,9 @@ const protectedPaths = [
   '/add',
   '/tags',
 ];
+
+// オンボーディング完了Cookie名
+const ONBOARDING_COOKIE = 'dayopt_onboarded';
 
 // 認証ページのパス
 const authPaths = ['/login', '/signup', '/auth'];
@@ -118,7 +122,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // Supabaseセッションを更新（ユーザー情報も同時取得 - 重複呼び出し防止で高速化）
-  const { response, user } = await updateSession(request);
+  const { response, supabase, user } = await updateSession(request);
 
   try {
     // 環境変数で認証をスキップ（開発環境用）
@@ -148,6 +152,57 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(
         new URL(getLocalizedPath('/calendar/day', currentLocale), request.url),
       );
+    }
+
+    // オンボーディングゲート（認証済みユーザーのみ）
+    if (user) {
+      const isOnboardingPath = pathWithoutLocale.startsWith('/onboarding');
+      const onboardedCookie = request.cookies.get(ONBOARDING_COOKIE);
+
+      if (!onboardedCookie) {
+        // Cookieなし → DB照会（初回 or cookie消去時のみ）
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('onboarding_completed_at')
+          .eq('id', user.id)
+          .single();
+
+        const isCompleted = !!profile?.onboarding_completed_at;
+
+        if (isCompleted) {
+          // DB上は完了 → Cookieを復元
+          response.cookies.set(ONBOARDING_COOKIE, '1', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 60 * 60 * 24 * 365,
+            path: '/',
+          });
+          if (isOnboardingPath) {
+            const redirectResponse = NextResponse.redirect(
+              new URL(getLocalizedPath('/calendar/day', currentLocale), request.url),
+            );
+            redirectResponse.cookies.set(ONBOARDING_COOKIE, '1', {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === 'production',
+              sameSite: 'lax',
+              maxAge: 60 * 60 * 24 * 365,
+              path: '/',
+            });
+            return redirectResponse;
+          }
+        } else if (isProtectedPath && !isOnboardingPath) {
+          // 未完了 → onboardingへリダイレクト
+          return NextResponse.redirect(
+            new URL(getLocalizedPath('/onboarding', currentLocale), request.url),
+          );
+        }
+      } else if (isOnboardingPath) {
+        // Cookie あり + onboardingパス → calendar/dayへ
+        return NextResponse.redirect(
+          new URL(getLocalizedPath('/calendar/day', currentLocale), request.url),
+        );
+      }
     }
 
     // next-intlのヘッダーをコピー

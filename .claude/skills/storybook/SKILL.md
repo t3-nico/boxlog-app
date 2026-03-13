@@ -54,17 +54,14 @@ Storybookの公式ベストプラクティスに基づいたStory作成ガイド
 └── src/stories/patterns/        → Patterns    → templates/patterns.md
 ```
 
-### `src/components/ui/` 内の Primitives vs Recipes 判定
+### `src/components/` 内の分類
 
-| 条件                                             | 分類          | テンプレート              |
-| ------------------------------------------------ | ------------- | ------------------------- |
-| shadcn/ui ベースの単体コンポーネント             | `Primitives/` | `templates/primitives.md` |
-| 複数 Primitives を組み合わせた拡張コンポーネント | `Recipes/`    | `templates/recipes.md`    |
+| ディレクトリ             | title prefix         | テンプレート              |
+| ------------------------ | -------------------- | ------------------------- |
+| `src/components/ui/`     | `Components/UI/`     | `templates/primitives.md` |
+| `src/components/common/` | `Components/Common/` | `templates/recipes.md`    |
 
-`Recipes/` に分類される `src/components/ui/` 内コンポーネントの例:
-`ActionFooter`, `ConfirmDialog`, `Field`, `InputGroup`, `DatePickerPopover`, `EmptyState`
-
-**迷ったら**: ドメイン知識を持たない → Recipes。ドメイン知識がある → Features。
+**迷ったら**: ドメイン知識を持たない → `Components/`。ドメイン知識がある → `Features/`。
 
 ---
 
@@ -76,7 +73,7 @@ Storybookの公式ベストプラクティスに基づいたStory作成ガイド
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
-  title: 'Primitives/MyComponent',
+  title: 'Components/UI/MyComponent',
   component: MyComponent,
   // ...
 } satisfies Meta<typeof MyComponent>;
@@ -146,16 +143,15 @@ export const ClickTest: Story = {
 
 ## カテゴリ命名規則（title）
 
-| ディレクトリ / 用途          | title prefix   | 例                                             |
-| ---------------------------- | -------------- | ---------------------------------------------- |
-| `src/stories/tokens/`        | `Foundations/` | `Foundations/Colors`, `Foundations/Typography` |
-| `src/components/ui/`         | `Primitives/`  | `Primitives/Button`, `Primitives/AlertDialog`  |
-| `src/core/components/`       | `Recipes/`     | `Recipes/Inspector/EntryInspector`             |
-| `src/components/recipes/`    | `Recipes/`     | `Recipes/ActionFooter`                         |
-| `src/components/common/`     | `Recipes/`     | `Recipes/EmptyState`                           |
-| `src/features/*/components/` | `Features/`    | `Features/Plans/PlanInspector`                 |
-| `src/stories/patterns/`      | `Patterns/`    | `Patterns/Feedback`, `Patterns/Forms`          |
-| `src/stories/docs/`          | `Docs/`        | `Docs/はじめに`, `Docs/StyleGuide/Overview`    |
+| ディレクトリ / 用途          | title prefix         | 例                                                       |
+| ---------------------------- | -------------------- | -------------------------------------------------------- |
+| `src/stories/tokens/`        | `Foundations/`       | `Foundations/Colors`, `Foundations/Typography`           |
+| `src/components/ui/`         | `Components/UI/`     | `Components/UI/Button`, `Components/UI/AlertDialog`      |
+| `src/components/common/`     | `Components/Common/` | `Components/Common/DateNavigator`                        |
+| `src/shell/components/`      | `Components/Shell/`  | `Components/Shell/AppHeader`, `Components/Shell/Sidebar` |
+| `src/features/*/components/` | `Features/`          | `Features/Entry/Inspector/EntryInspector`                |
+| `src/stories/patterns/`      | `Patterns/`          | `Patterns/Feedback`, `Patterns/Forms`                    |
+| `src/stories/docs/`          | `Docs/`              | `Docs/はじめに`, `Docs/StyleGuide/Overview`              |
 
 ---
 

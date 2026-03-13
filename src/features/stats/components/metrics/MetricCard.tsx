@@ -1,0 +1,126 @@
+'use client';
+
+import { TrendingDown, TrendingUp } from 'lucide-react';
+
+import { Card, CardContent } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+
+import type { MetricTrend, MetricValueParts } from '../../types/metrics.types';
+
+/** プログレスバーの色 */
+const PROGRESS_COLORS = {
+  good: 'bg-emerald-500',
+  warning: 'bg-amber-500',
+  critical: 'bg-red-500',
+} as const;
+
+type ThresholdStatus = 'good' | 'warning' | 'critical';
+
+interface MetricCardProps {
+  label: string;
+  /** フォーマット済みの値パーツ（数値と単位を分離表示） */
+  valueParts: MetricValueParts;
+  icon?: React.ComponentType<{ className?: string }> | undefined;
+  trend?: MetricTrend | undefined;
+  /** hero: 主要メトリクス（大きい表示）、default: 通常 */
+  variant?: 'default' | 'hero' | undefined;
+  /** プログレスバー（0-1）。undefined の場合はバー非表示 */
+  progress?: number | undefined;
+  /** プログレスバーの色。progress と併せて指定 */
+  progressStatus?: ThresholdStatus | undefined;
+  isLoading?: boolean;
+}
+
+export function MetricCard({
+  label,
+  valueParts,
+  icon: Icon,
+  trend,
+  variant = 'default',
+  progress,
+  progressStatus,
+  isLoading,
+}: MetricCardProps) {
+  const isHero = variant === 'hero';
+
+  if (isLoading) {
+    return (
+      <Card className={cn('gap-0 border-none py-0', isHero && 'col-span-2')}>
+        <CardContent className="p-6">
+          <div className="animate-pulse space-y-2">
+            <div className="bg-muted h-3 w-16 rounded" />
+            <div className={cn('bg-muted rounded', isHero ? 'h-11 w-24' : 'h-11 w-16')} />
+            <div className="bg-muted h-3 w-12 rounded" />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className={cn('gap-0 border-none py-0', isHero && 'col-span-2')}>
+      <CardContent className="flex h-full flex-col justify-between p-6">
+        {/* Label + Icon */}
+        <div className="flex items-center gap-1.5">
+          {Icon && <Icon className={cn('text-muted-foreground', isHero ? 'size-4' : 'size-3.5')} />}
+          <p className="text-muted-foreground text-xs font-medium">{label}</p>
+        </div>
+
+        {/* Value + Trend */}
+        <div className="mt-auto flex items-baseline gap-1 pt-2">
+          <span className="text-foreground text-4xl font-bold">{valueParts.primary}</span>
+          {valueParts.unit && (
+            <span
+              className={cn('text-muted-foreground font-medium', isHero ? 'text-lg' : 'text-base')}
+            >
+              {valueParts.unit}
+            </span>
+          )}
+          {valueParts.secondary && (
+            <>
+              <span className="text-foreground text-4xl font-bold">{valueParts.secondary}</span>
+              {valueParts.secondaryUnit && (
+                <span
+                  className={cn(
+                    'text-muted-foreground font-medium',
+                    isHero ? 'text-lg' : 'text-base',
+                  )}
+                >
+                  {valueParts.secondaryUnit}
+                </span>
+              )}
+            </>
+          )}
+          {trend && trend.direction !== 'flat' && (
+            <span
+              className={cn(
+                'ml-1 inline-flex items-center gap-0.5 text-sm font-medium',
+                trend.isPositive ? 'text-emerald-500' : 'text-red-500',
+              )}
+            >
+              {trend.direction === 'up' ? (
+                <TrendingUp className="size-3.5" />
+              ) : (
+                <TrendingDown className="size-3.5" />
+              )}
+              {Math.abs(Math.round(trend.delta * 100))}%
+            </span>
+          )}
+        </div>
+
+        {/* Progress Bar */}
+        {progress != null && (
+          <div className="bg-muted mt-1 h-1.5 w-full overflow-hidden rounded-full">
+            <div
+              className={cn(
+                'h-full rounded-full transition-all',
+                PROGRESS_COLORS[progressStatus ?? 'good'],
+              )}
+              style={{ width: `${Math.min(Math.max(progress * 100, 0), 100)}%` }}
+            />
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}

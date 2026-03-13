@@ -256,10 +256,11 @@ describe('Entry Status Utilities', () => {
       });
 
       it('should transition to planned and clear fields when made active', () => {
+        const now = new Date('2026-03-12T12:00:00Z');
         const newStartTime = new Date('2026-03-12T11:00:00Z');
         const newEndTime = new Date('2026-03-12T13:00:00Z');
 
-        const result = computeOriginTransition('unplanned', newStartTime, newEndTime);
+        const result = computeOriginTransition('unplanned', newStartTime, newEndTime, now);
 
         expect(result.origin).toBe('planned');
         expect(result.clearFields).toEqual({
@@ -339,10 +340,11 @@ describe('Entry Status Utilities', () => {
       it('should handle times at state boundaries', () => {
         // At the exact moment an entry transitions from upcoming to active
         // Time: 2026-03-12T12:00:00Z is exactly the start
+        const now = new Date('2026-03-12T12:00:00Z');
         const atStart = new Date('2026-03-12T12:00:00Z');
         const atEnd = new Date('2026-03-12T13:00:00Z');
 
-        const result = computeOriginTransition('unplanned', atStart, atEnd);
+        const result = computeOriginTransition('unplanned', atStart, atEnd, now);
 
         // When now=start, entry is active, should transition
         expect(result.origin).toBe('planned');

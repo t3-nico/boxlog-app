@@ -112,6 +112,7 @@ export const DayContent = ({
       className={cn('bg-background relative flex-1 overflow-hidden', className)}
       data-calendar-grid
       data-calendar-day-index="0"
+      data-tour-target="grid-drag"
     >
       {/* CalendarDragSelection: グリッド選択 + dnd-kit droppable */}
       <CalendarDragSelection

@@ -1,74 +1,41 @@
-# Temporal Constraints（時間制約）
+---
+paths:
+  - 'src/features/entry/**'
+  - 'src/features/calendar/**'
+---
 
-## 原則: Time waits for no one
+# Temporal Constraints（時間制約）
 
 過去は変えられない。記録だけ正しく残す。
 
 ## ブロックの状態
 
-| 状態         | 判定条件                       | 定義       |
-| ------------ | ------------------------------ | ---------- |
-| **upcoming** | `start_time > now`             | 未来の予定 |
-| **active**   | `start_time <= now < end_time` | 進行中     |
-| **past**     | `end_time <= now`              | 過去の記録 |
+| 状態         | 判定条件                       |
+| ------------ | ------------------------------ |
+| **upcoming** | `start_time > now`             |
+| **active**   | `start_time <= now < end_time` |
+| **past**     | `end_time <= now`              |
 
-判定は `getEntryState()` (`src/features/entry/lib/entry-status.ts`) で自動計算。手動ステータスは持たない。
+判定: `getEntryState()` (`src/features/entry/lib/entry-status.ts`)
 
-## 操作制約マトリクス
+## 操作制約
 
-### ドラッグ移動
+### 過去ブロック — 禁止
 
-| 操作                            | 可否 | 実装箇所                                            |
-| ------------------------------- | ---- | --------------------------------------------------- |
-| 過去 → どこでも                 | x    | PlanCard: `isPast` で mousedown/touchstart を無効化 |
-| 未来 → 未来                     | o    | -                                                   |
-| 未来 → 過去（全体が過去になる） | x    | useDragHandler: `newEndTime <= now` で拒否          |
-| 未来 → 跨ぎ（active になる）    | o    | end_time が未来なら許可                             |
+- ドラッグ移動、リサイズ、予定時間編集、日付変更
 
-### リサイズ
+### 過去ブロック — 許可
 
-| 操作                | 可否 | 実装箇所                         |
-| ------------------- | ---- | -------------------------------- |
-| 過去ブロック        | x    | PlanCard: リサイズハンドル非表示 |
-| 未来/進行中ブロック | o    | -                                |
+- 記録時間（actual start/end）、充実度スコア、メモ、タグ、削除
 
-### Inspector 編集
+### 未来/進行中ブロック
 
-| 操作                         | 過去ブロック | 未来/進行中ブロック     |
-| ---------------------------- | ------------ | ----------------------- |
-| 予定時間（start/end_time）   | x ロック     | o                       |
-| 日付変更                     | x disabled   | o（minDate=today）      |
-| 記録時間（actual_start/end） | o            | o                       |
-| 充実度スコア                 | o            | - (upcoming では非表示) |
-| メモ                         | o            | o                       |
-| タグ                         | o            | o                       |
-| 削除                         | o            | o                       |
+- 全操作可能。ただし未来→過去へのドラッグ移動は拒否
 
-### 日付移動（Inspector DatePicker）
+### 日付移動
 
-| 操作                      | 可否 | 実装箇所                               |
-| ------------------------- | ---- | -------------------------------------- |
-| 過去ブロックの日付変更    | x    | DateNavigatorRow: `disabled={true}`    |
-| 未来ブロック → 過去の日付 | x    | MiniCalendar: `minDate` でグレーアウト |
-| 未来ブロック → 未来の日付 | o    | -                                      |
-
-## 確定概念の廃止
-
-- `reviewed_at` フィールドはスキーマに存在するが未使用
-- 「確定」タイミングは不要。予定は `end_time` を過ぎた時点で自動的にロック
-- 記録はいつでも修正可能
+- 未来ブロック → 過去の日付は `minDate` でブロック
 
 ## 防御レイヤー
 
-各制約は UI + ロジックの二重防御:
-
-1. **UI層**: disabled 属性、ハンドル非表示、cursor 変更、minDate グレーアウト
-2. **ロジック層**: ハンドラー内の早期 return、ドロップ時の拒否チェック
-
-## 過去ブロックで許可される操作
-
-- 記録時間の調整（Inspector の actual start/end）
-- 充実度スコアの選択
-- メモの編集
-- タグの変更
-- 削除
+各制約は UI（disabled/非表示） + ロジック（早期return）の二重防御。

@@ -5,8 +5,8 @@ import { useEffect, useMemo, useRef } from 'react';
 
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { isCalendarViewPath } from '@/features/calendar';
-import { Sidebar } from '@/features/navigation';
-import { AppHeader } from '@/shell/layout/AppHeader';
+import { AppHeader } from '@/shell/components/AppHeader';
+import { Sidebar } from '@/shell/components/Sidebar';
 import { useLayoutStore } from '@/shell/stores/useLayoutStore';
 import { usePageTitleStore } from '@/shell/stores/usePageTitleStore';
 
@@ -58,7 +58,7 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
   // ページ判定: 独自ヘッダーを持つページかどうか（PageHeader表示制御用）
   const hasOwnHeader = useMemo(() => {
     const pathWithoutLocale = pathname?.replace(new RegExp(`^/${locale}`), '') ?? '';
-    return isCalendarViewPath(pathWithoutLocale) || pathWithoutLocale === '/stats';
+    return isCalendarViewPath(pathWithoutLocale) || pathWithoutLocale.startsWith('/stats');
   }, [pathname, locale]);
 
   return (

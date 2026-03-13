@@ -39,7 +39,7 @@ export function YearlyHeatmap() {
 
   if (isPending) {
     return (
-      <Card>
+      <Card className="border-none">
         <CardHeader>
           <Skeleton className="h-5 w-24" />
           <Skeleton className="h-4 w-40" />
@@ -52,7 +52,7 @@ export function YearlyHeatmap() {
   }
 
   return (
-    <Card>
+    <Card className="border-none">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <div>
           <CardTitle>Yearly Grid</CardTitle>

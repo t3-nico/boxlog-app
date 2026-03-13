@@ -5,14 +5,9 @@ import { useMemo } from 'react';
 import { Area, AreaChart, XAxis, YAxis } from 'recharts';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  type ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from '@/components/ui/chart';
 import { Skeleton } from '@/components/ui/skeleton';
 import { api } from '@/platform/trpc';
+import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '../ui/chart';
 
 import { useStatsFilterStore } from '../../stores/useStatsFilterStore';
 import { computeMonthCount } from '../../utils/computeDateRange';
@@ -37,7 +32,7 @@ export function MonthlyTrendChart() {
 
   if (isPending) {
     return (
-      <Card>
+      <Card className="border-none">
         <CardHeader>
           <CardTitle>Monthly Trend</CardTitle>
           <CardDescription>Past 12 months</CardDescription>
@@ -51,7 +46,7 @@ export function MonthlyTrendChart() {
 
   if (!data || data.length === 0) {
     return (
-      <Card>
+      <Card className="border-none">
         <CardHeader>
           <CardTitle>Monthly Trend</CardTitle>
           <CardDescription>Past 12 months</CardDescription>
@@ -77,7 +72,7 @@ export function MonthlyTrendChart() {
   }
 
   return (
-    <Card>
+    <Card className="border-none">
       <CardHeader>
         <CardTitle>Monthly Trend</CardTitle>
         <CardDescription>

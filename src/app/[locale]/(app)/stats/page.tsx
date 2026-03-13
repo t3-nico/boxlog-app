@@ -1,33 +1,10 @@
-import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
+import { redirect } from 'next/navigation';
 
-import { StatsPageContent, prefetchStatsData } from '@/features/stats';
-import type { Locale } from '@/platform/i18n/routing';
-import { HydrationBoundary } from '@/platform/trpc/server';
-import { PageSwitcher } from '@/shell/layout/PageSwitcher';
-
-export const dynamic = 'force-dynamic';
-
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale?: Locale }>;
-}): Promise<Metadata> {
-  const { locale = 'ja' } = await params;
-  const t = await getTranslations({ locale, namespace: 'calendar' });
-  return {
-    title: t('views.stats'),
-  };
-}
-
-const StatsPage = async () => {
-  const { dehydratedState } = await prefetchStatsData();
-
-  return (
-    <HydrationBoundary state={dehydratedState}>
-      <StatsPageContent headerSlot={<PageSwitcher />} />
-    </HydrationBoundary>
-  );
+/**
+ * /stats → /stats/overview にリダイレクト
+ */
+const StatsPage = () => {
+  redirect('stats/review');
 };
 
 export default StatsPage;

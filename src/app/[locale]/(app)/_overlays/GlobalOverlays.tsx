@@ -7,6 +7,7 @@ import {
   RecurringEditConfirmDialog,
 } from '@/features/entry/components';
 import { SettingsDialog } from '@/features/settings';
+import { TourController } from '@/features/tour';
 
 /**
  * グローバルオーバーレイ群
@@ -21,6 +22,7 @@ export function GlobalOverlays() {
       <EntryInspector />
       <EntryDeleteConfirmDialog />
       <RecurringEditConfirmDialog />
+      <TourController />
       <Toaster />
     </>
   );

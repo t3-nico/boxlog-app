@@ -19,7 +19,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
-  title: 'Recipes/Inspector/EntryInspector',
+  title: 'Components/Common/ActionFooter',
   parameters: { layout: 'centered' },
   tags: ['autodocs'],
 } satisfies Meta; // component 指定なし
@@ -31,7 +31,7 @@ type Story = StoryObj<typeof meta>;
 
 function MockTagRow({ tagName }: { tagName?: string }) {
   return (
-    <div className="flex items-center gap-2 px-5 pb-1 pt-5">
+    <div className="flex items-center gap-2 px-5 pt-5 pb-1">
       <span className="text-muted-foreground">{tagName ?? 'Add tag'}</span>
     </div>
   );
@@ -167,6 +167,6 @@ Story でこの制約を確認できるよう、`PastPlanned` は予定行がグ
 
 ## 参考実装
 
-- `src/core/components/inspector/EntryInspector.stories.tsx` — Interactive Wrapper + Mock の実例
-- `src/core/components/inspector/story-helpers.tsx` — 共通ヘルパーの実例
+- `src/features/entry/components/inspector/EntryInspector.stories.tsx` — Interactive Wrapper + Mock の実例
+- `src/features/entry/components/inspector/story-helpers.tsx` — 共通ヘルパーの実例
 - `src/components/ui/action-footer.stories.tsx` — シンプルな Recipe Story

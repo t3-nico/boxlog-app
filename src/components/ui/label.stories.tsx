@@ -5,7 +5,7 @@ import { Input } from './input';
 import { Label } from './label';
 
 const meta = {
-  title: 'Primitives/Label',
+  title: 'Components/UI/Label',
   component: Label,
   tags: ['autodocs'],
   parameters: { layout: 'fullscreen' },

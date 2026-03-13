@@ -5,14 +5,9 @@ import { useMemo } from 'react';
 import { Bar, BarChart, XAxis, YAxis } from 'recharts';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  type ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from '@/components/ui/chart';
 import { Skeleton } from '@/components/ui/skeleton';
 import { api } from '@/platform/trpc';
+import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '../ui/chart';
 
 import { useStatsFilterStore } from '../../stores/useStatsFilterStore';
 import { computeStatsDateRange } from '../../utils/computeDateRange';
@@ -41,7 +36,7 @@ export function DayOfWeekChart() {
 
   if (isPending) {
     return (
-      <Card>
+      <Card className="border-none">
         <CardHeader>
           <CardTitle>Day of Week</CardTitle>
           <CardDescription>Activity by day</CardDescription>
@@ -55,7 +50,7 @@ export function DayOfWeekChart() {
 
   if (!data || data.length === 0) {
     return (
-      <Card>
+      <Card className="border-none">
         <CardHeader>
           <CardTitle>Day of Week</CardTitle>
           <CardDescription>Activity by day</CardDescription>
@@ -78,7 +73,7 @@ export function DayOfWeekChart() {
   const weekendHours = data.slice(5).reduce((sum, item) => sum + item.hours, 0);
 
   return (
-    <Card>
+    <Card className="border-none">
       <CardHeader>
         <CardTitle>Day of Week</CardTitle>
         <CardDescription>

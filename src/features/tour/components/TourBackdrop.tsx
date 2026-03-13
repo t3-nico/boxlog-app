@@ -1,0 +1,16 @@
+'use client';
+
+/**
+ * ツアー用半透明バックドロップ
+ *
+ * ターゲット要素以外を暗くして注目を促す。
+ * pointer-events: none でユーザー操作を邪魔しない。
+ */
+export function TourBackdrop() {
+  return (
+    <div
+      className="animate-in fade-in z-tour-backdrop pointer-events-none fixed inset-0 bg-black/40 duration-150"
+      aria-hidden="true"
+    />
+  );
+}

@@ -73,15 +73,19 @@ export function computeOriginTransition(
   currentOrigin: EntryOrigin,
   newStartTime: Date,
   newEndTime: Date,
+  now?: Date,
 ): { origin: EntryOrigin; clearFields: Record<string, null> | null } {
   if (currentOrigin === 'planned') {
     return { origin: 'planned', clearFields: null };
   }
 
-  const newState = getEntryState({
-    start_time: newStartTime.toISOString(),
-    end_time: newEndTime.toISOString(),
-  });
+  const newState = getEntryState(
+    {
+      start_time: newStartTime.toISOString(),
+      end_time: newEndTime.toISOString(),
+    },
+    now,
+  );
 
   if (newState === 'upcoming' || newState === 'active') {
     return {

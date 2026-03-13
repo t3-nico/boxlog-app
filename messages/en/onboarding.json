@@ -1,0 +1,46 @@
+{
+  "onboarding": {
+    "step": "{current} of {total}",
+    "back": "Back",
+    "continue": "Continue",
+    "skip": "Skip",
+    "getStarted": "Get started",
+    "welcome": {
+      "title": "Welcome to Dayopt!",
+      "subtitle": "Let's personalize your experience",
+      "nameLabel": "What's your name?",
+      "namePlaceholder": "Enter your name",
+      "confirmTitle": "Confirm your name",
+      "confirmSubtitle": "We got this from your account"
+    },
+    "chronotype": {
+      "title": "What's your chronotype?",
+      "subtitle": "This helps us show your peak productivity hours on the calendar",
+      "lion": {
+        "name": "Lion",
+        "trait": "Early riser",
+        "time": "Peak: 7 AM – 12 PM"
+      },
+      "bear": {
+        "name": "Bear",
+        "trait": "Steady pace",
+        "time": "Peak: 10 AM – 2 PM"
+      },
+      "wolf": {
+        "name": "Wolf",
+        "trait": "Night owl",
+        "time": "Peak: 3 PM – 9 PM"
+      },
+      "dolphin": {
+        "name": "Dolphin",
+        "trait": "Light sleeper",
+        "time": "Peak: 8 AM – 12 PM"
+      },
+      "quizLink": "Not sure? Take the quiz",
+      "skipLink": "I'll set this up later"
+    },
+    "error": {
+      "completeFailed": "Failed to save. Please try again."
+    }
+  }
+}

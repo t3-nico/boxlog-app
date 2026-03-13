@@ -1,0 +1,30 @@
+{
+  "tour": {
+    "steps": {
+      "gridDrag": {
+        "title": "Drag to select a time slot",
+        "description": "Drag on the calendar to choose when you want to work on something"
+      },
+      "selectTag": {
+        "title": "Pick a tag to create your plan",
+        "description": "Choose an existing tag, or create a new one — it becomes both the label and title of your plan"
+      },
+      "clickEntry": {
+        "title": "Click to view details",
+        "description": "Click the block you just created to open the inspector — edit time, tags, and notes"
+      },
+      "planVsRecord": {
+        "title": "Plans vs Records",
+        "description": "A plan is what you intend to do. Once its time passes, it automatically becomes a record — what you actually did. You can always adjust the recorded time later."
+      }
+    },
+    "done": {
+      "title": "You're all set!",
+      "description": "Start planning your day"
+    },
+    "next": "Next",
+    "skip": "Skip tour",
+    "done_button": "Start planning",
+    "step": "{current} of {total}"
+  }
+}

@@ -1,4 +1,5 @@
 export { ChronotypeBackground } from './components/chronotype-background';
+export { ChronotypeQuiz } from './components/chronotype-quiz';
 export { ChronotypeSettings as ChronotypeSettingsPanel } from './components/chronotype-settings';
 export {
   CHRONOTYPE_EMOJI,
@@ -12,6 +13,7 @@ export {
   getChronotypeColor,
   getProductivityLevelColor,
 } from './lib/constants';
+export { CHRONOTYPE_QUIZ_QUESTIONS, calculateChronotypeResult } from './lib/quiz';
 export {
   chronotypeCustomZonesSchema,
   chronotypeDisplayModeSchema,

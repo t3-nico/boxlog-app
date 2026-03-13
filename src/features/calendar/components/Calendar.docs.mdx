@@ -39,9 +39,6 @@ CalendarController              メインエントリポイント
 │       ├── CalendarDragSelection/  ドラッグ選択レイヤー
 │       ├── PlanContextMenu     右クリックメニュー
 │       └── CurrentTimeLine     現在時刻線
-├── aside/
-│   ├── PlanListPanel           プラン一覧パネル
-│   └── RecordListPanel         レコード一覧パネル
 ├── sidebar/
 │   ├── ViewSwitcherList        ビュー切替
 │   └── tag-filter/             タグフィルターUI
@@ -58,7 +55,6 @@ CalendarController              メインエントリポイント
 | Store | 用途 | persist |
 |-------|------|---------|
 | `useCalendarFilterStore` | タイプ/タグのフィルター | Yes |
-| `useAppAsideStore` | アサイド種別・サイズ（`@/features/navigation`） | Yes |
 | `useCalendarDragStore` | ドラッグ元・ゴースト・プレビュー時間 | No |
 | `useCalendarScrollStore` | スクロール位置同期 | No |
 
@@ -90,20 +86,6 @@ CalendarController              メインエントリポイント
 | 未タグ | タグなしアイテムの表示トグル |
 
 `useCalendarFilterStore` で管理、localStorage に永続化。
-
----
-
-## アサイド
-
-| アサイドタイプ | 説明 |
-|------------|------|
-| `plan` | プラン一覧（ソート・検索付き） |
-| `record` | レコード一覧 |
-| `stats` | 統計サマリー（`@/features/stats`） |
-| `chat` | AIチャット |
-| `none` | アサイド非表示 |
-
-`useAppAsideStore`（`@/features/navigation`）でサイズ・種別を管理。
 
 ---
 

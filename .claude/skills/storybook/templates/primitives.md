@@ -9,7 +9,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MyComponent } from './my-component';
 
 const meta = {
-  title: 'Primitives/MyComponent',
+  title: 'Components/UI/MyComponent',
   component: MyComponent,
   tags: [], // MDX Docs を使う場合
   parameters: {
@@ -80,7 +80,7 @@ export const AllPatterns: Story = {
 
 ```tsx
 const meta = {
-  title: 'Primitives/Tabs',
+  title: 'Components/UI/Tabs',
   component: Tabs, // 親を指定（Autodocsで親のpropsが表示される）
   parameters: { layout: 'centered' },
   tags: ['autodocs'],

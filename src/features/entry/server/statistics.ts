@@ -280,4 +280,186 @@ export const entriesStatisticsRouter = createTRPCRouter({
           return { month, label: `${monthPart ? parseInt(monthPart) : 0}月`, hours };
         });
     }),
+
+  // ---------------------------------------------------------------------------
+  // Phase 1: KPI Metrics
+  // ---------------------------------------------------------------------------
+
+  /** 計画率: origin='planned' / 全エントリ */
+  getPlanRate: protectedProcedure.input(dateRangeInput).query(async ({ ctx, input }) => {
+    const { supabase, userId } = ctx;
+
+    const { data, error } = await supabase.rpc(
+      'get_plan_rate' as never,
+      {
+        p_user_id: userId,
+        p_start_date: input.startDate ?? null,
+        p_end_date: input.endDate ?? null,
+      } as never,
+    );
+
+    if (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to fetch plan rate',
+      });
+    }
+
+    const result = data as {
+      totalEntries: number;
+      plannedEntries: number;
+      planRate: number;
+    } | null;
+
+    return {
+      totalEntries: result?.totalEntries ?? 0,
+      plannedEntries: result?.plannedEntries ?? 0,
+      planRate: result?.planRate ?? 0,
+    };
+  }),
+
+  /** 見積もり精度: タグ別の予定時間 vs 実績時間 */
+  getEstimationAccuracy: protectedProcedure.input(dateRangeInput).query(async ({ ctx, input }) => {
+    const { supabase, userId } = ctx;
+
+    const { data, error } = await supabase.rpc(
+      'get_estimation_accuracy' as never,
+      {
+        p_user_id: userId,
+        p_start_date: input.startDate ?? null,
+        p_end_date: input.endDate ?? null,
+      } as never,
+    );
+
+    if (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to fetch estimation accuracy',
+      });
+    }
+
+    const rows = (data ?? []) as Array<{
+      tag_id: string;
+      tag_name: string;
+      tag_color: string;
+      avg_planned_minutes: number;
+      avg_actual_minutes: number;
+      avg_deviation_minutes: number;
+      entry_count: number;
+    }>;
+
+    return rows.map((row) => ({
+      tagId: row.tag_id,
+      tagName: row.tag_name,
+      tagColor: row.tag_color || 'indigo',
+      avgPlannedMinutes: row.avg_planned_minutes,
+      avgActualMinutes: row.avg_actual_minutes,
+      avgDeviationMinutes: row.avg_deviation_minutes,
+      entryCount: row.entry_count,
+    }));
+  }),
+
+  /** エネルギーマップ: 時間帯×曜日の活動分布（既存DB関数のラッパー） */
+  getEnergyMap: protectedProcedure.input(dateRangeInput).query(async ({ ctx, input }) => {
+    const { supabase, userId } = ctx;
+
+    const { data, error } = await supabase.rpc(
+      'get_energy_map' as never,
+      {
+        p_user_id: userId,
+        p_start_date: input.startDate ?? null,
+        p_end_date: input.endDate ?? null,
+      } as never,
+    );
+
+    if (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to fetch energy map',
+      });
+    }
+
+    return (data ?? []) as Array<{
+      hour: number;
+      dow: number;
+      avg_fulfillment: number | null;
+      total_minutes: number;
+      entry_count: number;
+    }>;
+  }),
+
+  /** コンテキストスイッチ: 連続エントリ間のタグ変化回数 */
+  getContextSwitches: protectedProcedure.input(dateRangeInput).query(async ({ ctx, input }) => {
+    const { supabase, userId } = ctx;
+
+    const { data, error } = await supabase.rpc(
+      'get_context_switches' as never,
+      {
+        p_user_id: userId,
+        p_start_date: input.startDate ?? null,
+        p_end_date: input.endDate ?? null,
+      } as never,
+    );
+
+    if (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to fetch context switches',
+      });
+    }
+
+    const result = data as {
+      totalSwitches: number;
+      avgPerDay: number;
+    } | null;
+
+    return {
+      totalSwitches: result?.totalSwitches ?? 0,
+      avgPerDay: result?.avgPerDay ?? 0,
+    };
+  }),
+
+  /** 空白率: 活動可能時間のうちスケジュールされていない時間の割合 */
+  getBlankRate: protectedProcedure
+    .input(
+      dateRangeInput.extend({
+        wakeHour: z.number().min(0).max(23).default(7),
+        sleepHour: z.number().min(0).max(23).default(23),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { supabase, userId } = ctx;
+
+      const { data, error } = await supabase.rpc(
+        'get_blank_rate' as never,
+        {
+          p_user_id: userId,
+          p_start_date: input.startDate ?? null,
+          p_end_date: input.endDate ?? null,
+          p_wake_hour: input.wakeHour,
+          p_sleep_hour: input.sleepHour,
+        } as never,
+      );
+
+      if (error) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to fetch blank rate',
+        });
+      }
+
+      const result = data as {
+        availableMinutes: number;
+        scheduledMinutes: number;
+        blankMinutes: number;
+        blankRate: number;
+      } | null;
+
+      return {
+        availableMinutes: result?.availableMinutes ?? 0,
+        scheduledMinutes: result?.scheduledMinutes ?? 0,
+        blankMinutes: result?.blankMinutes ?? 0,
+        blankRate: result?.blankRate ?? 0,
+      };
+    }),
 });
