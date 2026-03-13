@@ -120,6 +120,7 @@ export function ReminderSelect({
         className={`h-8 gap-1 px-2 ${hasReminder ? 'text-foreground' : 'text-muted-foreground'}`}
         type="button"
         disabled={disabled}
+        aria-label={t('common.reminder.label')}
       >
         <Bell className="h-4 w-4" />
       </Button>
