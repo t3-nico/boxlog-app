@@ -1,13 +1,71 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { PanelLeft, PanelLeftClose, SquarePen } from 'lucide-react';
-import { useState } from 'react';
+import { Bell, PanelLeft } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { HoverTooltip } from '@/components/ui/tooltip';
+import { useLayoutStore } from '@/shell/stores/useLayoutStore';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 import { Sidebar } from './Sidebar';
 
-/** サイドバーコンテナ。折りたたみ可能で、状態はlocalStorageに永続化される。 */
+// ── Mock: AuthStore にダミーユーザーを設定 ──
+
+function WithMockUser({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    // Storybook用のダミーユーザー（最小限のフィールドのみ）
+    const mockUser = {
+      id: 'story-user-id',
+      email: 'demo@dayopt.app',
+      user_metadata: { username: 'Demo User' },
+    };
+    useAuthStore.setState({
+      user: mockUser as never,
+      loading: false,
+    });
+    return () => {
+      useAuthStore.setState({ user: null, loading: true });
+    };
+  }, []);
+
+  return <>{children}</>;
+}
+
+// ── Mock: サイドバーコンテンツ（SidebarContent の簡易版） ──
+
+function MockSidebarContent() {
+  return (
+    <>
+      <div className="p-3">
+        <div className="bg-muted/50 flex aspect-square w-full items-center justify-center rounded-lg">
+          <span className="text-muted-foreground text-xs">Mini Calendar</span>
+        </div>
+      </div>
+      <div className="space-y-1 px-2">
+        {['Day', 'Week', 'Month'].map((label) => (
+          <div
+            key={label}
+            className="text-muted-foreground hover:bg-state-hover rounded-md px-3 py-1.5 text-sm"
+          >
+            {label}
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+// ── Mock: フッターアクション ──
+
+function MockFooterActions() {
+  return (
+    <Button variant="ghost" icon className="size-8" aria-label="Notifications">
+      <Bell className="size-4" />
+    </Button>
+  );
+}
+
+/** サイドバーコンテナ。Dayoptロゴ + 検索 + 閉じるボタン、children スロット、UserMenu + footerActions。 */
 const meta = {
   title: 'Components/Shell/Sidebar',
   component: Sidebar,
@@ -15,72 +73,45 @@ const meta = {
     layout: 'fullscreen',
   },
   tags: ['autodocs'],
-  args: {
-    children: (
-      <div className="p-4">
-        <div className="bg-container text-muted-foreground rounded p-4 text-center text-sm">
-          コンテンツエリア
-        </div>
-      </div>
+  decorators: [
+    (Story) => (
+      <WithMockUser>
+        <Story />
+      </WithMockUser>
     ),
-  },
+  ],
 } satisfies Meta<typeof Sidebar>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 // ---------------------------------------------------------------------------
-// インタラクティブデモ
+// インタラクティブデモ（実コンポーネント使用）
 // ---------------------------------------------------------------------------
 
 function InteractiveDemo() {
   const [isOpen, setIsOpen] = useState(true);
 
-  return (
-    <div className="border-border flex h-80 w-[640px] overflow-hidden rounded-xl border">
-      {/* サイドバー */}
-      <div
-        className="bg-surface-container border-border shrink-0 overflow-hidden border-r transition-all duration-200"
-        style={{ width: isOpen ? 240 : 0 }}
-      >
-        <div className="flex h-full w-60 flex-col">
-          {/* Header */}
-          <div className="flex h-12 shrink-0 items-center justify-between px-2">
-            <div className="flex items-center gap-2 px-2">
-              <div className="bg-muted size-6 rounded-full" />
-              <span className="text-foreground text-sm font-normal">User</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <HoverTooltip content="サイドバーを閉じる" side="bottom">
-                <Button
-                  variant="ghost"
-                  icon
-                  className="size-8"
-                  onClick={() => setIsOpen(false)}
-                  aria-label="サイドバーを閉じる"
-                >
-                  <PanelLeftClose className="size-4" />
-                </Button>
-              </HoverTooltip>
-              <Button variant="ghost" icon className="size-8" aria-label="作成">
-                <SquarePen className="size-4" />
-              </Button>
-            </div>
-          </div>
+  // Zustand storeと同期
+  useEffect(() => {
+    if (isOpen) {
+      useLayoutStore.setState({ sidebarOpen: true });
+    } else {
+      useLayoutStore.setState({ sidebarOpen: false });
+    }
+  }, [isOpen]);
 
-          {/* Content */}
-          <div className="flex-1 overflow-auto p-4">
-            <div className="space-y-2">
-              {['カレンダー', 'プラン', '記録', '統計'].map((label) => (
-                <div
-                  key={label}
-                  className="text-muted-foreground hover:bg-state-hover rounded-md px-3 py-1.5 text-sm"
-                >
-                  {label}
-                </div>
-              ))}
-            </div>
-          </div>
+  return (
+    <div className="border-border flex h-[500px] w-[800px] overflow-hidden rounded-xl border">
+      {/* サイドバー（実コンポーネント） */}
+      <div
+        className="shrink-0 overflow-hidden transition-all duration-200"
+        style={{ width: isOpen ? 256 : 0 }}
+      >
+        <div className="h-full w-64">
+          <Sidebar footerActions={<MockFooterActions />}>
+            <MockSidebarContent />
+          </Sidebar>
         </div>
       </div>
 
@@ -88,98 +119,23 @@ function InteractiveDemo() {
       <div className="bg-background flex flex-1 flex-col">
         <div className="border-border flex h-12 shrink-0 items-center gap-2 border-b px-4">
           {!isOpen && (
-            <HoverTooltip content="サイドバーを開く" side="bottom">
+            <HoverTooltip content="Open sidebar" side="bottom">
               <Button
                 variant="ghost"
                 icon
                 className="size-8"
                 onClick={() => setIsOpen(true)}
-                aria-label="サイドバーを開く"
+                aria-label="Open sidebar"
               >
                 <PanelLeft className="size-4" />
               </Button>
             </HoverTooltip>
           )}
-          <span className="text-muted-foreground text-sm">ヘッダー</span>
+          <span className="text-muted-foreground text-sm">Header</span>
         </div>
         <div className="flex flex-1 items-center justify-center p-4">
           <div className="bg-container text-muted-foreground rounded-lg p-6 text-center text-sm">
-            メインコンテンツ
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// 静的ヘルパー
-// ---------------------------------------------------------------------------
-
-function ToggleButtonComparison() {
-  return (
-    <div className="flex items-start gap-8 p-6">
-      <div className="bg-surface-container border-border flex h-12 w-48 items-center justify-end rounded-lg border px-2">
-        <HoverTooltip content="サイドバーを閉じる" side="bottom">
-          <Button variant="ghost" icon className="size-8" aria-label="サイドバーを閉じる">
-            <PanelLeftClose className="size-4" />
-          </Button>
-        </HoverTooltip>
-      </div>
-      <div className="bg-background border-border flex h-12 w-48 items-center rounded-lg border px-4">
-        <HoverTooltip content="サイドバーを開く" side="bottom">
-          <Button variant="ghost" icon className="size-8" aria-label="サイドバーを開く">
-            <PanelLeft className="size-4" />
-          </Button>
-        </HoverTooltip>
-      </div>
-    </div>
-  );
-}
-
-function LayoutOpen() {
-  return (
-    <div className="border-border flex h-64 w-[600px] overflow-hidden rounded-lg border">
-      <div className="bg-surface-container border-border w-64 shrink-0 border-r">
-        <div className="border-border flex h-12 items-center justify-between border-b px-2">
-          <span className="text-muted-foreground text-sm">UserMenu</span>
-          <Button variant="ghost" icon className="size-8" aria-label="サイドバーを閉じる">
-            <PanelLeftClose className="size-4" />
-          </Button>
-        </div>
-        <div className="p-4">
-          <div className="bg-container text-muted-foreground rounded p-2 text-center text-xs">
-            サイドバー
-          </div>
-        </div>
-      </div>
-      <div className="bg-background flex-1">
-        <div className="border-border flex h-12 items-center border-b px-4">
-          <span className="text-muted-foreground text-sm">ヘッダー</span>
-        </div>
-        <div className="p-4">
-          <div className="bg-container text-muted-foreground rounded p-2 text-center text-xs">
-            メインコンテンツ
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function LayoutClosed() {
-  return (
-    <div className="border-border flex h-64 w-[600px] overflow-hidden rounded-lg border">
-      <div className="bg-background flex-1">
-        <div className="border-border flex h-12 items-center gap-2 border-b px-4">
-          <Button variant="ghost" icon className="size-8" aria-label="サイドバーを開く">
-            <PanelLeft className="size-4" />
-          </Button>
-          <span className="text-muted-foreground text-sm">ヘッダー</span>
-        </div>
-        <div className="p-4">
-          <div className="bg-container text-muted-foreground rounded p-2 text-center text-xs">
-            メインコンテンツ（フル幅）
+            Main Content
           </div>
         </div>
       </div>
@@ -191,8 +147,30 @@ function LayoutClosed() {
 // Stories
 // ---------------------------------------------------------------------------
 
-/** デフォルト状態。サイドバーが開いている。 */
+/** デフォルト状態。コンテンツスロットとフッターアクション付き。 */
 export const Default: Story = {
+  args: {
+    children: <MockSidebarContent />,
+    footerActions: <MockFooterActions />,
+  },
+  decorators: [
+    (Story) => (
+      <div className="h-[500px] w-64">
+        <Story />
+      </div>
+    ),
+  ],
+};
+
+/** コンテンツなし。children スロットが空の状態。 */
+export const Empty: Story = {
+  args: {
+    children: (
+      <div className="flex flex-1 items-center justify-center p-4">
+        <span className="text-muted-foreground text-sm">No content</span>
+      </div>
+    ),
+  },
   decorators: [
     (Story) => (
       <div className="h-[400px] w-64">
@@ -203,44 +181,13 @@ export const Default: Story = {
 };
 
 /**
- * インタラクティブデモ。パネルアイコンをクリックでサイドバーが開閉する。
+ * インタラクティブデモ。閉じるボタンでサイドバーが閉じ、ヘッダーの開くボタンで復元。
  *
- * 実装のポイント:
- * - 本番では `useLayoutStore.use.toggleSidebar()` で状態管理
- * - `transition-all duration-200` で幅アニメーション
- * - 閉じた時はヘッダーに開くボタンが出現
+ * 実装構成:
+ * - ヘッダー: Dayoptロゴ + 検索ボタン + PanelLeft閉じるボタン
+ * - コンテンツ: composition layerから注入（children スロット）
+ * - フッター: UserMenu + footerActions（通知アイコン等）
  */
-export const Interactive: Story = {
+export const Interactive: StoryObj = {
   render: () => <InteractiveDemo />,
-};
-
-/** 折りたたみボタン。PanelLeftClose（閉じる）とPanelLeft（開く）の比較。 */
-export const ToggleButtons: Story = {
-  render: () => <ToggleButtonComparison />,
-};
-
-/** サイドバーが開いている状態のレイアウト。 */
-export const LayoutWithSidebarOpen: Story = {
-  render: () => <LayoutOpen />,
-};
-
-/** サイドバーが閉じている状態のレイアウト。 */
-export const LayoutWithSidebarClosed: Story = {
-  render: () => <LayoutClosed />,
-};
-
-/** 全パターン一覧。 */
-export const AllPatterns: Story = {
-  render: () => (
-    <div className="flex flex-col items-start gap-6 p-6">
-      <h3 className="text-foreground text-sm font-bold">Interactive</h3>
-      <InteractiveDemo />
-      <h3 className="text-foreground text-sm font-bold">Toggle Buttons</h3>
-      <ToggleButtonComparison />
-      <h3 className="text-foreground text-sm font-bold">Layout Open</h3>
-      <LayoutOpen />
-      <h3 className="text-foreground text-sm font-bold">Layout Closed</h3>
-      <LayoutClosed />
-    </div>
-  ),
 };
