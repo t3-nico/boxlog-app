@@ -259,6 +259,26 @@ export class EntryService {
 
     const updateData = removeUndefinedFields(normalizedInput) as Record<string, unknown>;
 
+    // 未来エントリの予定時間変更時: actual_* が旧予定と同値なら追従
+    if (oldData) {
+      const typedUpdate = updateData as {
+        start_time?: string;
+        end_time?: string;
+        actual_start_time?: string | null;
+        actual_end_time?: string | null;
+      };
+      if (typedUpdate.start_time && typedUpdate.actual_start_time === undefined) {
+        if (oldData.actual_start_time === oldData.start_time) {
+          updateData.actual_start_time = typedUpdate.start_time;
+        }
+      }
+      if (typedUpdate.end_time && typedUpdate.actual_end_time === undefined) {
+        if (oldData.actual_end_time === oldData.end_time) {
+          updateData.actual_end_time = typedUpdate.end_time;
+        }
+      }
+    }
+
     // reviewed_at 自動設定: fulfillment_score が設定されたら reviewed_at をセット
     const inputWithFulfillment = input as { fulfillment_score?: number | null };
     if (

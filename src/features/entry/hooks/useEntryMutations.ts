@@ -189,6 +189,35 @@ export function useEntryMutations() {
         updateData.actual_start_time = data.actual_start_time;
       if (data.actual_end_time !== undefined) updateData.actual_end_time = data.actual_end_time;
 
+      // 未来エントリの予定時間変更時: actual_* が旧予定と同値なら追従
+      if (data.start_time !== undefined || data.end_time !== undefined) {
+        const currentEntry =
+          previousEntry ??
+          (() => {
+            for (const [, cacheData] of previousEntriesList) {
+              const found = cacheData?.find((e) => e.id === id);
+              if (found) return found;
+            }
+            return undefined;
+          })();
+        if (currentEntry) {
+          if (
+            data.start_time !== undefined &&
+            updateData.actual_start_time === undefined &&
+            currentEntry.actual_start_time === currentEntry.start_time
+          ) {
+            updateData.actual_start_time = data.start_time;
+          }
+          if (
+            data.end_time !== undefined &&
+            updateData.actual_end_time === undefined &&
+            currentEntry.actual_end_time === currentEntry.end_time
+          ) {
+            updateData.actual_end_time = data.end_time;
+          }
+        }
+      }
+
       // Zustandキャッシュを更新
       if (Object.keys(updateData).length > 0) {
         updateCache(id, updateData as Parameters<typeof updateCache>[1]);
