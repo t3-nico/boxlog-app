@@ -13,7 +13,7 @@ import { z } from 'zod';
 
 import { EntryService } from '@/features/entry/server/entry-service';
 import { TagService } from '@/features/tags/server/tag-service';
-import { MS_PER_HOUR, MS_PER_MINUTE } from '@/lib/date';
+import { MS_PER_MINUTE } from '@/lib/date';
 import { logger } from '@/lib/logger';
 
 import type { ToolSet } from 'ai';
@@ -31,7 +31,7 @@ export function createAITools(supabase: AISupabaseClient, userId: string): ToolS
   return {
     searchPlans: tool({
       description:
-        'Search user entries (tasks/events) by date range, origin, or text. Use when the user asks about their past or future plans, schedule, or tasks.',
+        'Search user entries (tasks/events) by date range or text. Use when the user asks about their past or future plans, schedule, or tasks.',
       inputSchema: z.object({
         startDate: z
           .string()
@@ -41,10 +41,6 @@ export function createAITools(supabase: AISupabaseClient, userId: string): ToolS
           .string()
           .optional()
           .describe('End of date range (ISO 8601 datetime, e.g. 2026-01-31T23:59:59)'),
-        origin: z
-          .enum(['planned', 'unplanned'])
-          .optional()
-          .describe('Filter by entry origin (planned=scheduled, unplanned=logged)'),
         search: z.string().optional().describe('Search text to match in title or description'),
         limit: z
           .number()
@@ -60,7 +56,6 @@ export function createAITools(supabase: AISupabaseClient, userId: string): ToolS
             userId,
             startDate: input.startDate,
             endDate: input.endDate,
-            origin: input.origin,
             search: input.search,
             limit: input.limit ?? 20,
             sortBy: 'created_at',
@@ -75,7 +70,6 @@ export function createAITools(supabase: AISupabaseClient, userId: string): ToolS
             title: e.title ?? '(Untitled)',
             startTime: e.start_time ?? null,
             endTime: e.end_time ?? null,
-            origin: e.origin,
             tags: e.tagId ? [tagMap.get(e.tagId) ?? ''].filter(Boolean) : [],
           }));
 
@@ -89,7 +83,7 @@ export function createAITools(supabase: AISupabaseClient, userId: string): ToolS
 
     searchPastEntries: tool({
       description:
-        'Search user past entries (work log) by date range, origin, or fulfillment score. Use when the user asks about their past activities, time spent, or work history.',
+        'Search user past entries (work log) by date range or fulfillment score. Use when the user asks about their past activities, time spent, or work history.',
       inputSchema: z.object({
         startDate: z
           .string()
@@ -99,10 +93,6 @@ export function createAITools(supabase: AISupabaseClient, userId: string): ToolS
           .string()
           .optional()
           .describe('End of date range (ISO 8601 datetime, e.g. 2026-01-31T23:59:59)'),
-        origin: z
-          .enum(['planned', 'unplanned'])
-          .optional()
-          .describe('Filter by entry origin. Omit to include all entries.'),
         fulfillmentScoreMin: z
           .number()
           .int()
@@ -129,7 +119,6 @@ export function createAITools(supabase: AISupabaseClient, userId: string): ToolS
         try {
           const entries = await entryService.list({
             userId,
-            origin: input.origin,
             startDate: input.startDate,
             endDate: input.endDate,
             fulfillmentScoreMin: input.fulfillmentScoreMin,
@@ -204,9 +193,7 @@ export function createAITools(supabase: AISupabaseClient, userId: string): ToolS
           // entries テーブルから全エントリを取得
           const { data: entries, error: entriesError } = await supabase
             .from('entries')
-            .select(
-              'start_time, end_time, duration_minutes, origin, reviewed_at, fulfillment_score',
-            )
+            .select('start_time, end_time, duration_minutes, reviewed_at, fulfillment_score')
             .eq('user_id', userId)
             .gte('start_time', startDate.toISOString());
 
@@ -214,32 +201,19 @@ export function createAITools(supabase: AISupabaseClient, userId: string): ToolS
             return { error: 'Failed to fetch entry statistics' };
           }
 
-          let plannedHours = 0;
-          let recordedMinutes = 0;
+          let totalMinutes = 0;
           let reviewedEntries = 0;
 
           for (const entry of entries ?? []) {
-            // reviewed_at が設定されている = 振り返り済み
             if (entry.reviewed_at) reviewedEntries++;
 
-            if (entry.origin === 'planned') {
-              // Planned entries: use start_time/end_time
-              if (entry.start_time && entry.end_time) {
-                const hours =
-                  (new Date(entry.end_time).getTime() - new Date(entry.start_time).getTime()) /
-                  MS_PER_HOUR;
-                if (hours > 0) plannedHours += hours;
-              }
-            } else {
-              // Unplanned entries: prefer duration_minutes
-              if (entry.duration_minutes) {
-                recordedMinutes += entry.duration_minutes;
-              } else if (entry.start_time && entry.end_time) {
-                const minutes =
-                  (new Date(entry.end_time).getTime() - new Date(entry.start_time).getTime()) /
-                  MS_PER_MINUTE;
-                if (minutes > 0) recordedMinutes += minutes;
-              }
+            if (entry.duration_minutes) {
+              totalMinutes += entry.duration_minutes;
+            } else if (entry.start_time && entry.end_time) {
+              const minutes =
+                (new Date(entry.end_time).getTime() - new Date(entry.start_time).getTime()) /
+                MS_PER_MINUTE;
+              if (minutes > 0) totalMinutes += minutes;
             }
           }
 
@@ -251,10 +225,12 @@ export function createAITools(supabase: AISupabaseClient, userId: string): ToolS
               ? Math.round((scores.reduce((a, b) => a + b, 0) / scores.length) * 10) / 10
               : null;
 
+          const totalHours = Math.round((totalMinutes / 60) * 10) / 10;
+
           return {
             period,
-            plannedHours: Math.round(plannedHours * 10) / 10,
-            recordedHours: Math.round((recordedMinutes / 60) * 10) / 10,
+            plannedHours: totalHours,
+            recordedHours: totalHours,
             completedTasks: reviewedEntries,
             totalPlans: (entries ?? []).length,
             avgFulfillmentScore: avgFulfillment,

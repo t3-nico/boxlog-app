@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * Inspector の詳細タブ — 3パターン対応
+ * Inspector の詳細タブ — 2パターン対応
  *
  * Row 0: タグ（カラードット + タグ名）+ ⋯ メニュー
  * Row 1: 予定/記録 時間比較セクション
@@ -17,7 +17,6 @@ import { InspectorTimeSection } from '../InspectorTimeSection';
 import { TimeConflictAlert } from '../TimeConflictAlert';
 
 import type {
-  EntryOrigin,
   EntryState,
   EntryWithTags,
   FulfillmentScore,
@@ -51,7 +50,6 @@ interface EntryInspectorDetailsTabProps {
   onRepeatTypeChange: (type: string) => void;
   onRecurrenceRuleChange: (rrule: string | null) => void;
   entryState?: EntryState;
-  origin?: EntryOrigin;
   fulfillmentScore?: FulfillmentScore | null;
   onFulfillmentChange?: (score: FulfillmentScore | null) => void;
   // 記録時間（actual）
@@ -81,7 +79,6 @@ export const EntryInspectorDetailsTab = memo(function EntryInspectorDetailsTab({
   onRepeatTypeChange,
   onRecurrenceRuleChange,
   entryState = 'upcoming',
-  origin = 'planned',
   fulfillmentScore,
   onFulfillmentChange,
   actualStart = null,
@@ -91,8 +88,8 @@ export const EntryInspectorDetailsTab = memo(function EntryInspectorDetailsTab({
 }: EntryInspectorDetailsTabProps) {
   const t = useTranslations();
 
-  // 予定エントリでは繰り返し・リマインダーを表示（記録のみは非表示）
-  const showRecurrence = origin !== 'unplanned';
+  // 過去のエントリでは繰り返し・リマインダーを非表示
+  const showRecurrence = entryState !== 'past';
 
   return (
     <InspectorDetailsLayout
@@ -117,7 +114,6 @@ export const EntryInspectorDetailsTab = memo(function EntryInspectorDetailsTab({
           onActualStartChange={onActualStartChange ?? (() => {})}
           onActualEndChange={onActualEndChange ?? (() => {})}
           entryState={entryState}
-          origin={origin}
           timeConflictError={timeConflictError}
           fulfillmentScore={entryState !== 'upcoming' ? fulfillmentScore : undefined}
           onFulfillmentChange={entryState !== 'upcoming' ? onFulfillmentChange : undefined}

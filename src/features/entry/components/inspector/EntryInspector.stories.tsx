@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 import { expect, within } from 'storybook/test';
 
 import { cn } from '@/lib/utils';
-import type { EntryOrigin, EntryState, FulfillmentScore } from '../../types/entry';
+import type { EntryState, FulfillmentScore } from '../../types/entry';
 
 import { InspectorDetailsLayout } from './InspectorDetailsLayout';
 import { InspectorShell } from './InspectorShell';
@@ -14,33 +14,17 @@ import { InspectorTimeSection } from './InspectorTimeSection';
 import { InspectorFrame } from './story-helpers';
 
 /**
- * Entry Inspector — 3パターンの表示確認
+ * Entry Inspector — 2パターンの表示確認
  *
  * entries統合後の Inspector 完成形。
- * `entryState`（upcoming / active / past）と `origin`（planned / unplanned）の
- * 組み合わせで UI が切り替わる。
+ * `entryState`（upcoming / active / past）で UI が切り替わる。
  *
- * ## 3パターン
+ * ## 2パターン
  *
- * | パターン | 予定行 | 記録行 | 期間 | 繰り返し/通知 | 充実度 | ボーダー |
- * |----------|--------|--------|------|--------------|--------|----------|
- * | **Upcoming + Planned** | 編集可 | placeholder | 編集可 | ○ | × (Hide) | 実線 |
- * | **Past + Planned** | 編集可 | 編集可 | 編集可 | ○ | ○ | 実線 |
- * | **Past + Unplanned** | placeholder | 編集可 | 読取専用 | × (Hide) | ○ | 点線 |
- *
- * ## origin 自動遷移（ドラッグ移動時）
- *
- * `origin` は作成時に固定されるが、ドラッグで時間境界を跨ぐと自動遷移する。
- *
- * | 操作 | origin 変更 | フィールドクリア |
- * |------|-------------|-----------------|
- * | unplanned → 未来にドラッグ | `unplanned` → `planned` | actual_start/end, fulfillment_score |
- * | unplanned → 過去内で移動 | 変更なし | なし |
- * | planned → 過去にドラッグ | 変更なし（完了した予定） | なし |
- * | planned → 未来内で移動 | 変更なし | なし |
- *
- * 逆方向（planned → unplanned）の自動遷移は行わない。
- * 実装: `computeOriginTransition()` in `src/lib/entry-status.ts`
+ * | パターン | 予定行 | 記録行 | 日付 | 繰り返し/通知 | 充実度 |
+ * |----------|--------|--------|------|--------------|--------|
+ * | **Upcoming/Active** | 編集可 | 編集可 | 編集可 | ○ | × (Hide) |
+ * | **Past** | 非表示 | 編集可 | 非表示 | × (Hide) | ○ |
  *
  * ## レスポンシブ
  *
@@ -113,7 +97,6 @@ function MockTagRow({
 
 interface InspectorContentProps {
   entryState: EntryState;
-  origin: EntryOrigin;
   tagName?: string;
   tagDotClass?: string;
   initialPlannedStart?: string;
@@ -126,7 +109,6 @@ interface InspectorContentProps {
 
 function InspectorContent({
   entryState,
-  origin,
   tagName,
   tagDotClass,
   initialPlannedStart = '10:00',
@@ -145,6 +127,8 @@ function InspectorContent({
   const [fulfillment, setFulfillment] = useState<FulfillmentScore | null>(initialFulfillment);
   const t = useTranslations();
 
+  const isPast = entryState === 'past';
+
   return (
     <InspectorDetailsLayout
       tagRow={<MockTagRow tagName={tagName} dotClass={tagDotClass} />}
@@ -161,14 +145,13 @@ function InspectorContent({
           onActualStartChange={setActualStart}
           onActualEndChange={setActualEnd}
           entryState={entryState}
-          origin={origin}
           fulfillmentScore={entryState !== 'upcoming' ? fulfillment : undefined}
           onFulfillmentChange={entryState !== 'upcoming' ? setFulfillment : undefined}
           note={note}
           onNoteChange={setNote}
           notePlaceholder={t('plan.inspector.note.placeholder')}
           recurrenceRow={
-            origin !== 'unplanned' ? (
+            !isPast ? (
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Repeat className="text-muted-foreground size-4 flex-shrink-0" />
@@ -189,7 +172,7 @@ function InspectorContent({
             ) : undefined
           }
           reminderRow={
-            origin !== 'unplanned' ? (
+            !isPast ? (
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Bell className="text-muted-foreground size-4 flex-shrink-0" />
@@ -245,17 +228,16 @@ function StaticEntryInspector(props: InspectorContentProps) {
 // ─────────────────────────────────────────────────────────
 
 /**
- * ## Upcoming + Planned
+ * ## Upcoming
  *
  * 未来の予定エントリ。計画の編集がメイン操作。
- * - 予定行: 編集可能 | 記録行: placeholder
- * - 期間: テキスト表示 | 繰り返し/通知: ○ | 充実度: × (Hide) | メモ: ○
+ * - 予定行: 編集可 | 記録行: 編集可
+ * - 日付: 編集可 | 繰り返し/通知: ○ | 充実度: × (Hide) | メモ: ○
  */
-export const UpcomingPlanned: Story = {
+export const Upcoming: Story = {
   render: () => (
     <EntryInspectorStory
       entryState="upcoming"
-      origin="planned"
       tagName="Work"
       tagDotClass="bg-blue-500"
       initialPlannedStart="14:00"
@@ -273,17 +255,16 @@ export const UpcomingPlanned: Story = {
 };
 
 /**
- * ## Past + Planned
+ * ## Past
  *
- * 完了した予定エントリ。振り返りがメイン操作。
- * - 予定行: 編集可 | 記録行: 編集可
- * - 差分: バッジ表示 | 繰り返し/通知: ○ | 充実度: ○ | メモ: ○
+ * 過去のエントリ。記録の編集がメイン操作。
+ * - 予定行: 非表示 | 記録行: 編集可
+ * - 日付: 非表示 | 繰り返し/通知: × (Hide) | 充実度: ○ | メモ: ○
  */
-export const PastPlanned: Story = {
+export const Past: Story = {
   render: () => (
     <EntryInspectorStory
       entryState="past"
-      origin="planned"
       tagName="Meeting"
       tagDotClass="bg-purple-500"
       initialPlannedStart="10:00"
@@ -297,33 +278,9 @@ export const PastPlanned: Story = {
 };
 
 /**
- * ## Past + Unplanned
- *
- * 直接記録されたエントリ（予定なし）。記録のみがメイン操作。
- * - 予定行: placeholder | 記録行: 編集可
- * - 期間: テキスト表示 | 繰り返し/通知: × (Hide) | 充実度: ○ | メモ: ○
- */
-export const PastUnplanned: Story = {
-  render: () => (
-    <EntryInspectorStory
-      entryState="past"
-      origin="unplanned"
-      tagName="Personal"
-      tagDotClass="bg-green-500"
-      initialPlannedStart="13:00"
-      initialPlannedEnd="14:00"
-      initialActualStart="13:00"
-      initialActualEnd="14:00"
-      initialNote="Spontaneous lunch walk"
-      initialFulfillment={3}
-    />
-  ),
-};
-
-/**
  * ## All Patterns
  *
- * 3パターンを横並びで比較確認（静的 InspectorFrame 使用）。
+ * 2パターンを横並びで比較確認（静的 InspectorFrame 使用）。
  */
 export const AllPatterns: Story = {
   parameters: {
@@ -332,12 +289,9 @@ export const AllPatterns: Story = {
   render: () => (
     <div className="flex flex-wrap items-start gap-6">
       <div>
-        <p className="text-muted-foreground mb-3 text-center text-xs font-medium">
-          Upcoming + Planned
-        </p>
+        <p className="text-muted-foreground mb-3 text-center text-xs font-medium">Upcoming</p>
         <StaticEntryInspector
           entryState="upcoming"
-          origin="planned"
           tagName="Work"
           tagDotClass="bg-blue-500"
           initialPlannedStart="14:00"
@@ -346,10 +300,9 @@ export const AllPatterns: Story = {
         />
       </div>
       <div>
-        <p className="text-muted-foreground mb-3 text-center text-xs font-medium">Past + Planned</p>
+        <p className="text-muted-foreground mb-3 text-center text-xs font-medium">Past</p>
         <StaticEntryInspector
           entryState="past"
-          origin="planned"
           tagName="Meeting"
           tagDotClass="bg-purple-500"
           initialPlannedStart="10:00"
@@ -358,23 +311,6 @@ export const AllPatterns: Story = {
           initialActualEnd="12:00"
           initialNote="Ran 30min over"
           initialFulfillment={2}
-        />
-      </div>
-      <div>
-        <p className="text-muted-foreground mb-3 text-center text-xs font-medium">
-          Past + Unplanned
-        </p>
-        <StaticEntryInspector
-          entryState="past"
-          origin="unplanned"
-          tagName="Personal"
-          tagDotClass="bg-green-500"
-          initialPlannedStart="13:00"
-          initialPlannedEnd="14:00"
-          initialActualStart="13:00"
-          initialActualEnd="14:00"
-          initialNote="Lunch walk"
-          initialFulfillment={3}
         />
       </div>
     </div>

@@ -12,7 +12,6 @@ export type {
   CreateEntryInput,
   Entry,
   EntryFilters,
-  EntryOrigin,
   EntryWithTags,
   FulfillmentScore,
   RecurrenceConfig,
@@ -29,7 +28,6 @@ export {
   createEntrySchema,
   entryFilterSchema,
   entryIdSchema,
-  entryOriginSchema,
   fulfillmentScoreSchema,
   getEntryByIdSchema,
   recurrenceTypeSchema,
@@ -57,12 +55,7 @@ export type { AnchorRect } from './stores/useEntryInspectorStore';
 // Lib (entry-status utilities)
 // =============================================================================
 export type { EntryState } from '@/types/entry';
-export {
-  computeOriginTransition,
-  getEntryState,
-  isEntryPast,
-  isTimePast,
-} from './lib/entry-status';
+export { getEntryState, isEntryPast } from './lib/entry-status';
 
 // =============================================================================
 // Lib (recurrence utilities)

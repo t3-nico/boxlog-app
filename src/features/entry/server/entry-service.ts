@@ -5,7 +5,6 @@
  */
 
 import { logger } from '@/lib/logger';
-import { isTimePast } from '../lib/entry-status';
 import { normalizeDateTimeConsistency, removeUndefinedFields } from '../lib/entry-utils';
 
 import type {
@@ -33,7 +32,6 @@ export class EntryService {
     const {
       userId,
       tagId,
-      origin,
       search,
       startDate,
       endDate,
@@ -54,11 +52,6 @@ export class EntryService {
         return [];
       }
       query = query.in('id', entryIds);
-    }
-
-    // origin フィルター
-    if (origin) {
-      query = query.eq('origin', origin);
     }
 
     // 検索フィルター
@@ -180,12 +173,19 @@ export class EntryService {
     // 日時の正規化
     const normalizedInput = this.normalizeDateTimeFields(input);
 
-    // origin 自動判定: start_time が過去なら 'unplanned'
-    const origin =
-      normalizedInput.origin ??
-      (normalizedInput.start_time && isTimePast(normalizedInput.start_time as string)
-        ? 'unplanned'
-        : 'planned');
+    // actual_start_time / actual_end_time を自動セット（未指定時は予定と同値）
+    const typedInput = normalizedInput as {
+      start_time?: string | null;
+      end_time?: string | null;
+      actual_start_time?: string | null;
+      actual_end_time?: string | null;
+    };
+    if (typedInput.actual_start_time === undefined && typedInput.start_time) {
+      (normalizedInput as Record<string, unknown>).actual_start_time = typedInput.start_time;
+    }
+    if (typedInput.actual_end_time === undefined && typedInput.end_time) {
+      (normalizedInput as Record<string, unknown>).actual_end_time = typedInput.end_time;
+    }
 
     // 重複チェック
     if (preventOverlappingEntries && normalizedInput.start_time && normalizedInput.end_time) {
@@ -205,7 +205,6 @@ export class EntryService {
 
     const insertData = {
       user_id: userId,
-      origin,
       ...removeUndefinedFields(normalizedInput),
     };
 

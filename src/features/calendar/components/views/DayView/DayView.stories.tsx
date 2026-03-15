@@ -47,7 +47,6 @@ const basePlan: CalendarEvent = {
   duration: 60,
   isMultiDay: false,
   isRecurring: false,
-  origin: 'planned',
 };
 
 const mockPlans: CalendarEvent[] = [

@@ -12,7 +12,6 @@ export function createMockEntry(overrides: Partial<EntryRow> = {}): EntryRow {
     user_id: 'test-user-id',
     title: 'Test Entry',
     description: null,
-    origin: 'planned',
     start_time: null,
     end_time: null,
     actual_start_time: null,

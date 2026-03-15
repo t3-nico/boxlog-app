@@ -36,7 +36,6 @@ function createTimedPlan(overrides: Partial<TimedPlan> & { start: Date; end: Dat
     color: '',
     createdAt: new Date(),
     updatedAt: new Date(),
-    origin: 'planned',
     ...overrides,
   } as TimedPlan;
 }
@@ -56,7 +55,6 @@ function createCalendarEvent(
     color: '',
     createdAt: new Date(),
     updatedAt: new Date(),
-    origin: 'planned',
     ...overrides,
   } as CalendarEvent;
 }
@@ -125,27 +123,22 @@ describe('calculatePlanLayouts', () => {
     });
   });
 
-  it('Plannedを左側（column: 0）に優先配置', () => {
-    const planned = createTimedPlan({
-      id: 'planned',
+  it('同時刻の重複プランは開始時間順でカラム割当', () => {
+    const first = createTimedPlan({
+      id: 'first',
       start: new Date('2026-01-15T10:00:00'),
       end: new Date('2026-01-15T11:00:00'),
-      origin: 'planned',
     });
-    const unplanned = createTimedPlan({
-      id: 'unplanned',
+    const second = createTimedPlan({
+      id: 'second',
       start: new Date('2026-01-15T10:00:00'),
       end: new Date('2026-01-15T11:00:00'),
-      origin: 'unplanned',
     });
-    // unplannedを先に渡しても、plannedがcolumn 0になるべき
-    const layouts = calculatePlanLayouts([unplanned, planned]);
+    const layouts = calculatePlanLayouts([second, first]);
 
-    const plannedLayout = layouts.find((l) => l.plan.id === 'planned');
-    const unplannedLayout = layouts.find((l) => l.plan.id === 'unplanned');
-
-    expect(plannedLayout!.column).toBe(0);
-    expect(unplannedLayout!.column).toBe(1);
+    expect(layouts).toHaveLength(2);
+    expect(layouts[0]!.totalColumns).toBe(2);
+    expect(layouts[1]!.totalColumns).toBe(2);
   });
 });
 
@@ -454,29 +447,14 @@ describe('filterPlansByDate', () => {
 // ========================================
 
 describe('computeActualTimeDiffOverlay', () => {
-  it('past + planned + 実績ありのイベントでオーバーレイを計算', () => {
+  it('常にNO_OVERLAYを返す（origin廃止後は差分オーバーレイ無効化）', () => {
     const event = createCalendarEvent({
       id: 'test',
       startDate: new Date('2026-01-15T10:00:00'),
       endDate: new Date('2026-01-15T11:00:00'),
-      actualStartDate: new Date('2026-01-15T10:15:00'), // 15分遅れ
+      actualStartDate: new Date('2026-01-15T10:15:00'),
       actualEndDate: new Date('2026-01-15T11:00:00'),
       entryState: 'past',
-      origin: 'planned',
-    });
-    const overlay = computeActualTimeDiffOverlay(event, 72);
-
-    expect(overlay.topKind).toBe('unexecuted'); // 遅れ開始 = 未実行
-    expect(overlay.topHeight).toBe(18); // 15分 * 72 / 60 = 18px
-    expect(overlay.bottomKind).toBe('none');
-  });
-
-  it('upcoming/activeイベントはオーバーレイなし', () => {
-    const event = createCalendarEvent({
-      startDate: new Date('2099-01-15T10:00:00'),
-      endDate: new Date('2099-01-15T11:00:00'),
-      entryState: 'upcoming',
-      origin: 'planned',
     });
     const overlay = computeActualTimeDiffOverlay(event, 72);
 
@@ -484,32 +462,5 @@ describe('computeActualTimeDiffOverlay', () => {
     expect(overlay.bottomKind).toBe('none');
     expect(overlay.topShift).toBe(0);
     expect(overlay.heightDelta).toBe(0);
-  });
-
-  it('unplannedイベントはオーバーレイなし', () => {
-    const event = createCalendarEvent({
-      startDate: new Date('2026-01-15T10:00:00'),
-      endDate: new Date('2026-01-15T11:00:00'),
-      entryState: 'past',
-      origin: 'unplanned',
-    });
-    const overlay = computeActualTimeDiffOverlay(event, 72);
-    expect(overlay.topKind).toBe('none');
-  });
-
-  it('早期開始は overtime', () => {
-    const event = createCalendarEvent({
-      startDate: new Date('2026-01-15T10:00:00'),
-      endDate: new Date('2026-01-15T11:00:00'),
-      actualStartDate: new Date('2026-01-15T09:45:00'), // 15分早い
-      actualEndDate: new Date('2026-01-15T11:00:00'),
-      entryState: 'past',
-      origin: 'planned',
-    });
-    const overlay = computeActualTimeDiffOverlay(event, 72);
-
-    expect(overlay.topKind).toBe('overtime');
-    expect(overlay.topHeight).toBe(18); // 15分 * 72 / 60
-    expect(overlay.topShift).toBe(18);
   });
 });

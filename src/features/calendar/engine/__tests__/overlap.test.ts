@@ -18,25 +18,22 @@ function createEvent(
     color: '',
     createdAt: new Date(),
     updatedAt: new Date(),
-    origin: 'planned',
     ...overrides,
   } as CalendarEvent;
 }
 
 describe('checkClientSideOverlap', () => {
-  it('Plan↔Plan の重複はtrue', () => {
+  it('重複するイベントはtrue', () => {
     const events = [
       createEvent({
         id: 'a',
         startDate: new Date('2026-01-15T10:00'),
         endDate: new Date('2026-01-15T11:00'),
-        origin: 'planned',
       }),
       createEvent({
         id: 'b',
         startDate: new Date('2026-01-15T10:30'),
         endDate: new Date('2026-01-15T11:30'),
-        origin: 'planned',
       }),
     ];
     expect(
@@ -47,56 +44,6 @@ describe('checkClientSideOverlap', () => {
         new Date('2026-01-15T11:00'),
       ),
     ).toBe(true);
-  });
-
-  it('Record↔Record の重複はtrue', () => {
-    const events = [
-      createEvent({
-        id: 'a',
-        startDate: new Date('2026-01-15T10:00'),
-        endDate: new Date('2026-01-15T11:00'),
-        origin: 'unplanned',
-      }),
-      createEvent({
-        id: 'b',
-        startDate: new Date('2026-01-15T10:30'),
-        endDate: new Date('2026-01-15T11:30'),
-        origin: 'unplanned',
-      }),
-    ];
-    expect(
-      checkClientSideOverlap(
-        events,
-        'a',
-        new Date('2026-01-15T10:00'),
-        new Date('2026-01-15T11:00'),
-      ),
-    ).toBe(true);
-  });
-
-  it('Plan↔Record の重複はfalse（共存可能）', () => {
-    const events = [
-      createEvent({
-        id: 'a',
-        startDate: new Date('2026-01-15T10:00'),
-        endDate: new Date('2026-01-15T11:00'),
-        origin: 'planned',
-      }),
-      createEvent({
-        id: 'b',
-        startDate: new Date('2026-01-15T10:30'),
-        endDate: new Date('2026-01-15T11:30'),
-        origin: 'unplanned',
-      }),
-    ];
-    expect(
-      checkClientSideOverlap(
-        events,
-        'a',
-        new Date('2026-01-15T10:00'),
-        new Date('2026-01-15T11:00'),
-      ),
-    ).toBe(false);
   });
 
   it('自分自身との重複は除外', () => {
@@ -105,7 +52,6 @@ describe('checkClientSideOverlap', () => {
         id: 'a',
         startDate: new Date('2026-01-15T10:00'),
         endDate: new Date('2026-01-15T11:00'),
-        origin: 'planned',
       }),
     ];
     expect(
@@ -124,13 +70,11 @@ describe('checkClientSideOverlap', () => {
         id: 'a',
         startDate: new Date('2026-01-15T10:00'),
         endDate: new Date('2026-01-15T11:00'),
-        origin: 'planned',
       }),
       createEvent({
         id: 'b',
         startDate: new Date('2026-01-15T14:00'),
         endDate: new Date('2026-01-15T15:00'),
-        origin: 'planned',
       }),
     ];
     expect(

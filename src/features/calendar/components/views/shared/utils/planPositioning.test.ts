@@ -20,7 +20,6 @@ describe('planPositioning', () => {
     end: new Date(2025, 0, 15, endHour, endMinute),
     startDate: new Date(2025, 0, 15, startHour, startMinute),
     endDate: new Date(2025, 0, 15, endHour, endMinute),
-    origin: 'planned',
     status: 'open',
     color: 'blue',
     isRecurring: false,
@@ -168,171 +167,23 @@ describe('planPositioning', () => {
       duration: 60,
       isMultiDay: false,
       isRecurring: false,
-      origin: 'planned',
       entryState: 'past',
       actualStartDate: null,
       actualEndDate: null,
       ...overrides,
     });
 
-    it('actual times がない場合は none を返す', () => {
-      const plan = createCalendarEvent();
-      const result = computeActualTimeDiffOverlay(plan, HOUR_HEIGHT);
-
-      expect(result.topKind).toBe('none');
-      expect(result.bottomKind).toBe('none');
-      expect(result.topShift).toBe(0);
-      expect(result.heightDelta).toBe(0);
-    });
-
-    it('entryState が past でない場合は none を返す', () => {
-      const plan = createCalendarEvent({
-        entryState: 'upcoming',
-        actualStartDate: new Date(2025, 0, 15, 10, 0),
-        actualEndDate: new Date(2025, 0, 15, 11, 0),
-      });
-      const result = computeActualTimeDiffOverlay(plan, HOUR_HEIGHT);
-
-      expect(result.topKind).toBe('none');
-      expect(result.bottomKind).toBe('none');
-    });
-
-    it('origin が unplanned の場合は none を返す', () => {
-      const plan = createCalendarEvent({
-        origin: 'unplanned',
-        actualStartDate: new Date(2025, 0, 15, 10, 0),
-        actualEndDate: new Date(2025, 0, 15, 11, 0),
-      });
-      const result = computeActualTimeDiffOverlay(plan, HOUR_HEIGHT);
-
-      expect(result.topKind).toBe('none');
-      expect(result.bottomKind).toBe('none');
-    });
-
-    it('予定通りの場合は none を返す', () => {
-      const plan = createCalendarEvent({
-        actualStartDate: new Date(2025, 0, 15, 10, 0),
-        actualEndDate: new Date(2025, 0, 15, 11, 0),
-      });
-      const result = computeActualTimeDiffOverlay(plan, HOUR_HEIGHT);
-
-      expect(result.topKind).toBe('none');
-      expect(result.bottomKind).toBe('none');
-      expect(result.topShift).toBe(0);
-      expect(result.heightDelta).toBe(0);
-    });
-
-    it('遅刻（実績開始が遅い）→ 上部 unexecuted', () => {
-      // 予定 10:00-11:00、実績 10:15-11:00
+    it('常にNO_OVERLAYを返す（origin廃止後は差分オーバーレイ無効化）', () => {
       const plan = createCalendarEvent({
         actualStartDate: new Date(2025, 0, 15, 10, 15),
         actualEndDate: new Date(2025, 0, 15, 11, 0),
       });
       const result = computeActualTimeDiffOverlay(plan, HOUR_HEIGHT);
 
-      expect(result.topKind).toBe('unexecuted');
-      expect(result.topHeight).toBe((15 * HOUR_HEIGHT) / 60); // 15min
-      expect(result.bottomKind).toBe('none');
-      expect(result.topShift).toBe(0);
-    });
-
-    it('早く終了 → 下部 unexecuted', () => {
-      // 予定 10:00-11:00、実績 10:00-10:45
-      const plan = createCalendarEvent({
-        actualStartDate: new Date(2025, 0, 15, 10, 0),
-        actualEndDate: new Date(2025, 0, 15, 10, 45),
-      });
-      const result = computeActualTimeDiffOverlay(plan, HOUR_HEIGHT);
-
       expect(result.topKind).toBe('none');
-      expect(result.bottomKind).toBe('unexecuted');
-      expect(result.bottomHeight).toBe((15 * HOUR_HEIGHT) / 60); // 15min
-    });
-
-    it('早く始めた → 上部 overtime + topShift', () => {
-      // 予定 10:00-11:00、実績 9:45-11:00
-      const plan = createCalendarEvent({
-        actualStartDate: new Date(2025, 0, 15, 9, 45),
-        actualEndDate: new Date(2025, 0, 15, 11, 0),
-      });
-      const result = computeActualTimeDiffOverlay(plan, HOUR_HEIGHT);
-
-      expect(result.topKind).toBe('overtime');
-      expect(result.topHeight).toBe((15 * HOUR_HEIGHT) / 60);
-      expect(result.topShift).toBe((15 * HOUR_HEIGHT) / 60);
       expect(result.bottomKind).toBe('none');
-    });
-
-    it('超過 → 下部 overtime + heightDelta', () => {
-      // 予定 10:00-11:00、実績 10:00-11:30
-      const plan = createCalendarEvent({
-        actualStartDate: new Date(2025, 0, 15, 10, 0),
-        actualEndDate: new Date(2025, 0, 15, 11, 30),
-      });
-      const result = computeActualTimeDiffOverlay(plan, HOUR_HEIGHT);
-
-      expect(result.topKind).toBe('none');
-      expect(result.bottomKind).toBe('overtime');
-      expect(result.bottomHeight).toBe((30 * HOUR_HEIGHT) / 60);
-      expect(result.heightDelta).toBe((30 * HOUR_HEIGHT) / 60);
-    });
-
-    it('遅刻 + 早く終了 → 上下とも unexecuted', () => {
-      // 予定 10:00-11:00、実績 10:10-10:50
-      const plan = createCalendarEvent({
-        actualStartDate: new Date(2025, 0, 15, 10, 10),
-        actualEndDate: new Date(2025, 0, 15, 10, 50),
-      });
-      const result = computeActualTimeDiffOverlay(plan, HOUR_HEIGHT);
-
-      expect(result.topKind).toBe('unexecuted');
-      expect(result.topHeight).toBe((10 * HOUR_HEIGHT) / 60);
-      expect(result.bottomKind).toBe('unexecuted');
-      expect(result.bottomHeight).toBe((10 * HOUR_HEIGHT) / 60);
       expect(result.topShift).toBe(0);
       expect(result.heightDelta).toBe(0);
-    });
-
-    it('早く始めた + 超過 → 上下とも overtime', () => {
-      // 予定 10:00-11:00、実績 9:50-11:20
-      const plan = createCalendarEvent({
-        actualStartDate: new Date(2025, 0, 15, 9, 50),
-        actualEndDate: new Date(2025, 0, 15, 11, 20),
-      });
-      const result = computeActualTimeDiffOverlay(plan, HOUR_HEIGHT);
-
-      expect(result.topKind).toBe('overtime');
-      expect(result.topHeight).toBe((10 * HOUR_HEIGHT) / 60);
-      expect(result.topShift).toBe((10 * HOUR_HEIGHT) / 60);
-      expect(result.bottomKind).toBe('overtime');
-      expect(result.bottomHeight).toBe((20 * HOUR_HEIGHT) / 60);
-      expect(result.heightDelta).toBe(((10 + 20) * HOUR_HEIGHT) / 60);
-    });
-
-    it('actualEndDate のみ設定（actualStartDate null）→ 下部のみ unexecuted', () => {
-      // 予定 10:00-11:00、実績 ?-10:45（開始は予定通り扱い）
-      const plan = createCalendarEvent({
-        actualStartDate: null,
-        actualEndDate: new Date(2025, 0, 15, 10, 45),
-      });
-      const result = computeActualTimeDiffOverlay(plan, HOUR_HEIGHT);
-
-      expect(result.topKind).toBe('none');
-      expect(result.bottomKind).toBe('unexecuted');
-      expect(result.bottomHeight).toBe((15 * HOUR_HEIGHT) / 60);
-    });
-
-    it('actualStartDate のみ設定（actualEndDate null）→ 上部のみ unexecuted', () => {
-      // 予定 10:00-11:00、実績 10:15-?（終了は予定通り扱い）
-      const plan = createCalendarEvent({
-        actualStartDate: new Date(2025, 0, 15, 10, 15),
-        actualEndDate: null,
-      });
-      const result = computeActualTimeDiffOverlay(plan, HOUR_HEIGHT);
-
-      expect(result.topKind).toBe('unexecuted');
-      expect(result.topHeight).toBe((15 * HOUR_HEIGHT) / 60);
-      expect(result.bottomKind).toBe('none');
     });
   });
 });

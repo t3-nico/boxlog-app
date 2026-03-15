@@ -8,7 +8,6 @@ const createMockEntry = (overrides: Partial<PlanWithTagIds> = {}): PlanWithTagId
   user_id: 'user-1',
   title: 'テストエントリ',
   description: null,
-  origin: 'planned',
   start_time: null,
   end_time: null,
   actual_start_time: null,

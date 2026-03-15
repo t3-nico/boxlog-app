@@ -1,5 +1,5 @@
 import type { CalendarViewType } from '@/lib/calendar-constants';
-import type { EntryOrigin, EntryState, FulfillmentScore } from '@/types/entry';
+import type { EntryState, FulfillmentScore } from '@/types/entry';
 
 export interface CalendarEvent {
   id: string;
@@ -21,8 +21,6 @@ export interface CalendarEvent {
   isMultiDay: boolean;
   isRecurring: boolean;
   // === Entry 統合フィールド ===
-  /** エントリの起源（planned=予定, unplanned=記録） */
-  origin?: EntryOrigin | undefined;
   /** 時間位置ベースの状態（upcoming/active/past） */
   entryState?: EntryState | undefined;
   /** 充実度スコア（1-3） */

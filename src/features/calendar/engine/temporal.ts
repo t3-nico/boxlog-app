@@ -5,10 +5,4 @@
  * @/lib/entry-status からの re-export で、engine 層からアクセス可能にする。
  */
 
-export {
-  computeOriginTransition,
-  getEntryState,
-  isEntryPast,
-  isTimePast,
-  type EntryState,
-} from '@/features/entry';
+export { getEntryState, isEntryPast, type EntryState } from '@/features/entry';

@@ -13,7 +13,7 @@ import { useCallback, useMemo } from 'react';
 
 import { useEntryMutations } from '../../../hooks/useEntryMutations';
 import { getEntryState } from '../../../lib/entry-status';
-import type { EntryOrigin, FulfillmentScore } from '../../../types/entry';
+import type { FulfillmentScore } from '../../../types/entry';
 
 import { EntryInspectorDetailsTab } from './EntryInspectorDetailsTab';
 import { useEntryInspectorContentLogic } from './useEntryInspectorContentLogic';
@@ -49,11 +49,6 @@ export function EntryInspectorContent() {
     const st = plan.start_time ?? null;
     const et = plan.end_time ?? null;
     return getEntryState({ start_time: st, end_time: et });
-  }, [plan]);
-
-  // origin（planned / unplanned）
-  const origin = useMemo<EntryOrigin>(() => {
-    return plan?.origin ?? 'planned';
   }, [plan]);
 
   // 充実度スコアのハンドリング（active/past のみ表示）
@@ -129,7 +124,6 @@ export function EntryInspectorContent() {
       }}
       timeConflictError={timeConflictError}
       entryState={entryState}
-      origin={origin}
       fulfillmentScore={fulfillmentScore}
       onFulfillmentChange={handleFulfillmentChange}
       actualStart={actualStartTime}

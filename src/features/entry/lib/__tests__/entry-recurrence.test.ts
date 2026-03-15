@@ -30,7 +30,6 @@ function makeEntry(overrides: Partial<Entry> = {}): Entry {
     user_id: 'user-1',
     title: 'Test Entry',
     description: null,
-    origin: 'planned',
     start_time: null,
     end_time: null,
     actual_start_time: null,

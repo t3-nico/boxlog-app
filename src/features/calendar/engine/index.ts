@@ -47,5 +47,5 @@ export { checkClientSideOverlap } from './overlap';
 export { calculateViewDateRange, getNextPeriod, getPreviousPeriod } from './range';
 
 // Temporal: エントリ状態判定
-export { computeOriginTransition, getEntryState, isEntryPast, isTimePast } from './temporal';
+export { getEntryState, isEntryPast } from './temporal';
 export type { EntryState } from './temporal';

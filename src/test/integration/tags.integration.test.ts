@@ -329,7 +329,6 @@ describe.skipIf(SKIP_INTEGRATION)('Tags Router Integration', () => {
         .insert({
           user_id: TEST_USER_ID,
           title: 'Test Entry for Merge',
-          origin: 'planned',
         })
         .select()
         .single();
@@ -395,7 +394,6 @@ describe.skipIf(SKIP_INTEGRATION)('Tags Router Integration', () => {
         .insert({
           user_id: TEST_USER_ID,
           title: 'Test Entry for Duplicate',
-          origin: 'planned',
         })
         .select()
         .single();

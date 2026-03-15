@@ -285,7 +285,7 @@ export const entriesStatisticsRouter = createTRPCRouter({
   // Phase 1: KPI Metrics
   // ---------------------------------------------------------------------------
 
-  /** 計画率: origin='planned' / 全エントリ */
+  /** 計画率: 予定ありエントリ / 全エントリ */
   getPlanRate: protectedProcedure.input(dateRangeInput).query(async ({ ctx, input }) => {
     const { supabase, userId } = ctx;
 

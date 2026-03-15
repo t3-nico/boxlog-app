@@ -41,7 +41,6 @@ export function useCalendarHandlers() {
       logger.log('📋 Opening Entry Inspector:', {
         entryId: entryIdToOpen,
         title: plan.title,
-        origin: plan.origin,
         isRecurringInstance: !!plan.calendarId,
         instanceDate: instanceDateRaw,
       });

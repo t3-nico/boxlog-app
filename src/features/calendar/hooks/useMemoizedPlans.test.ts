@@ -17,7 +17,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-1',
           title: 'イベント1',
-          origin: 'planned',
+
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T10:00:00'),
@@ -33,7 +33,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-2',
           title: 'イベント2',
-          origin: 'planned',
+
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-20T10:00:00'),
@@ -49,7 +49,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-3',
           title: 'イベント3',
-          origin: 'planned',
+
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-25T10:00:00'),
@@ -79,7 +79,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-1',
           title: 'イベント1',
-          origin: 'planned',
+
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T10:00:00'),
@@ -95,7 +95,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-2',
           title: 'イベント2',
-          origin: 'planned',
+
           status: 'open',
           color: 'blue',
           endDate: new Date('2024-06-20T11:00:00'),
@@ -125,7 +125,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-1',
           title: 'イベント1',
-          origin: 'planned',
+
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T10:00:00'),
@@ -141,7 +141,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-2',
           title: 'イベント2',
-          origin: 'planned',
+
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T14:00:00'),
@@ -157,7 +157,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-3',
           title: 'イベント3',
-          origin: 'planned',
+
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-16T10:00:00'),
@@ -187,7 +187,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-1',
           title: 'イベント1',
-          origin: 'planned',
+
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T10:00:00'),
@@ -203,7 +203,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-2',
           title: 'イベント2',
-          origin: 'planned',
+
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T10:30:00'),
@@ -219,7 +219,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-3',
           title: 'イベント3',
-          origin: 'planned',
+
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T14:00:00'),
@@ -251,7 +251,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-1',
           title: 'イベント1',
-          origin: 'planned',
+
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T10:00:00'),
@@ -267,7 +267,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-2',
           title: 'イベント2',
-          origin: 'planned',
+
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T14:00:00'),
@@ -298,7 +298,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-1',
           title: 'イベント1',
-          origin: 'planned',
+
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T10:00:00'),
@@ -314,7 +314,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-2',
           title: 'イベント2',
-          origin: 'planned',
+
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T10:30:00'),
@@ -330,7 +330,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-3',
           title: 'イベント3',
-          origin: 'planned',
+
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T12:00:00'),
@@ -363,7 +363,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-1',
           title: 'イベント1',
-          origin: 'planned',
+
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T10:00:00'),
@@ -380,7 +380,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-2',
           title: 'イベント2',
-          origin: 'planned',
+
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T14:00:00'),
@@ -411,7 +411,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-1',
           title: 'ミーティング',
-          origin: 'planned',
+
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T10:00:00'),
@@ -427,7 +427,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-2',
           title: 'ランチ',
-          origin: 'planned',
+
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T14:00:00'),
@@ -459,7 +459,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-1',
           title: 'イベント1',
-          origin: 'planned',
+
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T10:00:00'),
@@ -491,7 +491,7 @@ describe('useMemoizedPlans', () => {
         {
           id: 'event-1',
           title: 'イベント1',
-          origin: 'planned',
+
           status: 'open',
           color: 'blue',
           startDate: new Date('2024-06-15T10:00:00'),

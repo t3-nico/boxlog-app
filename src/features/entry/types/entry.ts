@@ -2,9 +2,9 @@
 // plans + records を統合した entries テーブルに対応
 
 // 共有層が必要とする型は @/types/entry に残置（shared layerはfeaturesをimportできない）
-import type { EntryOrigin, FulfillmentScore } from '@/types/entry';
+import type { FulfillmentScore } from '@/types/entry';
 
-export type { EntryOrigin, EntryState, FulfillmentScore } from '@/types/entry';
+export type { EntryState, FulfillmentScore } from '@/types/entry';
 
 /**
  * 繰り返しタイプ
@@ -39,7 +39,6 @@ export interface Entry {
   user_id: string;
   title: string;
   description: string | null;
-  origin: EntryOrigin;
   start_time: string | null;
   end_time: string | null;
   actual_start_time: string | null;
@@ -69,7 +68,6 @@ export interface EntryWithTags extends Entry {
 export interface CreateEntryInput {
   title: string;
   description?: string;
-  origin?: EntryOrigin;
   start_time?: string;
   end_time?: string;
   actual_start_time?: string;
@@ -88,7 +86,6 @@ export interface CreateEntryInput {
 export interface UpdateEntryInput {
   title?: string;
   description?: string;
-  origin?: EntryOrigin;
   start_time?: string;
   end_time?: string;
   actual_start_time?: string | null;
@@ -106,7 +103,6 @@ export interface UpdateEntryInput {
  * フィルター条件
  */
 export interface EntryFilters {
-  origin?: EntryOrigin;
   search?: string;
   tagId?: string;
   startDate?: string;

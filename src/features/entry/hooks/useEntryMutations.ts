@@ -14,7 +14,6 @@ import { api } from '@/platform/trpc';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
-import { isTimePast } from '../lib/entry-status';
 import type { UpdateEntryInput } from '../schemas/entry';
 import { useEntryCacheStore } from '../stores/useEntryCacheStore';
 import { useEntryInspectorStore } from '../stores/useEntryInspectorStore';
@@ -70,18 +69,14 @@ export function useEntryMutations() {
 
       // 一時的なエントリを作成（IDは仮）
       const tempId = createTempId();
-      const origin =
-        input.origin ??
-        (input.start_time && isTimePast(input.start_time) ? 'unplanned' : 'planned');
       const tempEntry: Awaited<ReturnType<typeof utils.entries.list.fetch>>[number] = {
         id: tempId,
         title: input.title,
         description: input.description ?? null,
-        origin,
         start_time: input.start_time ?? null,
         end_time: input.end_time ?? null,
-        actual_start_time: null,
-        actual_end_time: null,
+        actual_start_time: input.start_time ?? null,
+        actual_end_time: input.end_time ?? null,
         duration_minutes: input.duration_minutes ?? null,
         fulfillment_score: input.fulfillment_score ?? null,
         recurrence_type: input.recurrence_type ?? null,
@@ -190,7 +185,6 @@ export function useEntryMutations() {
       if (data.fulfillment_score !== undefined)
         updateData.fulfillment_score = data.fulfillment_score;
       if (data.duration_minutes !== undefined) updateData.duration_minutes = data.duration_minutes;
-      if (data.origin !== undefined) updateData.origin = data.origin;
       if (data.actual_start_time !== undefined)
         updateData.actual_start_time = data.actual_start_time;
       if (data.actual_end_time !== undefined) updateData.actual_end_time = data.actual_end_time;
@@ -329,7 +323,6 @@ export function useEntryMutations() {
         const restoreData = {
           title: previousEntry.title,
           description: previousEntry.description ?? undefined,
-          origin: previousEntry.origin as 'planned' | 'unplanned' | undefined,
           start_time: normalizeDateTime(previousEntry.start_time),
           end_time: normalizeDateTime(previousEntry.end_time),
           reminder_minutes: previousEntry.reminder_minutes ?? undefined,

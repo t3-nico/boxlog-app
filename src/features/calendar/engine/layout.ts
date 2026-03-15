@@ -64,9 +64,7 @@ const NO_OVERLAY: ActualTimeDiffOverlay = {
 /**
  * プランの重複レイアウトを一括計算（メインエントリポイント）
  *
- * Googleカレンダー風の横並び配置:
- * 1. Planned を左側（column: 0）に配置
- * 2. Unplanned を右側に配置
+ * Googleカレンダー風の横並び配置（開始時間順でカラム割当）
  */
 export function calculatePlanLayouts(plans: TimedPlan[]): PlanLayout[] {
   if (plans.length === 0) return [];
@@ -136,9 +134,7 @@ export function findOverlapGroups(plans: TimedPlan[]): OverlapGroup[] {
 /**
  * グループ内のレイアウトを計算
  *
- * 列配置の優先順位:
- * 1. Plan（type !== 'record'）を左側（column: 0）に配置
- * 2. Record（type === 'record'）を右側に配置
+ * 開始時間順でカラムを割り当てる
  */
 export function calculateGroupLayout(plans: TimedPlan[]): PlanLayout[] {
   const layouts: PlanLayout[] = [];
@@ -162,11 +158,8 @@ export function calculateGroupLayout(plans: TimedPlan[]): PlanLayout[] {
   // 各プランにカラムを割り当て
   const assignments = new Map<string, number>();
 
-  // Planned を先に処理してcolumn: 0を優先的に割り当て、Unplanned を後に処理
+  // 開始時間順にソート
   const sortedForAssignment = [...plans].sort((a, b) => {
-    const aIsUnplanned = a.origin === 'unplanned';
-    const bIsUnplanned = b.origin === 'unplanned';
-    if (aIsUnplanned !== bIsUnplanned) return aIsUnplanned ? 1 : -1;
     return new Date(a.start).getTime() - new Date(b.start).getTime();
   });
 
@@ -350,69 +343,14 @@ export function filterPlansByDate(plans: TimedPlan[], date: Date): TimedPlan[] {
 // 予定 vs 記録 差分オーバーレイ
 // ========================================
 
-function toMinutesOfDay(date: Date): number {
-  return date.getHours() * 60 + date.getMinutes();
-}
-
 /**
  * 予定時間と実績時間の差分からオーバーレイ情報を計算
  *
- * 対象: entryState === 'past' && origin === 'planned' で
- * actualStartDate または actualEndDate が1つ以上ある場合
- * 未設定の方は予定通り（差分なし）として扱う
+ * origin 廃止に伴い、差分オーバーレイは無効化（常に NO_OVERLAY を返す）
  */
 export function computeActualTimeDiffOverlay(
-  plan: CalendarEvent,
-  hourHeight: number,
+  _plan: CalendarEvent,
+  _hourHeight: number,
 ): ActualTimeDiffOverlay {
-  if (
-    plan.entryState !== 'past' ||
-    plan.origin !== 'planned' ||
-    (!plan.actualStartDate && !plan.actualEndDate) ||
-    !plan.startDate ||
-    !plan.endDate
-  ) {
-    return NO_OVERLAY;
-  }
-
-  const plannedStartMin = toMinutesOfDay(plan.startDate);
-  const plannedEndMin = toMinutesOfDay(plan.endDate);
-  const actualStartMin = plan.actualStartDate
-    ? toMinutesOfDay(plan.actualStartDate)
-    : plannedStartMin;
-  const actualEndMin = plan.actualEndDate ? toMinutesOfDay(plan.actualEndDate) : plannedEndMin;
-
-  const minutesToPx = (minutes: number) => (Math.abs(minutes) * hourHeight) / 60;
-
-  // --- 上部（開始差分） ---
-  const startDiffMin = actualStartMin - plannedStartMin;
-  let topKind: ActualTimeDiffOverlay['topKind'] = 'none';
-  let topHeight = 0;
-  let topShift = 0;
-
-  if (startDiffMin > 0) {
-    topKind = 'unexecuted';
-    topHeight = minutesToPx(startDiffMin);
-  } else if (startDiffMin < 0) {
-    topKind = 'overtime';
-    topHeight = minutesToPx(startDiffMin);
-    topShift = topHeight;
-  }
-
-  // --- 下部（終了差分） ---
-  const endDiffMin = actualEndMin - plannedEndMin;
-  let bottomKind: ActualTimeDiffOverlay['bottomKind'] = 'none';
-  let bottomHeight = 0;
-  let heightDelta = topShift;
-
-  if (endDiffMin < 0) {
-    bottomKind = 'unexecuted';
-    bottomHeight = minutesToPx(endDiffMin);
-  } else if (endDiffMin > 0) {
-    bottomKind = 'overtime';
-    bottomHeight = minutesToPx(endDiffMin);
-    heightDelta += bottomHeight;
-  }
-
-  return { topKind, topHeight, bottomKind, bottomHeight, topShift, heightDelta };
+  return NO_OVERLAY;
 }

@@ -57,7 +57,6 @@ const basePlan: CalendarEvent = {
   duration: 60,
   isMultiDay: false,
   isRecurring: false,
-  origin: 'planned',
 };
 
 // 週の各日に分散したプラン

@@ -2,8 +2,6 @@ import { z } from 'zod';
 
 // Entry 用 Zod スキーマ（plans + records を統合）
 
-export const entryOriginSchema = z.enum(['planned', 'unplanned']);
-
 export const recurrenceTypeSchema = z.enum([
   'none',
   'daily',
@@ -48,7 +46,6 @@ const timeOrderRefine = <T extends Record<string, unknown>>(data: T, ctx: z.Refi
 const baseEntrySchema = z.object({
   title: z.string().max(200, 'validation.title.maxLength'),
   description: z.string().max(10000, 'validation.description.maxLength').optional(),
-  origin: entryOriginSchema.optional(), // 省略時はサーバー側で時間位置から判定
   start_time: z.string().datetime().nullable().optional(),
   end_time: z.string().datetime().nullable().optional(),
   actual_start_time: z.string().datetime().nullable().optional(),
@@ -74,7 +71,6 @@ export const entryIdSchema = z.object({
 
 // Entry フィルタスキーマ
 export const entryFilterSchema = z.object({
-  origin: entryOriginSchema.optional(),
   search: z.string().optional(),
   tagId: z.string().uuid().optional(),
   // 日付範囲フィルタ（start_time基準）
@@ -115,7 +111,6 @@ export const bulkDeleteEntrySchema = z.object({
 // 型エクスポート
 export type CreateEntryInput = z.infer<typeof createEntrySchema>;
 export type UpdateEntryInput = z.infer<typeof updateEntrySchema>;
-export type EntryOrigin = z.infer<typeof entryOriginSchema>;
 export type EntryFilter = z.infer<typeof entryFilterSchema>;
 export type EntryInclude = z.infer<typeof entryIncludeSchema>;
 export type GetEntryByIdInput = z.infer<typeof getEntryByIdSchema>;

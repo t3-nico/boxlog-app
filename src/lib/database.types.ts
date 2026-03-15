@@ -262,7 +262,6 @@ export type Database = {
           end_time: string | null;
           fulfillment_score: number | null;
           id: string;
-          origin: string;
           recurrence_end_date: string | null;
           recurrence_rule: string | null;
           recurrence_type: string | null;
@@ -284,7 +283,6 @@ export type Database = {
           end_time?: string | null;
           fulfillment_score?: number | null;
           id?: string;
-          origin?: string;
           recurrence_end_date?: string | null;
           recurrence_rule?: string | null;
           recurrence_type?: string | null;
@@ -306,7 +304,6 @@ export type Database = {
           end_time?: string | null;
           fulfillment_score?: number | null;
           id?: string;
-          origin?: string;
           recurrence_end_date?: string | null;
           recurrence_rule?: string | null;
           recurrence_type?: string | null;

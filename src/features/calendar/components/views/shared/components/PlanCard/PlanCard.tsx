@@ -95,9 +95,8 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     [safePosition, overlay, applyPositionAdjust, isSelected, isDragging, style],
   );
 
-  // 左アクセントの点線パターン（unplanned または超過部分で使用）
+  // 左アクセントの点線パターン（超過部分で使用）
   const dashedAccentGradient = `repeating-linear-gradient(to bottom, ${accentColor} 0px, ${accentColor} 5px, transparent 5px, transparent 9px)`;
-  const isUnplannedDashed = plan.origin === 'unplanned';
 
   // アンカー位置の設定（Inspector 配置用）
   const setAnchorRect = useEntryInspectorStore((s) => s.setAnchorRect);
@@ -254,12 +253,11 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         className="relative shrink-0"
         style={{
           width: `${accentWidth}px`,
-          backgroundColor: isUnplannedDashed ? undefined : accentColor,
-          backgroundImage: isUnplannedDashed ? dashedAccentGradient : undefined,
+          backgroundColor: accentColor,
         }}
       >
         {/* 超過で上に拡張 → その区間だけ点線 */}
-        {overlay.topKind === 'overtime' && !isUnplannedDashed && (
+        {overlay.topKind === 'overtime' && (
           <div
             className="absolute top-0 right-0 left-0"
             style={{
@@ -270,7 +268,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
           />
         )}
         {/* 超過で下に拡張 → その区間だけ点線 */}
-        {overlay.bottomKind === 'overtime' && !isUnplannedDashed && (
+        {overlay.bottomKind === 'overtime' && (
           <div
             className="absolute right-0 bottom-0 left-0"
             style={{

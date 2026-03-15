@@ -3,8 +3,11 @@
 /**
  * Inspector 時間セクション（組み立て役）
  *
- * DateNavigatorRow + TimeRow × 2 + 差分バッジを
- * 3パターン（upcoming+planned, past+planned, past+unplanned）に応じて組み立てる。
+ * DateNavigatorRow + TimeRow × 2 を
+ * 2パターン（upcoming/active, past）に応じて組み立てる。
+ *
+ * - upcoming/active: 予定行（編集可）＋記録行（プレースホルダー or 編集可）
+ * - past: 記録行のみ（予定行・日付・差分バッジ非表示）
  */
 
 import type { ReactNode } from 'react';
@@ -14,28 +17,13 @@ import { useMemo } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import { computeDuration } from '@/lib/time-utils';
-import { cn } from '@/lib/utils';
 import { useAutoAdjustEndTime } from '../../hooks/useAutoAdjustEndTime';
-import type { EntryOrigin, EntryState, FulfillmentScore } from '../../types/entry';
+import type { EntryState, FulfillmentScore } from '../../types/entry';
 
 import { DateNavigatorRow } from './DateNavigatorRow';
 import { FulfillmentRow } from './FulfillmentRow';
 import { InlineNoteSection } from './InlineNoteSection';
-import { TimeProgressBar } from './TimeProgressBar';
-import { TimeRow, TimeRowPlaceholder } from './TimeRow';
-
-/** 差分（分）を "+15m" / "±0" / "-10m" 形式にフォーマット */
-function formatDiffDisplay(diffMinutes: number): string {
-  if (diffMinutes === 0) return '±0';
-  const abs = Math.abs(diffMinutes);
-  const sign = diffMinutes > 0 ? '+' : '-';
-  const h = Math.floor(abs / 60);
-  const m = abs % 60;
-  if (h > 0 && m > 0) return `${sign}${h}h ${m}m`;
-  if (h > 0) return `${sign}${h}h`;
-  return `${sign}${m}m`;
-}
+import { TimeRow } from './TimeRow';
 
 interface InspectorTimeSectionProps {
   // 日付
@@ -53,7 +41,6 @@ interface InspectorTimeSectionProps {
   onActualEndChange: (time: string | null) => void;
   // 状態
   entryState: EntryState;
-  origin?: EntryOrigin;
   timeConflictError?: boolean;
   disabled?: boolean;
   // 充実度
@@ -80,7 +67,6 @@ export function InspectorTimeSection({
   onActualStartChange,
   onActualEndChange,
   entryState,
-  origin = 'planned',
   timeConflictError = false,
   disabled = false,
   fulfillmentScore,
@@ -93,17 +79,10 @@ export function InspectorTimeSection({
 }: InspectorTimeSectionProps) {
   const t = useTranslations();
 
-  // 3パターンのレンダリング制御
-  const isUnplanned = origin === 'unplanned';
   const isPast = entryState === 'past';
-  const isPlannedRowDisabled = isUnplanned;
-  const showActualPlaceholder = entryState === 'upcoming' && !isUnplanned;
 
-  // 過去ブロック: 予定ロック（Time waits for no one）
-  const isPlanLocked = isPast || disabled;
   // 未来/進行中ブロック: 過去の日付への移動を防止
   const today = useMemo(() => new Date(), []);
-  const dateMinDate = isPast ? undefined : today;
 
   // 予定行の自動調整
   const {
@@ -134,45 +113,22 @@ export function InspectorTimeSection({
     onActualEndChange(time);
   };
 
-  // Duration 計算
-  const plannedDuration = useMemo(
-    () => computeDuration(plannedStart, plannedEnd),
-    [plannedStart, plannedEnd],
-  );
-  const actualDuration = useMemo(
-    () => computeDuration(effectiveActualStart, effectiveActualEnd),
-    [effectiveActualStart, effectiveActualEnd],
-  );
-
-  const hasActualTime = actualStart !== null || actualEnd !== null;
-
-  // 差分計算（予定 vs 記録）
-  const diffMinutes = useMemo(
-    () => actualDuration - plannedDuration,
-    [actualDuration, plannedDuration],
-  );
-
   return (
     <div className="flex flex-col gap-2 px-4 pt-2.5 pb-4">
-      {/* 日付（過去ブロック: disabled / 未来ブロック: minDate=today） */}
-      <DateNavigatorRow
-        label={t('plan.inspector.time.date')}
-        icon={Calendar}
-        selectedDate={selectedDate}
-        onDateChange={onDateChange}
-        disabled={isPlanLocked}
-        minDate={dateMinDate}
-      />
-
-      {/* 予定行 */}
-      {isPlannedRowDisabled ? (
-        <TimeRowPlaceholder
-          label={t('plan.inspector.time.planned')}
-          icon={Clock}
-          message={t('plan.inspector.time.noPlanned')}
-          muted
+      {/* 日付（過去は非表示、未来は minDate=today） */}
+      {!isPast && (
+        <DateNavigatorRow
+          label={t('plan.inspector.time.date')}
+          icon={Calendar}
+          selectedDate={selectedDate}
+          onDateChange={onDateChange}
+          disabled={disabled}
+          minDate={today}
         />
-      ) : (
+      )}
+
+      {/* 予定行（過去は非表示） */}
+      {!isPast && (
         <TimeRow
           label={t('plan.inspector.time.planned')}
           icon={Clock}
@@ -180,50 +136,21 @@ export function InspectorTimeSection({
           endTime={plannedEnd}
           onStartChange={handlePlannedStartChange}
           onEndChange={handlePlannedEndChange}
-          disabled={isPlanLocked}
+          disabled={disabled}
           hasError={timeConflictError}
         />
       )}
 
-      {/* 記録行 */}
-      {showActualPlaceholder ? (
-        <TimeRowPlaceholder
-          label={t('plan.inspector.time.actual')}
-          icon={Play}
-          message={t('plan.inspector.time.sameAsPlanned')}
-        />
-      ) : (
-        <TimeRow
-          label={t('plan.inspector.time.actual')}
-          icon={Play}
-          startTime={effectiveActualStart}
-          endTime={effectiveActualEnd}
-          onStartChange={handleActualStartChange}
-          onEndChange={handleActualEndChange}
-          disabled={disabled}
-        />
-      )}
-
-      {/* 予定 vs 記録の差分（プログレスバー + バッジ） */}
-      {(hasActualTime || entryState !== 'upcoming') && plannedDuration > 0 && !isUnplanned && (
-        <div className="flex items-center gap-2">
-          <div className="flex-1">
-            <TimeProgressBar plannedMinutes={plannedDuration} actualMinutes={actualDuration} />
-          </div>
-          <span
-            className={cn(
-              'shrink-0 rounded-md px-1.5 py-0.5 text-xs font-medium tabular-nums',
-              diffMinutes > 0
-                ? 'bg-warning/15 text-warning'
-                : diffMinutes < 0
-                  ? 'bg-destructive/15 text-destructive'
-                  : 'bg-success/15 text-success',
-            )}
-          >
-            {formatDiffDisplay(diffMinutes)}
-          </span>
-        </div>
-      )}
+      {/* 記録行（常に表示） */}
+      <TimeRow
+        label={t('plan.inspector.time.actual')}
+        icon={Play}
+        startTime={effectiveActualStart}
+        endTime={effectiveActualEnd}
+        onStartChange={handleActualStartChange}
+        onEndChange={handleActualEndChange}
+        disabled={disabled}
+      />
 
       {/* 充実度 */}
       {onFulfillmentChange && (
@@ -235,9 +162,9 @@ export function InspectorTimeSection({
         />
       )}
 
-      {/* 繰り返し・通知（記録のみのエントリでは非表示） */}
-      {!isUnplanned && recurrenceRow}
-      {!isUnplanned && reminderRow}
+      {/* 繰り返し・通知（過去のエントリでは非表示） */}
+      {!isPast && recurrenceRow}
+      {!isPast && reminderRow}
 
       {/* メモ */}
       {onNoteChange && (

@@ -105,7 +105,6 @@ describe.skipIf(SKIP_INTEGRATION)('GDPR Router Integration', () => {
     await adminSupabase.from('entries').insert({
       user_id: TEST_USER_ID,
       title: 'GDPR Test Entry',
-      origin: 'planned',
     });
   });
 
